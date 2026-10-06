@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Concerns\BelongsToInstitution;
+use App\Enums\UserStatus;
 use App\Notifications\UserInvitation;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -20,10 +21,6 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use BelongsToInstitution, HasFactory, HasRoles, Notifiable;
-
-    public const STATUS_ACTIVE = 'active';
-
-    public const STATUS_INACTIVE = 'inactive';
 
     /**
      * Each role's landing page after login, in priority order: a user
@@ -46,12 +43,13 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'status' => UserStatus::class,
         ];
     }
 
     public function isActive(): bool
     {
-        return $this->status === self::STATUS_ACTIVE;
+        return $this->status === UserStatus::Active;
     }
 
     /**

@@ -16,6 +16,11 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
   ver `database/migrations/2025_01_01_000005_enable_row_level_security_on_tenant_tables.php`).
   El scope de Eloquent (`App\Concerns\BelongsToInstitution`) es una
   conveniencia de aplicación; la RLS es el límite de seguridad real.
+- **Nuevas tablas por institución**: en la migración, `$table->belongsToInstitution()`
+  crea `institution_id` (FK, índice y valor por defecto tomado de la sesión
+  RLS) y `RowLevelSecurity::enable('tabla')` activa la política; en el modelo,
+  `use BelongsToInstitution`. `tests/Feature/TenantTableTest.php` falla si
+  alguna tabla con `institution_id` queda sin RLS.
 - **Resolución de tenant**: cada institución vive en
   `https://{subdomain}.{APP_DOMAIN}`. `App\Http\Middleware\ResolveTenant`
   resuelve el subdominio (capturado como parámetro de ruta `{tenant}` en

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserStatus;
 use App\Models\User;
 
 test('login screen can be rendered', function () {
@@ -97,7 +98,7 @@ test('a user deactivated mid-session is logged out on their next request', funct
     $user = User::factory()->for($institution)->create();
 
     $this->actingAs($user);
-    $user->update(['status' => User::STATUS_INACTIVE]);
+    $user->update(['status' => UserStatus::Inactive]);
 
     $response = $this->get(tenantUrl($institution, '/profile'));
 

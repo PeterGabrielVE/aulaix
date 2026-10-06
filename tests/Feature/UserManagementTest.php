@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use App\Notifications\UserInvitation;
 use Illuminate\Support\Facades\Notification;
@@ -140,7 +141,7 @@ test("an administrator can change a user's role and deactivate them", function (
         'name' => $teacher->name,
         'email' => $teacher->email,
         'role' => 'Representante',
-        'status' => User::STATUS_INACTIVE,
+        'status' => UserStatus::Inactive->value,
     ])->assertSessionHasNoErrors()->assertRedirect(route('users.index'));
 
     $teacher->refresh();
@@ -156,7 +157,7 @@ test('administrators can not deactivate or demote themselves', function () {
         'name' => $admin->name,
         'email' => $admin->email,
         'role' => 'Docente',
-        'status' => User::STATUS_INACTIVE,
+        'status' => UserStatus::Inactive->value,
     ]);
 
     $response->assertSessionHasErrors(['role', 'status']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserStatus;
 use App\Models\User;
 use App\Support\CurrentTenant;
 use Closure;
@@ -45,9 +46,9 @@ class UserRequest extends FormRequest
             ],
             'status' => [
                 Rule::requiredIf($editedUser !== null),
-                Rule::in([User::STATUS_ACTIVE, User::STATUS_INACTIVE]),
+                Rule::enum(UserStatus::class),
                 function (string $attribute, mixed $value, Closure $fail) use ($editingSelf) {
-                    if ($editingSelf && $value !== User::STATUS_ACTIVE) {
+                    if ($editingSelf && $value !== UserStatus::Active->value) {
                         $fail('No puedes desactivar tu propia cuenta.');
                     }
                 },

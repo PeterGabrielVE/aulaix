@@ -1,6 +1,12 @@
 <?php
 
+use App\Models\Institution;
+use App\Models\User;
+use App\Support\CurrentTenant;
+use App\Support\RowLevelSecurity;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 /*
@@ -49,7 +55,7 @@ expect()->extend('toBeOne', function () {
 | Multi-tenancy helpers
 |--------------------------------------------------------------------------
 |
-| Every tenant-scoped table (currently just `users`) has PostgreSQL Row
+| Every tenant-scoped table (`users`, `password_reset_tokens`, ...) has PostgreSQL Row
 | Level Security FORCE-enabled (F1-02), so inserting into it requires the
 | same `app.current_institution_id` session variable that
 | App\Http\Middleware\ResolveTenant sets on every real request. These
@@ -57,22 +63,19 @@ expect()->extend('toBeOne', function () {
 | factories, before any HTTP request has run the middleware.
 */
 
-function tenant(array $attributes = []): \App\Models\Institution
+function tenant(array $attributes = []): Institution
 {
-    $institution = \App\Models\Institution::factory()->create($attributes);
+    $institution = Institution::factory()->create($attributes);
 
-    \Illuminate\Support\Facades\DB::statement(
-        "select set_config('app.current_institution_id', ?, false)",
-        [(string) $institution->id]
-    );
+    RowLevelSecurity::setInstitution($institution->id);
 
-    app(\App\Support\CurrentTenant::class)->set($institution);
-    app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($institution->id);
+    app(CurrentTenant::class)->set($institution);
+    app(PermissionRegistrar::class)->setPermissionsTeamId($institution->id);
 
     return $institution;
 }
 
-function tenantUrl(\App\Models\Institution $institution, string $path = '/'): string
+function tenantUrl(Institution $institution, string $path = '/'): string
 {
     return 'http://'.$institution->subdomain.'.'.config('app.domain').$path;
 }
@@ -81,11 +84,11 @@ function tenantUrl(\App\Models\Institution $institution, string $path = '/'): st
  * A user of the given institution holding one of the roles seeded by
  * RolePermissionSeeder (seeded here on demand; it's idempotent).
  */
-function userWithRole(\App\Models\Institution $institution, string $role, array $attributes = []): \App\Models\User
+function userWithRole(Institution $institution, string $role, array $attributes = []): User
 {
-    \Database\Seeders\RolePermissionSeeder::seedForInstitution($institution);
+    RolePermissionSeeder::seedForInstitution($institution);
 
-    $user = \App\Models\User::factory()->for($institution)->create($attributes);
+    $user = User::factory()->for($institution)->create($attributes);
     $user->assignRole($role);
 
     return $user;

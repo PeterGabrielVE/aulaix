@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserStatus;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -55,7 +56,7 @@ class UserController extends Controller
             'email' => $request->email,
             // Never shown to anyone; replaced when the invitation is accepted.
             'password' => Str::password(32),
-            'status' => User::STATUS_ACTIVE,
+            'status' => UserStatus::Active,
         ]);
 
         $user->syncRoles([$request->role]);
@@ -107,7 +108,7 @@ class UserController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'status' => $user->status,
+            'status' => $user->status->value,
             'role' => $user->roles->first()?->name,
             'invitation_pending' => ! $user->hasAcceptedInvitation(),
         ];

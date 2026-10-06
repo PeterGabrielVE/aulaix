@@ -6,6 +6,7 @@ use App\Support\CurrentTenant;
 use App\Support\RowLevelSecurity;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\RouteCollection;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
@@ -92,4 +93,24 @@ function userWithRole(Institution $institution, string $role, array $attributes 
     $user->assignRole($role);
 
     return $user;
+}
+
+/**
+ * Serve the app from another base domain (e.g. the production one) for the
+ * rest of the test. routes/web.php reads config('app.domain') when the
+ * routes are registered, so they're registered again the way
+ * bootstrap/app.php does it.
+ */
+function useAppDomain(string $domain): void
+{
+    config(['app.domain' => $domain]);
+
+    $router = app('router');
+    $router->setRoutes(new RouteCollection);
+    $router->middleware('web')->group(base_path('routes/web.php'));
+
+    // ->name() runs after a route is added, so the lookups need rebuilding.
+    $router->getRoutes()->refreshNameLookups();
+    $router->getRoutes()->refreshActionLookups();
+    app('url')->setRoutes($router->getRoutes());
 }

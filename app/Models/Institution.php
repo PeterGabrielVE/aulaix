@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\InstitutionStatus;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Institution extends Model
 {
     use HasFactory;
+
+    /**
+     * Subdomains of APP_DOMAIN that belong to the platform itself, never to
+     * an institution. Enforced by the institutions_subdomain_format check
+     * constraint; "www" is also redirected to the central domain.
+     */
+    public const RESERVED_SUBDOMAINS = ['www', 'api', 'admin', 'app', 'mail', 'static', 'assets', 'cdn'];
 
     protected $fillable = [
         'name',
@@ -37,6 +45,17 @@ class Institution extends Model
         return [
             'status' => InstitutionStatus::class,
         ];
+    }
+
+    /**
+     * Hostnames are case-insensitive and the request's host always arrives
+     * lower-cased, so the stored subdomain must be lower-case to match it.
+     */
+    protected function subdomain(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => strtolower(trim($value)),
+        );
     }
 
     /**

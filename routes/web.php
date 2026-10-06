@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,6 +21,17 @@ Route::domain(config('app.domain'))->group(function () {
 
     Route::get('/api/institutions/search', [InstitutionController::class, 'search'])
         ->name('institutions.search');
+});
+
+/*
+| www.{APP_DOMAIN} is the central domain under another name, not an
+| institution called "www" (a reserved subdomain, see Institution). Must be
+| registered before the tenant group, whose {tenant} pattern matches it too.
+*/
+Route::domain('www.'.config('app.domain'))->group(function () {
+    Route::get('/{path?}', fn (Request $request) => redirect()->away(
+        $request->getScheme().'://'.config('app.domain').$request->getRequestUri(), 301
+    ))->where('path', '.*');
 });
 
 /*

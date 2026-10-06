@@ -93,6 +93,33 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
    | Representante | `representante@demo.aulaix.test`  | `representante@demo2.aulaix.test`  |
    | Estudiante    | `estudiante@demo.aulaix.test`     | `estudiante@demo2.aulaix.test`     |
 
+## Dominio en producción
+
+Nada depende de `aulaix.test`: todo sale de `APP_DOMAIN`. Para servir
+`colegio.tusistema.com`:
+
+1. `.env`: `APP_DOMAIN=tusistema.com`, `APP_URL=https://tusistema.com`,
+   `SESSION_DOMAIN=null` (cada institución mantiene su propia sesión).
+2. DNS: un registro para `tusistema.com` y uno comodín para `*.tusistema.com`
+   apuntando al servidor (y un certificado TLS comodín).
+3. La institución debe existir con `subdomain = 'colegio'` y estado activo.
+
+Comportamiento:
+
+| Host | Resultado |
+|---|---|
+| `tusistema.com` | Selector de institución |
+| `colegio.tusistema.com` (o `Colegio.TuSistema.com`) | Institución `colegio` |
+| `www.tusistema.com/...` | Redirección 301 a `tusistema.com/...` |
+| `otro.tusistema.com` sin institución activa, `a.b.tusistema.com` | 404 |
+| Cualquier otro dominio | Rechazado (fuera de `local`/`testing`) |
+
+Un subdominio es una sola etiqueta DNS en minúsculas (letras, dígitos y
+guiones internos, máx. 63) y no puede ser uno de los reservados
+(`Institution::RESERVED_SUBDOMAINS`: `www`, `api`, `admin`, …); lo impone una
+restricción en la base de datos. `tests/Feature/SubdomainResolutionTest.php`
+verifica todo esto con `tusistema.com` como dominio.
+
 ## Autenticación
 
 - **Sin registro público.** Solo el administrador de cada institución crea

@@ -160,13 +160,28 @@ docker compose exec app php artisan ai:health
 docker compose exec app php artisan tinker
 ```
 
-## Notas sobre los datos de catálogo
+## Catálogos globales
 
-Los estados de Venezuela (`database/seeders/GeographicCatalogSeeder.php`)
-están completos (24), pero municipios y parroquias solo incluyen una
-muestra representativa (la capital de cada estado) —
-`database/seeders/data/venezuela-divisions.json`. No es un import completo
-de DIVIPOLA (335 municipios, 1000+ parroquias); reemplaza ese fixture por
-el dataset oficial cuando el catálogo deba ser exhaustivo. Los códigos
-(`code`) son identificadores internos secuenciales, no códigos DIVIPOLA
-oficiales.
+Estados, municipios, parroquias y materias MPPE son catálogos compartidos
+por todas las instituciones: sin `institution_id` ni RLS, se ven igual desde
+cualquier subdominio.
+
+- **Geografía** (`GeographicCatalogSeeder`): 24 entidades federales, 335
+  municipios y 1.140 parroquias, desde
+  `database/seeders/data/venezuela-divisions.json` (generado a partir de
+  [zokeber/venezuela-json](https://github.com/zokeber/venezuela-json), con
+  Vargas → La Guaira y la parroquia Mariguitar de Bolívar, Sucre). Los
+  estados usan su código ISO 3166-2 (`VE-A` = Distrito Capital); municipios y
+  parroquias, códigos internos por posición (`VE-A-01`, `VE-A-01-01`): no
+  reordenes el archivo, solo agrega al final.
+- **Materias** (`SubjectSeeder`): áreas de formación de Media General
+  (transformación curricular 2017) y áreas de aprendizaje de Primaria e
+  Inicial, con su nivel (`App\Enums\EducationLevel`). El seeder es la fuente
+  de verdad: renombra por código y elimina códigos que ya no estén.
+
+Ambos son idempotentes. En producción, carga o actualiza solo los catálogos
+(sin instituciones ni usuarios de demostración) con:
+
+```bash
+php artisan db:seed --class=CatalogSeeder --force
+```

@@ -1,26 +1,6740 @@
 [
-    {"state": "Amazonas", "municipality": "Puerto Ayacucho", "parish": "Puerto Ayacucho"},
-    {"state": "Anzoátegui", "municipality": "Barcelona", "parish": "Barcelona"},
-    {"state": "Apure", "municipality": "San Fernando de Apure", "parish": "San Fernando de Apure"},
-    {"state": "Aragua", "municipality": "Maracay", "parish": "Maracay"},
-    {"state": "Barinas", "municipality": "Barinas", "parish": "Barinas"},
-    {"state": "Bolívar", "municipality": "Ciudad Bolívar", "parish": "Ciudad Bolívar"},
-    {"state": "Carabobo", "municipality": "Valencia", "parish": "Valencia"},
-    {"state": "Cojedes", "municipality": "San Carlos", "parish": "San Carlos"},
-    {"state": "Delta Amacuro", "municipality": "Tucupita", "parish": "Tucupita"},
-    {"state": "Distrito Capital", "municipality": "Libertador", "parish": "Caracas"},
-    {"state": "Falcón", "municipality": "Coro", "parish": "Coro"},
-    {"state": "Guárico", "municipality": "San Juan de los Morros", "parish": "San Juan de los Morros"},
-    {"state": "Lara", "municipality": "Barquisimeto", "parish": "Barquisimeto"},
-    {"state": "Mérida", "municipality": "Mérida", "parish": "Mérida"},
-    {"state": "Miranda", "municipality": "Los Teques", "parish": "Los Teques"},
-    {"state": "Monagas", "municipality": "Maturín", "parish": "Maturín"},
-    {"state": "Nueva Esparta", "municipality": "La Asunción", "parish": "La Asunción"},
-    {"state": "Portuguesa", "municipality": "Guanare", "parish": "Guanare"},
-    {"state": "Sucre", "municipality": "Cumaná", "parish": "Cumaná"},
-    {"state": "Táchira", "municipality": "San Cristóbal", "parish": "San Cristóbal"},
-    {"state": "Trujillo", "municipality": "Trujillo", "parish": "Trujillo"},
-    {"state": "La Guaira", "municipality": "La Guaira", "parish": "La Guaira"},
-    {"state": "Yaracuy", "municipality": "San Felipe", "parish": "San Felipe"},
-    {"state": "Zulia", "municipality": "Maracaibo", "parish": "Maracaibo"}
+  {
+    "code": "VE-A",
+    "name": "Distrito Capital",
+    "capital": "Caracas",
+    "municipalities": [
+      {
+        "code": "VE-A-01",
+        "name": "Libertador",
+        "parishes": [
+          {
+            "code": "VE-A-01-01",
+            "name": "23 de enero"
+          },
+          {
+            "code": "VE-A-01-02",
+            "name": "Altagracia"
+          },
+          {
+            "code": "VE-A-01-03",
+            "name": "Antímano"
+          },
+          {
+            "code": "VE-A-01-04",
+            "name": "Caricuao"
+          },
+          {
+            "code": "VE-A-01-05",
+            "name": "Catedral"
+          },
+          {
+            "code": "VE-A-01-06",
+            "name": "Coche"
+          },
+          {
+            "code": "VE-A-01-07",
+            "name": "El Junquito"
+          },
+          {
+            "code": "VE-A-01-08",
+            "name": "El Paraíso"
+          },
+          {
+            "code": "VE-A-01-09",
+            "name": "El Recreo"
+          },
+          {
+            "code": "VE-A-01-10",
+            "name": "El Valle"
+          },
+          {
+            "code": "VE-A-01-11",
+            "name": "Candelaria"
+          },
+          {
+            "code": "VE-A-01-12",
+            "name": "La Pastora"
+          },
+          {
+            "code": "VE-A-01-13",
+            "name": "La Vega"
+          },
+          {
+            "code": "VE-A-01-14",
+            "name": "Macarao"
+          },
+          {
+            "code": "VE-A-01-15",
+            "name": "San Agustín"
+          },
+          {
+            "code": "VE-A-01-16",
+            "name": "San Bernardino"
+          },
+          {
+            "code": "VE-A-01-17",
+            "name": "San José"
+          },
+          {
+            "code": "VE-A-01-18",
+            "name": "San Juan"
+          },
+          {
+            "code": "VE-A-01-19",
+            "name": "San Pedro"
+          },
+          {
+            "code": "VE-A-01-20",
+            "name": "Santa Rosalía"
+          },
+          {
+            "code": "VE-A-01-21",
+            "name": "Santa Teresa"
+          },
+          {
+            "code": "VE-A-01-22",
+            "name": "Sucre (Catia)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-B",
+    "name": "Anzoátegui",
+    "capital": "Barcelona",
+    "municipalities": [
+      {
+        "code": "VE-B-01",
+        "name": "Anaco",
+        "parishes": [
+          {
+            "code": "VE-B-01-01",
+            "name": "Anaco"
+          },
+          {
+            "code": "VE-B-01-02",
+            "name": "San Joaquín"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-02",
+        "name": "Aragua",
+        "parishes": [
+          {
+            "code": "VE-B-02-01",
+            "name": "Cachipo"
+          },
+          {
+            "code": "VE-B-02-02",
+            "name": "Aragua de Barcelona"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-03",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-B-03-01",
+            "name": "Bergatín"
+          },
+          {
+            "code": "VE-B-03-02",
+            "name": "Caigua"
+          },
+          {
+            "code": "VE-B-03-03",
+            "name": "El Carmen."
+          },
+          {
+            "code": "VE-B-03-04",
+            "name": "El Pilar"
+          },
+          {
+            "code": "VE-B-03-05",
+            "name": "Naricual."
+          },
+          {
+            "code": "VE-B-03-06",
+            "name": "San Cristóbal"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-04",
+        "name": "Bruzual",
+        "parishes": [
+          {
+            "code": "VE-B-04-01",
+            "name": "Clarines"
+          },
+          {
+            "code": "VE-B-04-02",
+            "name": "Guanape"
+          },
+          {
+            "code": "VE-B-04-03",
+            "name": "Sabana de Uchire"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-05",
+        "name": "Cajigal",
+        "parishes": [
+          {
+            "code": "VE-B-05-01",
+            "name": "Onoto"
+          },
+          {
+            "code": "VE-B-05-02",
+            "name": "San Pablo"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-06",
+        "name": "Carvajal",
+        "parishes": [
+          {
+            "code": "VE-B-06-01",
+            "name": "Valle de Guanape"
+          },
+          {
+            "code": "VE-B-06-02",
+            "name": "Santa Bárbara"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-07",
+        "name": "Diego Bautista Urbaneja",
+        "parishes": [
+          {
+            "code": "VE-B-07-01",
+            "name": "Lechería"
+          },
+          {
+            "code": "VE-B-07-02",
+            "name": "El Morro"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-08",
+        "name": "Freites",
+        "parishes": [
+          {
+            "code": "VE-B-08-01",
+            "name": "Cantaura"
+          },
+          {
+            "code": "VE-B-08-02",
+            "name": "Libertador"
+          },
+          {
+            "code": "VE-B-08-03",
+            "name": "Santa Rosa"
+          },
+          {
+            "code": "VE-B-08-04",
+            "name": "Urica"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-09",
+        "name": "Guanipa",
+        "parishes": [
+          {
+            "code": "VE-B-09-01",
+            "name": "San José de Guanipa"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-10",
+        "name": "Guanta",
+        "parishes": [
+          {
+            "code": "VE-B-10-01",
+            "name": "Guanta"
+          },
+          {
+            "code": "VE-B-10-02",
+            "name": "Chorrerón"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-11",
+        "name": "Independencia",
+        "parishes": [
+          {
+            "code": "VE-B-11-01",
+            "name": "Mamo"
+          },
+          {
+            "code": "VE-B-11-02",
+            "name": "Soledad"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-12",
+        "name": "Libertad",
+        "parishes": [
+          {
+            "code": "VE-B-12-01",
+            "name": "San Mateo"
+          },
+          {
+            "code": "VE-B-12-02",
+            "name": "El Carito"
+          },
+          {
+            "code": "VE-B-12-03",
+            "name": "Santa Inés"
+          },
+          {
+            "code": "VE-B-12-04",
+            "name": "La Romereña"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-13",
+        "name": "McGregor",
+        "parishes": [
+          {
+            "code": "VE-B-13-01",
+            "name": "El Chaparro"
+          },
+          {
+            "code": "VE-B-13-02",
+            "name": "Tomás Alfaro"
+          },
+          {
+            "code": "VE-B-13-03",
+            "name": "Calatrava"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-14",
+        "name": "Miranda",
+        "parishes": [
+          {
+            "code": "VE-B-14-01",
+            "name": "Atapirire"
+          },
+          {
+            "code": "VE-B-14-02",
+            "name": "Boca del Pao"
+          },
+          {
+            "code": "VE-B-14-03",
+            "name": "El Pao"
+          },
+          {
+            "code": "VE-B-14-04",
+            "name": "Pariaguán"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-15",
+        "name": "Monagas",
+        "parishes": [
+          {
+            "code": "VE-B-15-01",
+            "name": "Mapire"
+          },
+          {
+            "code": "VE-B-15-02",
+            "name": "Piar"
+          },
+          {
+            "code": "VE-B-15-03",
+            "name": "Santa Clara"
+          },
+          {
+            "code": "VE-B-15-04",
+            "name": "San Diego de Cabrutica"
+          },
+          {
+            "code": "VE-B-15-05",
+            "name": "Uverito"
+          },
+          {
+            "code": "VE-B-15-06",
+            "name": "Zuata"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-16",
+        "name": "Peñalver",
+        "parishes": [
+          {
+            "code": "VE-B-16-01",
+            "name": "Puerto Píritu"
+          },
+          {
+            "code": "VE-B-16-02",
+            "name": "San Miguel"
+          },
+          {
+            "code": "VE-B-16-03",
+            "name": "Sucre"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-17",
+        "name": "Píritu",
+        "parishes": [
+          {
+            "code": "VE-B-17-01",
+            "name": "Píritu"
+          },
+          {
+            "code": "VE-B-17-02",
+            "name": "San Francisco"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-18",
+        "name": "San Juan de Capistrano",
+        "parishes": [
+          {
+            "code": "VE-B-18-01",
+            "name": "Boca de Uchire"
+          },
+          {
+            "code": "VE-B-18-02",
+            "name": "Boca de Chávez"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-19",
+        "name": "Santa Ana",
+        "parishes": [
+          {
+            "code": "VE-B-19-01",
+            "name": "Pueblo Nuevo"
+          },
+          {
+            "code": "VE-B-19-02",
+            "name": "Santa Ana"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-20",
+        "name": "Simón Rodríguez",
+        "parishes": [
+          {
+            "code": "VE-B-20-01",
+            "name": "Edmundo Barrios"
+          },
+          {
+            "code": "VE-B-20-02",
+            "name": "Miguel Otero Silva"
+          }
+        ]
+      },
+      {
+        "code": "VE-B-21",
+        "name": "Sotillo",
+        "parishes": [
+          {
+            "code": "VE-B-21-01",
+            "name": "Puerto La Cruz"
+          },
+          {
+            "code": "VE-B-21-02",
+            "name": "Pozuelos"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-C",
+    "name": "Apure",
+    "capital": "San Fernando de Apure",
+    "municipalities": [
+      {
+        "code": "VE-C-01",
+        "name": "Achaguas",
+        "parishes": [
+          {
+            "code": "VE-C-01-01",
+            "name": "Achaguas"
+          },
+          {
+            "code": "VE-C-01-02",
+            "name": "Apurito"
+          },
+          {
+            "code": "VE-C-01-03",
+            "name": "El Yagual"
+          },
+          {
+            "code": "VE-C-01-04",
+            "name": "Guachara"
+          },
+          {
+            "code": "VE-C-01-05",
+            "name": "Mucuritas"
+          },
+          {
+            "code": "VE-C-01-06",
+            "name": "Queseras del medio"
+          }
+        ]
+      },
+      {
+        "code": "VE-C-02",
+        "name": "Biruaca",
+        "parishes": [
+          {
+            "code": "VE-C-02-01",
+            "name": "Biruaca"
+          }
+        ]
+      },
+      {
+        "code": "VE-C-03",
+        "name": "Muñoz",
+        "parishes": [
+          {
+            "code": "VE-C-03-01",
+            "name": "Bruzual"
+          },
+          {
+            "code": "VE-C-03-02",
+            "name": "Mantecal"
+          },
+          {
+            "code": "VE-C-03-03",
+            "name": "Quintero"
+          },
+          {
+            "code": "VE-C-03-04",
+            "name": "Rincón Hondo"
+          },
+          {
+            "code": "VE-C-03-05",
+            "name": "San Vicente"
+          }
+        ]
+      },
+      {
+        "code": "VE-C-04",
+        "name": "Páez",
+        "parishes": [
+          {
+            "code": "VE-C-04-01",
+            "name": "Guasdualito"
+          },
+          {
+            "code": "VE-C-04-02",
+            "name": "Aramendi"
+          },
+          {
+            "code": "VE-C-04-03",
+            "name": "El Amparo"
+          },
+          {
+            "code": "VE-C-04-04",
+            "name": "San Camilo"
+          },
+          {
+            "code": "VE-C-04-05",
+            "name": "Urdaneta"
+          }
+        ]
+      },
+      {
+        "code": "VE-C-05",
+        "name": "Pedro Camejo",
+        "parishes": [
+          {
+            "code": "VE-C-05-01",
+            "name": "San Juan de Payara"
+          },
+          {
+            "code": "VE-C-05-02",
+            "name": "Codazzi"
+          },
+          {
+            "code": "VE-C-05-03",
+            "name": "Cunaviche"
+          }
+        ]
+      },
+      {
+        "code": "VE-C-06",
+        "name": "Rómulo Gallegos",
+        "parishes": [
+          {
+            "code": "VE-C-06-01",
+            "name": "Elorza"
+          },
+          {
+            "code": "VE-C-06-02",
+            "name": "La Trinidad"
+          }
+        ]
+      },
+      {
+        "code": "VE-C-07",
+        "name": "San Fernando",
+        "parishes": [
+          {
+            "code": "VE-C-07-01",
+            "name": "San Fernando"
+          },
+          {
+            "code": "VE-C-07-02",
+            "name": "El Recreo"
+          },
+          {
+            "code": "VE-C-07-03",
+            "name": "Peñalver"
+          },
+          {
+            "code": "VE-C-07-04",
+            "name": "San Rafael de Atamaica"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-D",
+    "name": "Aragua",
+    "capital": "Maracay",
+    "municipalities": [
+      {
+        "code": "VE-D-01",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-D-01-01",
+            "name": "Bolívar"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-02",
+        "name": "Camatagua",
+        "parishes": [
+          {
+            "code": "VE-D-02-01",
+            "name": "Camatagua"
+          },
+          {
+            "code": "VE-D-02-02",
+            "name": "Carmen de Cura"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-03",
+        "name": "Francisco Linares Alcántara",
+        "parishes": [
+          {
+            "code": "VE-D-03-01",
+            "name": "Santa Rita"
+          },
+          {
+            "code": "VE-D-03-02",
+            "name": "Francisco de Miranda"
+          },
+          {
+            "code": "VE-D-03-03",
+            "name": "Moseñor Feliciano González"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-04",
+        "name": "Girardot",
+        "parishes": [
+          {
+            "code": "VE-D-04-01",
+            "name": "Pedro José Ovalles"
+          },
+          {
+            "code": "VE-D-04-02",
+            "name": "Joaquín Crespo"
+          },
+          {
+            "code": "VE-D-04-03",
+            "name": "José Casanova Godoy"
+          },
+          {
+            "code": "VE-D-04-04",
+            "name": "Madre María de San José"
+          },
+          {
+            "code": "VE-D-04-05",
+            "name": "Andrés Eloy Blanco"
+          },
+          {
+            "code": "VE-D-04-06",
+            "name": "Los Tacarigua"
+          },
+          {
+            "code": "VE-D-04-07",
+            "name": "Las Delicias"
+          },
+          {
+            "code": "VE-D-04-08",
+            "name": "Choroní"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-05",
+        "name": "José Ángel Lamas",
+        "parishes": [
+          {
+            "code": "VE-D-05-01",
+            "name": "Santa Cruz"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-06",
+        "name": "José Félix Ribas",
+        "parishes": [
+          {
+            "code": "VE-D-06-01",
+            "name": "José Félix Ribas"
+          },
+          {
+            "code": "VE-D-06-02",
+            "name": "Castor Nieves Ríos"
+          },
+          {
+            "code": "VE-D-06-03",
+            "name": "Las Guacamayas"
+          },
+          {
+            "code": "VE-D-06-04",
+            "name": "Pao de Zárate"
+          },
+          {
+            "code": "VE-D-06-05",
+            "name": "Zuata"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-07",
+        "name": "José Rafael Revenga",
+        "parishes": [
+          {
+            "code": "VE-D-07-01",
+            "name": "José Rafael Revenga"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-08",
+        "name": "Libertador",
+        "parishes": [
+          {
+            "code": "VE-D-08-01",
+            "name": "Palo Negro"
+          },
+          {
+            "code": "VE-D-08-02",
+            "name": "San Martín de Porres"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-09",
+        "name": "Mario Briceño Iragorry",
+        "parishes": [
+          {
+            "code": "VE-D-09-01",
+            "name": "El Limón"
+          },
+          {
+            "code": "VE-D-09-02",
+            "name": "Caña de Azúcar"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-10",
+        "name": "Ocumare de la Costa de Oro",
+        "parishes": [
+          {
+            "code": "VE-D-10-01",
+            "name": "Ocumare de la Costa"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-11",
+        "name": "San Casimiro",
+        "parishes": [
+          {
+            "code": "VE-D-11-01",
+            "name": "San Casimiro"
+          },
+          {
+            "code": "VE-D-11-02",
+            "name": "Güiripa"
+          },
+          {
+            "code": "VE-D-11-03",
+            "name": "Ollas de Caramacate"
+          },
+          {
+            "code": "VE-D-11-04",
+            "name": "Valle Morín"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-12",
+        "name": "San Sebastián",
+        "parishes": [
+          {
+            "code": "VE-D-12-01",
+            "name": "San Sebastián"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-13",
+        "name": "Santiago Mariño",
+        "parishes": [
+          {
+            "code": "VE-D-13-01",
+            "name": "Turmero"
+          },
+          {
+            "code": "VE-D-13-02",
+            "name": "Arevalo Aponte"
+          },
+          {
+            "code": "VE-D-13-03",
+            "name": "Chuao"
+          },
+          {
+            "code": "VE-D-13-04",
+            "name": "Samán de Güere"
+          },
+          {
+            "code": "VE-D-13-05",
+            "name": "Alfredo Pacheco Miranda"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-14",
+        "name": "Santos Michelena",
+        "parishes": [
+          {
+            "code": "VE-D-14-01",
+            "name": "Santos Michelena"
+          },
+          {
+            "code": "VE-D-14-02",
+            "name": "Tiara"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-15",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-D-15-01",
+            "name": "Cagua"
+          },
+          {
+            "code": "VE-D-15-02",
+            "name": "Bella Vista"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-16",
+        "name": "Tovar",
+        "parishes": [
+          {
+            "code": "VE-D-16-01",
+            "name": "Tovar"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-17",
+        "name": "Urdaneta",
+        "parishes": [
+          {
+            "code": "VE-D-17-01",
+            "name": "Urdaneta"
+          },
+          {
+            "code": "VE-D-17-02",
+            "name": "Las Peñitas"
+          },
+          {
+            "code": "VE-D-17-03",
+            "name": "San Francisco de Cara"
+          },
+          {
+            "code": "VE-D-17-04",
+            "name": "Taguay"
+          }
+        ]
+      },
+      {
+        "code": "VE-D-18",
+        "name": "Zamora",
+        "parishes": [
+          {
+            "code": "VE-D-18-01",
+            "name": "Zamora"
+          },
+          {
+            "code": "VE-D-18-02",
+            "name": "Magdaleno"
+          },
+          {
+            "code": "VE-D-18-03",
+            "name": "San Francisco de Asís"
+          },
+          {
+            "code": "VE-D-18-04",
+            "name": "Valles de Tucutunemo"
+          },
+          {
+            "code": "VE-D-18-05",
+            "name": "Augusto Mijares"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-E",
+    "name": "Barinas",
+    "capital": "Barinas",
+    "municipalities": [
+      {
+        "code": "VE-E-01",
+        "name": "Alberto Arvelo Torrealba",
+        "parishes": [
+          {
+            "code": "VE-E-01-01",
+            "name": "Sabaneta"
+          },
+          {
+            "code": "VE-E-01-02",
+            "name": "Juan Antonio Rodríguez Domínguez"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-02",
+        "name": "Andrés Eloy Blanco",
+        "parishes": [
+          {
+            "code": "VE-E-02-01",
+            "name": "El Cantón"
+          },
+          {
+            "code": "VE-E-02-02",
+            "name": "Santa Cruz de Guacas"
+          },
+          {
+            "code": "VE-E-02-03",
+            "name": "Puerto Vivas"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-03",
+        "name": "Antonio José de Sucre",
+        "parishes": [
+          {
+            "code": "VE-E-03-01",
+            "name": "Ticoporo"
+          },
+          {
+            "code": "VE-E-03-02",
+            "name": "Nicolás Pulido"
+          },
+          {
+            "code": "VE-E-03-03",
+            "name": "Andrés Bello"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-04",
+        "name": "Arismendi",
+        "parishes": [
+          {
+            "code": "VE-E-04-01",
+            "name": "Arismendi"
+          },
+          {
+            "code": "VE-E-04-02",
+            "name": "Guadarrama"
+          },
+          {
+            "code": "VE-E-04-03",
+            "name": "La Unión"
+          },
+          {
+            "code": "VE-E-04-04",
+            "name": "San Antonio"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-05",
+        "name": "Barinas",
+        "parishes": [
+          {
+            "code": "VE-E-05-01",
+            "name": "Barinas"
+          },
+          {
+            "code": "VE-E-05-02",
+            "name": "Alberto Arvelo Larriva"
+          },
+          {
+            "code": "VE-E-05-03",
+            "name": "San Silvestre"
+          },
+          {
+            "code": "VE-E-05-04",
+            "name": "Santa Inés"
+          },
+          {
+            "code": "VE-E-05-05",
+            "name": "Santa Lucía"
+          },
+          {
+            "code": "VE-E-05-06",
+            "name": "Torunos"
+          },
+          {
+            "code": "VE-E-05-07",
+            "name": "El Carmen"
+          },
+          {
+            "code": "VE-E-05-08",
+            "name": "Rómulo Betancourt"
+          },
+          {
+            "code": "VE-E-05-09",
+            "name": "Corazón de Jesús"
+          },
+          {
+            "code": "VE-E-05-10",
+            "name": "Ramón Ignacio Méndez"
+          },
+          {
+            "code": "VE-E-05-11",
+            "name": "Alto Barinas"
+          },
+          {
+            "code": "VE-E-05-12",
+            "name": "Manuel Palacio Fajardo"
+          },
+          {
+            "code": "VE-E-05-13",
+            "name": "Juan Antonio Rodríguez Domínguez"
+          },
+          {
+            "code": "VE-E-05-14",
+            "name": "Dominga Ortiz de Páez"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-06",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-E-06-01",
+            "name": "Barinitas"
+          },
+          {
+            "code": "VE-E-06-02",
+            "name": "Altamira de Cáceres"
+          },
+          {
+            "code": "VE-E-06-03",
+            "name": "Calderas"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-07",
+        "name": "Cruz Paredes",
+        "parishes": [
+          {
+            "code": "VE-E-07-01",
+            "name": "Barrancas"
+          },
+          {
+            "code": "VE-E-07-02",
+            "name": "El Socorro"
+          },
+          {
+            "code": "VE-E-07-03",
+            "name": "Mazparrito"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-08",
+        "name": "Ezequiel Zamora",
+        "parishes": [
+          {
+            "code": "VE-E-08-01",
+            "name": "Santa Bárbara"
+          },
+          {
+            "code": "VE-E-08-02",
+            "name": "Pedro Briceño Méndez"
+          },
+          {
+            "code": "VE-E-08-03",
+            "name": "Ramón Ignacio Méndez"
+          },
+          {
+            "code": "VE-E-08-04",
+            "name": "José Ignacio del Pumar"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-09",
+        "name": "Obispos",
+        "parishes": [
+          {
+            "code": "VE-E-09-01",
+            "name": "Obispos"
+          },
+          {
+            "code": "VE-E-09-02",
+            "name": "Los Guasimitos"
+          },
+          {
+            "code": "VE-E-09-03",
+            "name": "El Real"
+          },
+          {
+            "code": "VE-E-09-04",
+            "name": "La Luz"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-10",
+        "name": "Pedraza",
+        "parishes": [
+          {
+            "code": "VE-E-10-01",
+            "name": "Ciudad Bolívia"
+          },
+          {
+            "code": "VE-E-10-02",
+            "name": "José Ignacio Briceño"
+          },
+          {
+            "code": "VE-E-10-03",
+            "name": "José Félix Ribas"
+          },
+          {
+            "code": "VE-E-10-04",
+            "name": "Páez"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-11",
+        "name": "Rojas",
+        "parishes": [
+          {
+            "code": "VE-E-11-01",
+            "name": "Libertad"
+          },
+          {
+            "code": "VE-E-11-02",
+            "name": "Dolores"
+          },
+          {
+            "code": "VE-E-11-03",
+            "name": "Santa Rosa"
+          },
+          {
+            "code": "VE-E-11-04",
+            "name": "Palacio Fajardo"
+          },
+          {
+            "code": "VE-E-11-05",
+            "name": "Simón Rodríguez"
+          }
+        ]
+      },
+      {
+        "code": "VE-E-12",
+        "name": "Sosa",
+        "parishes": [
+          {
+            "code": "VE-E-12-01",
+            "name": "Ciudad de Nutrias"
+          },
+          {
+            "code": "VE-E-12-02",
+            "name": "El Regalo"
+          },
+          {
+            "code": "VE-E-12-03",
+            "name": "Puerto Nutrias"
+          },
+          {
+            "code": "VE-E-12-04",
+            "name": "Santa Catalina"
+          },
+          {
+            "code": "VE-E-12-05",
+            "name": "Simón Bolívar"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-F",
+    "name": "Bolívar",
+    "capital": "Ciudad Bolívar",
+    "municipalities": [
+      {
+        "code": "VE-F-01",
+        "name": "Angostura",
+        "parishes": [
+          {
+            "code": "VE-F-01-01",
+            "name": "Raúl Leoni"
+          },
+          {
+            "code": "VE-F-01-02",
+            "name": "Barceloneta"
+          },
+          {
+            "code": "VE-F-01-03",
+            "name": "Santa Bárbara"
+          },
+          {
+            "code": "VE-F-01-04",
+            "name": "San Francisco"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-02",
+        "name": "Caroní",
+        "parishes": [
+          {
+            "code": "VE-F-02-01",
+            "name": "Cachamay"
+          },
+          {
+            "code": "VE-F-02-02",
+            "name": "Chirica"
+          },
+          {
+            "code": "VE-F-02-03",
+            "name": "Dalla Costa"
+          },
+          {
+            "code": "VE-F-02-04",
+            "name": "Once de Abril"
+          },
+          {
+            "code": "VE-F-02-05",
+            "name": "Simón Bolívar"
+          },
+          {
+            "code": "VE-F-02-06",
+            "name": "Unare"
+          },
+          {
+            "code": "VE-F-02-07",
+            "name": "Universidad"
+          },
+          {
+            "code": "VE-F-02-08",
+            "name": "Vista al Sol"
+          },
+          {
+            "code": "VE-F-02-09",
+            "name": "Pozo Verde"
+          },
+          {
+            "code": "VE-F-02-10",
+            "name": "Yocoima"
+          },
+          {
+            "code": "VE-F-02-11",
+            "name": "5 de Julio"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-03",
+        "name": "Cedeño",
+        "parishes": [
+          {
+            "code": "VE-F-03-01",
+            "name": "Cedeño"
+          },
+          {
+            "code": "VE-F-03-02",
+            "name": "Altagracia"
+          },
+          {
+            "code": "VE-F-03-03",
+            "name": "Ascensión Farreras"
+          },
+          {
+            "code": "VE-F-03-04",
+            "name": "Guaniamo"
+          },
+          {
+            "code": "VE-F-03-05",
+            "name": "La Urbana"
+          },
+          {
+            "code": "VE-F-03-06",
+            "name": "Pijiguaos"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-04",
+        "name": "El Callao",
+        "parishes": [
+          {
+            "code": "VE-F-04-01",
+            "name": "El Callao"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-05",
+        "name": "Gran Sabana",
+        "parishes": [
+          {
+            "code": "VE-F-05-01",
+            "name": "Gran Sabana"
+          },
+          {
+            "code": "VE-F-05-02",
+            "name": "Ikabarú"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-06",
+        "name": "Heres",
+        "parishes": [
+          {
+            "code": "VE-F-06-01",
+            "name": "Catedral"
+          },
+          {
+            "code": "VE-F-06-02",
+            "name": "Zea"
+          },
+          {
+            "code": "VE-F-06-03",
+            "name": "Orinoco"
+          },
+          {
+            "code": "VE-F-06-04",
+            "name": "José Antonio Páez"
+          },
+          {
+            "code": "VE-F-06-05",
+            "name": "Marhuanta"
+          },
+          {
+            "code": "VE-F-06-06",
+            "name": "Agua Salada"
+          },
+          {
+            "code": "VE-F-06-07",
+            "name": "Vista Hermosa"
+          },
+          {
+            "code": "VE-F-06-08",
+            "name": "La Sabanita"
+          },
+          {
+            "code": "VE-F-06-09",
+            "name": "Panapana"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-07",
+        "name": "Píar",
+        "parishes": [
+          {
+            "code": "VE-F-07-01",
+            "name": "Andrés Eloy Blanco"
+          },
+          {
+            "code": "VE-F-07-02",
+            "name": "Pedro Cova"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-08",
+        "name": "Roscio",
+        "parishes": [
+          {
+            "code": "VE-F-08-01",
+            "name": "Roscio"
+          },
+          {
+            "code": "VE-F-08-02",
+            "name": "Salóm"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-09",
+        "name": "Sifontes",
+        "parishes": [
+          {
+            "code": "VE-F-09-01",
+            "name": "Sifontes"
+          },
+          {
+            "code": "VE-F-09-02",
+            "name": "Dalla Costa"
+          },
+          {
+            "code": "VE-F-09-03",
+            "name": "San Isidro"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-10",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-F-10-01",
+            "name": "Sucre"
+          },
+          {
+            "code": "VE-F-10-02",
+            "name": "Aripao"
+          },
+          {
+            "code": "VE-F-10-03",
+            "name": "Guarataro"
+          },
+          {
+            "code": "VE-F-10-04",
+            "name": "Las Majadas"
+          },
+          {
+            "code": "VE-F-10-05",
+            "name": "Moitaco"
+          }
+        ]
+      },
+      {
+        "code": "VE-F-11",
+        "name": "Padre Pedro Chien",
+        "parishes": [
+          {
+            "code": "VE-F-11-01",
+            "name": "Padre Pedro Chien"
+          },
+          {
+            "code": "VE-F-11-02",
+            "name": "Río Grande"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-G",
+    "name": "Carabobo",
+    "capital": "Valencia",
+    "municipalities": [
+      {
+        "code": "VE-G-01",
+        "name": "Bejuma",
+        "parishes": [
+          {
+            "code": "VE-G-01-01",
+            "name": "Bejuma"
+          },
+          {
+            "code": "VE-G-01-02",
+            "name": "Canoabo"
+          },
+          {
+            "code": "VE-G-01-03",
+            "name": "Simón Bolívar"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-02",
+        "name": "Carlos Arvelo",
+        "parishes": [
+          {
+            "code": "VE-G-02-01",
+            "name": "Güigüe"
+          },
+          {
+            "code": "VE-G-02-02",
+            "name": "Carabobo"
+          },
+          {
+            "code": "VE-G-02-03",
+            "name": "Tacarigua"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-03",
+        "name": "Diego Ibarra",
+        "parishes": [
+          {
+            "code": "VE-G-03-01",
+            "name": "Mariara"
+          },
+          {
+            "code": "VE-G-03-02",
+            "name": "Aguas Calientes"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-04",
+        "name": "Guacara",
+        "parishes": [
+          {
+            "code": "VE-G-04-01",
+            "name": "Ciudad Alianza"
+          },
+          {
+            "code": "VE-G-04-02",
+            "name": "Guacara"
+          },
+          {
+            "code": "VE-G-04-03",
+            "name": "Yagua"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-05",
+        "name": "Mora",
+        "parishes": [
+          {
+            "code": "VE-G-05-01",
+            "name": "Morón"
+          },
+          {
+            "code": "VE-G-05-02",
+            "name": "Urama"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-06",
+        "name": "Libertador",
+        "parishes": [
+          {
+            "code": "VE-G-06-01",
+            "name": "Valencia"
+          },
+          {
+            "code": "VE-G-06-02",
+            "name": "Campo Carabobo"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-07",
+        "name": "Los Guayos",
+        "parishes": [
+          {
+            "code": "VE-G-07-01",
+            "name": "Los Guayos"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-08",
+        "name": "Miranda",
+        "parishes": [
+          {
+            "code": "VE-G-08-01",
+            "name": "Miranda"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-09",
+        "name": "Montalbán",
+        "parishes": [
+          {
+            "code": "VE-G-09-01",
+            "name": "Montalbán"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-10",
+        "name": "Naguanagua",
+        "parishes": [
+          {
+            "code": "VE-G-10-01",
+            "name": "Naguanagua"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-11",
+        "name": "Puerto Cabello",
+        "parishes": [
+          {
+            "code": "VE-G-11-01",
+            "name": "Bartolomé Salóm"
+          },
+          {
+            "code": "VE-G-11-02",
+            "name": "Democracia"
+          },
+          {
+            "code": "VE-G-11-03",
+            "name": "Fraternidad"
+          },
+          {
+            "code": "VE-G-11-04",
+            "name": "Goaigoaza"
+          },
+          {
+            "code": "VE-G-11-05",
+            "name": "Juan José Flores"
+          },
+          {
+            "code": "VE-G-11-06",
+            "name": "Unión"
+          },
+          {
+            "code": "VE-G-11-07",
+            "name": "Borburata"
+          },
+          {
+            "code": "VE-G-11-08",
+            "name": "Patanemo"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-12",
+        "name": "San Diego",
+        "parishes": [
+          {
+            "code": "VE-G-12-01",
+            "name": "San Diego"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-13",
+        "name": "San Joaquín",
+        "parishes": [
+          {
+            "code": "VE-G-13-01",
+            "name": "San Joaquín"
+          }
+        ]
+      },
+      {
+        "code": "VE-G-14",
+        "name": "Valencia",
+        "parishes": [
+          {
+            "code": "VE-G-14-01",
+            "name": "Urbana Candelaria"
+          },
+          {
+            "code": "VE-G-14-02",
+            "name": "Urbana Catedral"
+          },
+          {
+            "code": "VE-G-14-03",
+            "name": "Urbana El Socorro"
+          },
+          {
+            "code": "VE-G-14-04",
+            "name": "Urbana Miguel Peña"
+          },
+          {
+            "code": "VE-G-14-05",
+            "name": "Urbana Rafael Urdaneta"
+          },
+          {
+            "code": "VE-G-14-06",
+            "name": "Urbana San Blas"
+          },
+          {
+            "code": "VE-G-14-07",
+            "name": "Urbana San José"
+          },
+          {
+            "code": "VE-G-14-08",
+            "name": "Urbana Santa Rosa"
+          },
+          {
+            "code": "VE-G-14-09",
+            "name": "No Urbana Negro Primero"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-H",
+    "name": "Cojedes",
+    "capital": "San Carlos",
+    "municipalities": [
+      {
+        "code": "VE-H-01",
+        "name": "Anzoátegui",
+        "parishes": [
+          {
+            "code": "VE-H-01-01",
+            "name": "Cojedes"
+          },
+          {
+            "code": "VE-H-01-02",
+            "name": "Juan de Mata Suárez"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-02",
+        "name": "Tinaquillo",
+        "parishes": [
+          {
+            "code": "VE-H-02-01",
+            "name": "Tinaquillo"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-03",
+        "name": "Girardot",
+        "parishes": [
+          {
+            "code": "VE-H-03-01",
+            "name": "El Baúl"
+          },
+          {
+            "code": "VE-H-03-02",
+            "name": "Sucre"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-04",
+        "name": "Lima Blanco",
+        "parishes": [
+          {
+            "code": "VE-H-04-01",
+            "name": "La Aguadita"
+          },
+          {
+            "code": "VE-H-04-02",
+            "name": "Macapo"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-05",
+        "name": "Pao de San Juan Bautista",
+        "parishes": [
+          {
+            "code": "VE-H-05-01",
+            "name": "El Pao"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-06",
+        "name": "Ricaurte",
+        "parishes": [
+          {
+            "code": "VE-H-06-01",
+            "name": "El Amparo"
+          },
+          {
+            "code": "VE-H-06-02",
+            "name": "Libertad de Cojedes"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-07",
+        "name": "Rómulo Gallegos",
+        "parishes": [
+          {
+            "code": "VE-H-07-01",
+            "name": "Rómulo Gallegos"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-08",
+        "name": "San Carlos",
+        "parishes": [
+          {
+            "code": "VE-H-08-01",
+            "name": "San Carlos de Austria"
+          },
+          {
+            "code": "VE-H-08-02",
+            "name": "Juan Ángel Bravo"
+          },
+          {
+            "code": "VE-H-08-03",
+            "name": "Manuel Manrique"
+          }
+        ]
+      },
+      {
+        "code": "VE-H-09",
+        "name": "Tinaco",
+        "parishes": [
+          {
+            "code": "VE-H-09-01",
+            "name": "General en Jefe José Laurencio Silva"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-I",
+    "name": "Falcón",
+    "capital": "Coro",
+    "municipalities": [
+      {
+        "code": "VE-I-01",
+        "name": "Acosta",
+        "parishes": [
+          {
+            "code": "VE-I-01-01",
+            "name": "Capadare"
+          },
+          {
+            "code": "VE-I-01-02",
+            "name": "La Pastora"
+          },
+          {
+            "code": "VE-I-01-03",
+            "name": "Libertador"
+          },
+          {
+            "code": "VE-I-01-04",
+            "name": "San Juan de los Cayos"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-02",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-I-02-01",
+            "name": "Aracua"
+          },
+          {
+            "code": "VE-I-02-02",
+            "name": "La Peña"
+          },
+          {
+            "code": "VE-I-02-03",
+            "name": "San Luis"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-03",
+        "name": "Buchivacoa",
+        "parishes": [
+          {
+            "code": "VE-I-03-01",
+            "name": "Bariro"
+          },
+          {
+            "code": "VE-I-03-02",
+            "name": "Borojó"
+          },
+          {
+            "code": "VE-I-03-03",
+            "name": "Capatárida"
+          },
+          {
+            "code": "VE-I-03-04",
+            "name": "Guajiro"
+          },
+          {
+            "code": "VE-I-03-05",
+            "name": "Seque"
+          },
+          {
+            "code": "VE-I-03-06",
+            "name": "Zazárida"
+          },
+          {
+            "code": "VE-I-03-07",
+            "name": "Valle de Eroa"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-04",
+        "name": "Carirubana",
+        "parishes": [
+          {
+            "code": "VE-I-04-01",
+            "name": "Norte"
+          },
+          {
+            "code": "VE-I-04-02",
+            "name": "Carirubana"
+          },
+          {
+            "code": "VE-I-04-03",
+            "name": "Santa Ana"
+          },
+          {
+            "code": "VE-I-04-04",
+            "name": "Urbana Punta Cardón"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-05",
+        "name": "Colina",
+        "parishes": [
+          {
+            "code": "VE-I-05-01",
+            "name": "La Vela de Coro"
+          },
+          {
+            "code": "VE-I-05-02",
+            "name": "Acurigua"
+          },
+          {
+            "code": "VE-I-05-03",
+            "name": "Guaibacoa"
+          },
+          {
+            "code": "VE-I-05-04",
+            "name": "Las Calderas"
+          },
+          {
+            "code": "VE-I-05-05",
+            "name": "Macoruca"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-06",
+        "name": "Dabajuro",
+        "parishes": [
+          {
+            "code": "VE-I-06-01",
+            "name": "Dabajuro"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-07",
+        "name": "Democracia",
+        "parishes": [
+          {
+            "code": "VE-I-07-01",
+            "name": "Agua Clara"
+          },
+          {
+            "code": "VE-I-07-02",
+            "name": "Avaria"
+          },
+          {
+            "code": "VE-I-07-03",
+            "name": "Pedregal"
+          },
+          {
+            "code": "VE-I-07-04",
+            "name": "Piedra Grande"
+          },
+          {
+            "code": "VE-I-07-05",
+            "name": "Purureche"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-08",
+        "name": "Falcón",
+        "parishes": [
+          {
+            "code": "VE-I-08-01",
+            "name": "Adaure"
+          },
+          {
+            "code": "VE-I-08-02",
+            "name": "Adícora"
+          },
+          {
+            "code": "VE-I-08-03",
+            "name": "Baraived"
+          },
+          {
+            "code": "VE-I-08-04",
+            "name": "Buena Vista"
+          },
+          {
+            "code": "VE-I-08-05",
+            "name": "Jadacaquiva"
+          },
+          {
+            "code": "VE-I-08-06",
+            "name": "El Vínculo"
+          },
+          {
+            "code": "VE-I-08-07",
+            "name": "El Hato"
+          },
+          {
+            "code": "VE-I-08-08",
+            "name": "Moruy"
+          },
+          {
+            "code": "VE-I-08-09",
+            "name": "Pueblo Nuevo"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-09",
+        "name": "Federación",
+        "parishes": [
+          {
+            "code": "VE-I-09-01",
+            "name": "Agua Larga"
+          },
+          {
+            "code": "VE-I-09-02",
+            "name": "Churuguara"
+          },
+          {
+            "code": "VE-I-09-03",
+            "name": "El Paují"
+          },
+          {
+            "code": "VE-I-09-04",
+            "name": "Independencia"
+          },
+          {
+            "code": "VE-I-09-05",
+            "name": "Mapararí"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-10",
+        "name": "Jacura",
+        "parishes": [
+          {
+            "code": "VE-I-10-01",
+            "name": "Agua Linda"
+          },
+          {
+            "code": "VE-I-10-02",
+            "name": "Araurima"
+          },
+          {
+            "code": "VE-I-10-03",
+            "name": "Jacura"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-11",
+        "name": "Los Taques",
+        "parishes": [
+          {
+            "code": "VE-I-11-01",
+            "name": "Los Taques"
+          },
+          {
+            "code": "VE-I-11-02",
+            "name": "Judibana"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-12",
+        "name": "Manaure",
+        "parishes": [
+          {
+            "code": "VE-I-12-01",
+            "name": "Cacique Manaure"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-13",
+        "name": "Mauroa",
+        "parishes": [
+          {
+            "code": "VE-I-13-01",
+            "name": "Mene de Mauroa"
+          },
+          {
+            "code": "VE-I-13-02",
+            "name": "San Félix"
+          },
+          {
+            "code": "VE-I-13-03",
+            "name": "Casigua"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-14",
+        "name": "Miranda",
+        "parishes": [
+          {
+            "code": "VE-I-14-01",
+            "name": "Guzmán Guillermo"
+          },
+          {
+            "code": "VE-I-14-02",
+            "name": "Mitare"
+          },
+          {
+            "code": "VE-I-14-03",
+            "name": "Río Seco"
+          },
+          {
+            "code": "VE-I-14-04",
+            "name": "Sabaneta"
+          },
+          {
+            "code": "VE-I-14-05",
+            "name": "San Antonio"
+          },
+          {
+            "code": "VE-I-14-06",
+            "name": "San Gabriel"
+          },
+          {
+            "code": "VE-I-14-07",
+            "name": "Santa Ana"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-15",
+        "name": "Monseñor Iturriza",
+        "parishes": [
+          {
+            "code": "VE-I-15-01",
+            "name": "Boca del Tocuyo"
+          },
+          {
+            "code": "VE-I-15-02",
+            "name": "Chichiriviche"
+          },
+          {
+            "code": "VE-I-15-03",
+            "name": "Tocuyo de la Costa"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-16",
+        "name": "Palmasola",
+        "parishes": [
+          {
+            "code": "VE-I-16-01",
+            "name": "Palmasola"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-17",
+        "name": "Petit",
+        "parishes": [
+          {
+            "code": "VE-I-17-01",
+            "name": "Cabure"
+          },
+          {
+            "code": "VE-I-17-02",
+            "name": "Colina"
+          },
+          {
+            "code": "VE-I-17-03",
+            "name": "Curimagua"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-18",
+        "name": "Píritu",
+        "parishes": [
+          {
+            "code": "VE-I-18-01",
+            "name": "San José de la Costa"
+          },
+          {
+            "code": "VE-I-18-02",
+            "name": "Píritu"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-19",
+        "name": "San Francisco",
+        "parishes": [
+          {
+            "code": "VE-I-19-01",
+            "name": "Capital San Francisco"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-20",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-I-20-01",
+            "name": "Sucre"
+          },
+          {
+            "code": "VE-I-20-02",
+            "name": "Pecaya"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-21",
+        "name": "Silva",
+        "parishes": [
+          {
+            "code": "VE-I-21-01",
+            "name": "Tucacas"
+          },
+          {
+            "code": "VE-I-21-02",
+            "name": "Boca de Aroa"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-22",
+        "name": "Tocópero",
+        "parishes": [
+          {
+            "code": "VE-I-22-01",
+            "name": "Tocópero"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-23",
+        "name": "Unión",
+        "parishes": [
+          {
+            "code": "VE-I-23-01",
+            "name": "El Charal"
+          },
+          {
+            "code": "VE-I-23-02",
+            "name": "Las Vegas del Tuy"
+          },
+          {
+            "code": "VE-I-23-03",
+            "name": "Santa Cruz de Bucaral"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-24",
+        "name": "Urumaco",
+        "parishes": [
+          {
+            "code": "VE-I-24-01",
+            "name": "Bruzual"
+          },
+          {
+            "code": "VE-I-24-02",
+            "name": "Urumaco"
+          }
+        ]
+      },
+      {
+        "code": "VE-I-25",
+        "name": "Zamora",
+        "parishes": [
+          {
+            "code": "VE-I-25-01",
+            "name": "Puerto Cumarebo"
+          },
+          {
+            "code": "VE-I-25-02",
+            "name": "La Ciénaga"
+          },
+          {
+            "code": "VE-I-25-03",
+            "name": "La Soledad"
+          },
+          {
+            "code": "VE-I-25-04",
+            "name": "Pueblo Cumarebo"
+          },
+          {
+            "code": "VE-I-25-05",
+            "name": "Zazárida"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-J",
+    "name": "Guárico",
+    "capital": "San Juan de Los Morros",
+    "municipalities": [
+      {
+        "code": "VE-J-01",
+        "name": "Camaguán",
+        "parishes": [
+          {
+            "code": "VE-J-01-01",
+            "name": "Camaguán"
+          },
+          {
+            "code": "VE-J-01-02",
+            "name": "Puerto Miranda"
+          },
+          {
+            "code": "VE-J-01-03",
+            "name": "Uverito"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-02",
+        "name": "Chaguaramas",
+        "parishes": [
+          {
+            "code": "VE-J-02-01",
+            "name": "Chaguaramas"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-03",
+        "name": "El Socorro",
+        "parishes": [
+          {
+            "code": "VE-J-03-01",
+            "name": "El Socorro"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-04",
+        "name": "Infante",
+        "parishes": [
+          {
+            "code": "VE-J-04-01",
+            "name": "Valle de la Pascua"
+          },
+          {
+            "code": "VE-J-04-02",
+            "name": "Espino"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-05",
+        "name": "Las Mercedes",
+        "parishes": [
+          {
+            "code": "VE-J-05-01",
+            "name": "Las Mercedes"
+          },
+          {
+            "code": "VE-J-05-02",
+            "name": "Cabruta"
+          },
+          {
+            "code": "VE-J-05-03",
+            "name": "Santa Rita de Manapire"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-06",
+        "name": "Mellado",
+        "parishes": [
+          {
+            "code": "VE-J-06-01",
+            "name": "El Sombrero"
+          },
+          {
+            "code": "VE-J-06-02",
+            "name": "Sosa"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-07",
+        "name": "Miranda",
+        "parishes": [
+          {
+            "code": "VE-J-07-01",
+            "name": "El Calvario"
+          },
+          {
+            "code": "VE-J-07-02",
+            "name": "El Rastro"
+          },
+          {
+            "code": "VE-J-07-03",
+            "name": "Guardatinajas"
+          },
+          {
+            "code": "VE-J-07-04",
+            "name": "Capital Urbana Calabozo"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-08",
+        "name": "Monagas",
+        "parishes": [
+          {
+            "code": "VE-J-08-01",
+            "name": "Altagracia de Orituco"
+          },
+          {
+            "code": "VE-J-08-02",
+            "name": "San Rafael de Orituco"
+          },
+          {
+            "code": "VE-J-08-03",
+            "name": "San Francisco Javier de Lezama"
+          },
+          {
+            "code": "VE-J-08-04",
+            "name": "Paso Real de Macaira"
+          },
+          {
+            "code": "VE-J-08-05",
+            "name": "Carlos Soublette"
+          },
+          {
+            "code": "VE-J-08-06",
+            "name": "San Francisco de Macaira"
+          },
+          {
+            "code": "VE-J-08-07",
+            "name": "Libertad de Orituco"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-09",
+        "name": "Ortiz",
+        "parishes": [
+          {
+            "code": "VE-J-09-01",
+            "name": "San José de Tiznados"
+          },
+          {
+            "code": "VE-J-09-02",
+            "name": "San Francisco de Tiznados"
+          },
+          {
+            "code": "VE-J-09-03",
+            "name": "San Lorenzo de Tiznados"
+          },
+          {
+            "code": "VE-J-09-04",
+            "name": "Ortiz"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-10",
+        "name": "Ribas",
+        "parishes": [
+          {
+            "code": "VE-J-10-01",
+            "name": "Tucupido"
+          },
+          {
+            "code": "VE-J-10-02",
+            "name": "San Rafael de Laya"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-11",
+        "name": "Roscio",
+        "parishes": [
+          {
+            "code": "VE-J-11-01",
+            "name": "Cantagallo"
+          },
+          {
+            "code": "VE-J-11-02",
+            "name": "San Juan de los Morros"
+          },
+          {
+            "code": "VE-J-11-03",
+            "name": "Parapara"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-12",
+        "name": "San Gerónimo de Guayabal",
+        "parishes": [
+          {
+            "code": "VE-J-12-01",
+            "name": "Guayabal"
+          },
+          {
+            "code": "VE-J-12-02",
+            "name": "Cazorla"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-13",
+        "name": "San José de Guaribe",
+        "parishes": [
+          {
+            "code": "VE-J-13-01",
+            "name": "San José de Guaribe"
+          },
+          {
+            "code": "VE-J-13-02",
+            "name": "Uveral"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-14",
+        "name": "Santa María de Ipire",
+        "parishes": [
+          {
+            "code": "VE-J-14-01",
+            "name": "Santa María de Ipire"
+          },
+          {
+            "code": "VE-J-14-02",
+            "name": "Altamira"
+          }
+        ]
+      },
+      {
+        "code": "VE-J-15",
+        "name": "Zaraza",
+        "parishes": [
+          {
+            "code": "VE-J-15-01",
+            "name": "Unare"
+          },
+          {
+            "code": "VE-J-15-02",
+            "name": "Zaraza"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-K",
+    "name": "Lara",
+    "capital": "Barquisimeto",
+    "municipalities": [
+      {
+        "code": "VE-K-01",
+        "name": "Andrés Eloy Blanco",
+        "parishes": [
+          {
+            "code": "VE-K-01-01",
+            "name": "Quebrada Honda de Guache"
+          },
+          {
+            "code": "VE-K-01-02",
+            "name": "Pío Tamayo"
+          },
+          {
+            "code": "VE-K-01-03",
+            "name": "Yacambú"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-02",
+        "name": "Crespo",
+        "parishes": [
+          {
+            "code": "VE-K-02-01",
+            "name": "Freitez"
+          },
+          {
+            "code": "VE-K-02-02",
+            "name": "José María Blanco"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-03",
+        "name": "Iribarren",
+        "parishes": [
+          {
+            "code": "VE-K-03-01",
+            "name": "Catedral"
+          },
+          {
+            "code": "VE-K-03-02",
+            "name": "Concepción"
+          },
+          {
+            "code": "VE-K-03-03",
+            "name": "El Cují"
+          },
+          {
+            "code": "VE-K-03-04",
+            "name": "Juan de Villegas"
+          },
+          {
+            "code": "VE-K-03-05",
+            "name": "Santa Rosa"
+          },
+          {
+            "code": "VE-K-03-06",
+            "name": "Tamaca"
+          },
+          {
+            "code": "VE-K-03-07",
+            "name": "Unión"
+          },
+          {
+            "code": "VE-K-03-08",
+            "name": "Aguedo Felipe Alvarado"
+          },
+          {
+            "code": "VE-K-03-09",
+            "name": "Buena Vista"
+          },
+          {
+            "code": "VE-K-03-10",
+            "name": "Juárez"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-04",
+        "name": "Jiménez",
+        "parishes": [
+          {
+            "code": "VE-K-04-01",
+            "name": "Juan Bautista Rodríguez"
+          },
+          {
+            "code": "VE-K-04-02",
+            "name": "Cuara"
+          },
+          {
+            "code": "VE-K-04-03",
+            "name": "Diego de Lozada"
+          },
+          {
+            "code": "VE-K-04-04",
+            "name": "Paraíso de San José"
+          },
+          {
+            "code": "VE-K-04-05",
+            "name": "San Miguel"
+          },
+          {
+            "code": "VE-K-04-06",
+            "name": "Tintorero"
+          },
+          {
+            "code": "VE-K-04-07",
+            "name": "José Bernardo Dorante"
+          },
+          {
+            "code": "VE-K-04-08",
+            "name": "Coronel Mariano Peraza"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-05",
+        "name": "Morán",
+        "parishes": [
+          {
+            "code": "VE-K-05-01",
+            "name": "Anzoátegui"
+          },
+          {
+            "code": "VE-K-05-02",
+            "name": "Bolívar"
+          },
+          {
+            "code": "VE-K-05-03",
+            "name": "Guárico"
+          },
+          {
+            "code": "VE-K-05-04",
+            "name": "Hilario Luna y Luna"
+          },
+          {
+            "code": "VE-K-05-05",
+            "name": "Humocaro Bajo"
+          },
+          {
+            "code": "VE-K-05-06",
+            "name": "Humocaro Alto"
+          },
+          {
+            "code": "VE-K-05-07",
+            "name": "La Candelaria"
+          },
+          {
+            "code": "VE-K-05-08",
+            "name": "Morán"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-06",
+        "name": "Palavecino",
+        "parishes": [
+          {
+            "code": "VE-K-06-01",
+            "name": "Cabudare"
+          },
+          {
+            "code": "VE-K-06-02",
+            "name": "José Gregorio Bastidas"
+          },
+          {
+            "code": "VE-K-06-03",
+            "name": "Agua Viva"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-07",
+        "name": "Simón Planas",
+        "parishes": [
+          {
+            "code": "VE-K-07-01",
+            "name": "Buría"
+          },
+          {
+            "code": "VE-K-07-02",
+            "name": "Gustavo Vega"
+          },
+          {
+            "code": "VE-K-07-03",
+            "name": "Sarare"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-08",
+        "name": "Torres",
+        "parishes": [
+          {
+            "code": "VE-K-08-01",
+            "name": "Altagracia"
+          },
+          {
+            "code": "VE-K-08-02",
+            "name": "Antonio Díaz"
+          },
+          {
+            "code": "VE-K-08-03",
+            "name": "Camacaro"
+          },
+          {
+            "code": "VE-K-08-04",
+            "name": "Castañeda"
+          },
+          {
+            "code": "VE-K-08-05",
+            "name": "Cecilio Zubillaga"
+          },
+          {
+            "code": "VE-K-08-06",
+            "name": "Chiquinquira"
+          },
+          {
+            "code": "VE-K-08-07",
+            "name": "El Blanco"
+          },
+          {
+            "code": "VE-K-08-08",
+            "name": "Espinoza de los Monteros"
+          },
+          {
+            "code": "VE-K-08-09",
+            "name": "Heriberto Arrollo"
+          },
+          {
+            "code": "VE-K-08-10",
+            "name": "Lara"
+          },
+          {
+            "code": "VE-K-08-11",
+            "name": "Las Mercedes"
+          },
+          {
+            "code": "VE-K-08-12",
+            "name": "Manuel Morillo"
+          },
+          {
+            "code": "VE-K-08-13",
+            "name": "Montaña Verde"
+          },
+          {
+            "code": "VE-K-08-14",
+            "name": "Montes de Oca"
+          },
+          {
+            "code": "VE-K-08-15",
+            "name": "Reyes de Vargas"
+          },
+          {
+            "code": "VE-K-08-16",
+            "name": "Torres"
+          },
+          {
+            "code": "VE-K-08-17",
+            "name": "Trinidad Samuel"
+          }
+        ]
+      },
+      {
+        "code": "VE-K-09",
+        "name": "Urdaneta",
+        "parishes": [
+          {
+            "code": "VE-K-09-01",
+            "name": "Siquisique"
+          },
+          {
+            "code": "VE-K-09-02",
+            "name": "San Miguel"
+          },
+          {
+            "code": "VE-K-09-03",
+            "name": "Moroturo"
+          },
+          {
+            "code": "VE-K-09-04",
+            "name": "Xaguas"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-L",
+    "name": "Mérida",
+    "capital": "Mérida",
+    "municipalities": [
+      {
+        "code": "VE-L-01",
+        "name": "Alberto Adriani",
+        "parishes": [
+          {
+            "code": "VE-L-01-01",
+            "name": "Presidente Betancourt"
+          },
+          {
+            "code": "VE-L-01-02",
+            "name": "Presidente Páez"
+          },
+          {
+            "code": "VE-L-01-03",
+            "name": "Presidente Rómulo Gallegos"
+          },
+          {
+            "code": "VE-L-01-04",
+            "name": "Gabriel Picón González"
+          },
+          {
+            "code": "VE-L-01-05",
+            "name": "Héctor Amable Mora"
+          },
+          {
+            "code": "VE-L-01-06",
+            "name": "José Nucete Sardi"
+          },
+          {
+            "code": "VE-L-01-07",
+            "name": "Pulido Méndez"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-02",
+        "name": "Andrés Bello",
+        "parishes": [
+          {
+            "code": "VE-L-02-01",
+            "name": "La Azulita"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-03",
+        "name": "Antonio Pinto Salinas",
+        "parishes": [
+          {
+            "code": "VE-L-03-01",
+            "name": "Santa Cruz de Mora"
+          },
+          {
+            "code": "VE-L-03-02",
+            "name": "Mesa Bolívar"
+          },
+          {
+            "code": "VE-L-03-03",
+            "name": "Mesa de Las Palmas"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-04",
+        "name": "Aricagua",
+        "parishes": [
+          {
+            "code": "VE-L-04-01",
+            "name": "Aricagua"
+          },
+          {
+            "code": "VE-L-04-02",
+            "name": "San Antonio"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-05",
+        "name": "Arzobispo Chacón",
+        "parishes": [
+          {
+            "code": "VE-L-05-01",
+            "name": "Canagua"
+          },
+          {
+            "code": "VE-L-05-02",
+            "name": "Capurí"
+          },
+          {
+            "code": "VE-L-05-03",
+            "name": "Chacantá"
+          },
+          {
+            "code": "VE-L-05-04",
+            "name": "El Molino"
+          },
+          {
+            "code": "VE-L-05-05",
+            "name": "Guaimaral"
+          },
+          {
+            "code": "VE-L-05-06",
+            "name": "Mucutuy"
+          },
+          {
+            "code": "VE-L-05-07",
+            "name": "Mucuchachí"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-06",
+        "name": "Campo Elías",
+        "parishes": [
+          {
+            "code": "VE-L-06-01",
+            "name": "Fernández Peña"
+          },
+          {
+            "code": "VE-L-06-02",
+            "name": "Matriz"
+          },
+          {
+            "code": "VE-L-06-03",
+            "name": "Montalbán"
+          },
+          {
+            "code": "VE-L-06-04",
+            "name": "Acequias"
+          },
+          {
+            "code": "VE-L-06-05",
+            "name": "Jají"
+          },
+          {
+            "code": "VE-L-06-06",
+            "name": "La Mesa"
+          },
+          {
+            "code": "VE-L-06-07",
+            "name": "San José del Sur"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-07",
+        "name": "Caracciolo Parra Olmedo",
+        "parishes": [
+          {
+            "code": "VE-L-07-01",
+            "name": "Tucaní"
+          },
+          {
+            "code": "VE-L-07-02",
+            "name": "Florencio Ramírez"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-08",
+        "name": "Cardenal Quintero",
+        "parishes": [
+          {
+            "code": "VE-L-08-01",
+            "name": "Santo Domingo"
+          },
+          {
+            "code": "VE-L-08-02",
+            "name": "Las Piedras"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-09",
+        "name": "Guaraque",
+        "parishes": [
+          {
+            "code": "VE-L-09-01",
+            "name": "Guaraque"
+          },
+          {
+            "code": "VE-L-09-02",
+            "name": "Mesa de Quintero"
+          },
+          {
+            "code": "VE-L-09-03",
+            "name": "Río Negro"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-10",
+        "name": "Julio César Salas",
+        "parishes": [
+          {
+            "code": "VE-L-10-01",
+            "name": "Arapuey"
+          },
+          {
+            "code": "VE-L-10-02",
+            "name": "Palmira"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-11",
+        "name": "Justo Briceño",
+        "parishes": [
+          {
+            "code": "VE-L-11-01",
+            "name": "San Cristóbal de Torondoy"
+          },
+          {
+            "code": "VE-L-11-02",
+            "name": "Torondoy"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-12",
+        "name": "Libertador",
+        "parishes": [
+          {
+            "code": "VE-L-12-01",
+            "name": "Antonio Spinetti Dini"
+          },
+          {
+            "code": "VE-L-12-02",
+            "name": "Arias"
+          },
+          {
+            "code": "VE-L-12-03",
+            "name": "Caracciolo Parra Pérez"
+          },
+          {
+            "code": "VE-L-12-04",
+            "name": "Domingo Peña"
+          },
+          {
+            "code": "VE-L-12-05",
+            "name": "El Llano"
+          },
+          {
+            "code": "VE-L-12-06",
+            "name": "Gonzalo Picón Febres"
+          },
+          {
+            "code": "VE-L-12-07",
+            "name": "Jacinto Plaza"
+          },
+          {
+            "code": "VE-L-12-08",
+            "name": "Juan Rodríguez Suárez"
+          },
+          {
+            "code": "VE-L-12-09",
+            "name": "Lasso de la Vega"
+          },
+          {
+            "code": "VE-L-12-10",
+            "name": "Mariano Picón Salas"
+          },
+          {
+            "code": "VE-L-12-11",
+            "name": "Milla"
+          },
+          {
+            "code": "VE-L-12-12",
+            "name": "Osuna Rodríguez"
+          },
+          {
+            "code": "VE-L-12-13",
+            "name": "Sagrario"
+          },
+          {
+            "code": "VE-L-12-14",
+            "name": "El Morro"
+          },
+          {
+            "code": "VE-L-12-15",
+            "name": "Los Nevados"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-13",
+        "name": "Miranda",
+        "parishes": [
+          {
+            "code": "VE-L-13-01",
+            "name": "Andrés Eloy Blanco"
+          },
+          {
+            "code": "VE-L-13-02",
+            "name": "La Venta"
+          },
+          {
+            "code": "VE-L-13-03",
+            "name": "Piñango"
+          },
+          {
+            "code": "VE-L-13-04",
+            "name": "Timotes"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-14",
+        "name": "Obispo Ramos de Lora",
+        "parishes": [
+          {
+            "code": "VE-L-14-01",
+            "name": "Eloy Paredes"
+          },
+          {
+            "code": "VE-L-14-02",
+            "name": "San Rafael de Alcázar"
+          },
+          {
+            "code": "VE-L-14-03",
+            "name": "Santa Elena de Arenales"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-15",
+        "name": "Padre Noguera",
+        "parishes": [
+          {
+            "code": "VE-L-15-01",
+            "name": "Santa María de Caparo"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-16",
+        "name": "Pueblo Llano",
+        "parishes": [
+          {
+            "code": "VE-L-16-01",
+            "name": "Pueblo Llano"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-17",
+        "name": "Rangel",
+        "parishes": [
+          {
+            "code": "VE-L-17-01",
+            "name": "Cacute"
+          },
+          {
+            "code": "VE-L-17-02",
+            "name": "La Toma"
+          },
+          {
+            "code": "VE-L-17-03",
+            "name": "Mucuchíes"
+          },
+          {
+            "code": "VE-L-17-04",
+            "name": "Mucurubá"
+          },
+          {
+            "code": "VE-L-17-05",
+            "name": "San Rafael"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-18",
+        "name": "Rivas Dávila",
+        "parishes": [
+          {
+            "code": "VE-L-18-01",
+            "name": "Gerónimo Maldonado"
+          },
+          {
+            "code": "VE-L-18-02",
+            "name": "Bailadores"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-19",
+        "name": "Santos Marquina",
+        "parishes": [
+          {
+            "code": "VE-L-19-01",
+            "name": "Tabay"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-20",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-L-20-01",
+            "name": "Chiguará"
+          },
+          {
+            "code": "VE-L-20-02",
+            "name": "Estánquez"
+          },
+          {
+            "code": "VE-L-20-03",
+            "name": "Lagunillas"
+          },
+          {
+            "code": "VE-L-20-04",
+            "name": "La Trampa"
+          },
+          {
+            "code": "VE-L-20-05",
+            "name": "Pueblo Nuevo del Sur"
+          },
+          {
+            "code": "VE-L-20-06",
+            "name": "San Juan"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-21",
+        "name": "Tovar",
+        "parishes": [
+          {
+            "code": "VE-L-21-01",
+            "name": "El Amparo"
+          },
+          {
+            "code": "VE-L-21-02",
+            "name": "El Llano"
+          },
+          {
+            "code": "VE-L-21-03",
+            "name": "San Francisco"
+          },
+          {
+            "code": "VE-L-21-04",
+            "name": "Tovar"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-22",
+        "name": "Tulio Febres Cordero",
+        "parishes": [
+          {
+            "code": "VE-L-22-01",
+            "name": "Independencia"
+          },
+          {
+            "code": "VE-L-22-02",
+            "name": "María de la Concepción Palacios Blanco"
+          },
+          {
+            "code": "VE-L-22-03",
+            "name": "Nueva Bolivia"
+          },
+          {
+            "code": "VE-L-22-04",
+            "name": "Santa Apolonia"
+          }
+        ]
+      },
+      {
+        "code": "VE-L-23",
+        "name": "Zea",
+        "parishes": [
+          {
+            "code": "VE-L-23-01",
+            "name": "Caño El Tigre"
+          },
+          {
+            "code": "VE-L-23-02",
+            "name": "Zea"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-M",
+    "name": "Miranda",
+    "capital": "Los Teques",
+    "municipalities": [
+      {
+        "code": "VE-M-01",
+        "name": "Acevedo",
+        "parishes": [
+          {
+            "code": "VE-M-01-01",
+            "name": "Aragüita"
+          },
+          {
+            "code": "VE-M-01-02",
+            "name": "Arévalo González"
+          },
+          {
+            "code": "VE-M-01-03",
+            "name": "Capaya"
+          },
+          {
+            "code": "VE-M-01-04",
+            "name": "Caucagua"
+          },
+          {
+            "code": "VE-M-01-05",
+            "name": "Panaquire"
+          },
+          {
+            "code": "VE-M-01-06",
+            "name": "Ribas"
+          },
+          {
+            "code": "VE-M-01-07",
+            "name": "El Café"
+          },
+          {
+            "code": "VE-M-01-08",
+            "name": "Marizapa"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-02",
+        "name": "Andrés Bello",
+        "parishes": [
+          {
+            "code": "VE-M-02-01",
+            "name": "Cumbo"
+          },
+          {
+            "code": "VE-M-02-02",
+            "name": "San José de Barlovento"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-03",
+        "name": "Baruta",
+        "parishes": [
+          {
+            "code": "VE-M-03-01",
+            "name": "El Cafetal"
+          },
+          {
+            "code": "VE-M-03-02",
+            "name": "Las Minas"
+          },
+          {
+            "code": "VE-M-03-03",
+            "name": "Nuestra Señora del Rosario"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-04",
+        "name": "Brión",
+        "parishes": [
+          {
+            "code": "VE-M-04-01",
+            "name": "Higuerote"
+          },
+          {
+            "code": "VE-M-04-02",
+            "name": "Curiepe"
+          },
+          {
+            "code": "VE-M-04-03",
+            "name": "Tacarigua de Brión"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-05",
+        "name": "Buroz",
+        "parishes": [
+          {
+            "code": "VE-M-05-01",
+            "name": "Mamporal"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-06",
+        "name": "Carrizal",
+        "parishes": [
+          {
+            "code": "VE-M-06-01",
+            "name": "Carrizal"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-07",
+        "name": "Chacao",
+        "parishes": [
+          {
+            "code": "VE-M-07-01",
+            "name": "Chacao"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-08",
+        "name": "Cristóbal Rojas",
+        "parishes": [
+          {
+            "code": "VE-M-08-01",
+            "name": "Charallave"
+          },
+          {
+            "code": "VE-M-08-02",
+            "name": "Las Brisas"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-09",
+        "name": "El Hatillo",
+        "parishes": [
+          {
+            "code": "VE-M-09-01",
+            "name": "El Hatillo"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-10",
+        "name": "Guaicaipuro",
+        "parishes": [
+          {
+            "code": "VE-M-10-01",
+            "name": "Altagracia de la Montaña"
+          },
+          {
+            "code": "VE-M-10-02",
+            "name": "Cecilio Acosta"
+          },
+          {
+            "code": "VE-M-10-03",
+            "name": "Los Teques"
+          },
+          {
+            "code": "VE-M-10-04",
+            "name": "El Jarillo"
+          },
+          {
+            "code": "VE-M-10-05",
+            "name": "San Pedro."
+          },
+          {
+            "code": "VE-M-10-06",
+            "name": "Tácata"
+          },
+          {
+            "code": "VE-M-10-07",
+            "name": "Paracotos"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-11",
+        "name": "Independencia",
+        "parishes": [
+          {
+            "code": "VE-M-11-01",
+            "name": "Cartanal"
+          },
+          {
+            "code": "VE-M-11-02",
+            "name": "Santa Teresa del Tuy"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-12",
+        "name": "Lander",
+        "parishes": [
+          {
+            "code": "VE-M-12-01",
+            "name": "La Democracia"
+          },
+          {
+            "code": "VE-M-12-02",
+            "name": "Ocumare del Tuy"
+          },
+          {
+            "code": "VE-M-12-03",
+            "name": "Santa Bárbara"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-13",
+        "name": "Los Salias",
+        "parishes": [
+          {
+            "code": "VE-M-13-01",
+            "name": "San Antonio de los Altos"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-14",
+        "name": "Páez",
+        "parishes": [
+          {
+            "code": "VE-M-14-01",
+            "name": "Río Chico"
+          },
+          {
+            "code": "VE-M-14-02",
+            "name": "El Guapo"
+          },
+          {
+            "code": "VE-M-14-03",
+            "name": "Tacarigua de la Laguna"
+          },
+          {
+            "code": "VE-M-14-04",
+            "name": "Paparo"
+          },
+          {
+            "code": "VE-M-14-05",
+            "name": "San Fernando del Guapo"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-15",
+        "name": "Paz Castillo",
+        "parishes": [
+          {
+            "code": "VE-M-15-01",
+            "name": "Santa Lucía del Tuy"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-16",
+        "name": "Pedro Gual",
+        "parishes": [
+          {
+            "code": "VE-M-16-01",
+            "name": "Cúpira"
+          },
+          {
+            "code": "VE-M-16-02",
+            "name": "Machurucuto"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-17",
+        "name": "Plaza",
+        "parishes": [
+          {
+            "code": "VE-M-17-01",
+            "name": "Guarenas"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-18",
+        "name": "Simón Bolívar",
+        "parishes": [
+          {
+            "code": "VE-M-18-01",
+            "name": "San Antonio de Yare"
+          },
+          {
+            "code": "VE-M-18-02",
+            "name": "San Francisco de Yare"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-19",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-M-19-01",
+            "name": "Leoncio Martínez"
+          },
+          {
+            "code": "VE-M-19-02",
+            "name": "Petare"
+          },
+          {
+            "code": "VE-M-19-03",
+            "name": "Caucagüita"
+          },
+          {
+            "code": "VE-M-19-04",
+            "name": "Filas de Mariche"
+          },
+          {
+            "code": "VE-M-19-05",
+            "name": "La Dolorita"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-20",
+        "name": "Urdaneta",
+        "parishes": [
+          {
+            "code": "VE-M-20-01",
+            "name": "Cúa"
+          },
+          {
+            "code": "VE-M-20-02",
+            "name": "Nueva Cúa"
+          }
+        ]
+      },
+      {
+        "code": "VE-M-21",
+        "name": "Zamora",
+        "parishes": [
+          {
+            "code": "VE-M-21-01",
+            "name": "Guatire"
+          },
+          {
+            "code": "VE-M-21-02",
+            "name": "Bolívar"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-N",
+    "name": "Monagas",
+    "capital": "Maturín",
+    "municipalities": [
+      {
+        "code": "VE-N-01",
+        "name": "Acosta",
+        "parishes": [
+          {
+            "code": "VE-N-01-01",
+            "name": "San Antonio de Maturín"
+          },
+          {
+            "code": "VE-N-01-02",
+            "name": "San Francisco de Maturín"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-02",
+        "name": "Aguasay",
+        "parishes": [
+          {
+            "code": "VE-N-02-01",
+            "name": "Aguasay"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-03",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-N-03-01",
+            "name": "Caripito"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-04",
+        "name": "Caripe",
+        "parishes": [
+          {
+            "code": "VE-N-04-01",
+            "name": "El Guácharo"
+          },
+          {
+            "code": "VE-N-04-02",
+            "name": "La Guanota"
+          },
+          {
+            "code": "VE-N-04-03",
+            "name": "Sabana de Piedra"
+          },
+          {
+            "code": "VE-N-04-04",
+            "name": "San Agustín"
+          },
+          {
+            "code": "VE-N-04-05",
+            "name": "Teresen"
+          },
+          {
+            "code": "VE-N-04-06",
+            "name": "Caripe"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-05",
+        "name": "Cedeño",
+        "parishes": [
+          {
+            "code": "VE-N-05-01",
+            "name": "Areo"
+          },
+          {
+            "code": "VE-N-05-02",
+            "name": "Capital Cedeño"
+          },
+          {
+            "code": "VE-N-05-03",
+            "name": "San Félix de Cantalicio"
+          },
+          {
+            "code": "VE-N-05-04",
+            "name": "Viento Fresco"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-06",
+        "name": "Ezequiel Zamora",
+        "parishes": [
+          {
+            "code": "VE-N-06-01",
+            "name": "El Tejero"
+          },
+          {
+            "code": "VE-N-06-02",
+            "name": "Punta de Mata"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-07",
+        "name": "Libertador",
+        "parishes": [
+          {
+            "code": "VE-N-07-01",
+            "name": "Chaguaramas"
+          },
+          {
+            "code": "VE-N-07-02",
+            "name": "Las Alhuacas"
+          },
+          {
+            "code": "VE-N-07-03",
+            "name": "Tabasca"
+          },
+          {
+            "code": "VE-N-07-04",
+            "name": "Temblador"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-08",
+        "name": "Maturín",
+        "parishes": [
+          {
+            "code": "VE-N-08-01",
+            "name": "Alto de los Godos"
+          },
+          {
+            "code": "VE-N-08-02",
+            "name": "Boquerón"
+          },
+          {
+            "code": "VE-N-08-03",
+            "name": "Las Cocuizas"
+          },
+          {
+            "code": "VE-N-08-04",
+            "name": "La Cruz"
+          },
+          {
+            "code": "VE-N-08-05",
+            "name": "San Simón"
+          },
+          {
+            "code": "VE-N-08-06",
+            "name": "El Corozo"
+          },
+          {
+            "code": "VE-N-08-07",
+            "name": "El Furrial"
+          },
+          {
+            "code": "VE-N-08-08",
+            "name": "Jusepín"
+          },
+          {
+            "code": "VE-N-08-09",
+            "name": "La Pica"
+          },
+          {
+            "code": "VE-N-08-10",
+            "name": "San Vicente"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-09",
+        "name": "Piar",
+        "parishes": [
+          {
+            "code": "VE-N-09-01",
+            "name": "Aparicio"
+          },
+          {
+            "code": "VE-N-09-02",
+            "name": "Aragua de Maturín"
+          },
+          {
+            "code": "VE-N-09-03",
+            "name": "Chaguamal"
+          },
+          {
+            "code": "VE-N-09-04",
+            "name": "El Pinto"
+          },
+          {
+            "code": "VE-N-09-05",
+            "name": "Guanaguana"
+          },
+          {
+            "code": "VE-N-09-06",
+            "name": "La Toscana"
+          },
+          {
+            "code": "VE-N-09-07",
+            "name": "Taguaya"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-10",
+        "name": "Punceres",
+        "parishes": [
+          {
+            "code": "VE-N-10-01",
+            "name": "Cachipo"
+          },
+          {
+            "code": "VE-N-10-02",
+            "name": "Quiriquire"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-11",
+        "name": "Santa Bárbara",
+        "parishes": [
+          {
+            "code": "VE-N-11-01",
+            "name": "Santa Bárbara"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-12",
+        "name": "Sotillo",
+        "parishes": [
+          {
+            "code": "VE-N-12-01",
+            "name": "Barrancas"
+          },
+          {
+            "code": "VE-N-12-02",
+            "name": "Los Barrancos de Fajardo"
+          }
+        ]
+      },
+      {
+        "code": "VE-N-13",
+        "name": "Uracoa",
+        "parishes": [
+          {
+            "code": "VE-N-13-01",
+            "name": "Uracoa"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-O",
+    "name": "Nueva Esparta",
+    "capital": "La Asunción",
+    "municipalities": [
+      {
+        "code": "VE-O-01",
+        "name": "Antolín del Campo",
+        "parishes": [
+          {
+            "code": "VE-O-01-01",
+            "name": "Antolín del Campo"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-02",
+        "name": "Arismendi",
+        "parishes": [
+          {
+            "code": "VE-O-02-01",
+            "name": "Arismendi"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-03",
+        "name": "Díaz",
+        "parishes": [
+          {
+            "code": "VE-O-03-01",
+            "name": "San Juan Bautista"
+          },
+          {
+            "code": "VE-O-03-02",
+            "name": "Zabala"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-04",
+        "name": "García",
+        "parishes": [
+          {
+            "code": "VE-O-04-01",
+            "name": "García"
+          },
+          {
+            "code": "VE-O-04-02",
+            "name": "Francisco Fajardo"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-05",
+        "name": "Gómez",
+        "parishes": [
+          {
+            "code": "VE-O-05-01",
+            "name": "Bolívar"
+          },
+          {
+            "code": "VE-O-05-02",
+            "name": "Guevara"
+          },
+          {
+            "code": "VE-O-05-03",
+            "name": "Cerro de Matasiete"
+          },
+          {
+            "code": "VE-O-05-04",
+            "name": "Santa Ana"
+          },
+          {
+            "code": "VE-O-05-05",
+            "name": "Sucre"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-06",
+        "name": "Maneiro",
+        "parishes": [
+          {
+            "code": "VE-O-06-01",
+            "name": "Aguirre"
+          },
+          {
+            "code": "VE-O-06-02",
+            "name": "Maneiro"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-07",
+        "name": "Marcano",
+        "parishes": [
+          {
+            "code": "VE-O-07-01",
+            "name": "Adrián"
+          },
+          {
+            "code": "VE-O-07-02",
+            "name": "Juan Griego"
+          },
+          {
+            "code": "VE-O-07-03",
+            "name": "Yaguaraparo"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-08",
+        "name": "Mariño",
+        "parishes": [
+          {
+            "code": "VE-O-08-01",
+            "name": "Porlamar"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-09",
+        "name": "Península de Macanao",
+        "parishes": [
+          {
+            "code": "VE-O-09-01",
+            "name": "San Francisco de Macanao"
+          },
+          {
+            "code": "VE-O-09-02",
+            "name": "Boca de Río"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-10",
+        "name": "Tubores",
+        "parishes": [
+          {
+            "code": "VE-O-10-01",
+            "name": "Tubores"
+          },
+          {
+            "code": "VE-O-10-02",
+            "name": "Los Barales"
+          }
+        ]
+      },
+      {
+        "code": "VE-O-11",
+        "name": "Villalba",
+        "parishes": [
+          {
+            "code": "VE-O-11-01",
+            "name": "Vicente Fuentes"
+          },
+          {
+            "code": "VE-O-11-02",
+            "name": "Villalba"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-P",
+    "name": "Portuguesa",
+    "capital": "Guanare",
+    "municipalities": [
+      {
+        "code": "VE-P-01",
+        "name": "Agua Blanca",
+        "parishes": [
+          {
+            "code": "VE-P-01-01",
+            "name": "Agua Blanca"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-02",
+        "name": "Araure",
+        "parishes": [
+          {
+            "code": "VE-P-02-01",
+            "name": "Araure"
+          },
+          {
+            "code": "VE-P-02-02",
+            "name": "Río Acarigua"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-03",
+        "name": "Esteller",
+        "parishes": [
+          {
+            "code": "VE-P-03-01",
+            "name": "Píritu"
+          },
+          {
+            "code": "VE-P-03-02",
+            "name": "Uveral"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-04",
+        "name": "Guanare",
+        "parishes": [
+          {
+            "code": "VE-P-04-01",
+            "name": "Cordova"
+          },
+          {
+            "code": "VE-P-04-02",
+            "name": "Guanare"
+          },
+          {
+            "code": "VE-P-04-03",
+            "name": "San José de la Montaña"
+          },
+          {
+            "code": "VE-P-04-04",
+            "name": "San Juan de Guanaguanare"
+          },
+          {
+            "code": "VE-P-04-05",
+            "name": "Virgen de Coromoto"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-05",
+        "name": "Guanarito",
+        "parishes": [
+          {
+            "code": "VE-P-05-01",
+            "name": "Guanarito"
+          },
+          {
+            "code": "VE-P-05-02",
+            "name": "Trinidad de la Capilla"
+          },
+          {
+            "code": "VE-P-05-03",
+            "name": "Divina Pastora"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-06",
+        "name": "Monseñor José Vicente de Unda",
+        "parishes": [
+          {
+            "code": "VE-P-06-01",
+            "name": "Peña Blanca"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-07",
+        "name": "Ospino",
+        "parishes": [
+          {
+            "code": "VE-P-07-01",
+            "name": "Aparición"
+          },
+          {
+            "code": "VE-P-07-02",
+            "name": "La Estación"
+          },
+          {
+            "code": "VE-P-07-03",
+            "name": "Ospino"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-08",
+        "name": "Páez",
+        "parishes": [
+          {
+            "code": "VE-P-08-01",
+            "name": "Acarigua"
+          },
+          {
+            "code": "VE-P-08-02",
+            "name": "Payara"
+          },
+          {
+            "code": "VE-P-08-03",
+            "name": "Pimpinela"
+          },
+          {
+            "code": "VE-P-08-04",
+            "name": "Ramón Peraza"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-09",
+        "name": "Papelón",
+        "parishes": [
+          {
+            "code": "VE-P-09-01",
+            "name": "Caño Delgadito"
+          },
+          {
+            "code": "VE-P-09-02",
+            "name": "Papelón"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-10",
+        "name": "San Genaro de Boconoíto",
+        "parishes": [
+          {
+            "code": "VE-P-10-01",
+            "name": "Antolín Tovar Anquino"
+          },
+          {
+            "code": "VE-P-10-02",
+            "name": "Boconoíto"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-11",
+        "name": "San Rafael de Onoto",
+        "parishes": [
+          {
+            "code": "VE-P-11-01",
+            "name": "Santa Fé"
+          },
+          {
+            "code": "VE-P-11-02",
+            "name": "San Rafael de Onoto"
+          },
+          {
+            "code": "VE-P-11-03",
+            "name": "Thermo Morales"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-12",
+        "name": "Santa Rosalía",
+        "parishes": [
+          {
+            "code": "VE-P-12-01",
+            "name": "Florida"
+          },
+          {
+            "code": "VE-P-12-02",
+            "name": "El Playón"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-13",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-P-13-01",
+            "name": "Biscucuy"
+          },
+          {
+            "code": "VE-P-13-02",
+            "name": "Concepción"
+          },
+          {
+            "code": "VE-P-13-03",
+            "name": "San José de Saguaz"
+          },
+          {
+            "code": "VE-P-13-04",
+            "name": "San Rafael de Palo Alzado"
+          },
+          {
+            "code": "VE-P-13-05",
+            "name": "Uvencio Antonio Velásquez"
+          },
+          {
+            "code": "VE-P-13-06",
+            "name": "Villa Rosa"
+          }
+        ]
+      },
+      {
+        "code": "VE-P-14",
+        "name": "Turén",
+        "parishes": [
+          {
+            "code": "VE-P-14-01",
+            "name": "Canelones"
+          },
+          {
+            "code": "VE-P-14-02",
+            "name": "Santa Cruz"
+          },
+          {
+            "code": "VE-P-14-03",
+            "name": "San Isidro Labrador"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-R",
+    "name": "Sucre",
+    "capital": "Cumaná",
+    "municipalities": [
+      {
+        "code": "VE-R-01",
+        "name": "Andrés Eloy Blanco",
+        "parishes": [
+          {
+            "code": "VE-R-01-01",
+            "name": "Mariño"
+          },
+          {
+            "code": "VE-R-01-02",
+            "name": "Rómulo Gallegos"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-02",
+        "name": "Andrés Mata",
+        "parishes": [
+          {
+            "code": "VE-R-02-01",
+            "name": "San José de Aerocuar"
+          },
+          {
+            "code": "VE-R-02-02",
+            "name": "Tavera Acosta"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-03",
+        "name": "Arismendi",
+        "parishes": [
+          {
+            "code": "VE-R-03-01",
+            "name": "Río Caribe"
+          },
+          {
+            "code": "VE-R-03-02",
+            "name": "Antonio José de Sucre"
+          },
+          {
+            "code": "VE-R-03-03",
+            "name": "El Morro de Puerto Santo"
+          },
+          {
+            "code": "VE-R-03-04",
+            "name": "Puerto Santo"
+          },
+          {
+            "code": "VE-R-03-05",
+            "name": "San Juan de las Galdonas"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-04",
+        "name": "Benítez",
+        "parishes": [
+          {
+            "code": "VE-R-04-01",
+            "name": "El Pilar"
+          },
+          {
+            "code": "VE-R-04-02",
+            "name": "El Rincón"
+          },
+          {
+            "code": "VE-R-04-03",
+            "name": "General Francisco Antonio Váquez"
+          },
+          {
+            "code": "VE-R-04-04",
+            "name": "Guaraúnos"
+          },
+          {
+            "code": "VE-R-04-05",
+            "name": "Tunapuicito"
+          },
+          {
+            "code": "VE-R-04-06",
+            "name": "Unión"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-05",
+        "name": "Bermúdez",
+        "parishes": [
+          {
+            "code": "VE-R-05-01",
+            "name": "Santa Catalina"
+          },
+          {
+            "code": "VE-R-05-02",
+            "name": "Santa Rosa"
+          },
+          {
+            "code": "VE-R-05-03",
+            "name": "Santa Teresa"
+          },
+          {
+            "code": "VE-R-05-04",
+            "name": "Bolívar"
+          },
+          {
+            "code": "VE-R-05-05",
+            "name": "Maracapana"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-06",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-R-06-01",
+            "name": "Mariguitar"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-07",
+        "name": "Cajigal",
+        "parishes": [
+          {
+            "code": "VE-R-07-01",
+            "name": "Libertad"
+          },
+          {
+            "code": "VE-R-07-02",
+            "name": "El Paujil"
+          },
+          {
+            "code": "VE-R-07-03",
+            "name": "Yaguaraparo"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-08",
+        "name": "Cruz Salmerón Acosta",
+        "parishes": [
+          {
+            "code": "VE-R-08-01",
+            "name": "Cruz Salmerón Acosta"
+          },
+          {
+            "code": "VE-R-08-02",
+            "name": "Chacopata"
+          },
+          {
+            "code": "VE-R-08-03",
+            "name": "Manicuare"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-09",
+        "name": "Libertador",
+        "parishes": [
+          {
+            "code": "VE-R-09-01",
+            "name": "Tunapuy"
+          },
+          {
+            "code": "VE-R-09-02",
+            "name": "Campo Elías"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-10",
+        "name": "Mariño",
+        "parishes": [
+          {
+            "code": "VE-R-10-01",
+            "name": "Irapa"
+          },
+          {
+            "code": "VE-R-10-02",
+            "name": "Campo Claro"
+          },
+          {
+            "code": "VE-R-10-03",
+            "name": "Maraval"
+          },
+          {
+            "code": "VE-R-10-04",
+            "name": "San Antonio de Irapa"
+          },
+          {
+            "code": "VE-R-10-05",
+            "name": "Soro"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-11",
+        "name": "Mejía",
+        "parishes": [
+          {
+            "code": "VE-R-11-01",
+            "name": "Mejía"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-12",
+        "name": "Montes",
+        "parishes": [
+          {
+            "code": "VE-R-12-01",
+            "name": "Cumanacoa"
+          },
+          {
+            "code": "VE-R-12-02",
+            "name": "Arenas"
+          },
+          {
+            "code": "VE-R-12-03",
+            "name": "Aricagua"
+          },
+          {
+            "code": "VE-R-12-04",
+            "name": "Cocollar"
+          },
+          {
+            "code": "VE-R-12-05",
+            "name": "San Fernando"
+          },
+          {
+            "code": "VE-R-12-06",
+            "name": "San Lorenzo"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-13",
+        "name": "Ribero",
+        "parishes": [
+          {
+            "code": "VE-R-13-01",
+            "name": "Villa Frontado (Muelle de Cariaco)"
+          },
+          {
+            "code": "VE-R-13-02",
+            "name": "Catuaro"
+          },
+          {
+            "code": "VE-R-13-03",
+            "name": "Rendón"
+          },
+          {
+            "code": "VE-R-13-04",
+            "name": "San Cruz"
+          },
+          {
+            "code": "VE-R-13-05",
+            "name": "Santa María"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-14",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-R-14-01",
+            "name": "Altagracia Cumaná"
+          },
+          {
+            "code": "VE-R-14-02",
+            "name": "Santa Inés Cumaná"
+          },
+          {
+            "code": "VE-R-14-03",
+            "name": "Valentín Valiente Cumaná"
+          },
+          {
+            "code": "VE-R-14-04",
+            "name": "Ayacucho Cumaná"
+          },
+          {
+            "code": "VE-R-14-05",
+            "name": "San Juan"
+          },
+          {
+            "code": "VE-R-14-06",
+            "name": "Raúl Leoni"
+          },
+          {
+            "code": "VE-R-14-07",
+            "name": "Gran Mariscal"
+          }
+        ]
+      },
+      {
+        "code": "VE-R-15",
+        "name": "Valdez",
+        "parishes": [
+          {
+            "code": "VE-R-15-01",
+            "name": "Cristóbal Colón"
+          },
+          {
+            "code": "VE-R-15-02",
+            "name": "Bideau"
+          },
+          {
+            "code": "VE-R-15-03",
+            "name": "Punta de Piedras"
+          },
+          {
+            "code": "VE-R-15-04",
+            "name": "Güiria"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-S",
+    "name": "Táchira",
+    "capital": "San Cristóbal",
+    "municipalities": [
+      {
+        "code": "VE-S-01",
+        "name": "Andrés Bello",
+        "parishes": [
+          {
+            "code": "VE-S-01-01",
+            "name": "Andrés Bello"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-02",
+        "name": "Antonio Rómulo Costa",
+        "parishes": [
+          {
+            "code": "VE-S-02-01",
+            "name": "Antonio Rómulo Costa"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-03",
+        "name": "Ayacucho",
+        "parishes": [
+          {
+            "code": "VE-S-03-01",
+            "name": "Ayacucho"
+          },
+          {
+            "code": "VE-S-03-02",
+            "name": "Rivas Berti"
+          },
+          {
+            "code": "VE-S-03-03",
+            "name": "San Pedro del Río"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-04",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-S-04-01",
+            "name": "Bolívar"
+          },
+          {
+            "code": "VE-S-04-02",
+            "name": "Palotal"
+          },
+          {
+            "code": "VE-S-04-03",
+            "name": "General Juan Vicente Gómez"
+          },
+          {
+            "code": "VE-S-04-04",
+            "name": "Isaías Medina Angarita"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-05",
+        "name": "Cárdenas",
+        "parishes": [
+          {
+            "code": "VE-S-05-01",
+            "name": "Cárdenas"
+          },
+          {
+            "code": "VE-S-05-02",
+            "name": "Amenodoro Rangel Lamus"
+          },
+          {
+            "code": "VE-S-05-03",
+            "name": "La Florida"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-06",
+        "name": "Córdoba",
+        "parishes": [
+          {
+            "code": "VE-S-06-01",
+            "name": "Córdoba"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-07",
+        "name": "Fernández Feo",
+        "parishes": [
+          {
+            "code": "VE-S-07-01",
+            "name": "Fernández Feo"
+          },
+          {
+            "code": "VE-S-07-02",
+            "name": "Alberto Adriani"
+          },
+          {
+            "code": "VE-S-07-03",
+            "name": "Santo Domingo"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-08",
+        "name": "Francisco de Miranda",
+        "parishes": [
+          {
+            "code": "VE-S-08-01",
+            "name": "Francisco de Miranda"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-09",
+        "name": "García de Hevia",
+        "parishes": [
+          {
+            "code": "VE-S-09-01",
+            "name": "García de Hevia"
+          },
+          {
+            "code": "VE-S-09-02",
+            "name": "Boca de Grita"
+          },
+          {
+            "code": "VE-S-09-03",
+            "name": "José Antonio Páez"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-10",
+        "name": "Guásimos",
+        "parishes": [
+          {
+            "code": "VE-S-10-01",
+            "name": "Guásimos"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-11",
+        "name": "Independencia",
+        "parishes": [
+          {
+            "code": "VE-S-11-01",
+            "name": "Independencia"
+          },
+          {
+            "code": "VE-S-11-02",
+            "name": "Juan Germán Roscio"
+          },
+          {
+            "code": "VE-S-11-03",
+            "name": "Román Cárdenas"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-12",
+        "name": "Jáuregui",
+        "parishes": [
+          {
+            "code": "VE-S-12-01",
+            "name": "Jáuregui"
+          },
+          {
+            "code": "VE-S-12-02",
+            "name": "Emilio Constantino Guerrero"
+          },
+          {
+            "code": "VE-S-12-03",
+            "name": "Monseñor Miguel Antonio Salas"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-13",
+        "name": "José María Vargas",
+        "parishes": [
+          {
+            "code": "VE-S-13-01",
+            "name": "José María Vargas"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-14",
+        "name": "Junín",
+        "parishes": [
+          {
+            "code": "VE-S-14-01",
+            "name": "Junín"
+          },
+          {
+            "code": "VE-S-14-02",
+            "name": "La Petrólea"
+          },
+          {
+            "code": "VE-S-14-03",
+            "name": "Quinimarí"
+          },
+          {
+            "code": "VE-S-14-04",
+            "name": "Bramón"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-15",
+        "name": "Libertad",
+        "parishes": [
+          {
+            "code": "VE-S-15-01",
+            "name": "Libertad"
+          },
+          {
+            "code": "VE-S-15-02",
+            "name": "Cipriano Castro"
+          },
+          {
+            "code": "VE-S-15-03",
+            "name": "Manuel Felipe Rugeles"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-16",
+        "name": "Libertador",
+        "parishes": [
+          {
+            "code": "VE-S-16-01",
+            "name": "Capital Libertador"
+          },
+          {
+            "code": "VE-S-16-02",
+            "name": "Doradas"
+          },
+          {
+            "code": "VE-S-16-03",
+            "name": "Emeterio Ochoa"
+          },
+          {
+            "code": "VE-S-16-04",
+            "name": "San Joaquín de Navay"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-17",
+        "name": "Lobatera",
+        "parishes": [
+          {
+            "code": "VE-S-17-01",
+            "name": "Lobatera"
+          },
+          {
+            "code": "VE-S-17-02",
+            "name": "Constitución"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-18",
+        "name": "Michelena",
+        "parishes": [
+          {
+            "code": "VE-S-18-01",
+            "name": "Michelena"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-19",
+        "name": "Panamericano",
+        "parishes": [
+          {
+            "code": "VE-S-19-01",
+            "name": "Panamericano"
+          },
+          {
+            "code": "VE-S-19-02",
+            "name": "La Palmita"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-20",
+        "name": "Pedro María Ureña",
+        "parishes": [
+          {
+            "code": "VE-S-20-01",
+            "name": "Pedro María Ureña"
+          },
+          {
+            "code": "VE-S-20-02",
+            "name": "Nueva Arcadia"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-21",
+        "name": "Rafael Urdaneta",
+        "parishes": [
+          {
+            "code": "VE-S-21-01",
+            "name": "Delicias"
+          },
+          {
+            "code": "VE-S-21-02",
+            "name": "Pecaya"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-22",
+        "name": "Samuel Darío Maldonado",
+        "parishes": [
+          {
+            "code": "VE-S-22-01",
+            "name": "Samuel Darío Maldonado"
+          },
+          {
+            "code": "VE-S-22-02",
+            "name": "Boconó"
+          },
+          {
+            "code": "VE-S-22-03",
+            "name": "Hernández"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-23",
+        "name": "San Cristóbal",
+        "parishes": [
+          {
+            "code": "VE-S-23-01",
+            "name": "La Concordia"
+          },
+          {
+            "code": "VE-S-23-02",
+            "name": "San Juan Bautista"
+          },
+          {
+            "code": "VE-S-23-03",
+            "name": "Pedro María Morantes"
+          },
+          {
+            "code": "VE-S-23-04",
+            "name": "San Sebastián"
+          },
+          {
+            "code": "VE-S-23-05",
+            "name": "Dr. Francisco Romero Lobo"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-24",
+        "name": "Seboruco",
+        "parishes": [
+          {
+            "code": "VE-S-24-01",
+            "name": "Seboruco"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-25",
+        "name": "Simón Rodríguez",
+        "parishes": [
+          {
+            "code": "VE-S-25-01",
+            "name": "Simón Rodríguez"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-26",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-S-26-01",
+            "name": "Sucre"
+          },
+          {
+            "code": "VE-S-26-02",
+            "name": "Eleazar López Contreras"
+          },
+          {
+            "code": "VE-S-26-03",
+            "name": "San Pablo"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-27",
+        "name": "Torbes",
+        "parishes": [
+          {
+            "code": "VE-S-27-01",
+            "name": "San José Obrero"
+          },
+          {
+            "code": "VE-S-27-02",
+            "name": "San Juan Eudes"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-28",
+        "name": "Uribante",
+        "parishes": [
+          {
+            "code": "VE-S-28-01",
+            "name": "Uribante"
+          },
+          {
+            "code": "VE-S-28-02",
+            "name": "Cárdenas"
+          },
+          {
+            "code": "VE-S-28-03",
+            "name": "Juan Pablo Peñalosa"
+          },
+          {
+            "code": "VE-S-28-04",
+            "name": "Potosí"
+          }
+        ]
+      },
+      {
+        "code": "VE-S-29",
+        "name": "San Judas Tadeo",
+        "parishes": [
+          {
+            "code": "VE-S-29-01",
+            "name": "San Judas Tadeo"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-T",
+    "name": "Trujillo",
+    "capital": "Trujillo",
+    "municipalities": [
+      {
+        "code": "VE-T-01",
+        "name": "Andrés Bello",
+        "parishes": [
+          {
+            "code": "VE-T-01-01",
+            "name": "Araguaney"
+          },
+          {
+            "code": "VE-T-01-02",
+            "name": "El Jaguito"
+          },
+          {
+            "code": "VE-T-01-03",
+            "name": "La Esperanza"
+          },
+          {
+            "code": "VE-T-01-04",
+            "name": "Santa Isabel"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-02",
+        "name": "Boconó",
+        "parishes": [
+          {
+            "code": "VE-T-02-01",
+            "name": "Boconó"
+          },
+          {
+            "code": "VE-T-02-02",
+            "name": "El Carmen"
+          },
+          {
+            "code": "VE-T-02-03",
+            "name": "Mosquey"
+          },
+          {
+            "code": "VE-T-02-04",
+            "name": "Ayacucho"
+          },
+          {
+            "code": "VE-T-02-05",
+            "name": "Burbusay"
+          },
+          {
+            "code": "VE-T-02-06",
+            "name": "General Ribas"
+          },
+          {
+            "code": "VE-T-02-07",
+            "name": "Guaramacal"
+          },
+          {
+            "code": "VE-T-02-08",
+            "name": "Vega de Guaramacal"
+          },
+          {
+            "code": "VE-T-02-09",
+            "name": "Monseñor Jáuregui"
+          },
+          {
+            "code": "VE-T-02-10",
+            "name": "Rafael Rangel"
+          },
+          {
+            "code": "VE-T-02-11",
+            "name": "San Miguel"
+          },
+          {
+            "code": "VE-T-02-12",
+            "name": "San José"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-03",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-T-03-01",
+            "name": "Sabana Grande"
+          },
+          {
+            "code": "VE-T-03-02",
+            "name": "Cheregüé"
+          },
+          {
+            "code": "VE-T-03-03",
+            "name": "Granados"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-04",
+        "name": "Candelaria",
+        "parishes": [
+          {
+            "code": "VE-T-04-01",
+            "name": "Arnoldo Gabaldón"
+          },
+          {
+            "code": "VE-T-04-02",
+            "name": "Bolivia"
+          },
+          {
+            "code": "VE-T-04-03",
+            "name": "Carrillo"
+          },
+          {
+            "code": "VE-T-04-04",
+            "name": "Cegarra"
+          },
+          {
+            "code": "VE-T-04-05",
+            "name": "Chejendé"
+          },
+          {
+            "code": "VE-T-04-06",
+            "name": "Manuel Salvador Ulloa"
+          },
+          {
+            "code": "VE-T-04-07",
+            "name": "San José"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-05",
+        "name": "Carache",
+        "parishes": [
+          {
+            "code": "VE-T-05-01",
+            "name": "Carache"
+          },
+          {
+            "code": "VE-T-05-02",
+            "name": "La Concepción"
+          },
+          {
+            "code": "VE-T-05-03",
+            "name": "Cuicas"
+          },
+          {
+            "code": "VE-T-05-04",
+            "name": "Panamericana"
+          },
+          {
+            "code": "VE-T-05-05",
+            "name": "Santa Cruz"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-06",
+        "name": "Escuque",
+        "parishes": [
+          {
+            "code": "VE-T-06-01",
+            "name": "Escuque"
+          },
+          {
+            "code": "VE-T-06-02",
+            "name": "La Unión (El Alto Escuque)"
+          },
+          {
+            "code": "VE-T-06-03",
+            "name": "Santa Rita"
+          },
+          {
+            "code": "VE-T-06-04",
+            "name": "Sabana Libre"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-07",
+        "name": "José Felipe Márquez Cañizalez",
+        "parishes": [
+          {
+            "code": "VE-T-07-01",
+            "name": "El Socorro"
+          },
+          {
+            "code": "VE-T-07-02",
+            "name": "Los Caprichos"
+          },
+          {
+            "code": "VE-T-07-03",
+            "name": "Antonio José de Sucre"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-08",
+        "name": "Juan Vicente Campos Elías",
+        "parishes": [
+          {
+            "code": "VE-T-08-01",
+            "name": "Campo Elías"
+          },
+          {
+            "code": "VE-T-08-02",
+            "name": "Arnoldo Gabaldón"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-09",
+        "name": "La Ceiba",
+        "parishes": [
+          {
+            "code": "VE-T-09-01",
+            "name": "Santa Apolonia"
+          },
+          {
+            "code": "VE-T-09-02",
+            "name": "El Progreso"
+          },
+          {
+            "code": "VE-T-09-03",
+            "name": "La Ceiba"
+          },
+          {
+            "code": "VE-T-09-04",
+            "name": "Tres de Febrero"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-10",
+        "name": "Miranda",
+        "parishes": [
+          {
+            "code": "VE-T-10-01",
+            "name": "El Dividive"
+          },
+          {
+            "code": "VE-T-10-02",
+            "name": "Agua Santa"
+          },
+          {
+            "code": "VE-T-10-03",
+            "name": "Agua Caliente"
+          },
+          {
+            "code": "VE-T-10-04",
+            "name": "El Cenizo"
+          },
+          {
+            "code": "VE-T-10-05",
+            "name": "Valerita"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-11",
+        "name": "Monte Carmelo",
+        "parishes": [
+          {
+            "code": "VE-T-11-01",
+            "name": "Monte Carmelo"
+          },
+          {
+            "code": "VE-T-11-02",
+            "name": "Buena Vista"
+          },
+          {
+            "code": "VE-T-11-03",
+            "name": "Santa María del Horcón"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-12",
+        "name": "Motatán",
+        "parishes": [
+          {
+            "code": "VE-T-12-01",
+            "name": "Motatán"
+          },
+          {
+            "code": "VE-T-12-02",
+            "name": "El Baño"
+          },
+          {
+            "code": "VE-T-12-03",
+            "name": "Jalisco"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-13",
+        "name": "Pampán",
+        "parishes": [
+          {
+            "code": "VE-T-13-01",
+            "name": "Pampán"
+          },
+          {
+            "code": "VE-T-13-02",
+            "name": "Flor de Patria"
+          },
+          {
+            "code": "VE-T-13-03",
+            "name": "La Paz"
+          },
+          {
+            "code": "VE-T-13-04",
+            "name": "Santa Ana"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-14",
+        "name": "Pampanito",
+        "parishes": [
+          {
+            "code": "VE-T-14-01",
+            "name": "Pampanito"
+          },
+          {
+            "code": "VE-T-14-02",
+            "name": "La Concepción"
+          },
+          {
+            "code": "VE-T-14-03",
+            "name": "Pampanito II"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-15",
+        "name": "Rafael Rangel",
+        "parishes": [
+          {
+            "code": "VE-T-15-01",
+            "name": "Betijoque"
+          },
+          {
+            "code": "VE-T-15-02",
+            "name": "José Gregorio Hernández"
+          },
+          {
+            "code": "VE-T-15-03",
+            "name": "La Pueblita"
+          },
+          {
+            "code": "VE-T-15-04",
+            "name": "Los Cedros"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-16",
+        "name": "San Rafael de Carvajal",
+        "parishes": [
+          {
+            "code": "VE-T-16-01",
+            "name": "Carvajal"
+          },
+          {
+            "code": "VE-T-16-02",
+            "name": "Campo Alegre"
+          },
+          {
+            "code": "VE-T-16-03",
+            "name": "Antonio Nicolás Briceño"
+          },
+          {
+            "code": "VE-T-16-04",
+            "name": "José Leonardo Suárez"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-17",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-T-17-01",
+            "name": "Sabana de Mendoza"
+          },
+          {
+            "code": "VE-T-17-02",
+            "name": "Junín"
+          },
+          {
+            "code": "VE-T-17-03",
+            "name": "Valmore Rodríguez"
+          },
+          {
+            "code": "VE-T-17-04",
+            "name": "El Paraíso"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-18",
+        "name": "Trujillo",
+        "parishes": [
+          {
+            "code": "VE-T-18-01",
+            "name": "Andrés Linares"
+          },
+          {
+            "code": "VE-T-18-02",
+            "name": "Chiquinquirá"
+          },
+          {
+            "code": "VE-T-18-03",
+            "name": "Cristóbal Mendoza"
+          },
+          {
+            "code": "VE-T-18-04",
+            "name": "Cruz Carrillo"
+          },
+          {
+            "code": "VE-T-18-05",
+            "name": "Matriz"
+          },
+          {
+            "code": "VE-T-18-06",
+            "name": "Monseñor Carrillo"
+          },
+          {
+            "code": "VE-T-18-07",
+            "name": "Tres Esquinas"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-19",
+        "name": "Urdaneta",
+        "parishes": [
+          {
+            "code": "VE-T-19-01",
+            "name": "Cabimbú"
+          },
+          {
+            "code": "VE-T-19-02",
+            "name": "Jajó"
+          },
+          {
+            "code": "VE-T-19-03",
+            "name": "La Mesa de Esnujaque"
+          },
+          {
+            "code": "VE-T-19-04",
+            "name": "Santiago"
+          },
+          {
+            "code": "VE-T-19-05",
+            "name": "Tuñame"
+          },
+          {
+            "code": "VE-T-19-06",
+            "name": "La Quebrada"
+          }
+        ]
+      },
+      {
+        "code": "VE-T-20",
+        "name": "Valera",
+        "parishes": [
+          {
+            "code": "VE-T-20-01",
+            "name": "Juan Ignacio Montilla"
+          },
+          {
+            "code": "VE-T-20-02",
+            "name": "La Beatriz"
+          },
+          {
+            "code": "VE-T-20-03",
+            "name": "La Puerta"
+          },
+          {
+            "code": "VE-T-20-04",
+            "name": "Mendoza del Valle de Momboy"
+          },
+          {
+            "code": "VE-T-20-05",
+            "name": "Mercedes Díaz"
+          },
+          {
+            "code": "VE-T-20-06",
+            "name": "San Luis"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-U",
+    "name": "Yaracuy",
+    "capital": "San Felipe",
+    "municipalities": [
+      {
+        "code": "VE-U-01",
+        "name": "Arístides Bastidas",
+        "parishes": [
+          {
+            "code": "VE-U-01-01",
+            "name": "Arístides Bastidas"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-02",
+        "name": "Bolívar",
+        "parishes": [
+          {
+            "code": "VE-U-02-01",
+            "name": "Bolívar"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-03",
+        "name": "Bruzual",
+        "parishes": [
+          {
+            "code": "VE-U-03-01",
+            "name": "Chivacoa"
+          },
+          {
+            "code": "VE-U-03-02",
+            "name": "Campo Elías"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-04",
+        "name": "Cocorote",
+        "parishes": [
+          {
+            "code": "VE-U-04-01",
+            "name": "Cocorote"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-05",
+        "name": "Independencia",
+        "parishes": [
+          {
+            "code": "VE-U-05-01",
+            "name": "Independencia"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-06",
+        "name": "José Antonio Páez",
+        "parishes": [
+          {
+            "code": "VE-U-06-01",
+            "name": "José Antonio Páez"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-07",
+        "name": "La Trinidad",
+        "parishes": [
+          {
+            "code": "VE-U-07-01",
+            "name": "La Trinidad"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-08",
+        "name": "Manuel Monge",
+        "parishes": [
+          {
+            "code": "VE-U-08-01",
+            "name": "Manuel Monge"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-09",
+        "name": "Nirgua",
+        "parishes": [
+          {
+            "code": "VE-U-09-01",
+            "name": "Salóm"
+          },
+          {
+            "code": "VE-U-09-02",
+            "name": "Temerla"
+          },
+          {
+            "code": "VE-U-09-03",
+            "name": "Nirgua"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-10",
+        "name": "Peña",
+        "parishes": [
+          {
+            "code": "VE-U-10-01",
+            "name": "San Andrés"
+          },
+          {
+            "code": "VE-U-10-02",
+            "name": "Yaritagua"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-11",
+        "name": "San Felipe",
+        "parishes": [
+          {
+            "code": "VE-U-11-01",
+            "name": "San Javier"
+          },
+          {
+            "code": "VE-U-11-02",
+            "name": "Albarico"
+          },
+          {
+            "code": "VE-U-11-03",
+            "name": "San Felipe"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-12",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-U-12-01",
+            "name": "Sucre"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-13",
+        "name": "Urachiche",
+        "parishes": [
+          {
+            "code": "VE-U-13-01",
+            "name": "Urachiche"
+          }
+        ]
+      },
+      {
+        "code": "VE-U-14",
+        "name": "Veroes",
+        "parishes": [
+          {
+            "code": "VE-U-14-01",
+            "name": "El Guayabo"
+          },
+          {
+            "code": "VE-U-14-02",
+            "name": "Farriar"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-V",
+    "name": "Zulia",
+    "capital": "Maracaibo",
+    "municipalities": [
+      {
+        "code": "VE-V-01",
+        "name": "Almirante Padilla",
+        "parishes": [
+          {
+            "code": "VE-V-01-01",
+            "name": "Isla de Toas"
+          },
+          {
+            "code": "VE-V-01-02",
+            "name": "Monagas"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-02",
+        "name": "Baralt",
+        "parishes": [
+          {
+            "code": "VE-V-02-01",
+            "name": "General Urdaneta"
+          },
+          {
+            "code": "VE-V-02-02",
+            "name": "Libertador"
+          },
+          {
+            "code": "VE-V-02-03",
+            "name": "Marcelino Briceño"
+          },
+          {
+            "code": "VE-V-02-04",
+            "name": "Pueblo Nuevo"
+          },
+          {
+            "code": "VE-V-02-05",
+            "name": "Manuel Guanipa Matos"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-03",
+        "name": "Cabimas",
+        "parishes": [
+          {
+            "code": "VE-V-03-01",
+            "name": "Ambrosio"
+          },
+          {
+            "code": "VE-V-03-02",
+            "name": "Carmen Herrera"
+          },
+          {
+            "code": "VE-V-03-03",
+            "name": "La Rosa"
+          },
+          {
+            "code": "VE-V-03-04",
+            "name": "Germán Ríos Linares"
+          },
+          {
+            "code": "VE-V-03-05",
+            "name": "San Benito"
+          },
+          {
+            "code": "VE-V-03-06",
+            "name": "Rómulo Betancourt"
+          },
+          {
+            "code": "VE-V-03-07",
+            "name": "Jorge Hernández"
+          },
+          {
+            "code": "VE-V-03-08",
+            "name": "Punta Gorda"
+          },
+          {
+            "code": "VE-V-03-09",
+            "name": "Arístides Calvani"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-04",
+        "name": "Catatumbo",
+        "parishes": [
+          {
+            "code": "VE-V-04-01",
+            "name": "Encontrados"
+          },
+          {
+            "code": "VE-V-04-02",
+            "name": "Udón Pérez"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-05",
+        "name": "Colón",
+        "parishes": [
+          {
+            "code": "VE-V-05-01",
+            "name": "Moralito"
+          },
+          {
+            "code": "VE-V-05-02",
+            "name": "San Carlos del Zulia"
+          },
+          {
+            "code": "VE-V-05-03",
+            "name": "Santa Cruz del Zulia"
+          },
+          {
+            "code": "VE-V-05-04",
+            "name": "Santa Bárbara"
+          },
+          {
+            "code": "VE-V-05-05",
+            "name": "Urribarrí"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-06",
+        "name": "Francisco Javier Pulgar",
+        "parishes": [
+          {
+            "code": "VE-V-06-01",
+            "name": "Carlos Quevedo"
+          },
+          {
+            "code": "VE-V-06-02",
+            "name": "Francisco Javier Pulgar"
+          },
+          {
+            "code": "VE-V-06-03",
+            "name": "Simón Rodríguez"
+          },
+          {
+            "code": "VE-V-06-04",
+            "name": "Guamo-Gavilanes"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-07",
+        "name": "Páez",
+        "parishes": [
+          {
+            "code": "VE-V-07-01",
+            "name": "Sinamaica"
+          },
+          {
+            "code": "VE-V-07-02",
+            "name": "Alta Guajira"
+          },
+          {
+            "code": "VE-V-07-03",
+            "name": "Elías Sánchez Rubio"
+          },
+          {
+            "code": "VE-V-07-04",
+            "name": "Guajira"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-08",
+        "name": "Jesús Enrique Lossada",
+        "parishes": [
+          {
+            "code": "VE-V-08-01",
+            "name": "La Concepción"
+          },
+          {
+            "code": "VE-V-08-02",
+            "name": "San José"
+          },
+          {
+            "code": "VE-V-08-03",
+            "name": "Mariano Parra León"
+          },
+          {
+            "code": "VE-V-08-04",
+            "name": "José Ramón Yépez"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-09",
+        "name": "Jesús María Semprún",
+        "parishes": [
+          {
+            "code": "VE-V-09-01",
+            "name": "Jesús María Semprún"
+          },
+          {
+            "code": "VE-V-09-02",
+            "name": "Barí"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-10",
+        "name": "La Cañada de Urdaneta",
+        "parishes": [
+          {
+            "code": "VE-V-10-01",
+            "name": "Concepción"
+          },
+          {
+            "code": "VE-V-10-02",
+            "name": "Andrés Bello"
+          },
+          {
+            "code": "VE-V-10-03",
+            "name": "Chiquinquirá"
+          },
+          {
+            "code": "VE-V-10-04",
+            "name": "El Carmelo"
+          },
+          {
+            "code": "VE-V-10-05",
+            "name": "Potreritos"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-11",
+        "name": "Lagunillas",
+        "parishes": [
+          {
+            "code": "VE-V-11-01",
+            "name": "Libertad"
+          },
+          {
+            "code": "VE-V-11-02",
+            "name": "Alonso de Ojeda"
+          },
+          {
+            "code": "VE-V-11-03",
+            "name": "Venezuela"
+          },
+          {
+            "code": "VE-V-11-04",
+            "name": "Eleazar López Contreras"
+          },
+          {
+            "code": "VE-V-11-05",
+            "name": "Campo Lara"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-12",
+        "name": "Machiques de Perijá",
+        "parishes": [
+          {
+            "code": "VE-V-12-01",
+            "name": "Bartolomé de las Casas"
+          },
+          {
+            "code": "VE-V-12-02",
+            "name": "Libertad"
+          },
+          {
+            "code": "VE-V-12-03",
+            "name": "Río Negro"
+          },
+          {
+            "code": "VE-V-12-04",
+            "name": "San José de Perijá"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-13",
+        "name": "Mara",
+        "parishes": [
+          {
+            "code": "VE-V-13-01",
+            "name": "San Rafael"
+          },
+          {
+            "code": "VE-V-13-02",
+            "name": "La Sierrita"
+          },
+          {
+            "code": "VE-V-13-03",
+            "name": "Las Parcelas"
+          },
+          {
+            "code": "VE-V-13-04",
+            "name": "Luis de Vicente"
+          },
+          {
+            "code": "VE-V-13-05",
+            "name": "Monseñor Marcos Sergio Godoy"
+          },
+          {
+            "code": "VE-V-13-06",
+            "name": "Ricaurte"
+          },
+          {
+            "code": "VE-V-13-07",
+            "name": "Tamare"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-14",
+        "name": "Maracaibo",
+        "parishes": [
+          {
+            "code": "VE-V-14-01",
+            "name": "Antonio Borjas Romero"
+          },
+          {
+            "code": "VE-V-14-02",
+            "name": "Bolívar"
+          },
+          {
+            "code": "VE-V-14-03",
+            "name": "Cacique Mara"
+          },
+          {
+            "code": "VE-V-14-04",
+            "name": "Carracciolo Parra Pérez"
+          },
+          {
+            "code": "VE-V-14-05",
+            "name": "Cecilio Acosta"
+          },
+          {
+            "code": "VE-V-14-06",
+            "name": "Cristo de Aranza"
+          },
+          {
+            "code": "VE-V-14-07",
+            "name": "Coquivacoa"
+          },
+          {
+            "code": "VE-V-14-08",
+            "name": "Chiquinquirá"
+          },
+          {
+            "code": "VE-V-14-09",
+            "name": "Francisco Eugenio Bustamante"
+          },
+          {
+            "code": "VE-V-14-10",
+            "name": "Idelfonzo Vásquez"
+          },
+          {
+            "code": "VE-V-14-11",
+            "name": "Juana de Ávila"
+          },
+          {
+            "code": "VE-V-14-12",
+            "name": "Luis Hurtado Higuera"
+          },
+          {
+            "code": "VE-V-14-13",
+            "name": "Manuel Dagnino"
+          },
+          {
+            "code": "VE-V-14-14",
+            "name": "Olegario Villalobos."
+          },
+          {
+            "code": "VE-V-14-15",
+            "name": "Raúl Leoni"
+          },
+          {
+            "code": "VE-V-14-16",
+            "name": "Santa Lucía"
+          },
+          {
+            "code": "VE-V-14-17",
+            "name": "Venancio Pulgar"
+          },
+          {
+            "code": "VE-V-14-18",
+            "name": "San Isidro"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-15",
+        "name": "Miranda",
+        "parishes": [
+          {
+            "code": "VE-V-15-01",
+            "name": "Altagracia"
+          },
+          {
+            "code": "VE-V-15-02",
+            "name": "Faría"
+          },
+          {
+            "code": "VE-V-15-03",
+            "name": "Ana María Campos"
+          },
+          {
+            "code": "VE-V-15-04",
+            "name": "San Antonio"
+          },
+          {
+            "code": "VE-V-15-05",
+            "name": "San José"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-16",
+        "name": "Rosario de Perijá",
+        "parishes": [
+          {
+            "code": "VE-V-16-01",
+            "name": "Donaldo García"
+          },
+          {
+            "code": "VE-V-16-02",
+            "name": "El Rosario"
+          },
+          {
+            "code": "VE-V-16-03",
+            "name": "Sixto Zambrano"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-17",
+        "name": "San Francisco",
+        "parishes": [
+          {
+            "code": "VE-V-17-01",
+            "name": "San Francisco"
+          },
+          {
+            "code": "VE-V-17-02",
+            "name": "El Bajo"
+          },
+          {
+            "code": "VE-V-17-03",
+            "name": "Domitila Flores"
+          },
+          {
+            "code": "VE-V-17-04",
+            "name": "Francisco Ochoa"
+          },
+          {
+            "code": "VE-V-17-05",
+            "name": "Los Cortijos"
+          },
+          {
+            "code": "VE-V-17-06",
+            "name": "Marcial Hernández"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-18",
+        "name": "Santa Rita",
+        "parishes": [
+          {
+            "code": "VE-V-18-01",
+            "name": "Santa Rita"
+          },
+          {
+            "code": "VE-V-18-02",
+            "name": "El Mene"
+          },
+          {
+            "code": "VE-V-18-03",
+            "name": "Pedro Lucas Urribarrí"
+          },
+          {
+            "code": "VE-V-18-04",
+            "name": "José Cenobio Urribarrí"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-19",
+        "name": "Simón Bolívar",
+        "parishes": [
+          {
+            "code": "VE-V-19-01",
+            "name": "Rafael Maria Baralt"
+          },
+          {
+            "code": "VE-V-19-02",
+            "name": "Manuel Manrique"
+          },
+          {
+            "code": "VE-V-19-03",
+            "name": "Rafael Urdaneta"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-20",
+        "name": "Sucre",
+        "parishes": [
+          {
+            "code": "VE-V-20-01",
+            "name": "Bobures"
+          },
+          {
+            "code": "VE-V-20-02",
+            "name": "Gibraltar"
+          },
+          {
+            "code": "VE-V-20-03",
+            "name": "Heras"
+          },
+          {
+            "code": "VE-V-20-04",
+            "name": "Monseñor Arturo Álvarez"
+          },
+          {
+            "code": "VE-V-20-05",
+            "name": "Rómulo Gallegos"
+          },
+          {
+            "code": "VE-V-20-06",
+            "name": "El Batey"
+          }
+        ]
+      },
+      {
+        "code": "VE-V-21",
+        "name": "Valmore Rodríguez",
+        "parishes": [
+          {
+            "code": "VE-V-21-01",
+            "name": "Rafael Urdaneta"
+          },
+          {
+            "code": "VE-V-21-02",
+            "name": "La Victoria"
+          },
+          {
+            "code": "VE-V-21-03",
+            "name": "Raúl Cuenca"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-W",
+    "name": "La Guaira",
+    "capital": "La Guaira",
+    "municipalities": [
+      {
+        "code": "VE-W-01",
+        "name": "Vargas",
+        "parishes": [
+          {
+            "code": "VE-W-01-01",
+            "name": "Caraballeda"
+          },
+          {
+            "code": "VE-W-01-02",
+            "name": "Carayaca"
+          },
+          {
+            "code": "VE-W-01-03",
+            "name": "Carlos Soublette"
+          },
+          {
+            "code": "VE-W-01-04",
+            "name": "Caruao Chuspa"
+          },
+          {
+            "code": "VE-W-01-05",
+            "name": "Catia La Mar"
+          },
+          {
+            "code": "VE-W-01-06",
+            "name": "El Junko"
+          },
+          {
+            "code": "VE-W-01-07",
+            "name": "La Guaira"
+          },
+          {
+            "code": "VE-W-01-08",
+            "name": "Macuto"
+          },
+          {
+            "code": "VE-W-01-09",
+            "name": "Maiquetía"
+          },
+          {
+            "code": "VE-W-01-10",
+            "name": "Naiguatá"
+          },
+          {
+            "code": "VE-W-01-11",
+            "name": "Urimare"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-X",
+    "name": "Amazonas",
+    "capital": "Puerto Ayacucho",
+    "municipalities": [
+      {
+        "code": "VE-X-01",
+        "name": "Alto Orinoco",
+        "parishes": [
+          {
+            "code": "VE-X-01-01",
+            "name": "Alto Orinoco La Esmeralda"
+          },
+          {
+            "code": "VE-X-01-02",
+            "name": "Huachamacare Acanaña"
+          },
+          {
+            "code": "VE-X-01-03",
+            "name": "Marawaka Toky Shamanaña"
+          },
+          {
+            "code": "VE-X-01-04",
+            "name": "Mavaka Mavaka"
+          },
+          {
+            "code": "VE-X-01-05",
+            "name": "Sierra Parima Parimabé"
+          }
+        ]
+      },
+      {
+        "code": "VE-X-02",
+        "name": "Atabapo",
+        "parishes": [
+          {
+            "code": "VE-X-02-01",
+            "name": "Ucata Laja Lisa"
+          },
+          {
+            "code": "VE-X-02-02",
+            "name": "Yapacana Macuruco"
+          },
+          {
+            "code": "VE-X-02-03",
+            "name": "Caname Guarinuma"
+          }
+        ]
+      },
+      {
+        "code": "VE-X-03",
+        "name": "Atures",
+        "parishes": [
+          {
+            "code": "VE-X-03-01",
+            "name": "Fernando Girón Tovar"
+          },
+          {
+            "code": "VE-X-03-02",
+            "name": "Luis Alberto Gómez"
+          },
+          {
+            "code": "VE-X-03-03",
+            "name": "Pahueña Limón de Parhueña"
+          },
+          {
+            "code": "VE-X-03-04",
+            "name": "Platanillal Platanillal"
+          }
+        ]
+      },
+      {
+        "code": "VE-X-04",
+        "name": "Autana",
+        "parishes": [
+          {
+            "code": "VE-X-04-01",
+            "name": "Samariapo Samariapo"
+          },
+          {
+            "code": "VE-X-04-02",
+            "name": "Sipapo Pendare"
+          },
+          {
+            "code": "VE-X-04-03",
+            "name": "Munduapo Munduapo"
+          },
+          {
+            "code": "VE-X-04-04",
+            "name": "Guayapo San Pedro del Orinoco"
+          }
+        ]
+      },
+      {
+        "code": "VE-X-05",
+        "name": "Manapiare",
+        "parishes": [
+          {
+            "code": "VE-X-05-01",
+            "name": "Alto Ventuari Cacurí"
+          },
+          {
+            "code": "VE-X-05-02",
+            "name": "Medio Ventuari Manami"
+          },
+          {
+            "code": "VE-X-05-03",
+            "name": "Bajo Ventuari Marueta"
+          }
+        ]
+      },
+      {
+        "code": "VE-X-06",
+        "name": "Maroa",
+        "parishes": [
+          {
+            "code": "VE-X-06-01",
+            "name": "Victorino"
+          },
+          {
+            "code": "VE-X-06-02",
+            "name": "Comunidad"
+          }
+        ]
+      },
+      {
+        "code": "VE-X-07",
+        "name": "Río Negro",
+        "parishes": [
+          {
+            "code": "VE-X-07-01",
+            "name": "Casiquiare Curimacare"
+          },
+          {
+            "code": "VE-X-07-02",
+            "name": "Cocuy"
+          },
+          {
+            "code": "VE-X-07-03",
+            "name": "San Carlos de Río Negro"
+          },
+          {
+            "code": "VE-X-07-04",
+            "name": "Solano Solano"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "code": "VE-Y",
+    "name": "Delta Amacuro",
+    "capital": "Tucupita",
+    "municipalities": [
+      {
+        "code": "VE-Y-01",
+        "name": "Antonio Díaz",
+        "parishes": [
+          {
+            "code": "VE-Y-01-01",
+            "name": "Curiapo"
+          },
+          {
+            "code": "VE-Y-01-02",
+            "name": "Almirante Luis Brión"
+          },
+          {
+            "code": "VE-Y-01-03",
+            "name": "Francisco Aniceto Lugo Boca de Cuyubini"
+          },
+          {
+            "code": "VE-Y-01-04",
+            "name": "Manuel Renaud"
+          },
+          {
+            "code": "VE-Y-01-05",
+            "name": "Padre Barral"
+          },
+          {
+            "code": "VE-Y-01-06",
+            "name": "Santos de Abelgas"
+          }
+        ]
+      },
+      {
+        "code": "VE-Y-02",
+        "name": "Casacoima",
+        "parishes": [
+          {
+            "code": "VE-Y-02-01",
+            "name": "Imataca Moruca"
+          },
+          {
+            "code": "VE-Y-02-02",
+            "name": "Cinco de Julio Piacoa"
+          },
+          {
+            "code": "VE-Y-02-03",
+            "name": "Juan Bautista Arismendi"
+          },
+          {
+            "code": "VE-Y-02-04",
+            "name": "Manuel Piar Santa Catalina"
+          },
+          {
+            "code": "VE-Y-02-05",
+            "name": "Rómulo Gallegos"
+          }
+        ]
+      },
+      {
+        "code": "VE-Y-03",
+        "name": "Pedernales",
+        "parishes": [
+          {
+            "code": "VE-Y-03-01",
+            "name": "Pedernales"
+          },
+          {
+            "code": "VE-Y-03-02",
+            "name": "Luis Beltrán Prieto Figueroa"
+          }
+        ]
+      },
+      {
+        "code": "VE-Y-04",
+        "name": "Tucupita",
+        "parishes": [
+          {
+            "code": "VE-Y-04-01",
+            "name": "San José"
+          },
+          {
+            "code": "VE-Y-04-02",
+            "name": "José Vidal Marcano Caparal de Guara"
+          },
+          {
+            "code": "VE-Y-04-03",
+            "name": "Juan Millán"
+          },
+          {
+            "code": "VE-Y-04-04",
+            "name": "Leonardo Ruíz Pineda Paloma"
+          },
+          {
+            "code": "VE-Y-04-05",
+            "name": "Mariscal Antonio José de Sucre"
+          },
+          {
+            "code": "VE-Y-04-06",
+            "name": "Monseñor Argimiro García San Rafael"
+          },
+          {
+            "code": "VE-Y-04-07",
+            "name": "San Rafael"
+          },
+          {
+            "code": "VE-Y-04-08",
+            "name": "Virgen del Valle"
+          }
+        ]
+      }
+    ]
+  }
 ]

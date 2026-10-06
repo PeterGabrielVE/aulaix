@@ -23,10 +23,12 @@ export default defineConfig({
         },
         // Bind mounts from a Windows/macOS host don't propagate filesystem
         // events into the container, so Vite never sees edits (stale
-        // modules, no HMR). Poll instead.
+        // modules, no HMR). Poll instead — but skip the large trees that
+        // never hold frontend sources, or polling them pins a CPU core.
         watch: {
             usePolling: true,
             interval: 300,
+            ignored: ['**/vendor/**', '**/storage/**', '**/bootstrap/cache/**', '**/.git/**'],
         },
     },
     plugins: [

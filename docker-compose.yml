@@ -5,6 +5,12 @@ services:
             dockerfile: docker/php/Dockerfile
         volumes:
             - .:/var/www/html
+            # vendor/ (~10k files) lives in a Linux-native volume instead of
+            # the host bind mount: on Windows/macOS every file PHP reads
+            # through the bind mount is a slow cross-VM round trip, which
+            # made each request take seconds. docker-entrypoint.sh runs
+            # `composer install` into it when empty.
+            - aulaix_vendor:/var/www/html/vendor
         # No `environment:` block here on purpose: APP_ENV etc. come from the
         # mounted .env file. Setting APP_ENV as a real container env var would
         # pre-populate PHP's $_ENV/$_SERVER before phpunit.xml's <env> runs,
@@ -41,6 +47,8 @@ services:
             # Shadows the bind mount above so the container's own
             # (Linux-native) node_modules wins — see docker/node/Dockerfile.
             - aulaix_node_modules:/var/www/html/node_modules
+            # Same vendor/ the app container uses (app.js imports Ziggy from it).
+            - aulaix_vendor:/var/www/html/vendor:ro
         ports:
             - "${VITE_PORT:-5173}:5173"
         networks:
@@ -93,4 +101,6 @@ volumes:
     aulaix_pgdata:
         driver: local
     aulaix_node_modules:
+        driver: local
+    aulaix_vendor:
         driver: local

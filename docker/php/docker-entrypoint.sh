@@ -9,4 +9,9 @@ set -e
 # ability to log errors or compile views.
 chown -R www-data:www-data storage bootstrap/cache
 
+# vendor/ is a named volume (see docker-compose.yml), empty on first start.
+if [ ! -f vendor/autoload.php ]; then
+    composer install --no-interaction --prefer-dist
+fi
+
 exec "$@"

@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
         Blueprint::macro('belongsToInstitution', function (bool $index = true) {
             /** @var Blueprint $this */
             $column = $this->foreignId('institution_id')
-                ->default(DB::raw("nullif(current_setting('".RowLevelSecurity::SESSION_VARIABLE."', true), '')::bigint"));
+                ->default(DB::raw(RowLevelSecurity::CURRENT_INSTITUTION_SQL));
 
             if ($index) {
                 $column->index();

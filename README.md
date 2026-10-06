@@ -21,6 +21,10 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
   RLS) y `RowLevelSecurity::enable('tabla')` activa la política; en el modelo,
   `use BelongsToInstitution`. `tests/Feature/TenantTableTest.php` falla si
   alguna tabla con `institution_id` queda sin RLS.
+- **Sin institución, cero filas**: una conexión sin institución en la sesión
+  (dominio central, o tras `RowLevelSecurity::clearInstitution()`) no ve ni
+  puede escribir filas de ninguna tabla por institución. Las pruebas de
+  aislamiento se ejecutan aparte con `php artisan test --group=rls`.
 - **Resolución de tenant**: cada institución vive en
   `https://{subdomain}.{APP_DOMAIN}`. `App\Http\Middleware\ResolveTenant`
   resuelve el subdominio (capturado como parámetro de ruta `{tenant}` en

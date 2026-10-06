@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Schema;
  * RowLevelSecurity::enable() — and a guard that no tenant-scoped table
  * ships without its RLS policy.
  */
+pest()->group('rls');
 
 /**
  * Tables that have an institution_id column but deliberately no RLS policy.
@@ -82,5 +83,23 @@ test('every table with an institution_id column enforces Row Level Security', fu
     foreach ($tables as $table) {
         expect([$table->enabled, $table->forced, $table->has_policy])
             ->toBe([true, true, true], "La tabla {$table->name} tiene institution_id pero no RLS forzada. Usa RowLevelSecurity::enable('{$table->name}') en su migración.");
+    }
+});
+
+test('every tenant isolation policy uses the same rule as RowLevelSecurity::enable()', function () {
+    createProbeTable();
+
+    $policies = collect(DB::select("select tablename, qual, with_check from pg_policies where policyname = 'tenant_isolation'"))
+        ->keyBy('tablename');
+    $expected = $policies->pull('tenant_probes');
+
+    expect($policies)->not->toBeEmpty();
+
+    // Postgres stores the parsed expression, so the same rule always reads
+    // back as the same text. A hand-written policy that differs (e.g. the
+    // old one without nullif(), which failed on an empty tenant) fails here.
+    foreach ($policies as $table => $policy) {
+        expect([$policy->qual, $policy->with_check])
+            ->toBe([$expected->qual, $expected->with_check], "La política de {$table} no coincide con RowLevelSecurity::enable().");
     }
 });

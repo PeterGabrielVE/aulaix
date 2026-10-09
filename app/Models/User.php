@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Concerns\BelongsToInstitution;
 use App\Enums\UserStatus;
+use App\Notifications\ResetPasswordLink;
 use App\Notifications\UserInvitation;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -59,6 +60,15 @@ class User extends Authenticatable
     public function sendInvitation(): void
     {
         $this->notify(new UserInvitation(Password::broker('invitations')->createToken($this)));
+    }
+
+    /**
+     * Email a "forgot your password?" link, valid for
+     * auth.passwords.users.expire minutes (Password::sendResetLink calls this).
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPasswordLink($token));
     }
 
     public function hasAcceptedInvitation(): bool

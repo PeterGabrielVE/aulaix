@@ -126,6 +126,11 @@ verifica todo esto con `tusistema.com` como dominio.
   cuentas (menú *Usuarios*), les asigna un rol y el sistema les envía una
   invitación por correo para que elijan su contraseña (el enlace vence en 7
   días; se puede reenviar). En desarrollo los correos llegan a Mailhog.
+- **Recuperación de contraseña.** *¿Olvidaste tu contraseña?* envía un
+  enlace por correo, válido 60 minutos y de un solo uso
+  (`auth.passwords.users.expire`). La respuesta es la misma exista o no la
+  cuenta (no revela qué correos están registrados); se envía como máximo un
+  enlace por minuto por cuenta y el formulario admite 6 envíos por minuto.
 - **Usuarios activos/inactivos.** Un usuario inactivo no puede iniciar
   sesión, y si ya tenía sesión abierta se cierra en su siguiente petición.
   Un administrador no puede desactivarse ni quitarse el rol a sí mismo.

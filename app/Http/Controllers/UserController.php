@@ -12,7 +12,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Administrator-only user management. There is no public registration:
+ * User management for roles with gestionar-usuarios (Administrador,
+ * Director). There is no public registration:
  * every account is created here and activated through an emailed
  * invitation (App\Notifications\UserInvitation).
  *
@@ -59,7 +60,7 @@ class UserController extends Controller
             'status' => UserStatus::Active,
         ]);
 
-        $user->syncRoles([$request->role]);
+        $user->syncRoles($request->roles);
         $user->sendInvitation();
 
         return redirect()->route('users.index')
@@ -84,7 +85,7 @@ class UserController extends Controller
         }
 
         $user->save();
-        $user->syncRoles([$request->role]);
+        $user->syncRoles($request->roles);
 
         return redirect()->route('users.index')
             ->with('success', "Se actualizó a {$user->name}.");
@@ -109,7 +110,11 @@ class UserController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'status' => $user->status->value,
-            'role' => $user->roles->first()?->name,
+            // In the same priority order as User::HOME_ROUTES.
+            'roles' => array_values(array_intersect(
+                array_keys(User::HOME_ROUTES),
+                $user->roles->pluck('name')->all(),
+            )),
             'invitation_pending' => ! $user->hasAcceptedInvitation(),
         ];
     }

@@ -29,6 +29,8 @@ class User extends Authenticatable
      */
     public const HOME_ROUTES = [
         'Administrador' => 'admin.home',
+        'Director' => 'director.home',
+        'Coordinador' => 'coordinator.home',
         'Docente' => 'teacher.home',
         'Representante' => 'guardian.home',
         'Estudiante' => 'student.home',

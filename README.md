@@ -89,6 +89,8 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
    | Rol           | Colegio Demo Uno                  | Colegio Demo Dos                   |
    |---------------|-----------------------------------|------------------------------------|
    | Administrador | `admin@demo.aulaix.test`          | `admin@demo2.aulaix.test`          |
+   | Director      | `director@demo.aulaix.test`       | `director@demo2.aulaix.test`       |
+   | Coordinador   | `coordinador@demo.aulaix.test`    | `coordinador@demo2.aulaix.test`    |
    | Docente       | `docente@demo.aulaix.test`        | `docente@demo2.aulaix.test`        |
    | Representante | `representante@demo.aulaix.test`  | `representante@demo2.aulaix.test`  |
    | Estudiante    | `estudiante@demo.aulaix.test`     | `estudiante@demo2.aulaix.test`     |
@@ -134,6 +136,22 @@ verifica todo esto con `tusistema.com` como dominio.
 - **Usuarios activos/inactivos.** Un usuario inactivo no puede iniciar
   sesión, y si ya tenía sesión abierta se cierra en su siguiente petición.
   Un administrador no puede desactivarse ni quitarse el rol a sí mismo.
+- **Roles base** (`RolePermissionSeeder`), creados en cada institución:
+
+  | Rol           | Permisos                                                       |
+  |---------------|----------------------------------------------------------------|
+  | Administrador | todos (incluye `gestionar-roles`)                              |
+  | Director      | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones`  |
+  | Coordinador   | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
+  | Docente       | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
+  | Representante | `ver-calificaciones`                                           |
+  | Estudiante    | `ver-calificaciones`                                           |
+
+  Un usuario puede tener varios roles en su plantel (p. ej. Docente y
+  Representante). Como cada plantel tiene sus propias cuentas, el mismo
+  correo puede ser Docente en uno y Representante en otro. Solo un
+  Administrador puede asignar o quitar el rol de Administrador, y nadie
+  puede quitarse a sí mismo ese rol ni el acceso a la gestión de usuarios.
 - **Redirección por rol.** `/dashboard` redirige a la pantalla de inicio del
   rol (`User::HOME_ROUTES`); con varios roles gana el de mayor prioridad.
 - **Aislamiento.** Los tokens de restablecimiento/invitación

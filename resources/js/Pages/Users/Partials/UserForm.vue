@@ -4,10 +4,11 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 // Fields shared by Users/Create and Users/Edit. `form` is the parent's
 // useForm() instance; status is only editable once the user exists.
-defineProps({
+const props = defineProps({
     form: {
         type: Object,
         required: true,
@@ -27,6 +28,15 @@ defineProps({
 });
 
 defineEmits(['submit']);
+
+// Errors on the list itself ("roles") or on one entry ("roles.1").
+const rolesError = computed(
+    () =>
+        props.form.errors.roles ??
+        Object.entries(props.form.errors).find(([key]) =>
+            key.startsWith('roles.'),
+        )?.[1],
+);
 
 const selectClass =
     'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
@@ -61,16 +71,28 @@ const selectClass =
             <InputError class="mt-2" :message="form.errors.email" />
         </div>
 
-        <div>
-            <InputLabel for="role" value="Rol" />
-            <select id="role" v-model="form.role" :class="selectClass" required>
-                <option value="" disabled>Selecciona un rol</option>
-                <option v-for="role in roles" :key="role" :value="role">
+        <fieldset>
+            <legend class="block text-sm font-medium text-gray-700">Roles</legend>
+            <p class="mt-1 text-sm text-gray-500">
+                Puedes marcar varios, p. ej. Docente y Representante.
+            </p>
+            <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <label
+                    v-for="role in roles"
+                    :key="role"
+                    class="flex items-center gap-2 text-sm text-gray-700"
+                >
+                    <input
+                        v-model="form.roles"
+                        type="checkbox"
+                        :value="role"
+                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                    />
                     {{ role }}
-                </option>
-            </select>
-            <InputError class="mt-2" :message="form.errors.role" />
-        </div>
+                </label>
+            </div>
+            <InputError class="mt-2" :message="rolesError" />
+        </fieldset>
 
         <div v-if="showStatus">
             <InputLabel for="status" value="Estado" />

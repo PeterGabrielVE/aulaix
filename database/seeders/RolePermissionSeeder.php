@@ -25,8 +25,15 @@ class RolePermissionSeeder
         'ver-calificaciones',
     ];
 
+    /**
+     * The six base roles. Director runs the school (users, oversight) but
+     * not the role/permission setup, which stays with the Administrador;
+     * Coordinador handles the academic side of every section.
+     */
     private const ROLES = [
         'Administrador' => self::PERMISSIONS,
+        'Director' => ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones'],
+        'Coordinador' => ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones'],
         'Docente' => ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones'],
         'Representante' => ['ver-calificaciones'],
         'Estudiante' => ['ver-calificaciones'],

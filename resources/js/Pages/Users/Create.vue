@@ -13,7 +13,7 @@ defineProps({
 const form = useForm({
     name: '',
     email: '',
-    role: '',
+    roles: [],
 });
 
 const submit = () => {

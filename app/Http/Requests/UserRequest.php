@@ -34,16 +34,43 @@ class UserRequest extends FormRequest
                     ->where('institution_id', app(CurrentTenant::class)->id())
                     ->ignore($editedUser),
             ],
-            'role' => [
-                'required', 'string', Rule::in(self::assignableRoles()),
-                // An administrator demoting themselves could leave the
-                // institution with nobody able to manage users.
+            // A user may hold several roles in the same institution (e.g.
+            // Docente and Representante); each institution's account is
+            // separate, so roles never carry over to another one.
+            'roles' => [
+                'required', 'array', 'min:1',
+                // Someone removing their own access could leave the
+                // institution with nobody able to manage users, or (since
+                // only an Administrador can grant that role) with no
+                // Administrador ever again.
                 function (string $attribute, mixed $value, Closure $fail) use ($editingSelf) {
-                    if ($editingSelf && $value !== 'Administrador') {
+                    if (! $editingSelf) {
+                        return;
+                    }
+
+                    if ($this->user()->hasRole('Administrador') && ! in_array('Administrador', (array) $value, true)) {
                         $fail('No puedes quitarte a ti mismo el rol de Administrador.');
+                    } elseif (! self::grantsUserManagement((array) $value)) {
+                        $fail('No puedes quitarte a ti mismo la gestión de usuarios.');
+                    }
+                },
+                // Director also manages users, but must not be able to make
+                // anyone (themselves included) an Administrador, or take the
+                // role away from one.
+                function (string $attribute, mixed $value, Closure $fail) use ($editedUser) {
+                    if ($this->user()->hasRole('Administrador')) {
+                        return;
+                    }
+
+                    $wantsAdministrador = in_array('Administrador', (array) $value, true);
+                    $isAdministrador = (bool) $editedUser?->hasRole('Administrador');
+
+                    if ($wantsAdministrador !== $isAdministrador) {
+                        $fail('Solo un Administrador puede asignar o quitar el rol de Administrador.');
                     }
                 },
             ],
+            'roles.*' => ['required', 'string', 'distinct', Rule::in(self::assignableRoles())],
             'status' => [
                 Rule::requiredIf($editedUser !== null),
                 Rule::enum(UserStatus::class),
@@ -70,5 +97,20 @@ class UserRequest extends FormRequest
             ->all();
 
         return array_values(array_intersect(array_keys(User::HOME_ROUTES), $existing));
+    }
+
+    /**
+     * Whether any of the given roles of the current institution carries the
+     * permission to manage users.
+     *
+     * @param  array<int, mixed>  $roleNames
+     */
+    private static function grantsUserManagement(array $roleNames): bool
+    {
+        return Role::query()
+            ->where(config('permission.column_names.team_foreign_key'), app(CurrentTenant::class)->id())
+            ->whereIn('name', array_filter($roleNames, 'is_string'))
+            ->whereRelation('permissions', 'name', 'gestionar-usuarios')
+            ->exists();
     }
 }

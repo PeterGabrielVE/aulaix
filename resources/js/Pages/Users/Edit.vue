@@ -19,7 +19,7 @@ const props = defineProps({
 const form = useForm({
     name: props.user.name,
     email: props.user.email,
-    role: props.user.role ?? '',
+    roles: [...props.user.roles],
     status: props.user.status,
 });
 
@@ -50,7 +50,8 @@ const resendInvitation = () => {
                     <div class="max-w-xl">
                         <p v-if="isSelf" class="mb-6 text-sm text-gray-600">
                             Estás editando tu propia cuenta: no puedes
-                            desactivarla ni quitarte el rol de Administrador.
+                            desactivarla, quitarte el rol de Administrador ni
+                            quedarte sin acceso a la gestión de usuarios.
                         </p>
 
                         <UserForm

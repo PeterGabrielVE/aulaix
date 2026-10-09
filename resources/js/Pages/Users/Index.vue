@@ -63,7 +63,7 @@ watch(search, (value) => {
                         <thead class="bg-gray-50 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                             <tr>
                                 <th scope="col" class="px-6 py-3">Nombre</th>
-                                <th scope="col" class="px-6 py-3">Rol</th>
+                                <th scope="col" class="px-6 py-3">Roles</th>
                                 <th scope="col" class="px-6 py-3">Estado</th>
                                 <th scope="col" class="px-6 py-3"><span class="sr-only">Acciones</span></th>
                             </tr>
@@ -75,7 +75,7 @@ watch(search, (value) => {
                                     <span class="block text-gray-500">{{ user.email }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-gray-700">
-                                    {{ user.role ?? 'Sin rol' }}
+                                    {{ user.roles.length ? user.roles.join(', ') : 'Sin rol' }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex flex-wrap gap-1">

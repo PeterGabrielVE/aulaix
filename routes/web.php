@@ -51,6 +51,10 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
 
         Route::get('/admin', [HomeController::class, 'admin'])
             ->middleware('role:Administrador')->name('admin.home');
+        Route::get('/director', [HomeController::class, 'director'])
+            ->middleware('role:Director')->name('director.home');
+        Route::get('/coordinator', [HomeController::class, 'coordinator'])
+            ->middleware('role:Coordinador')->name('coordinator.home');
         Route::get('/teacher', [HomeController::class, 'teacher'])
             ->middleware('role:Docente')->name('teacher.home');
         Route::get('/guardian', [HomeController::class, 'guardian'])

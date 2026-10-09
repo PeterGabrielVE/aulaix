@@ -45,6 +45,8 @@ class InstitutionSeeder extends Seeder
      */
     private const DEMO_USERS = [
         'admin' => 'Administrador',
+        'director' => 'Director',
+        'coordinador' => 'Coordinador',
         'docente' => 'Docente',
         'representante' => 'Representante',
         'estudiante' => 'Estudiante',

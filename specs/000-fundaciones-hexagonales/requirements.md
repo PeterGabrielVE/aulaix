@@ -114,8 +114,10 @@ sin detalles internos.
 spec → test no se rompa en silencio.
 
 - **FND-R06.1** — Si una carpeta de `specs/NNN-*` no contiene
-  `requirements.md`, `design.md` y `tasks.md` con frontmatter `estado`
-  válido, entonces la suite de tests deberá fallar.
+  `requirements.md`, o si alguno de sus archivos (`requirements.md`,
+  `design.md`, `tasks.md`) no tiene un frontmatter `estado` válido, entonces
+  la suite de tests deberá fallar. `design.md` exige que `requirements.md`
+  esté `aprobada`, y `tasks.md` exige lo mismo de `design.md`.
 - **FND-R06.2** — Si dos criterios de aceptación comparten ID, entonces la
   suite de tests deberá fallar.
 - **FND-R06.3** — Si la matriz de trazabilidad referencia un archivo de test

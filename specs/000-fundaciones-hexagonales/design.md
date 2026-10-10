@@ -127,7 +127,9 @@ FND-R02.6 se activa por módulo con una lista explícita
 
 `tests/Architecture/SpecsTest.php` lee `specs/NNN-*/`:
 
-1. Comprueba que existen los tres archivos y que su `estado` es válido.
+1. Comprueba que existe `requirements.md`, que todo archivo presente tiene un
+   `estado` válido, y que cada fase solo existe si la anterior está
+   `aprobada` (o en un estado posterior).
 2. Extrae los IDs de criterios (`/\*\*([A-Z]{3}-R\d{2}\.\d+)\*\*/`) y exige
    que sean únicos.
 3. Por cada fila de la matriz, comprueba que el archivo existe y que define

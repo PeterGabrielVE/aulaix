@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Enums;
+declare(strict_types=1);
+
+namespace AulaX\Catalogs\Domain;
 
 /**
  * Levels of the Venezuelan school system (Subsistema de Educación Básica)

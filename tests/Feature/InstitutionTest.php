@@ -2,7 +2,7 @@
 
 use App\Enums\InstitutionStatus;
 use App\Models\Institution;
-use App\Models\Parish;
+use AulaX\Catalogs\Infrastructure\Persistence\ParishModel as Parish;
 use Database\Seeders\GeographicCatalogSeeder;
 use Illuminate\Database\QueryException;
 

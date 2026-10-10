@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\InstitutionStatus;
+use AulaX\Catalogs\Infrastructure\Persistence\ParishModel;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -79,6 +80,6 @@ class Institution extends Model
 
     public function parish(): BelongsTo
     {
-        return $this->belongsTo(Parish::class);
+        return $this->belongsTo(ParishModel::class);
     }
 }

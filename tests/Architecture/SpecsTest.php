@@ -99,8 +99,17 @@ test('every spec has requirements and valid states in its documents', function (
     }
 })->with(specDirectories());
 
-test('a spec document is never further along than the previous phase')
-    ->todo('Pending a decision on SPEC-000 FND-R06.1 (see tasks.md T-09).');
+test('a spec phase is not approved while the previous phase is still a draft', function (string $spec) {
+    $states = collect(['requirements', 'design', 'tasks'])
+        ->mapWithKeys(fn (string $document) => [$document => is_file($file = specsPath("{$spec}/{$document}.md")) ? specState($file) : null]);
+
+    foreach (['design' => 'requirements', 'tasks' => 'design'] as $document => $previous) {
+        $isApprovedOrBeyond = ! in_array($states[$document], [null, 'borrador', 'obsoleta'], true);
+
+        expect($isApprovedOrBeyond && $states[$previous] === 'borrador')
+            ->toBeFalse("{$spec}/{$document}.md is '{$states[$document]}' while {$previous}.md is still a draft.");
+    }
+})->with(specDirectories());
 
 test('criterion IDs are unique across all specs', function () {
     $criteria = collect(specDirectories())->keys()->flatMap(fn (string $spec) => criteriaOf($spec));

@@ -1,7 +1,7 @@
 ---
 spec: 000-fundaciones-hexagonales
 prefijo: FND
-estado: aprobada
+estado: implementada
 fecha: 2026-10-10
 ---
 
@@ -118,8 +118,10 @@ spec → test no se rompa en silencio.
 - **FND-R06.1** — Si una carpeta de `specs/NNN-*` no contiene
   `requirements.md`, o si alguno de sus archivos (`requirements.md`,
   `design.md`, `tasks.md`) no tiene un frontmatter `estado` válido, entonces
-  la suite de tests deberá fallar. `design.md` exige que `requirements.md`
-  esté `aprobada`, y `tasks.md` exige lo mismo de `design.md`.
+  la suite de tests deberá fallar. Si `design.md` está `aprobada` o más
+  avanzado mientras `requirements.md` sigue en `borrador`, o `tasks.md` lo está
+  mientras `design.md` sigue en `borrador`, entonces la suite de tests deberá
+  fallar. Los tres documentos pueden estar en `borrador` a la vez.
 - **FND-R06.2** — Si dos criterios de aceptación comparten ID, entonces la
   suite de tests deberá fallar.
 - **FND-R06.3** — Si la matriz de trazabilidad referencia un archivo de test
@@ -177,7 +179,7 @@ real y sin riesgo antes de migrar los módulos con reglas.
 | FND-R05.3 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «returns 404 when the domain does not find the resource» |
 | FND-R05.4 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «returns 409 with its message when the action conflicts with the current state» |
 | FND-R05.5 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «does not reveal the message of an unexpected error outside debug mode» |
-| FND-R06.1 | `tests/Architecture/SpecsTest.php` › «every spec has requirements and valid states in its documents» (la regla de orden entre fases está pendiente, ver `tasks.md` T-09) |
+| FND-R06.1 | `tests/Architecture/SpecsTest.php` › «every spec has requirements and valid states in its documents»; `tests/Architecture/SpecsTest.php` › «a spec phase is not approved while the previous phase is still a draft» |
 | FND-R06.2 | `tests/Architecture/SpecsTest.php` › «criterion IDs are unique across all specs» |
 | FND-R06.3 | `tests/Architecture/SpecsTest.php` › «the traceability matrix only points at tests that exist» |
 | FND-R06.4 | `tests/Architecture/SpecsTest.php` › «an implemented spec traces every acceptance criterion to a test» |

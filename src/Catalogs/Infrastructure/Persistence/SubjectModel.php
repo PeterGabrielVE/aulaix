@@ -1,12 +1,19 @@
 <?php
 
-namespace App\Models;
+declare(strict_types=1);
 
-use App\Enums\EducationLevel;
+namespace AulaX\Catalogs\Infrastructure\Persistence;
+
+use AulaX\Catalogs\Domain\EducationLevel;
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+/**
+ * The table is explicit: see StateModel.
+ */
+final class SubjectModel extends Model
 {
+    protected $table = 'subjects';
+
     protected $fillable = ['name', 'code', 'education_level'];
 
     /**

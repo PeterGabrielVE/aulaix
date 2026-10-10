@@ -80,12 +80,12 @@ estudios. Esta spec documenta el comportamiento **ya implementado**.
 
 | Criterio | Test(s) |
 |----------|---------|
-| CAT-R01.1 | `tests/Feature/GlobalCatalogsTest.php` › «the geographic catalog covers all of Venezuela» |
+| CAT-R01.1 | `tests/Feature/GlobalCatalogsTest.php` › «the geographic catalog covers all of Venezuela»; `tests/Feature/Catalogs/Infrastructure/Source/JsonGeographySourceTest.php` › «reads the bundled file as a valid catalog of all of Venezuela»; `tests/Unit/Catalogs/Domain/Geography/GeographicCatalogTest.php` › «rejects a state without municipalities» |
 | CAT-R01.2 | `tests/Feature/GlobalCatalogsTest.php` › «states use their ISO 3166-2 code and current name» |
 | CAT-R01.3 | `tests/Feature/GlobalCatalogsTest.php` › «a state exposes its municipalities and parishes» |
-| CAT-R02.1 | `tests/Feature/GlobalCatalogsTest.php` › «the subjects catalog follows the current MPPE curriculum» |
+| CAT-R02.1 | `tests/Feature/GlobalCatalogsTest.php` › «the subjects catalog follows the current MPPE curriculum»; `tests/Unit/Catalogs/Domain/Subject/SubjectCatalogTest.php` › «rejects a catalog that leaves an education level without subjects» |
 | CAT-R03.1 | `tests/Feature/GlobalCatalogsTest.php` › «seeding the catalogs again changes nothing» |
-| CAT-R03.2 | `tests/Feature/GlobalCatalogsTest.php` › «the placeholder catalog of the first version is replaced, keeping institutions» |
+| CAT-R03.2 | `tests/Feature/GlobalCatalogsTest.php` › «the placeholder catalog of the first version is replaced, keeping institutions»; `tests/Unit/Catalogs/Application/SyncGeographyHandlerTest.php` › «drops the provisional catalog and then upserts the reference one, inside one transaction» |
 | CAT-R03.3 | `tests/Feature/GlobalCatalogsTest.php` › «subjects dropped from the curriculum are removed when re-seeding» |
 | CAT-R04.1 | `tests/Feature/GlobalCatalogsTest.php` › «the catalogs are the same from any institution and with no institution at all» |
 | CAT-R04.2 | `tests/Feature/GlobalCatalogsTest.php` › «catalog tables are not tenant-scoped» |

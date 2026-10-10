@@ -1,6 +1,6 @@
 ---
 spec: 000-fundaciones-hexagonales
-estado: implementando
+estado: implementada
 fecha: 2026-10-10
 diseño: design.md
 ---
@@ -52,7 +52,7 @@ diseño: design.md
 - [x] **T-08** — Mapeo de excepciones de dominio en `bootstrap/app.php` (`Exceptions::map`).
   - Criterios: FND-R05.1 – FND-R05.5
   - Test: `tests/Feature/Shared/DomainExceptionRenderingTest.php`
-- [ ] **T-09** — `tests/Architecture/SpecsTest.php`. **Parcial.**
+- [x] **T-09** — `tests/Architecture/SpecsTest.php`.
   - Criterios: FND-R06.1 – FND-R06.4
   - Hecho: existencia y estados válidos, IDs únicos, matriz que apunta a tests
     existentes (`test`, `it` y `arch`), trazabilidad completa en specs
@@ -60,11 +60,9 @@ diseño: design.md
     un criterio sin trazar.
   - Hecho: test de IAM-R02.8 (bloqueo tras 5 intentos fallidos) en
     `tests/Feature/Auth/AuthenticationTest.php` y en la matriz de SPEC-002.
-  - **Pendiente de decisión (P-04):** la regla de orden entre fases de
-    FND-R06.1 («`tasks.md` exige `design.md` aprobado») haría fallar las specs
-    001 – 003, que tienen sus tres documentos en borrador. Propuesta: sustituirla
-    por «un documento no puede tener un estado más avanzado que el de la fase
-    anterior». Hasta que se decida, queda como `todo` en el test.
+  - Regla de orden entre fases (decidida el 2026-10-10): un documento no puede
+    estar aprobado o más avanzado mientras la fase anterior sigue en borrador.
+    Verificada en rojo poniendo `001-tenancy/tasks.md` en `aprobada`.
 
 ## Fase 4 — Piloto
 
@@ -84,4 +82,4 @@ diseño: design.md
 - [x] Suite `Architecture` en verde.
 - [x] Pint sin cambios pendientes.
 - [x] Matriz de trazabilidad completa en `requirements.md`.
-- [ ] `estado: implementada` en los tres archivos (tras decidir T-09).
+- [x] `estado: implementada` en los tres archivos.

@@ -1,12 +1,12 @@
 <?php
 
-use App\Enums\EducationLevel;
 use App\Models\Institution;
-use App\Models\Municipality;
-use App\Models\Parish;
-use App\Models\State;
-use App\Models\Subject;
 use App\Support\RowLevelSecurity;
+use AulaX\Catalogs\Domain\EducationLevel;
+use AulaX\Catalogs\Infrastructure\Persistence\MunicipalityModel as Municipality;
+use AulaX\Catalogs\Infrastructure\Persistence\ParishModel as Parish;
+use AulaX\Catalogs\Infrastructure\Persistence\StateModel as State;
+use AulaX\Catalogs\Infrastructure\Persistence\SubjectModel as Subject;
 use Database\Seeders\CatalogSeeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

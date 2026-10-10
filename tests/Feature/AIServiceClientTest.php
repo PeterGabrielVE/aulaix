@@ -1,6 +1,7 @@
 <?php
 
 use App\Contracts\AIServiceClient;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -19,7 +20,7 @@ test('health returns the decoded payload when the AI service responds', function
 });
 
 test('health returns null when the AI service is unreachable', function () {
-    Http::fake(fn () => throw new \Illuminate\Http\Client\ConnectionException('connection refused'));
+    Http::fake(fn () => throw new ConnectionException('connection refused'));
 
     $result = app(AIServiceClient::class)->health();
 

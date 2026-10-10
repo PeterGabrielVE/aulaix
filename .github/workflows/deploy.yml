@@ -1,0 +1,79 @@
+name: Deploy
+
+# Called by CD, and runnable by hand for rollbacks: pick the environment and
+# any image tag that already exists in GHCR (sha-<commit> or vX.Y.Z).
+on:
+    workflow_call:
+        inputs:
+            environment:
+                type: string
+                required: true
+            image_tag:
+                type: string
+                required: true
+    workflow_dispatch:
+        inputs:
+            environment:
+                type: choice
+                options: [staging, production]
+                required: true
+            image_tag:
+                description: Existing image tag (sha-<commit> or vX.Y.Z)
+                type: string
+                required: true
+
+permissions:
+    contents: read
+    packages: read
+
+jobs:
+    deploy:
+        name: Deploy ${{ inputs.image_tag }} to ${{ inputs.environment }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 15
+        # Environment-scoped secrets (SSH_*) and protection rules (e.g.
+        # required reviewers on production) are configured in GitHub.
+        environment:
+            name: ${{ inputs.environment }}
+            url: ${{ vars.APP_URL }}
+        concurrency:
+            group: deploy-${{ inputs.environment }}
+            cancel-in-progress: false
+        env:
+            SSH_TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+            APP_DIR: ${{ vars.APP_DIR || '/opt/aulaix' }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  sparse-checkout: |
+                      docker-compose.prod.yml
+                      docker/deploy
+
+            - name: Configure SSH
+              env:
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+              run: |
+                  install -m 700 -d ~/.ssh
+                  printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+                  chmod 600 ~/.ssh/id_ed25519
+                  printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+            - name: Upload compose file and deploy script
+              run: scp docker-compose.prod.yml docker/deploy/deploy.sh "$SSH_TARGET:$APP_DIR/"
+
+            # The job's short-lived GITHUB_TOKEN (packages: read) lets the
+            # server pull from GHCR without storing a long-lived credential.
+            - name: Log the server in to GHCR
+              env:
+                  GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: ssh "$SSH_TARGET" "docker login ghcr.io -u '${{ github.actor }}' --password-stdin" <<< "$GHCR_TOKEN"
+
+            - name: Deploy
+              run: |
+                  ssh "$SSH_TARGET" \
+                      "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY,,} APP_DIR='$APP_DIR' bash '$APP_DIR/deploy.sh' '${{ inputs.image_tag }}'"
+
+            - name: Log the server out of GHCR
+              if: always()
+              run: ssh "$SSH_TARGET" "docker logout ghcr.io" || true

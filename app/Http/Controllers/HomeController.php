@@ -28,6 +28,16 @@ class HomeController extends Controller
         return Inertia::render('Home/Admin');
     }
 
+    public function director(): Response
+    {
+        return Inertia::render('Home/Director');
+    }
+
+    public function coordinator(): Response
+    {
+        return Inertia::render('Home/Coordinator');
+    }
+
     public function teacher(): Response
     {
         return Inertia::render('Home/Teacher');

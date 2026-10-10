@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Concerns\BelongsToInstitution;
+use App\Enums\UserStatus;
+use App\Notifications\ResetPasswordLink;
 use App\Notifications\UserInvitation;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -21,16 +23,14 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use BelongsToInstitution, HasFactory, HasRoles, Notifiable;
 
-    public const STATUS_ACTIVE = 'active';
-
-    public const STATUS_INACTIVE = 'inactive';
-
     /**
      * Each role's landing page after login, in priority order: a user
      * holding several roles lands on the first one that matches.
      */
     public const HOME_ROUTES = [
         'Administrador' => 'admin.home',
+        'Director' => 'director.home',
+        'Coordinador' => 'coordinator.home',
         'Docente' => 'teacher.home',
         'Representante' => 'guardian.home',
         'Estudiante' => 'student.home',
@@ -46,12 +46,13 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'status' => UserStatus::class,
         ];
     }
 
     public function isActive(): bool
     {
-        return $this->status === self::STATUS_ACTIVE;
+        return $this->status === UserStatus::Active;
     }
 
     /**
@@ -61,6 +62,15 @@ class User extends Authenticatable
     public function sendInvitation(): void
     {
         $this->notify(new UserInvitation(Password::broker('invitations')->createToken($this)));
+    }
+
+    /**
+     * Email a "forgot your password?" link, valid for
+     * auth.passwords.users.expire minutes (Password::sendResetLink calls this).
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPasswordLink($token));
     }
 
     public function hasAcceptedInvitation(): bool

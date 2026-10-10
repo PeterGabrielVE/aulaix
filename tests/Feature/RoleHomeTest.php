@@ -4,6 +4,8 @@ use App\Models\User;
 
 dataset('role homes', [
     'Administrador' => ['Administrador', 'admin.home', '/admin', 'Home/Admin'],
+    'Director' => ['Director', 'director.home', '/director', 'Home/Director'],
+    'Coordinador' => ['Coordinador', 'coordinator.home', '/coordinator', 'Home/Coordinator'],
     'Docente' => ['Docente', 'teacher.home', '/teacher', 'Home/Teacher'],
     'Representante' => ['Representante', 'guardian.home', '/guardian', 'Home/Guardian'],
     'Estudiante' => ['Estudiante', 'student.home', '/student', 'Home/Student'],
@@ -34,6 +36,15 @@ test('a user with several roles lands on the highest-priority one', function () 
         ->assertRedirect(route('teacher.home'));
 });
 
+test('a director who also teaches lands on the director home', function () {
+    $institution = tenant();
+    $user = userWithRole($institution, 'Docente');
+    $user->assignRole('Director');
+
+    $this->actingAs($user)->get(tenantUrl($institution, '/dashboard'))
+        ->assertRedirect(route('director.home'));
+});
+
 test('a user without a role sees a notice instead of a home screen', function () {
     $institution = tenant();
     $user = User::factory()->for($institution)->create();
@@ -49,4 +60,6 @@ test("a role can not open another role's home screen", function () {
 
     $this->actingAs($student)->get(tenantUrl($institution, '/admin'))->assertForbidden();
     $this->actingAs($student)->get(tenantUrl($institution, '/teacher'))->assertForbidden();
+    $this->actingAs($student)->get(tenantUrl($institution, '/director'))->assertForbidden();
+    $this->actingAs($student)->get(tenantUrl($institution, '/coordinator'))->assertForbidden();
 });

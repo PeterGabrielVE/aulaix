@@ -17,7 +17,7 @@ class InstitutionController extends Controller
         $query = trim((string) $request->query('q', ''));
 
         $institutions = Institution::query()
-            ->where('status', 'active')
+            ->active()
             ->when($query !== '', fn ($builder) => $builder->where('name', 'ilike', "%{$query}%"))
             ->orderBy('name')
             ->limit(10)

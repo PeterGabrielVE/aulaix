@@ -1,6 +1,13 @@
 <?php
 
+use App\Models\Institution;
+use App\Models\User;
+use App\Support\CurrentTenant;
+use App\Support\RowLevelSecurity;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\RouteCollection;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 /*
@@ -49,7 +56,7 @@ expect()->extend('toBeOne', function () {
 | Multi-tenancy helpers
 |--------------------------------------------------------------------------
 |
-| Every tenant-scoped table (currently just `users`) has PostgreSQL Row
+| Every tenant-scoped table (`users`, `password_reset_tokens`, ...) has PostgreSQL Row
 | Level Security FORCE-enabled (F1-02), so inserting into it requires the
 | same `app.current_institution_id` session variable that
 | App\Http\Middleware\ResolveTenant sets on every real request. These
@@ -57,22 +64,19 @@ expect()->extend('toBeOne', function () {
 | factories, before any HTTP request has run the middleware.
 */
 
-function tenant(array $attributes = []): \App\Models\Institution
+function tenant(array $attributes = []): Institution
 {
-    $institution = \App\Models\Institution::factory()->create($attributes);
+    $institution = Institution::factory()->create($attributes);
 
-    \Illuminate\Support\Facades\DB::statement(
-        "select set_config('app.current_institution_id', ?, false)",
-        [(string) $institution->id]
-    );
+    RowLevelSecurity::setInstitution($institution->id);
 
-    app(\App\Support\CurrentTenant::class)->set($institution);
-    app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($institution->id);
+    app(CurrentTenant::class)->set($institution);
+    app(PermissionRegistrar::class)->setPermissionsTeamId($institution->id);
 
     return $institution;
 }
 
-function tenantUrl(\App\Models\Institution $institution, string $path = '/'): string
+function tenantUrl(Institution $institution, string $path = '/'): string
 {
     return 'http://'.$institution->subdomain.'.'.config('app.domain').$path;
 }
@@ -81,12 +85,32 @@ function tenantUrl(\App\Models\Institution $institution, string $path = '/'): st
  * A user of the given institution holding one of the roles seeded by
  * RolePermissionSeeder (seeded here on demand; it's idempotent).
  */
-function userWithRole(\App\Models\Institution $institution, string $role, array $attributes = []): \App\Models\User
+function userWithRole(Institution $institution, string $role, array $attributes = []): User
 {
-    \Database\Seeders\RolePermissionSeeder::seedForInstitution($institution);
+    RolePermissionSeeder::seedForInstitution($institution);
 
-    $user = \App\Models\User::factory()->for($institution)->create($attributes);
+    $user = User::factory()->for($institution)->create($attributes);
     $user->assignRole($role);
 
     return $user;
+}
+
+/**
+ * Serve the app from another base domain (e.g. the production one) for the
+ * rest of the test. routes/web.php reads config('app.domain') when the
+ * routes are registered, so they're registered again the way
+ * bootstrap/app.php does it.
+ */
+function useAppDomain(string $domain): void
+{
+    config(['app.domain' => $domain]);
+
+    $router = app('router');
+    $router->setRoutes(new RouteCollection);
+    $router->middleware('web')->group(base_path('routes/web.php'));
+
+    // ->name() runs after a route is added, so the lookups need rebuilding.
+    $router->getRoutes()->refreshNameLookups();
+    $router->getRoutes()->refreshActionLookups();
+    app('url')->setRoutes($router->getRoutes());
 }

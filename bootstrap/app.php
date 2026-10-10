@@ -1,9 +1,16 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsActive;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ResolveTenant;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,15 +20,20 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // Only APP_DOMAIN and its subdomains reach the app; any other Host
+        // header is rejected before routing. Laravel skips this in local and
+        // testing environments.
+        $middleware->trustHosts(at: fn () => [config('app.domain')], subdomains: true);
+
         $middleware->alias([
-            'tenant' => \App\Http\Middleware\ResolveTenant::class,
-            'active' => \App\Http\Middleware\EnsureUserIsActive::class,
-            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'tenant' => ResolveTenant::class,
+            'active' => EnsureUserIsActive::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
         ]);
 
         // Laravel's default middleware priority list runs Authenticate
@@ -37,8 +49,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // silently no-ops (the "before" target is never found, so the
         // middleware gets appended at the very end instead).
         $middleware->prependToPriorityList(
-            before: \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
-            prepend: \App\Http\Middleware\ResolveTenant::class,
+            before: AuthenticatesRequests::class,
+            prepend: ResolveTenant::class,
         );
     })
     ->withExceptions(function (Exceptions $exceptions): void {

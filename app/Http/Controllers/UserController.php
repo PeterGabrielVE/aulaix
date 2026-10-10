@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserStatus;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -11,7 +12,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Administrator-only user management. There is no public registration:
+ * User management for roles with gestionar-usuarios (Administrador,
+ * Director). There is no public registration:
  * every account is created here and activated through an emailed
  * invitation (App\Notifications\UserInvitation).
  *
@@ -55,10 +57,10 @@ class UserController extends Controller
             'email' => $request->email,
             // Never shown to anyone; replaced when the invitation is accepted.
             'password' => Str::password(32),
-            'status' => User::STATUS_ACTIVE,
+            'status' => UserStatus::Active,
         ]);
 
-        $user->syncRoles([$request->role]);
+        $user->syncRoles($request->roles);
         $user->sendInvitation();
 
         return redirect()->route('users.index')
@@ -83,7 +85,7 @@ class UserController extends Controller
         }
 
         $user->save();
-        $user->syncRoles([$request->role]);
+        $user->syncRoles($request->roles);
 
         return redirect()->route('users.index')
             ->with('success', "Se actualizó a {$user->name}.");
@@ -107,8 +109,12 @@ class UserController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'status' => $user->status,
-            'role' => $user->roles->first()?->name,
+            'status' => $user->status->value,
+            // In the same priority order as User::HOME_ROUTES.
+            'roles' => array_values(array_intersect(
+                array_keys(User::HOME_ROUTES),
+                $user->roles->pluck('name')->all(),
+            )),
             'invitation_pending' => ! $user->hasAcceptedInvitation(),
         ];
     }

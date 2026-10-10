@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Enums\InstitutionStatus;
+use App\Enums\UserStatus;
 use App\Models\Institution;
 use App\Models\User;
+use App\Support\RowLevelSecurity;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -17,8 +19,24 @@ use Illuminate\Support\Facades\Hash;
 class InstitutionSeeder extends Seeder
 {
     private const INSTITUTIONS = [
-        ['name' => 'Colegio Demo Uno', 'subdomain' => 'demo'],
-        ['name' => 'Colegio Demo Dos', 'subdomain' => 'demo2'],
+        [
+            'name' => 'Colegio Demo Uno',
+            'subdomain' => 'demo',
+            'dea_code' => 'OD00010101',
+            'rif' => 'J-00000001-0',
+            'address' => 'Av. Principal, Caracas',
+            'phone' => '0212-5550001',
+            'email' => 'contacto@demo.aulaix.test',
+        ],
+        [
+            'name' => 'Colegio Demo Dos',
+            'subdomain' => 'demo2',
+            'dea_code' => 'OD00010202',
+            'rif' => 'J-00000002-0',
+            'address' => 'Calle 2, Maracaibo',
+            'phone' => '0261-5550002',
+            'email' => 'contacto@demo2.aulaix.test',
+        ],
     ];
 
     /**
@@ -27,6 +45,8 @@ class InstitutionSeeder extends Seeder
      */
     private const DEMO_USERS = [
         'admin' => 'Administrador',
+        'director' => 'Director',
+        'coordinador' => 'Coordinador',
         'docente' => 'Docente',
         'representante' => 'Representante',
         'estudiante' => 'Estudiante',
@@ -37,16 +57,13 @@ class InstitutionSeeder extends Seeder
         foreach (self::INSTITUTIONS as $data) {
             $institution = Institution::query()->updateOrCreate(
                 ['subdomain' => $data['subdomain']],
-                ['name' => $data['name'], 'status' => 'active'],
+                [...$data, 'status' => InstitutionStatus::Active],
             );
 
             // Tenant-scoped tables enforce RLS (F1-02) even for this seeder's
             // own DB role, so writes to `users` need the same session
             // variable ResolveTenant sets on every real request.
-            DB::statement(
-                "select set_config('app.current_institution_id', ?, false)",
-                [(string) $institution->id]
-            );
+            RowLevelSecurity::setInstitution($institution->id);
 
             RolePermissionSeeder::seedForInstitution($institution);
 
@@ -56,7 +73,7 @@ class InstitutionSeeder extends Seeder
                     [
                         'name' => $role,
                         'password' => Hash::make('password'),
-                        'status' => User::STATUS_ACTIVE,
+                        'status' => UserStatus::Active,
                         'email_verified_at' => now(),
                     ],
                 );

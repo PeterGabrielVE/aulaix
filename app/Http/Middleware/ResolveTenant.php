@@ -4,9 +4,9 @@ namespace App\Http\Middleware;
 
 use App\Models\Institution;
 use App\Support\CurrentTenant;
+use App\Support\RowLevelSecurity;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Spatie\Permission\PermissionRegistrar;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,8 +34,8 @@ class ResolveTenant
         $subdomain = $request->route('tenant');
 
         $institution = Institution::query()
+            ->active()
             ->where('subdomain', $subdomain)
-            ->where('status', 'active')
             ->first();
 
         abort_if($institution === null, 404, 'Institución no encontrada.');
@@ -54,10 +54,7 @@ class ResolveTenant
         // string as $user). It has been fully consumed at this point.
         $request->route()->forgetParameter('tenant');
 
-        DB::statement(
-            "select set_config('app.current_institution_id', ?, false)",
-            [(string) $institution->id]
-        );
+        RowLevelSecurity::setInstitution($institution->id);
 
         $this->permissionRegistrar->setPermissionsTeamId($institution->id);
 

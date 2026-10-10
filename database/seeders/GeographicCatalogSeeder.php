@@ -8,41 +8,79 @@ use App\Models\State;
 use Illuminate\Database\Seeder;
 
 /**
- * Seeds the global states/municipalities/parishes catalog (F1-04) with one
- * representative municipality + parish per state (its capital).
+ * Seeds the global states/municipalities/parishes catalog (F1-04): the 24
+ * federal entities (23 states + Distrito Capital), their 335 municipalities
+ * and 1,140 parishes, shared by every institution.
  *
- * This is intentionally NOT a full DIVIPOLA import — Venezuela has 335
- * municipalities and 1000+ parishes, far more than a seed needs to prove
- * out the catalog. "code" values here are sequential placeholders, not
- * official DIVIPOLA codes. Swap database/seeders/data/venezuela-divisions.json
- * for the full official dataset when this catalog needs to be exhaustive.
+ * Data: database/seeders/data/venezuela-divisions.json, generated from the
+ * public dataset github.com/zokeber/venezuela-json with two corrections —
+ * Vargas renamed La Guaira (2019), and the missing parish of Bolívar
+ * (Sucre), Mariguitar.
+ *
+ * Codes: states use their ISO 3166-2:VE code (VE-A = Distrito Capital).
+ * Municipalities and parishes have no ISO code, so theirs are internal and
+ * positional within that file (VE-A-01, VE-A-01-01): never reorder the
+ * file, only append, or existing codes would point at different places.
+ *
+ * Idempotent: rows are matched by code, so re-running it updates names in
+ * place and never duplicates.
  */
 class GeographicCatalogSeeder extends Seeder
 {
     public function run(): void
     {
-        $divisions = json_decode(
+        $states = json_decode(
             file_get_contents(__DIR__.'/data/venezuela-divisions.json'),
             associative: true,
+            flags: JSON_THROW_ON_ERROR,
         );
 
-        foreach ($divisions as $index => $division) {
-            $sequence = str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+        $this->removePlaceholderCatalog();
 
-            $state = State::query()->updateOrCreate(
-                ['code' => "VE-{$sequence}"],
-                ['name' => $division['state']],
-            );
+        State::query()->upsert(
+            array_map(fn (array $state) => ['code' => $state['code'], 'name' => $state['name']], $states),
+            uniqueBy: ['code'],
+            update: ['name'],
+        );
+        $stateIds = State::query()->pluck('id', 'code');
 
-            $municipality = Municipality::query()->updateOrCreate(
-                ['code' => "VE-{$sequence}-01"],
-                ['state_id' => $state->id, 'name' => $division['municipality']],
-            );
-
-            Parish::query()->updateOrCreate(
-                ['code' => "VE-{$sequence}-01-01"],
-                ['municipality_id' => $municipality->id, 'name' => $division['parish']],
-            );
+        $municipalities = [];
+        foreach ($states as $state) {
+            foreach ($state['municipalities'] as $municipality) {
+                $municipalities[] = [
+                    'code' => $municipality['code'],
+                    'name' => $municipality['name'],
+                    'state_id' => $stateIds[$state['code']],
+                ];
+            }
         }
+        Municipality::query()->upsert($municipalities, uniqueBy: ['code'], update: ['name', 'state_id']);
+        $municipalityIds = Municipality::query()->pluck('id', 'code');
+
+        $parishes = [];
+        foreach ($states as $state) {
+            foreach ($state['municipalities'] as $municipality) {
+                foreach ($municipality['parishes'] as $parish) {
+                    $parishes[] = [
+                        'code' => $parish['code'],
+                        'name' => $parish['name'],
+                        'municipality_id' => $municipalityIds[$municipality['code']],
+                    ];
+                }
+            }
+        }
+        Parish::query()->upsert($parishes, uniqueBy: ['code'], update: ['name', 'municipality_id']);
+    }
+
+    /**
+     * The first version of this catalog held one placeholder municipality
+     * and parish per state, coded VE-01 … VE-24. Its codes don't match the
+     * real ones, so those rows are dropped (municipalities and parishes
+     * cascade; an institution located in one keeps existing, without a
+     * parish) rather than left behind as duplicates.
+     */
+    private function removePlaceholderCatalog(): void
+    {
+        State::query()->where('code', '~', '^VE-[0-9]{2}$')->delete();
     }
 }

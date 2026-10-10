@@ -16,6 +16,15 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
   ver `database/migrations/2025_01_01_000005_enable_row_level_security_on_tenant_tables.php`).
   El scope de Eloquent (`App\Concerns\BelongsToInstitution`) es una
   conveniencia de aplicación; la RLS es el límite de seguridad real.
+- **Nuevas tablas por institución**: en la migración, `$table->belongsToInstitution()`
+  crea `institution_id` (FK, índice y valor por defecto tomado de la sesión
+  RLS) y `RowLevelSecurity::enable('tabla')` activa la política; en el modelo,
+  `use BelongsToInstitution`. `tests/Feature/TenantTableTest.php` falla si
+  alguna tabla con `institution_id` queda sin RLS.
+- **Sin institución, cero filas**: una conexión sin institución en la sesión
+  (dominio central, o tras `RowLevelSecurity::clearInstitution()`) no ve ni
+  puede escribir filas de ninguna tabla por institución. Las pruebas de
+  aislamiento se ejecutan aparte con `php artisan test --group=rls`.
 - **Resolución de tenant**: cada institución vive en
   `https://{subdomain}.{APP_DOMAIN}`. `App\Http\Middleware\ResolveTenant`
   resuelve el subdominio (capturado como parámetro de ruta `{tenant}` en
@@ -80,9 +89,38 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
    | Rol           | Colegio Demo Uno                  | Colegio Demo Dos                   |
    |---------------|-----------------------------------|------------------------------------|
    | Administrador | `admin@demo.aulaix.test`          | `admin@demo2.aulaix.test`          |
+   | Director      | `director@demo.aulaix.test`       | `director@demo2.aulaix.test`       |
+   | Coordinador   | `coordinador@demo.aulaix.test`    | `coordinador@demo2.aulaix.test`    |
    | Docente       | `docente@demo.aulaix.test`        | `docente@demo2.aulaix.test`        |
    | Representante | `representante@demo.aulaix.test`  | `representante@demo2.aulaix.test`  |
    | Estudiante    | `estudiante@demo.aulaix.test`     | `estudiante@demo2.aulaix.test`     |
+
+## Dominio en producción
+
+Nada depende de `aulaix.test`: todo sale de `APP_DOMAIN`. Para servir
+`colegio.tusistema.com`:
+
+1. `.env`: `APP_DOMAIN=tusistema.com`, `APP_URL=https://tusistema.com`,
+   `SESSION_DOMAIN=null` (cada institución mantiene su propia sesión).
+2. DNS: un registro para `tusistema.com` y uno comodín para `*.tusistema.com`
+   apuntando al servidor (y un certificado TLS comodín).
+3. La institución debe existir con `subdomain = 'colegio'` y estado activo.
+
+Comportamiento:
+
+| Host | Resultado |
+|---|---|
+| `tusistema.com` | Selector de institución |
+| `colegio.tusistema.com` (o `Colegio.TuSistema.com`) | Institución `colegio` |
+| `www.tusistema.com/...` | Redirección 301 a `tusistema.com/...` |
+| `otro.tusistema.com` sin institución activa, `a.b.tusistema.com` | 404 |
+| Cualquier otro dominio | Rechazado (fuera de `local`/`testing`) |
+
+Un subdominio es una sola etiqueta DNS en minúsculas (letras, dígitos y
+guiones internos, máx. 63) y no puede ser uno de los reservados
+(`Institution::RESERVED_SUBDOMAINS`: `www`, `api`, `admin`, …); lo impone una
+restricción en la base de datos. `tests/Feature/SubdomainResolutionTest.php`
+verifica todo esto con `tusistema.com` como dominio.
 
 ## Autenticación
 
@@ -90,9 +128,30 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
   cuentas (menú *Usuarios*), les asigna un rol y el sistema les envía una
   invitación por correo para que elijan su contraseña (el enlace vence en 7
   días; se puede reenviar). En desarrollo los correos llegan a Mailhog.
+- **Recuperación de contraseña.** *¿Olvidaste tu contraseña?* envía un
+  enlace por correo, válido 60 minutos y de un solo uso
+  (`auth.passwords.users.expire`). La respuesta es la misma exista o no la
+  cuenta (no revela qué correos están registrados); se envía como máximo un
+  enlace por minuto por cuenta y el formulario admite 6 envíos por minuto.
 - **Usuarios activos/inactivos.** Un usuario inactivo no puede iniciar
   sesión, y si ya tenía sesión abierta se cierra en su siguiente petición.
   Un administrador no puede desactivarse ni quitarse el rol a sí mismo.
+- **Roles base** (`RolePermissionSeeder`), creados en cada institución:
+
+  | Rol           | Permisos                                                       |
+  |---------------|----------------------------------------------------------------|
+  | Administrador | todos (incluye `gestionar-roles`)                              |
+  | Director      | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones`  |
+  | Coordinador   | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
+  | Docente       | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
+  | Representante | `ver-calificaciones`                                           |
+  | Estudiante    | `ver-calificaciones`                                           |
+
+  Un usuario puede tener varios roles en su plantel (p. ej. Docente y
+  Representante). Como cada plantel tiene sus propias cuentas, el mismo
+  correo puede ser Docente en uno y Representante en otro. Solo un
+  Administrador puede asignar o quitar el rol de Administrador, y nadie
+  puede quitarse a sí mismo ese rol ni el acceso a la gestión de usuarios.
 - **Redirección por rol.** `/dashboard` redirige a la pantalla de inicio del
   rol (`User::HOME_ROUTES`); con varios roles gana el de mayor prioridad.
 - **Aislamiento.** Los tokens de restablecimiento/invitación
@@ -124,13 +183,28 @@ docker compose exec app php artisan ai:health
 docker compose exec app php artisan tinker
 ```
 
-## Notas sobre los datos de catálogo
+## Catálogos globales
 
-Los estados de Venezuela (`database/seeders/GeographicCatalogSeeder.php`)
-están completos (24), pero municipios y parroquias solo incluyen una
-muestra representativa (la capital de cada estado) —
-`database/seeders/data/venezuela-divisions.json`. No es un import completo
-de DIVIPOLA (335 municipios, 1000+ parroquias); reemplaza ese fixture por
-el dataset oficial cuando el catálogo deba ser exhaustivo. Los códigos
-(`code`) son identificadores internos secuenciales, no códigos DIVIPOLA
-oficiales.
+Estados, municipios, parroquias y materias MPPE son catálogos compartidos
+por todas las instituciones: sin `institution_id` ni RLS, se ven igual desde
+cualquier subdominio.
+
+- **Geografía** (`GeographicCatalogSeeder`): 24 entidades federales, 335
+  municipios y 1.140 parroquias, desde
+  `database/seeders/data/venezuela-divisions.json` (generado a partir de
+  [zokeber/venezuela-json](https://github.com/zokeber/venezuela-json), con
+  Vargas → La Guaira y la parroquia Mariguitar de Bolívar, Sucre). Los
+  estados usan su código ISO 3166-2 (`VE-A` = Distrito Capital); municipios y
+  parroquias, códigos internos por posición (`VE-A-01`, `VE-A-01-01`): no
+  reordenes el archivo, solo agrega al final.
+- **Materias** (`SubjectSeeder`): áreas de formación de Media General
+  (transformación curricular 2017) y áreas de aprendizaje de Primaria e
+  Inicial, con su nivel (`App\Enums\EducationLevel`). El seeder es la fuente
+  de verdad: renombra por código y elimina códigos que ya no estén.
+
+Ambos son idempotentes. En producción, carga o actualiza solo los catálogos
+(sin instituciones ni usuarios de demostración) con:
+
+```bash
+php artisan db:seed --class=CatalogSeeder --force
+```

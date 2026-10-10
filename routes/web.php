@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,6 +24,17 @@ Route::domain(config('app.domain'))->group(function () {
 });
 
 /*
+| www.{APP_DOMAIN} is the central domain under another name, not an
+| institution called "www" (a reserved subdomain, see Institution). Must be
+| registered before the tenant group, whose {tenant} pattern matches it too.
+*/
+Route::domain('www.'.config('app.domain'))->group(function () {
+    Route::get('/{path?}', fn (Request $request) => redirect()->away(
+        $request->getScheme().'://'.config('app.domain').$request->getRequestUri(), 301
+    ))->where('path', '.*');
+});
+
+/*
 |--------------------------------------------------------------------------
 | Tenant domain (F1-01 → F1-06)
 |--------------------------------------------------------------------------
@@ -39,6 +51,10 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
 
         Route::get('/admin', [HomeController::class, 'admin'])
             ->middleware('role:Administrador')->name('admin.home');
+        Route::get('/director', [HomeController::class, 'director'])
+            ->middleware('role:Director')->name('director.home');
+        Route::get('/coordinator', [HomeController::class, 'coordinator'])
+            ->middleware('role:Coordinador')->name('coordinator.home');
         Route::get('/teacher', [HomeController::class, 'teacher'])
             ->middleware('role:Docente')->name('teacher.home');
         Route::get('/guardian', [HomeController::class, 'guardian'])

@@ -39,7 +39,7 @@ const rolesError = computed(
 );
 
 const selectClass =
-    'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
+    'mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-indigo-500 focus:ring-indigo-500';
 </script>
 
 <template>
@@ -86,7 +86,7 @@ const selectClass =
                         v-model="form.roles"
                         type="checkbox"
                         :value="role"
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                        class="rounded-sm border-gray-300 text-indigo-600 shadow-xs focus:ring-indigo-500"
                     />
                     {{ role }}
                 </label>
@@ -106,7 +106,7 @@ const selectClass =
         <div class="flex items-center justify-end gap-4">
             <Link
                 :href="route('users.index')"
-                class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
                 Cancelar
             </Link>

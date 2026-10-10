@@ -42,7 +42,7 @@ watch(search, (value) => {
                 </h2>
                 <Link
                     :href="route('users.create')"
-                    class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Nuevo usuario
                 </Link>
@@ -58,7 +58,7 @@ watch(search, (value) => {
                     class="block w-full sm:max-w-sm"
                 />
 
-                <div class="overflow-x-auto bg-white shadow-sm sm:rounded-lg">
+                <div class="overflow-x-auto bg-white shadow-xs sm:rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                             <tr>

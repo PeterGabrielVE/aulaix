@@ -1,3 +1,37 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * source(none) turns off automatic source detection: the scanned paths are
+ * listed explicitly below, so the output is identical in CI (where .gitignore
+ * hides vendor/) and in the Docker build (where no .gitignore exists and the
+ * whole vendor/ tree would otherwise be scanned).
+ */
+@import 'tailwindcss' source(none);
+
+@source '../views';
+@source '../js';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@plugin '@tailwindcss/forms';
+
+@theme {
+    --font-sans: Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/*
+ * Tailwind v3 defaults that v4 changed, kept so the UI looks the same:
+ * borders default to gray-200 (v4: currentColor) and buttons show a
+ * pointer cursor (v4: default cursor).
+ */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+}

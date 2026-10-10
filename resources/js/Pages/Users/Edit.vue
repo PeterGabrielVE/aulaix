@@ -46,7 +46,7 @@ const resendInvitation = () => {
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+                <div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
                     <div class="max-w-xl">
                         <p v-if="isSelf" class="mb-6 text-sm text-gray-600">
                             Estás editando tu propia cuenta: no puedes
@@ -66,7 +66,7 @@ const resendInvitation = () => {
 
                 <div
                     v-if="user.invitation_pending"
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                    class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8"
                 >
                     <div class="max-w-xl">
                         <h3 class="text-lg font-medium text-gray-900">

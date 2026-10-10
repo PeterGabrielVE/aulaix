@@ -33,7 +33,7 @@ const submit = () => {
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
+                <div class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
                     <div class="max-w-xl">
                         <p class="mb-6 text-sm text-gray-600">
                             Le enviaremos un correo con un enlace para que elija

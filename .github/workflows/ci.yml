@@ -1,0 +1,231 @@
+name: CI
+
+on:
+    pull_request:
+    workflow_dispatch:
+    # CD calls this workflow before building images, so main is gated by
+    # exactly the same checks a pull request is.
+    workflow_call:
+
+concurrency:
+    group: ci-${{ github.event.pull_request.number || github.ref }}
+    # A new push to a PR makes the previous run worthless; on main (via CD)
+    # every commit must finish its own run.
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+    contents: read
+
+env:
+    PHP_VERSION: '8.4'
+    NODE_VERSION: '22'
+    # Same extension set as docker/php/Dockerfile.
+    PHP_EXTENSIONS: pdo_pgsql, pgsql, pcntl, bcmath, zip, gd, intl, redis
+
+jobs:
+    lint:
+        name: Lint & audit (PHP)
+        runs-on: ubuntu-24.04
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ env.PHP_VERSION }}
+                  extensions: ${{ env.PHP_EXTENSIONS }}
+                  coverage: none
+                  tools: composer:v2
+
+            - name: Validate composer.json / composer.lock
+              run: composer validate --strict
+
+            - name: Cache Composer downloads
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/composer/files
+                  key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+                  restore-keys: composer-${{ runner.os }}-
+
+            - run: composer install --no-interaction --prefer-dist --no-progress
+
+            - name: Code style (Pint)
+              run: vendor/bin/pint --test
+
+            - name: Known vulnerabilities (Composer)
+              run: composer audit --locked
+
+    frontend:
+        name: Build assets
+        runs-on: ubuntu-24.04
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v4
+
+            # resources/js/app.js imports Ziggy from vendor/, so the PHP
+            # dependencies must exist before Vite can bundle anything. Only
+            # the files are needed: no scripts, no autoloader, no extensions.
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ env.PHP_VERSION }}
+                  coverage: none
+                  tools: composer:v2
+
+            - name: Cache Composer downloads
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/composer/files
+                  key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+                  restore-keys: composer-${{ runner.os }}-
+
+            - run: composer install --no-interaction --prefer-dist --no-progress --no-dev --no-scripts --no-autoloader --ignore-platform-reqs
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: npm
+
+            # .npmrc sets ignore-scripts=true, so dependency install scripts never run.
+            - run: npm ci
+
+            - name: Known vulnerabilities (npm)
+              run: npm audit --audit-level=high
+
+            - run: npm run build
+              env:
+                  VITE_APP_NAME: AulaX
+
+            # The Blade root view calls @vite, so feature tests that render a
+            # page need a real manifest. Build once, reuse in the test job.
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: vite-build
+                  path: public/build
+                  retention-days: 1
+                  if-no-files-found: error
+
+    tests:
+        name: Tests (Pest + PostgreSQL)
+        needs: frontend
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+
+        services:
+            postgres:
+                image: postgres:16-alpine
+                env:
+                    POSTGRES_DB: aulaix
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd "pg_isready -U postgres -d aulaix"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 10
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ env.PHP_VERSION }}
+                  extensions: ${{ env.PHP_EXTENSIONS }}
+                  coverage: none
+                  tools: composer:v2
+
+            # phpunit.xml pins DB_HOST=postgres with force="true" (it has to,
+            # see the comment there), so env vars can't redirect it. Make the
+            # Docker-Compose hostname resolve to the service container instead.
+            - name: Resolve "postgres" to the service container
+              run: echo "127.0.0.1 postgres" | sudo tee -a /etc/hosts
+
+            # Same script the local postgres container runs on first boot:
+            # creates the NOSUPERUSER / NOBYPASSRLS role and aulaix_testing.
+            # Tests then run as that role, so RLS is genuinely enforced — a
+            # superuser would silently bypass every policy.
+            - name: Create application role and test database
+              run: docker exec -i ${{ job.services.postgres.id }} psql -U postgres -d aulaix -v ON_ERROR_STOP=1 < docker/postgres/init.sql
+
+            - name: Cache Composer downloads
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/composer/files
+                  key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+                  restore-keys: composer-${{ runner.os }}-
+
+            - run: composer install --no-interaction --prefer-dist --no-progress
+
+            - name: Prepare environment
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate --ansi
+
+            - uses: actions/download-artifact@v4
+              with:
+                  name: vite-build
+                  path: public/build
+
+            - name: Test suite
+              run: php artisan test --compact --exclude-group=rls
+
+            # Run separately so a tenant-isolation regression shows up as its
+            # own red step instead of being buried in the general suite.
+            - name: Tenant isolation (RLS)
+              run: php artisan test --compact --group=rls
+
+            # Proves the migrations and seeders work on a clean database as
+            # the RLS-constrained role (as in production), and that every
+            # down() can actually roll back.
+            - name: Migrations, seeders and rollback
+              env:
+                  DB_DATABASE: aulaix
+                  CACHE_STORE: array
+              run: |
+                  php artisan migrate --force --seed
+                  php artisan migrate:reset --force
+                  php artisan migrate --force
+
+            - name: Upload Laravel log
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: laravel-log
+                  path: storage/logs/*.log
+                  retention-days: 7
+                  if-no-files-found: ignore
+
+    docker:
+        name: Docker images build
+        # On main the CD workflow builds (and pushes) the images itself.
+        if: github.event_name == 'pull_request'
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - image: app
+                      context: .
+                      file: docker/php/Dockerfile.prod
+                      target: app
+                    - image: web
+                      context: .
+                      file: docker/php/Dockerfile.prod
+                      target: web
+                    - image: ai
+                      context: docker/ai-service
+                      file: docker/ai-service/Dockerfile
+                      target: ''
+        steps:
+            - uses: actions/checkout@v4
+            - uses: docker/setup-buildx-action@v3
+            - uses: docker/build-push-action@v6
+              with:
+                  context: ${{ matrix.context }}
+                  file: ${{ matrix.file }}
+                  target: ${{ matrix.target }}
+                  push: false
+                  cache-from: type=gha,scope=${{ matrix.image }}
+                  cache-to: type=gha,mode=max,scope=${{ matrix.image }}

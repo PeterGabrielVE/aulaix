@@ -34,7 +34,7 @@ const user = usePage().props.auth.user;
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="overflow-hidden bg-white shadow-xs sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <p class="text-lg font-medium">Hola, {{ user.name }}.</p>
                         <p class="mt-1 text-sm text-gray-600">{{ description }}</p>
@@ -46,7 +46,7 @@ const user = usePage().props.auth.user;
                         v-for="link in links"
                         :key="link.route"
                         :href="route(link.route)"
-                        class="block rounded-lg bg-white p-6 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="block rounded-lg bg-white p-6 shadow-xs hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
                     >
                         <span class="block font-medium text-gray-900">{{ link.label }}</span>
                         <span class="mt-1 block text-sm text-gray-600">{{ link.description }}</span>

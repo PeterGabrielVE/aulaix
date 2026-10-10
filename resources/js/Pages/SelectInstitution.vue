@@ -66,7 +66,7 @@ function goToInstitution(subdomain) {
             <li v-for="institution in results" :key="institution.subdomain">
                 <button
                     type="button"
-                    class="w-full rounded-md px-2 py-3 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    class="w-full rounded-md px-2 py-3 text-left hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
                     @click="goToInstitution(institution.subdomain)"
                 >
                     <span class="block font-medium text-gray-900">{{ institution.name }}</span>

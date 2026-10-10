@@ -1,0 +1,53 @@
+# Production stack, used on the server by docker/deploy/deploy.sh.
+# IMAGE_PREFIX / IMAGE_TAG are supplied by the deploy script; everything
+# else comes from the server's .env (never committed).
+#
+# PostgreSQL is NOT part of this stack on purpose: use a managed instance or
+# a dedicated host with backups. The DB_USERNAME role must be NOSUPERUSER and
+# NOBYPASSRLS (like docker/postgres/init.sql), or Row Level Security is off.
+services:
+    app:
+        image: ${IMAGE_PREFIX}/app:${IMAGE_TAG}
+        env_file: .env
+        restart: unless-stopped
+        volumes:
+            - storage_app:/var/www/html/storage/app
+        depends_on:
+            - redis
+        networks:
+            - aulaix
+
+    web:
+        image: ${IMAGE_PREFIX}/web:${IMAGE_TAG}
+        restart: unless-stopped
+        # Bound to localhost: TLS is terminated by the reverse proxy in front
+        # (Caddy, Traefik, Cloudflare...), which forwards to this port.
+        ports:
+            - "127.0.0.1:${HTTP_PORT:-8080}:80"
+        depends_on:
+            - app
+        networks:
+            - aulaix
+
+    ai-service:
+        image: ${IMAGE_PREFIX}/ai:${IMAGE_TAG}
+        restart: unless-stopped
+        networks:
+            - aulaix
+
+    redis:
+        image: redis:7-alpine
+        restart: unless-stopped
+        command: ["redis-server", "--appendonly", "yes"]
+        volumes:
+            - redis_data:/data
+        networks:
+            - aulaix
+
+networks:
+    aulaix:
+        driver: bridge
+
+volumes:
+    storage_app:
+    redis_data:

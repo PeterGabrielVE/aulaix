@@ -1,3 +1,10 @@
+# AulaX — Spec-driven development
+
+- This project follows spec-driven development. Before any behavior change, read `specs/constitution.md` and the spec of the module you touch (`specs/NNN-*/`). No behavior change without an approved spec (rule P-01).
+- Specs, ADRs and their discussion are written in Spanish; code, identifiers and code comments stay in English.
+- Workflow commands: `/spec-requirements`, `/spec-design`, `/spec-tasks`, `/spec-implement`.
+- Target architecture is hexagonal, in `src/` (namespace `AulaX\`), per ADR 0001. Until a module's refactor spec is implemented, its code still lives in `app/`; follow the existing structure there.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 

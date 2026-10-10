@@ -97,7 +97,7 @@ jobs:
 
             # The Blade root view calls @vite, so feature tests that render a
             # page need a real manifest. Build once, reuse in the test job.
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@v7
               with:
                   name: vite-build
                   path: public/build
@@ -189,7 +189,7 @@ jobs:
 
             - name: Upload Laravel log
               if: failure()
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: laravel-log
                   path: storage/logs/*.log

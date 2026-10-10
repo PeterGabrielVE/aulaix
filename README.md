@@ -40,7 +40,7 @@ IA desacoplado (FastAPI), todo orquestado con Docker Compose.
   institución.
 - **Módulo de IA**: `docker/ai-service` es un servicio FastAPI
   independiente. Laravel nunca lo llama directamente — solo a través de
-  `App\Contracts\AIServiceClient`, así la implementación es intercambiable.
+  `AulaX\Ai\Application\AIServiceClient`, así la implementación es intercambiable.
   En esta fase no hay funcionalidades de IA reales, solo el cableado.
 
 ## Requisitos

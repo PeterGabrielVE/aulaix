@@ -37,7 +37,7 @@ tienen dominio propio.
 
 | Spec | Backlog | Módulo | Depende de | Estado |
 |------|---------|--------|------------|--------|
-| 000 Fundaciones hexagonales | F0-06 (parte) | `Shared`, `Ai` | — | requisitos en borrador |
+| 000 Fundaciones hexagonales | F0-06 (parte) | `Shared`, `Ai` | — | implementando (9 de 10 tareas) |
 | 003 Catálogos (refactor) | F1-04 | `Catalogs` | 000 | requisitos implementados |
 | 001 Tenancy (refactor) | F1-01 – F1-03 | `Tenancy` | 000 | requisitos implementados |
 | 002 Identidad y acceso (refactor) | F1-05, F1-06 | `IdentityAccess` | se implementa con 004 | **se fusiona con 004**: no tiene sentido refactorizar el modelo de cuentas por plantel para cambiarlo justo después |

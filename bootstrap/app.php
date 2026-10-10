@@ -3,14 +3,22 @@
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveTenant;
+use AulaX\Shared\Domain\AuthorizationDenied;
+use AulaX\Shared\Domain\BusinessRuleViolation;
+use AulaX\Shared\Domain\Conflict;
+use AulaX\Shared\Domain\NotFound;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -57,4 +65,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Domain exceptions → HTTP, in this one place (constitution C-06,
+        // SPEC-000 FND-R05). Use cases throw them; controllers never
+        // translate errors themselves.
+        $exceptions->map(BusinessRuleViolation::class, fn (BusinessRuleViolation $e) => ValidationException::withMessages([
+            $e->field() ?? 'general' => $e->getMessage(),
+        ]));
+        $exceptions->map(AuthorizationDenied::class, fn (AuthorizationDenied $e) => new AccessDeniedHttpException($e->getMessage(), $e));
+        $exceptions->map(NotFound::class, fn (NotFound $e) => new NotFoundHttpException($e->getMessage(), $e));
+        $exceptions->map(Conflict::class, fn (Conflict $e) => new ConflictHttpException($e->getMessage(), $e));
     })->create();

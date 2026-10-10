@@ -1,13 +1,13 @@
 <?php
 
-use App\Contracts\AIServiceClient;
+use AulaX\Ai\Application\AIServiceClient;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 /**
  * The AI module (docker/ai-service) is a separate, decoupled service — these
  * tests never hit it over the network, they fake the HTTP boundary that
- * App\Services\AI\HttpAIServiceClient talks through.
+ * AulaX\Ai\Infrastructure\HttpAIServiceClient talks through.
  */
 test('health returns the decoded payload when the AI service responds', function () {
     Http::fake([

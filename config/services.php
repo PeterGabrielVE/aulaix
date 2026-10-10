@@ -42,7 +42,7 @@ return [
     |
     | Base URL of the standalone AI microservice (see docker/ai-service).
     | Laravel never talks to AI logic directly — it only ever goes through
-    | App\Contracts\AIServiceClient, so the implementation (this HTTP
+    | AulaX\Ai\Application\AIServiceClient, so the implementation (this HTTP
     | service today) can be swapped without touching calling code.
     |
     */

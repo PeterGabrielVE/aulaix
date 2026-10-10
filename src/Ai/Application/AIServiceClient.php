@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Contracts;
+declare(strict_types=1);
+
+namespace AulaX\Ai\Application;
 
 /**
  * Boundary between the Laravel monolith and the decoupled AI module

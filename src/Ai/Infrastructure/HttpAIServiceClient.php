@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Services\AI;
+declare(strict_types=1);
 
-use App\Contracts\AIServiceClient;
+namespace AulaX\Ai\Infrastructure;
+
+use AulaX\Ai\Application\AIServiceClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class HttpAIServiceClient implements AIServiceClient
+final class HttpAIServiceClient implements AIServiceClient
 {
     public function __construct(
         private readonly string $baseUrl,

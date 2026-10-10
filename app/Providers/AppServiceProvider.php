@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Contracts\AIServiceClient;
-use App\Services\AI\HttpAIServiceClient;
 use App\Support\CurrentTenant;
 use App\Support\RowLevelSecurity;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,11 +17,6 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(CurrentTenant::class);
-
-        $this->app->singleton(AIServiceClient::class, fn () => new HttpAIServiceClient(
-            baseUrl: config('services.ai.base_url'),
-            timeout: config('services.ai.timeout'),
-        ));
     }
 
     /**

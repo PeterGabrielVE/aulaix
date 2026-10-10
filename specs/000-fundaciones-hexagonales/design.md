@@ -1,6 +1,6 @@
 ---
 spec: 000-fundaciones-hexagonales
-estado: borrador
+estado: aprobada
 fecha: 2026-10-10
 requisitos: requirements.md
 ---

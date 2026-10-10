@@ -1,7 +1,7 @@
 ---
 spec: 000-fundaciones-hexagonales
 prefijo: FND
-estado: borrador
+estado: aprobada
 fecha: 2026-10-10
 ---
 
@@ -96,8 +96,10 @@ construir módulos sin repetir infraestructura.
 sin detalles internos.
 
 - **FND-R05.1** — Cuando un caso de uso lanza una excepción de dominio por
-  una regla de negocio incumplida, el sistema deberá responder 422 con el
-  mensaje de la excepción asociado al campo que indique la excepción.
+  una regla de negocio incumplida, el sistema deberá tratarla como un error de
+  validación del campo que indique la excepción (o de `general` si no indica
+  ninguno): 422 en peticiones JSON, y redirección al formulario con el error
+  en las demás.
 - **FND-R05.2** — Cuando un caso de uso lanza una excepción de autorización
   de dominio, el sistema deberá responder 403.
 - **FND-R05.3** — Cuando un caso de uso lanza una excepción de «no
@@ -156,6 +158,28 @@ real y sin riesgo antes de migrar los módulos con reglas.
 
 | Criterio | Test(s) |
 |----------|---------|
+| FND-R01.1 | `tests/Unit/Shared/Domain/AggregateRootTest.php` › «releases the recorded events in the order they happened» |
+| FND-R01.2 | `tests/Architecture/LayersTest.php` › «a domain layer does not depend on the framework» |
+| FND-R02.1 | `tests/Architecture/LayersTest.php` › «a domain layer does not depend on the framework» |
+| FND-R02.2 | `tests/Architecture/LayersTest.php` › «an application layer does not depend on the framework» |
+| FND-R02.3 | `tests/Architecture/LayersTest.php` › «the core never reaches into infrastructure» |
+| FND-R02.4 | `tests/Architecture/LayersTest.php` › «a module only uses the domain and infrastructure of Shared»; `tests/Architecture/LayersTest.php` › «Shared depends on no other module» |
+| FND-R02.5 | `tests/Architecture/LayersTest.php` › «every file in src declares strict types» |
+| FND-R02.6 | `tests/Architecture/LayersTest.php` › «a migrated controller does not use Eloquent or infrastructure directly» (sin controladores migrados todavía; se activa con SPEC-001) |
+| FND-R03.1 | `tests/Unit/Shared/Domain/DomainExceptionTest.php` › «a business rule violation names the form field it belongs to»; `tests/Unit/Shared/Domain/DomainExceptionTest.php` › «a business rule violation without a field belongs to no form field» |
+| FND-R03.2 | `tests/Feature/Shared/Infrastructure/SystemClockTest.php` › «the clock follows the application time, so tests can move it» |
+| FND-R03.3 | `tests/Feature/Shared/Infrastructure/LaravelTransactionManagerTest.php` › «keeps the changes and returns the result when the operation succeeds»; `tests/Feature/Shared/Infrastructure/LaravelTransactionManagerTest.php` › «undoes every change and rethrows when the operation fails» |
+| FND-R03.4 | `tests/Feature/Shared/Infrastructure/LaravelEventBusTest.php` › «publishes the events of a transaction only once it commits»; `tests/Feature/Shared/Infrastructure/LaravelEventBusTest.php` › «publishes an event right away when no transaction is open» |
+| FND-R03.5 | `tests/Feature/Shared/Infrastructure/LaravelEventBusTest.php` › «does not publish the events of a transaction that rolls back» |
+| FND-R04.1 | `tests/Feature/Shared/Infrastructure/LaravelEventBusTest.php` › «publishes an event right away when no transaction is open»; `tests/Feature/AIServiceClientTest.php` › «health returns the decoded payload when the AI service responds» |
+| FND-R05.1 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «shows a broken business rule as a validation error on its form field»; `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «returns 422 with the field error for a broken business rule in JSON»; `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «files a broken business rule without a field under the general error» |
+| FND-R05.2 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «returns 403 when the domain denies the action» |
+| FND-R05.3 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «returns 404 when the domain does not find the resource» |
+| FND-R05.4 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «returns 409 with its message when the action conflicts with the current state» |
+| FND-R05.5 | `tests/Feature/Shared/DomainExceptionRenderingTest.php` › «does not reveal the message of an unexpected error outside debug mode» |
+| FND-R06.1 | `tests/Architecture/SpecsTest.php` › «every spec has requirements and valid states in its documents» (la regla de orden entre fases está pendiente, ver `tasks.md` T-09) |
+| FND-R06.2 | `tests/Architecture/SpecsTest.php` › «criterion IDs are unique across all specs» |
+| FND-R06.3 | `tests/Architecture/SpecsTest.php` › «the traceability matrix only points at tests that exist» |
+| FND-R06.4 | `tests/Architecture/SpecsTest.php` › «an implemented spec traces every acceptance criterion to a test» |
 | FND-R07.1 | `tests/Feature/AIServiceClientTest.php` › «health returns the decoded payload when the AI service responds» |
 | FND-R07.2 | `tests/Feature/AIServiceClientTest.php` › «health returns null when the AI service is unreachable» |
-| FND-R01.* a FND-R06.* | Pendientes (se crean en las tareas T-02 a T-09). |

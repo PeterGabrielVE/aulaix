@@ -277,7 +277,7 @@ administración ni escalar privilegios.
 | IAM-R02.5 | `tests/Feature/Auth/AuthenticationTest.php` › «users can not authenticate on another institution's subdomain» |
 | IAM-R02.6 | `tests/Feature/Auth/AuthenticationTest.php` › «inactive users can not authenticate» |
 | IAM-R02.7 | `tests/Feature/Auth/AuthenticationTest.php` › «inactive users with a wrong password get the generic error» |
-| IAM-R02.8 | Sin test propio (comportamiento heredado de Breeze). **Pendiente**: lo añade SPEC-000 T-09, antes de activar la validación de specs. |
+| IAM-R02.8 | `tests/Feature/Auth/AuthenticationTest.php` › «five failed logins lock the account out for a minute, even with the right password» |
 | IAM-R02.9 | `tests/Feature/Auth/AuthenticationTest.php` › «failed logins in one institution do not lock out the same email in another» |
 | IAM-R02.10 | `tests/Feature/Auth/AuthenticationTest.php` › «users can logout» |
 | IAM-R03.1 | `tests/Feature/Auth/AuthenticationTest.php` › «a user deactivated mid-session is logged out on their next request» |

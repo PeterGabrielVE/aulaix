@@ -107,6 +107,27 @@ test('a user deactivated mid-session is logged out on their next request', funct
     $response->assertSessionHasErrors(['email' => __('auth.inactive')]);
 });
 
+test('five failed logins lock the account out for a minute, even with the right password', function () {
+    $this->freezeTime();
+    $institution = tenant();
+    $user = User::factory()->for($institution)->create();
+
+    foreach (range(1, 5) as $attempt) {
+        $this->post(tenantUrl($institution, '/login'), [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ]);
+    }
+
+    $response = $this->post(tenantUrl($institution, '/login'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertGuest();
+    $response->assertSessionHasErrors(['email' => __('auth.throttle', ['seconds' => 60, 'minutes' => 1])]);
+});
+
 test('failed logins in one institution do not lock out the same email in another', function () {
     $institutionA = tenant();
     User::factory()->for($institutionA)->create(['email' => 'shared@example.com']);

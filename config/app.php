@@ -69,6 +69,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trusted Proxies
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated IPs or CIDR ranges of the reverse proxies in front of
+    | the app (e.g. the TLS proxy of the deployment), or "*" to trust any.
+    | Only requests coming from them may set the client IP through
+    | X-Forwarded-For (App\Http\Middleware\TrustConfiguredProxies).
+    |
+    */
+
+    'trusted_proxies' => env('TRUSTED_PROXIES') === '*'
+        ? '*'
+        : array_values(array_filter(array_map('trim', explode(',', (string) env('TRUSTED_PROXIES', ''))))),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

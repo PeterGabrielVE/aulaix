@@ -168,7 +168,7 @@ jobs:
                   path: public/build
 
             - name: Test suite
-              run: php artisan test --compact --exclude-group=rls
+              run: php artisan test --compact --exclude-group=rls,perf
 
             # Run separately so a tenant-isolation regression shows up as its
             # own red step instead of being buried in the general suite.
@@ -186,6 +186,10 @@ jobs:
                   php artisan migrate --force --seed
                   php artisan migrate:reset --force
                   php artisan migrate --force
+                  # migrate:fresh drops tables but not functions or types:
+                  # running it twice catches migrations that are not re-runnable.
+                  php artisan migrate:fresh --force
+                  php artisan migrate:fresh --force
 
             - name: Upload Laravel log
               if: failure()

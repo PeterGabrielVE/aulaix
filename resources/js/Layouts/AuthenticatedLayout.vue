@@ -50,6 +50,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                 >
                                     Usuarios
                                 </NavLink>
+                                <NavLink
+                                    v-if="can.viewAudit"
+                                    :href="route('audit.index')"
+                                    :active="route().current('audit.*')"
+                                >
+                                    Bitácora
+                                </NavLink>
                             </div>
                         </div>
 
@@ -167,6 +174,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             :active="route().current('users.*')"
                         >
                             Usuarios
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="can.viewAudit"
+                            :href="route('audit.index')"
+                            :active="route().current('audit.*')"
+                        >
+                            Bitácora
                         </ResponsiveNavLink>
                     </div>
 

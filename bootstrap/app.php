@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveTenant;
+use App\Http\Middleware\TrustConfiguredProxies;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use AulaX\Shared\Domain\Conflict;
@@ -12,6 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
@@ -36,6 +38,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // header is rejected before routing. Laravel skips this in local and
         // testing environments.
         $middleware->trustHosts(at: fn () => [config('app.domain')], subdomains: true);
+
+        // Only the proxies in TRUSTED_PROXIES may set the client IP (SPEC-005).
+        $middleware->replace(TrustProxies::class, TrustConfiguredProxies::class);
 
         $middleware->alias([
             'tenant' => ResolveTenant::class,

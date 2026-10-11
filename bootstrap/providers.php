@@ -2,6 +2,7 @@
 
 use App\Providers\AppServiceProvider;
 use AulaX\Ai\Infrastructure\AiServiceProvider;
+use AulaX\Audit\Infrastructure\AuditServiceProvider;
 use AulaX\Catalogs\Infrastructure\CatalogsServiceProvider;
 use AulaX\Shared\Infrastructure\SharedServiceProvider;
 use AulaX\Tenancy\Infrastructure\TenancyServiceProvider;
@@ -12,4 +13,5 @@ return [
     AiServiceProvider::class,
     CatalogsServiceProvider::class,
     TenancyServiceProvider::class,
+    AuditServiceProvider::class,
 ];

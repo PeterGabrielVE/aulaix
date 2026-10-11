@@ -38,6 +38,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'can' => [
                     'manageUsers' => (bool) $request->user()?->can('gestionar-usuarios'),
+                    'viewAudit' => (bool) $request->user()?->can('ver-bitacora'),
                 ],
             ],
             'flash' => [

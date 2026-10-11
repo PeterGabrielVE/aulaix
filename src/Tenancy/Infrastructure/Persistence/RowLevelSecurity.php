@@ -68,6 +68,31 @@ final class RowLevelSecurity
     }
 
     /**
+     * The opposite of enable(), for platform-wide tables that no institution
+     * may ever see (e.g. the platform audit log, SPEC-005): while an
+     * institution is active the table reads as empty and rejects every write.
+     */
+    public static function enableOutsideTenants(string $table): void
+    {
+        $current = self::CURRENT_INSTITUTION_SQL;
+
+        DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
+        DB::statement("ALTER TABLE {$table} FORCE ROW LEVEL SECURITY");
+        DB::statement("
+            CREATE POLICY platform_only ON {$table}
+            USING ({$current} IS NULL)
+            WITH CHECK ({$current} IS NULL)
+        ");
+    }
+
+    public static function disableOutsideTenants(string $table): void
+    {
+        DB::statement("DROP POLICY IF EXISTS platform_only ON {$table}");
+        DB::statement("ALTER TABLE {$table} NO FORCE ROW LEVEL SECURITY");
+        DB::statement("ALTER TABLE {$table} DISABLE ROW LEVEL SECURITY");
+    }
+
+    /**
      * Scope the rest of this DB session to the given institution. Session-
      * wide (not transaction-local) so it survives the transactions Eloquent
      * and the test suite open and close along the way.

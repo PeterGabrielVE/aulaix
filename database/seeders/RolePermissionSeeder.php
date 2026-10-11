@@ -23,6 +23,7 @@ class RolePermissionSeeder
         'ver-estudiantes',
         'gestionar-calificaciones',
         'ver-calificaciones',
+        'ver-bitacora',
     ];
 
     /**
@@ -32,7 +33,7 @@ class RolePermissionSeeder
      */
     private const ROLES = [
         'Administrador' => self::PERMISSIONS,
-        'Director' => ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones'],
+        'Director' => ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora'],
         'Coordinador' => ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones'],
         'Docente' => ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones'],
         'Representante' => ['ver-calificaciones'],

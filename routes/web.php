@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\ProfileController;
@@ -62,6 +63,13 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
             ->middleware('role:Representante')->name('guardian.home');
         Route::get('/student', [HomeController::class, 'student'])
             ->middleware('role:Estudiante')->name('student.home');
+
+        Route::middleware('permission:ver-bitacora')->group(function () {
+            Route::get('/bitacora', [AuditLogController::class, 'index'])->name('audit.index');
+            Route::get('/bitacora/{entry}', [AuditLogController::class, 'show'])
+                ->whereNumber('entry')
+                ->name('audit.show');
+        });
 
         Route::middleware('permission:gestionar-usuarios')->group(function () {
             Route::resource('users', UserController::class)->except(['show', 'destroy']);

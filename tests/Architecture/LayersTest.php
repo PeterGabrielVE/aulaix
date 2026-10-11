@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Middleware\ResolveTenant;
 
@@ -26,6 +27,8 @@ const MIGRATED_CONTROLLERS = [
     // SPEC-001
     ResolveTenant::class,
     InstitutionController::class,
+    // SPEC-005
+    AuditLogController::class,
 ];
 
 /**

@@ -15,6 +15,12 @@
             <directory>tests/Architecture</directory>
         </testsuite>
     </testsuites>
+    <groups>
+        <exclude>
+            <!-- Slow performance checks (SPEC-005): run them with the perf group option. -->
+            <group>perf</group>
+        </exclude>
+    </groups>
     <source>
         <include>
             <directory>app</directory>

@@ -1,13 +1,13 @@
 <?php
 
-use App\Models\Institution;
 use App\Models\User;
-use App\Support\CurrentTenant;
-use App\Support\RowLevelSecurity;
+use AulaX\Tenancy\Application\TenantActivator;
+use AulaX\Tenancy\Application\TenantContext;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionMapper;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\RouteCollection;
-use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 /*
@@ -68,10 +68,9 @@ function tenant(array $attributes = []): Institution
 {
     $institution = Institution::factory()->create($attributes);
 
-    RowLevelSecurity::setInstitution($institution->id);
-
-    app(CurrentTenant::class)->set($institution);
-    app(PermissionRegistrar::class)->setPermissionsTeamId($institution->id);
+    // The same activation ResolveTenant runs on a real request: current
+    // tenant, RLS session variable and permission team, all at once.
+    app(TenantActivator::class)->activate(TenantContext::of(InstitutionMapper::toDomain($institution)));
 
     return $institution;
 }

@@ -1,27 +1,37 @@
 <?php
 
-namespace App\Models;
+declare(strict_types=1);
 
-use App\Enums\InstitutionStatus;
+namespace AulaX\Tenancy\Infrastructure\Persistence;
+
 use AulaX\Catalogs\Infrastructure\Persistence\ParishModel;
+use AulaX\Tenancy\Domain\InstitutionStatus;
+use AulaX\Tenancy\Domain\Subdomain;
+use Database\Factories\InstitutionFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Institution extends Model
+/**
+ * Persistence of the Institution aggregate. The table is explicit: Eloquent
+ * would otherwise infer "institution_models" from the class name.
+ */
+#[UseFactory(InstitutionFactory::class)]
+final class InstitutionModel extends Model
 {
+    /** @use HasFactory<InstitutionFactory> */
     use HasFactory;
 
     /**
-     * Subdomains of APP_DOMAIN that belong to the platform itself, never to
-     * an institution. Enforced by the institutions_subdomain_format check
-     * constraint; "www" is also redirected to the central domain.
+     * @see Subdomain::RESERVED
      */
-    public const RESERVED_SUBDOMAINS = ['www', 'api', 'admin', 'app', 'mail', 'static', 'assets', 'cdn'];
+    public const RESERVED_SUBDOMAINS = Subdomain::RESERVED;
+
+    protected $table = 'institutions';
 
     protected $fillable = [
         'name',
@@ -49,13 +59,14 @@ class Institution extends Model
     }
 
     /**
-     * Hostnames are case-insensitive and the request's host always arrives
-     * lower-cased, so the stored subdomain must be lower-case to match it.
+     * Normalized like the domain does, so writes that bypass it (seeders,
+     * factories) store the same value. The format itself is enforced by the
+     * institutions_subdomain_format check constraint.
      */
     protected function subdomain(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => strtolower(trim($value)),
+            set: fn (string $value) => Subdomain::normalize($value),
         );
     }
 
@@ -71,11 +82,6 @@ class Institution extends Model
     public function isActive(): bool
     {
         return $this->status === InstitutionStatus::Active;
-    }
-
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
     }
 
     public function parish(): BelongsTo

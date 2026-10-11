@@ -52,7 +52,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | Spec | Módulo | Requisitos | Diseño | Tareas |
 |------|--------|------------|--------|--------|
 | [000 Fundaciones hexagonales](000-fundaciones-hexagonales/) | `Shared`, `Ai` | implementada | implementada | implementada |
-| [001 Tenancy](001-tenancy/) | `Tenancy` | implementada¹ | borrador | borrador |
+| [001 Tenancy](001-tenancy/) | `Tenancy` | implementada¹ | implementada (v2) | implementada (v2) |
 | [002 Identidad y acceso](002-identidad-acceso/) | `IdentityAccess` | implementada¹ | borrador | borrador |
 | [003 Catálogos globales](003-catalogos/) | `Catalogs` | implementada¹ | implementada (v2) | implementada (v2) |
 | [004 Identidad global](004-identidad-global/) | `IdentityAccess` | aprobada v3 (D1 legal pendiente) | — | — |

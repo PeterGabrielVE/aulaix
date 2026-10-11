@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Enums\InstitutionStatus;
 use App\Enums\UserStatus;
-use App\Models\Institution;
 use App\Models\User;
-use App\Support\RowLevelSecurity;
+use AulaX\Tenancy\Domain\InstitutionStatus;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
+use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 

@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Enums\InstitutionStatus;
-use App\Models\Institution;
+use AulaX\Tenancy\Domain\InstitutionStatus;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

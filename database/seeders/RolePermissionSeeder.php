@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Institution;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;

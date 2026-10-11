@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
-use App\Support\CurrentTenant;
+use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -103,7 +103,7 @@ class LoginRequest extends FormRequest
         // Scoped per institution: the same email is a different account in
         // each one, so failed attempts in one must not lock out the other.
         return Str::transliterate(
-            app(CurrentTenant::class)->id().'|'.Str::lower($this->string('email')).'|'.$this->ip()
+            app(CurrentTenant::class)->institutionId()?->value.'|'.Str::lower($this->string('email')).'|'.$this->ip()
         );
     }
 }

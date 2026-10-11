@@ -1,6 +1,6 @@
 <?php
 
-use App\Support\RowLevelSecurity;
+use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\UserStatus;
 use App\Models\User;
-use App\Support\CurrentTenant;
+use AulaX\Tenancy\Application\CurrentTenant;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -31,7 +31,7 @@ class UserRequest extends FormRequest
             'email' => [
                 'required', 'string', 'lowercase', 'email', 'max:255',
                 Rule::unique(User::class)
-                    ->where('institution_id', app(CurrentTenant::class)->id())
+                    ->where('institution_id', app(CurrentTenant::class)->institutionId()?->value)
                     ->ignore($editedUser),
             ],
             // A user may hold several roles in the same institution (e.g.
@@ -92,7 +92,7 @@ class UserRequest extends FormRequest
     public static function assignableRoles(): array
     {
         $existing = Role::query()
-            ->where(config('permission.column_names.team_foreign_key'), app(CurrentTenant::class)->id())
+            ->where(config('permission.column_names.team_foreign_key'), app(CurrentTenant::class)->institutionId()?->value)
             ->pluck('name')
             ->all();
 
@@ -108,7 +108,7 @@ class UserRequest extends FormRequest
     private static function grantsUserManagement(array $roleNames): bool
     {
         return Role::query()
-            ->where(config('permission.column_names.team_foreign_key'), app(CurrentTenant::class)->id())
+            ->where(config('permission.column_names.team_foreign_key'), app(CurrentTenant::class)->institutionId()?->value)
             ->whereIn('name', array_filter($roleNames, 'is_string'))
             ->whereRelation('permissions', 'name', 'gestionar-usuarios')
             ->exists();

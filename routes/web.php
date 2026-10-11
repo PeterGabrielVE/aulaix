@@ -20,6 +20,7 @@ Route::domain(config('app.domain'))->group(function () {
     Route::get('/', fn () => Inertia::render('SelectInstitution'))->name('institutions.select');
 
     Route::get('/api/institutions/search', [InstitutionController::class, 'search'])
+        ->middleware('throttle:30,1')
         ->name('institutions.search');
 });
 

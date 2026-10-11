@@ -39,7 +39,7 @@ tienen dominio propio.
 |------|---------|--------|------------|--------|
 | 000 Fundaciones hexagonales | F0-06 (parte) | `Shared`, `Ai` | — | **implementada** |
 | 003 Catálogos (refactor) | F1-04 | `Catalogs` | 000 | **implementada** |
-| 001 Tenancy (refactor) | F1-01 – F1-03 | `Tenancy` | 000 | requisitos implementados |
+| 001 Tenancy (refactor) | F1-01 – F1-03 | `Tenancy` | 000 | **implementada** |
 | 002 Identidad y acceso (refactor) | F1-05, F1-06 | `IdentityAccess` | se implementa con 004 | **se fusiona con 004**: no tiene sentido refactorizar el modelo de cuentas por plantel para cambiarlo justo después |
 | 005 Bitácora de auditoría | F1-08 | `Audit` | 000 | por escribir. **Antes que 004 y que Evaluación**: identidad y notas nacen auditadas |
 | 004 Identidad global | F1-07, revisa F1-06 | `IdentityAccess` | 001, 005, ADR 0004 | requisitos v3 **aprobados** (Q1–Q8 resueltas). La eliminación efectiva depende de la validación legal (D1) |

@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use App\Support\CurrentTenant;
-use App\Support\RowLevelSecurity;
+use AulaX\Tenancy\Infrastructure\InMemoryCurrentTenant as CurrentTenant;
+use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 

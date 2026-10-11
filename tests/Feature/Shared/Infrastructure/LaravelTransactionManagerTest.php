@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Institution;
 use AulaX\Shared\Application\TransactionManager;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 
 it('keeps the changes and returns the result when the operation succeeds', function () {
     $result = app(TransactionManager::class)->run(function () {

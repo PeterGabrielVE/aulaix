@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Concerns;
+declare(strict_types=1);
 
-use App\Models\Institution;
-use App\Support\CurrentTenant;
+namespace AulaX\Tenancy\Infrastructure\Persistence;
+
+use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,13 +20,13 @@ trait BelongsToInstitution
     public static function bootBelongsToInstitution(): void
     {
         static::addGlobalScope('institution', function (Builder $builder) {
-            if ($tenantId = app(CurrentTenant::class)->id()) {
+            if ($tenantId = app(CurrentTenant::class)->institutionId()?->value) {
                 $builder->where($builder->getModel()->getTable().'.institution_id', $tenantId);
             }
         });
 
         static::creating(function ($model) {
-            if (! $model->institution_id && $tenantId = app(CurrentTenant::class)->id()) {
+            if (! $model->institution_id && $tenantId = app(CurrentTenant::class)->institutionId()?->value) {
                 $model->institution_id = $tenantId;
             }
         });
@@ -33,6 +34,6 @@ trait BelongsToInstitution
 
     public function institution(): BelongsTo
     {
-        return $this->belongsTo(Institution::class);
+        return $this->belongsTo(InstitutionModel::class, 'institution_id');
     }
 }

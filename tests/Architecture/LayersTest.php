@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\InstitutionController;
+use App\Http\Middleware\ResolveTenant;
+
 /**
  * SPEC-000 (FND-R02): the dependency rules of specs/constitution.md
  * (A-01 – A-06) as executable checks. Modules are discovered from src/, so a
@@ -19,7 +22,22 @@ const FRAMEWORK_HELPERS = ['now', 'today', 'config', 'app', 'resolve', '__', 'tr
  *
  * @var list<class-string>
  */
-const MIGRATED_CONTROLLERS = [];
+const MIGRATED_CONTROLLERS = [
+    // SPEC-001
+    ResolveTenant::class,
+    InstitutionController::class,
+];
+
+/**
+ * The only links allowed between two modules' infrastructure, each one
+ * justified in its spec. Everything else stays forbidden (FND-R02.4).
+ *
+ * @var array<string, list<class-string>>
+ */
+const ALLOWED_INFRASTRUCTURE_LINKS = [
+    // SPEC-001: an institution is located in a parish (Eloquent relation).
+    'Tenancy' => ['AulaX\Catalogs\Infrastructure\Persistence\ParishModel'],
+];
 
 /**
  * @return list<string>
@@ -73,7 +91,9 @@ arch('a module only uses the domain and infrastructure of Shared', function (str
         $this->markTestSkipped("{$module} is the only module besides Shared.");
     }
 
-    expect("AulaX\\{$module}")->not->toUse($foreignInternals);
+    expect("AulaX\\{$module}")
+        ->not->toUse($foreignInternals)
+        ->ignoring(ALLOWED_INFRASTRUCTURE_LINKS[$module] ?? []);
 })->with('modules');
 
 arch('Shared depends on no other module', function () {
@@ -94,6 +114,9 @@ arch('every file in src declares strict types')
     ->toUseStrictTypes();
 
 arch('a migrated controller does not use Eloquent or infrastructure directly', function (string $controller) {
+    // An arch expectation on a class that does not exist passes vacuously.
+    expect(class_exists($controller))->toBeTrue("{$controller} does not exist.");
+
     expect($controller)->not->toUse([
         'App\Models',
         'Illuminate\Database',

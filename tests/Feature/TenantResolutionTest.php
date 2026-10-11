@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Institution;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 
 test('the central domain shows the institution selector, not a tenant page', function () {
     $response = $this->get('http://'.config('app.domain').'/');
@@ -45,3 +45,28 @@ test('the institution search endpoint only returns active institutions', functio
     $response->assertJsonCount(1, 'data');
     $response->assertJsonPath('data.0.subdomain', $active->subdomain);
 });
+
+test('the institution search is rate limited per client', function () {
+    $search = 'http://'.config('app.domain').'/api/institutions/search?q=Colegio';
+
+    foreach (range(1, 30) as $attempt) {
+        $this->getJson($search)->assertOk();
+    }
+
+    $this->getJson($search)->assertTooManyRequests();
+});
+
+test('the institution search treats % and _ literally', function (string $query, string $expected) {
+    Institution::factory()->create(['name' => 'Colegio 100% Bilingüe']);
+    Institution::factory()->create(['name' => 'Colegio_Norte']);
+    Institution::factory()->create(['name' => 'Colegio Sur']);
+
+    $response = $this->getJson('http://'.config('app.domain').'/api/institutions/search?q='.urlencode($query));
+
+    $response->assertOk();
+    $response->assertJsonCount(1, 'data');
+    $response->assertJsonPath('data.0.name', $expected);
+})->with([
+    'a percent sign' => ['%', 'Colegio 100% Bilingüe'],
+    'an underscore' => ['_', 'Colegio_Norte'],
+]);

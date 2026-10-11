@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Institution;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Illuminate\Database\QueryException;
 
 /**

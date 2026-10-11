@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Support;
+declare(strict_types=1);
+
+namespace AulaX\Tenancy\Infrastructure\Persistence;
 
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +25,7 @@ use Illuminate\Support\Facades\DB;
  * institution_id column but no policy, so the second line can't be
  * forgotten silently.
  */
-class RowLevelSecurity
+final class RowLevelSecurity
 {
     /**
      * The Postgres session variable every tenant_isolation policy compares

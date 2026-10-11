@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Support\CurrentTenant;
+use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -30,7 +30,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $institution = app(CurrentTenant::class)->get();
+        $institution = app(CurrentTenant::class)->context();
 
         return [
             ...parent::share($request),

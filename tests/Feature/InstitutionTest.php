@@ -1,8 +1,8 @@
 <?php
 
-use App\Enums\InstitutionStatus;
-use App\Models\Institution;
 use AulaX\Catalogs\Infrastructure\Persistence\ParishModel as Parish;
+use AulaX\Tenancy\Domain\InstitutionStatus;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Database\Seeders\GeographicCatalogSeeder;
 use Illuminate\Database\QueryException;
 

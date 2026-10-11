@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\UserStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -53,5 +54,21 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Models moved to src/ carry a "Model" suffix (InstitutionModel), which
+     * would make ->for($institution) look for an "institutionModel" relation
+     * instead of "institution".
+     *
+     * @param  Factory|Model  $factory
+     * @param  string|null  $relationship
+     * @return static
+     */
+    public function for($factory, $relationship = null)
+    {
+        $related = $factory instanceof Factory ? $factory->modelName() : $factory;
+
+        return parent::for($factory, $relationship ?? Str::camel(Str::replaceEnd('Model', '', class_basename($related))));
     }
 }

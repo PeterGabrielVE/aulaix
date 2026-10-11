@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Institution;
 use App\Models\User;
 use App\Notifications\ResetPasswordLink;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 

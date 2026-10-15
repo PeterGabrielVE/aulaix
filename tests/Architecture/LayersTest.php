@@ -1,7 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\Auth\AcceptInvitationController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\ResolveTenant;
 
 /**
@@ -29,6 +34,12 @@ const MIGRATED_CONTROLLERS = [
     InstitutionController::class,
     // SPEC-005
     AuditLogController::class,
+    // SPEC-004
+    UserController::class,
+    InvitationController::class,
+    AcceptInvitationController::class,
+    HomeController::class,
+    EnsureActiveMembership::class,
 ];
 
 /**
@@ -111,6 +122,16 @@ arch('Shared depends on no other module', function () {
 
     expect('AulaX\Shared')->not->toUse($otherModules);
 });
+
+arch('only IdentityAccess uses the account model', function (string $module) {
+    // With no institution active, Row Level Security shows every account
+    // (ADR 0006): reading them is IdentityAccess's job alone.
+    if ($module === 'IdentityAccess') {
+        $this->markTestSkipped('The account model belongs to IdentityAccess.');
+    }
+
+    expect("AulaX\\{$module}")->not->toUse('AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel');
+})->with('modules');
 
 arch('every file in src declares strict types')
     ->expect('AulaX')

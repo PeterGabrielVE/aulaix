@@ -377,4 +377,31 @@ Ninguna. Q1 a Q8 están resueltas en [Decisiones incorporadas](#decisiones-incor
 
 | Criterio | Test(s) |
 |----------|---------|
-| IDG-R01.1 – IDG-R11.8 | Pendientes (spec en borrador). |
+| IDG-R01.1 | `tests/Feature/IdentityAccess/AccountIsolationTest.php` › «two regular accounts can not share an email» |
+| IDG-R01.2 | `tests/Unit/IdentityAccess/Domain/Account/EmailAddressTest.php` › «normalizes an email to lower case without surrounding spaces»; `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «emails are stored normalized» |
+| IDG-R01.3 | `tests/Feature/UserManagementTest.php` › «suspending a member keeps their membership in other institutions» |
+| IDG-R02.1 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a suspension in one institution leaves the others untouched» |
+| IDG-R02.2 | `tests/Feature/UserManagementTest.php` › «an administrator can change a user's role and deactivate them»; `tests/Feature/UserManagementTest.php` › «suspending a member keeps their membership in other institutions» |
+| IDG-R02.3 | `tests/Feature/UserManagementTest.php` › «a suspended member is reactivated with the roles they had» |
+| IDG-R03.8 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a suspended or ended membership ends the session in that institution»; `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «an account that is no longer active loses access everywhere» |
+| IDG-R03.9 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «someone without a membership can not log in, as if they had no account»; `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a session can not be carried into an institution without membership» |
+| IDG-R04.1 | `tests/Feature/UserManagementTest.php` › «an administrator invites a person with a role and the link is emailed»; `tests/Unit/IdentityAccess/Domain/Invitation/InvitationTest.php` › «is pending for seven days from when it was sent» |
+| IDG-R04.2 | `tests/Feature/UserManagementTest.php` › «inviting someone who belongs to another institution gets the same answer as anyone else» |
+| IDG-R04.3 | `tests/Feature/UserManagementTest.php` › «a member of the institution can not be invited again»; `tests/Feature/UserManagementTest.php` › «an email with a pending invitation can not be invited twice» |
+| IDG-R04.4 | `tests/Feature/Auth/InvitationTest.php` › «accepting an invitation creates the account, verifies the email and joins the institution»; `tests/Feature/Auth/InvitationTest.php` › «the new member can then log in to the institution» |
+| IDG-R04.7 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be corrected, which replaces its link» |
+| IDG-R04.8 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be resent»; `tests/Feature/UserManagementTest.php` › «an invitation that is no longer pending can not be resent» |
+| IDG-R04.9 | `tests/Feature/Auth/InvitationTest.php` › «an invitation expires after a week»; `tests/Feature/Auth/InvitationTest.php` › «an invalid invitation token is rejected»; `tests/Feature/Auth/InvitationTest.php` › «an invitation can only be used once»; `tests/Feature/Auth/InvitationTest.php` › «a cancelled invitation can not be used»; `tests/Feature/Auth/InvitationTest.php` › «an invitation is only valid for the institution that sent it» |
+| IDG-R04.10 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be cancelled» |
+| IDG-R05.5 | `tests/Feature/UserManagementTest.php` › «a manager can not change the name or email of a member» |
+| IDG-R05.6 | `tests/Feature/UserManagementTest.php` › «the user list never includes users of another institution»; `tests/Feature/UserManagementTest.php` › «a user of another institution can not be edited»; `tests/Feature/UserManagementTest.php` › «an invitation of another institution can not be managed» |
+| IDG-R07.3 | `tests/Feature/UserManagementTest.php` › «the last active administrador can not be suspended» |
+| IDG-R09.1 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «a regular account becomes a global account with an active membership, keeping its password»; `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «a deactivated user keeps the account with a membership suspended by the institution» |
+| IDG-R09.2 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «accounts sharing an email stay separate, each with its own password and institution» |
+| IDG-R09.5 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «accounts sharing an email but not the name are left for support to review» |
+| IDG-R09.6 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «a user who never accepted the invitation becomes a pending invitation whose link still works»; `tests/Feature/Auth/InvitationTest.php` › «invitation links sent before SPEC-004 still work» |
+| IDG-R10.1 | `tests/Feature/UserManagementTest.php` › «invitations and membership changes are recorded in the audit log» |
+| IDG-NF01 | `tests/Feature/IdentityAccess/AccountIsolationTest.php` › «an institution only sees the people who are its members»; `tests/Feature/IdentityAccess/AccountIsolationTest.php` › «a member of another institution is invisible, even with raw SQL» |
+| IDG-NF02 | `tests/Feature/UserManagementTest.php` › «inviting someone who belongs to another institution gets the same answer as anyone else» |
+| IDG-NF04 | `tests/Unit/IdentityAccess/Domain/Invitation/InvitationTest.php` › «keeps only the hash of its token» |
+| Resto de IDG-R03, R04.5, R04.6, R05.1 – R05.4, R06 – R08, R09.3, R09.4, R09.7, R11 | Pendientes (PR B y PR C). |

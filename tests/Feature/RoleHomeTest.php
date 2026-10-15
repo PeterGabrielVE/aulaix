@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 
 dataset('role homes', [
     'Administrador' => ['Administrador', 'admin.home', '/admin', 'Home/Admin'],

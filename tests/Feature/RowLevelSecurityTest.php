@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use AulaX\Tenancy\Infrastructure\InMemoryCurrentTenant as CurrentTenant;
 use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
 use Illuminate\Database\QueryException;
@@ -44,9 +44,10 @@ test('a query without a tenant returns no rows', function (string $how) {
 
     withoutTenant($how);
 
-    expect(User::count())->toBe(0);
-    expect(DB::table('users')->count())->toBe(0);
-    expect(DB::select('select count(*) as total from users')[0]->total)->toBe(0);
+    // users is a global table since SPEC-004 (ADR 0006); memberships are the
+    // institution-scoped rows every user now has.
+    expect(DB::table('institution_memberships')->count())->toBe(0);
+    expect(DB::select('select count(*) as total from institution_memberships')[0]->total)->toBe(0);
 })->with('ways to have no tenant');
 
 test('without a tenant nothing can be written', function (string $how) {
@@ -57,16 +58,15 @@ test('without a tenant nothing can be written', function (string $how) {
 
     // In a savepoint, so the rejected insert doesn't abort the test's
     // surrounding transaction for the checks that follow.
-    expect(fn () => DB::transaction(fn () => DB::table('users')->insert([
+    expect(fn () => DB::transaction(fn () => DB::table('institution_memberships')->insert([
         'institution_id' => $institution->id,
-        'name' => 'Sin tenant',
-        'email' => 'sin-tenant@example.com',
-        'password' => 'x',
+        'user_id' => $user->id,
+        'status' => 'active',
     ])))->toThrow(QueryException::class, 'row-level security');
 
     // Invisible rows can't be updated or deleted either: nothing matches.
-    expect(DB::table('users')->where('id', $user->id)->update(['name' => 'Cambiado']))->toBe(0);
-    expect(DB::table('users')->where('id', $user->id)->delete())->toBe(0);
+    expect(DB::table('institution_memberships')->where('user_id', $user->id)->update(['status' => 'ended']))->toBe(0);
+    expect(DB::table('institution_memberships')->where('user_id', $user->id)->delete())->toBe(0);
 })->with('ways to have no tenant');
 
 test('switching back to a tenant after clearing it shows only its rows again', function () {
@@ -74,10 +74,10 @@ test('switching back to a tenant after clearing it shows only its rows again', f
     $user = User::factory()->for($institution)->create();
 
     RowLevelSecurity::clearInstitution();
-    expect(DB::table('users')->count())->toBe(0);
+    expect(DB::table('institution_memberships')->count())->toBe(0);
 
     RowLevelSecurity::setInstitution($institution->id);
-    expect(DB::table('users')->pluck('id')->all())->toBe([$user->id]);
+    expect(DB::table('institution_memberships')->pluck('user_id')->all())->toBe([$user->id]);
 });
 
 test('the application connects with a role that can not bypass Row Level Security', function () {

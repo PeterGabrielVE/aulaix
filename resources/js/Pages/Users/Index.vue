@@ -9,11 +9,19 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    invitations: {
+        type: Array,
+        required: true,
+    },
     filters: {
         type: Object,
         required: true,
     },
 });
+
+function pageUrl(page) {
+    return route('users.index', { ...(search.value ? { search: search.value } : {}), page });
+}
 
 const search = ref(props.filters.search);
 
@@ -44,7 +52,7 @@ watch(search, (value) => {
                     :href="route('users.create')"
                     class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                    Nuevo usuario
+                    Invitar
                 </Link>
             </div>
         </template>
@@ -86,11 +94,7 @@ watch(search, (value) => {
                                         <span
                                             v-else
                                             class="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-700"
-                                        >Inactivo</span>
-                                        <span
-                                            v-if="user.invitation_pending"
-                                            class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800"
-                                        >Invitación pendiente</span>
+                                        >Suspendido</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
@@ -112,25 +116,66 @@ watch(search, (value) => {
                 </div>
 
                 <nav
-                    v-if="users.last_page > 1"
-                    class="flex flex-wrap gap-1"
+                    v-if="users.lastPage > 1"
+                    class="flex items-center justify-between text-sm text-gray-700"
                     aria-label="Paginación"
                 >
-                    <template v-for="link in users.links" :key="link.label">
-                        <Link
-                            v-if="link.url"
-                            :href="link.url"
-                            preserve-state
-                            class="rounded-md px-3 py-1 text-sm"
-                            :class="link.active ? 'bg-gray-800 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'"
-                        ><span v-html="link.label" /></Link>
-                        <span
-                            v-else
-                            class="rounded-md px-3 py-1 text-sm text-gray-400"
-                            v-html="link.label"
-                        />
-                    </template>
+                    <Link
+                        v-if="users.page > 1"
+                        :href="pageUrl(users.page - 1)"
+                        preserve-state
+                        class="rounded-md bg-white px-3 py-1 hover:bg-gray-50"
+                    >Anterior</Link>
+                    <span v-else />
+                    <span>Página {{ users.page }} de {{ users.lastPage }} · {{ users.total }} miembros</span>
+                    <Link
+                        v-if="users.page < users.lastPage"
+                        :href="pageUrl(users.page + 1)"
+                        preserve-state
+                        class="rounded-md bg-white px-3 py-1 hover:bg-gray-50"
+                    >Siguiente</Link>
+                    <span v-else />
                 </nav>
+
+                <section v-if="invitations.length" class="space-y-2">
+                    <h3 class="text-lg font-medium text-gray-900">Invitaciones pendientes</h3>
+                    <div class="overflow-x-auto bg-white shadow-xs sm:rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead class="bg-gray-50 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Nombre</th>
+                                    <th scope="col" class="px-6 py-3">Roles</th>
+                                    <th scope="col" class="px-6 py-3">Vence</th>
+                                    <th scope="col" class="px-6 py-3"><span class="sr-only">Acciones</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr v-for="invitation in invitations" :key="invitation.id">
+                                    <td class="px-6 py-4">
+                                        <span class="block font-medium text-gray-900">{{ invitation.name }}</span>
+                                        <span class="block text-gray-500">{{ invitation.email }}</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-700">{{ invitation.roles.join(', ') }}</td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            v-if="invitation.expired"
+                                            class="rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-700"
+                                        >Vencida</span>
+                                        <span v-else class="text-gray-700">{{ invitation.expiresAt }}</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <Link
+                                            :href="route('invitations.edit', invitation.id)"
+                                            class="font-medium text-indigo-600 hover:text-indigo-800"
+                                        >
+                                            Gestionar
+                                        </Link>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </div>
     </AuthenticatedLayout>

@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
 use App\Notifications\ResetPasswordLink;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -202,16 +202,14 @@ test('reset tokens for the same email are kept separately per institution', func
     $userA = User::factory()->for($institutionA)->create(['email' => 'shared@example.com']);
     $this->post(tenantUrl($institutionA, '/forgot-password'), ['email' => 'shared@example.com']);
 
+    // SPEC-004: one account, a membership in each institution; until the
+    // central password reset (PR B) each institution keeps its own token.
     $institutionB = tenant();
-    $userB = User::factory()->for($institutionB)->create(['email' => 'shared@example.com']);
+    $userB = joinInstitution($userA, $institutionB);
     $this->post(tenantUrl($institutionB, '/forgot-password'), ['email' => 'shared@example.com']);
 
-    $tokenA = null;
-    Notification::assertSentTo($userA, ResetPasswordLink::class, function ($notification) use (&$tokenA) {
-        $tokenA = $notification->token;
-
-        return true;
-    });
+    // Same account, two emails (one per institution): A's is the first one.
+    $tokenA = Notification::sent($userA, ResetPasswordLink::class)->first()->token;
 
     // Requesting a reset in B used to overwrite A's pending token (the table
     // was keyed by email alone). A's link must still work.
@@ -233,7 +231,7 @@ test('a reset token from one institution can not be used in another', function (
     $this->post(tenantUrl($institutionA, '/forgot-password'), ['email' => 'shared@example.com']);
 
     $institutionB = tenant();
-    $userB = User::factory()->for($institutionB)->create(['email' => 'shared@example.com']);
+    $userB = joinInstitution($userA, $institutionB);
 
     Notification::assertSentTo($userA, ResetPasswordLink::class, function ($notification) use ($institutionB) {
         $this->post(tenantUrl($institutionB, '/reset-password'), [

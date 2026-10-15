@@ -1,7 +1,7 @@
 <?php
 
-use App\Enums\UserStatus;
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
+use Illuminate\Support\Facades\DB;
 
 test('login screen can be rendered', function () {
     $institution = tenant();
@@ -98,7 +98,8 @@ test('a user deactivated mid-session is logged out on their next request', funct
     $user = User::factory()->for($institution)->create();
 
     $this->actingAs($user);
-    $user->update(['status' => UserStatus::Inactive]);
+    // The institution suspends the membership (SPEC-004: status lives there now).
+    DB::table('institution_memberships')->where('user_id', $user->id)->update(['status' => 'suspended', 'suspension_reason' => 'institution']);
 
     $response = $this->get(tenantUrl($institution, '/profile'));
 
@@ -129,8 +130,9 @@ test('five failed logins lock the account out for a minute, even with the right 
 });
 
 test('failed logins in one institution do not lock out the same email in another', function () {
+    // SPEC-004: the same person is one account with a membership in each.
     $institutionA = tenant();
-    User::factory()->for($institutionA)->create(['email' => 'shared@example.com']);
+    $person = User::factory()->for($institutionA)->create(['email' => 'shared@example.com']);
 
     foreach (range(1, 5) as $attempt) {
         $this->post(tenantUrl($institutionA, '/login'), [
@@ -140,7 +142,7 @@ test('failed logins in one institution do not lock out the same email in another
     }
 
     $institutionB = tenant();
-    User::factory()->for($institutionB)->create(['email' => 'shared@example.com']);
+    joinInstitution($person, $institutionB);
 
     $this->post(tenantUrl($institutionB, '/login'), [
         'email' => 'shared@example.com',

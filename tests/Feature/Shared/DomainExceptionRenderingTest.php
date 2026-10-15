@@ -2,6 +2,7 @@
 
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
+use AulaX\Shared\Domain\BusinessRuleViolations;
 use AulaX\Shared\Domain\Conflict;
 use AulaX\Shared\Domain\NotFound;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,22 @@ it('files a broken business rule without a field under the general error', funct
     $this->postJson($uri)
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['general' => 'No se puede completar la operación.']);
+});
+
+it('reports several broken rules at once, grouped by field', function () {
+    $uri = routeThrowing(BusinessRuleViolations::of(
+        BusinessRuleViolation::onField('roles', 'No puedes quitarte a ti mismo la gestión de usuarios.'),
+        BusinessRuleViolation::onField('roles', 'Solo un Administrador puede asignar o quitar el rol de Administrador.'),
+        BusinessRuleViolation::onField('status', 'No puedes desactivar tu propia cuenta.'),
+    ));
+
+    $this->postJson($uri)
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.roles', [
+            'No puedes quitarte a ti mismo la gestión de usuarios.',
+            'Solo un Administrador puede asignar o quitar el rol de Administrador.',
+        ])
+        ->assertJsonPath('errors.status', ['No puedes desactivar tu propia cuenta.']);
 });
 
 it('returns 403 when the domain denies the action', function () {

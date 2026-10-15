@@ -12,7 +12,8 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 // No public registration: accounts are created by the institution's
-// administrator (UserController) and activated through an invitation.
+// people join an institution through an invitation (UserController), accepted
+// on the central domain (routes/web.php).
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
@@ -33,11 +34,9 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:6,1')
         ->name('password.store');
 
-    Route::get('invitation/{token}', [AcceptInvitationController::class, 'create'])
-        ->name('invitation.show');
-
-    Route::post('invitation', [AcceptInvitationController::class, 'store'])
-        ->name('invitation.store');
+    // Invitation links sent before SPEC-004; they now open on the central domain.
+    Route::get('invitation/{token}', [AcceptInvitationController::class, 'legacy'])
+        ->name('invitation.legacy');
 });
 
 Route::middleware(['auth', 'active'])->group(function () {

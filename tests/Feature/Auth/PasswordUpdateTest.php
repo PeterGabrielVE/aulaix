@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use Illuminate\Support\Facades\Hash;
 
 test('password can be updated', function () {

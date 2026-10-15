@@ -2,7 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
+use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -27,7 +28,7 @@ class ResetPasswordLink extends Notification
 
     public function toMail(User $notifiable): MailMessage
     {
-        $institution = $notifiable->institution;
+        $institution = app(CurrentTenant::class)->context();
 
         // Sent from a tenant request, so route() already resolves to this
         // institution's subdomain (ResolveTenant binds the URL default).

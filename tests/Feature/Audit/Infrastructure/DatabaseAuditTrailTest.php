@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\User;
 use AulaX\Audit\Application\AuditContext;
 use AulaX\Audit\Application\AuditEvent;
 use AulaX\Audit\Application\AuditSubject;
 use AulaX\Audit\Application\AuditTrail;
 use AulaX\Audit\Application\FieldChange;
 use AulaX\Audit\Infrastructure\DatabaseAuditTrail;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\Clock;
 use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;

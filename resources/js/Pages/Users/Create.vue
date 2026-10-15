@@ -22,12 +22,12 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Nuevo usuario" />
+    <Head title="Invitar" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Nuevo usuario
+                Invitar a una persona
             </h2>
         </template>
 
@@ -37,13 +37,13 @@ const submit = () => {
                     <div class="max-w-xl">
                         <p class="mb-6 text-sm text-gray-600">
                             Le enviaremos un correo con un enlace para que elija
-                            su contraseña y active su cuenta.
+                            su contraseña y se una al plantel. El enlace vence en 7 días.
                         </p>
 
                         <UserForm
                             :form="form"
                             :roles="roles"
-                            submit-label="Crear y enviar invitación"
+                            submit-label="Enviar invitación"
                             @submit="submit"
                         />
                     </div>

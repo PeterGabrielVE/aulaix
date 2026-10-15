@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -23,6 +25,17 @@ Route::domain(config('app.domain'))->group(function () {
     Route::get('/api/institutions/search', [InstitutionController::class, 'search'])
         ->middleware('throttle:30,1')
         ->name('institutions.search');
+
+    // SPEC-004: accounts are global, so invitations are accepted here.
+    Route::middleware('guest')->group(function () {
+        Route::get('/invitaciones/{subdomain}/aceptada', [AcceptInvitationController::class, 'accepted'])
+            ->name('invitations.accepted');
+        Route::get('/invitaciones/{subdomain}/{token}', [AcceptInvitationController::class, 'create'])
+            ->name('invitations.accept');
+        Route::post('/invitaciones/{subdomain}', [AcceptInvitationController::class, 'store'])
+            ->middleware('throttle:6,1')
+            ->name('invitations.store');
+    });
 });
 
 /*
@@ -72,9 +85,17 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
         });
 
         Route::middleware('permission:gestionar-usuarios')->group(function () {
-            Route::resource('users', UserController::class)->except(['show', 'destroy']);
-            Route::post('/users/{user}/invitation', [UserController::class, 'resendInvitation'])
-                ->name('users.invitation');
+            Route::resource('users', UserController::class)->except(['show', 'destroy'])
+                ->whereNumber('user');
+
+            Route::get('/invitations/{invitation}/edit', [InvitationController::class, 'edit'])
+                ->whereNumber('invitation')->name('invitations.edit');
+            Route::put('/invitations/{invitation}', [InvitationController::class, 'update'])
+                ->whereNumber('invitation')->name('invitations.update');
+            Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])
+                ->whereNumber('invitation')->name('invitations.resend');
+            Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy'])
+                ->whereNumber('invitation')->name('invitations.destroy');
         });
     });
 

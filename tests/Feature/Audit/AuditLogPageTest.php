@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\User;
 use AulaX\Audit\Application\AuditEvent;
 use AulaX\Audit\Application\AuditSubject;
 use AulaX\Audit\Application\AuditTrail;
 use AulaX\Audit\Application\FieldChange;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use AulaX\Shared\Application\TransactionManager;
 use Illuminate\Support\Facades\DB;
 

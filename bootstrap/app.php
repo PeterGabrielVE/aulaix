@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Middleware\EnsureUserIsActive;
+use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveTenant;
 use App\Http\Middleware\TrustConfiguredProxies;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
+use AulaX\Shared\Domain\BusinessRuleViolations;
 use AulaX\Shared\Domain\Conflict;
 use AulaX\Shared\Domain\NotFound;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
@@ -44,7 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'tenant' => ResolveTenant::class,
-            'active' => EnsureUserIsActive::class,
+            'active' => EnsureActiveMembership::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
         ]);
@@ -77,6 +78,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->map(BusinessRuleViolation::class, fn (BusinessRuleViolation $e) => ValidationException::withMessages([
             $e->field() ?? 'general' => $e->getMessage(),
         ]));
+        $exceptions->map(BusinessRuleViolations::class, fn (BusinessRuleViolations $e) => ValidationException::withMessages(
+            $e->messagesByField(),
+        ));
         $exceptions->map(AuthorizationDenied::class, fn (AuthorizationDenied $e) => new AccessDeniedHttpException($e->getMessage(), $e));
         $exceptions->map(NotFound::class, fn (NotFound $e) => new NotFoundHttpException($e->getMessage(), $e));
         $exceptions->map(Conflict::class, fn (Conflict $e) => new ConflictHttpException($e->getMessage(), $e));

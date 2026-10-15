@@ -1,121 +1,173 @@
 <?php
 
-use App\Models\User;
-use App\Notifications\UserInvitation;
+use AulaX\IdentityAccess\Infrastructure\Notifications\InvitationMail;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\InvitationModel;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Testing\TestResponse;
 
 /**
- * Send $user an invitation and return the token from the email.
+ * SPEC-004 IDG-R04.4, R04.9: accepting an invitation on the central domain.
  */
-function inviteAndGetToken(User $user): string
+function invitationToken(Institution $institution, string $email, array $roles = ['Docente']): string
 {
     Notification::fake();
 
-    $user->sendInvitation();
+    test()->actingAs(userWithRole($institution, 'Administrador'))
+        ->post(tenantUrl($institution, '/users'), ['name' => 'Ana Pérez', 'email' => $email, 'roles' => $roles])
+        ->assertSessionHasNoErrors();
 
-    $token = null;
-    Notification::assertSentTo($user, UserInvitation::class, function (UserInvitation $notification) use (&$token) {
-        $token = $notification->token;
+    $url = null;
+    Notification::assertSentOnDemand(InvitationMail::class, function (InvitationMail $mail) use (&$url) {
+        $url = $mail->url;
 
         return true;
     });
+    leaveTenant();
 
-    return $token;
+    return basename(parse_url($url, PHP_URL_PATH));
+}
+
+function accept(Institution $institution, string $token, string $email = 'ana@example.com'): TestResponse
+{
+    return test()->post(centralUrl("/invitaciones/{$institution->subdomain}"), [
+        'token' => $token,
+        'email' => $email,
+        'password' => 'mi-contrasena-nueva',
+        'password_confirmation' => 'mi-contrasena-nueva',
+    ]);
 }
 
 test('the invitation screen can be rendered', function () {
     $institution = tenant();
-    $user = User::factory()->for($institution)->unverified()->create();
-    $token = inviteAndGetToken($user);
+    $token = invitationToken($institution, 'ana@example.com');
 
-    $this->get(tenantUrl($institution, "/invitation/{$token}?email={$user->email}"))
+    $this->get(centralUrl("/invitaciones/{$institution->subdomain}/{$token}?email=ana@example.com"))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Auth/AcceptInvitation')
-            ->where('email', $user->email)
+            ->where('email', 'ana@example.com')
+            ->where('subdomain', $institution->subdomain)
         );
 });
 
-test('accepting an invitation sets the password, verifies the email and logs the user in', function () {
+test('accepting an invitation creates the account, verifies the email and joins the institution', function () {
     $institution = tenant();
-    $user = userWithRole($institution, 'Docente', ['email_verified_at' => null]);
-    $token = inviteAndGetToken($user);
+    $token = invitationToken($institution, 'ana@example.com', ['Docente', 'Representante']);
 
-    $response = $this->post(tenantUrl($institution, '/invitation'), [
-        'token' => $token,
-        'email' => $user->email,
-        'password' => 'mi-contrasena-nueva',
-        'password_confirmation' => 'mi-contrasena-nueva',
-    ]);
+    accept($institution, $token)
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(centralUrl("/invitaciones/{$institution->subdomain}/aceptada"));
 
-    $response->assertSessionHasNoErrors()->assertRedirect(route('dashboard'));
-    $this->assertAuthenticatedAs($user);
+    $account = User::query()->where('email', 'ana@example.com')->sole();
+    expect($account->name)->toBe('Ana Pérez')
+        ->and(Hash::check('mi-contrasena-nueva', $account->password))->toBeTrue()
+        ->and($account->email_verified_at)->not->toBeNull();
 
-    $user->refresh();
-    expect(Hash::check('mi-contrasena-nueva', $user->password))->toBeTrue();
-    expect($user->hasAcceptedInvitation())->toBeTrue();
+    useTenant($institution);
+    expect(DB::table('institution_memberships')->where('user_id', $account->id)->value('status'))->toBe('active')
+        ->and($account->fresh()->getRoleNames()->sort()->values()->all())->toBe(['Docente', 'Representante'])
+        ->and(InvitationModel::query()->sole()->status)->toBe('accepted');
+});
+
+test('the new member can then log in to the institution', function () {
+    $institution = tenant();
+    accept($institution, invitationToken($institution, 'ana@example.com'));
+
+    $this->get(centralUrl("/invitaciones/{$institution->subdomain}/aceptada"))
+        ->assertInertia(fn ($page) => $page
+            ->component('Auth/InvitationAccepted')
+            ->where('loginUrl', tenantUrl($institution, '/login'))
+        );
+
+    $this->post(tenantUrl($institution, '/login'), ['email' => 'ana@example.com', 'password' => 'mi-contrasena-nueva'])
+        ->assertSessionHasNoErrors();
+    $this->assertAuthenticated();
 });
 
 test('an invitation is still valid days later, unlike a password reset link', function () {
     $institution = tenant();
-    $user = User::factory()->for($institution)->unverified()->create();
-    $token = inviteAndGetToken($user);
+    $token = invitationToken($institution, 'ana@example.com');
 
     $this->travel(6)->days();
 
-    $this->post(tenantUrl($institution, '/invitation'), [
-        'token' => $token,
-        'email' => $user->email,
-        'password' => 'mi-contrasena-nueva',
-        'password_confirmation' => 'mi-contrasena-nueva',
-    ])->assertSessionHasNoErrors();
+    accept($institution, $token)->assertSessionHasNoErrors();
 });
 
 test('an invitation expires after a week', function () {
     $institution = tenant();
-    $user = User::factory()->for($institution)->unverified()->create();
-    $token = inviteAndGetToken($user);
+    $token = invitationToken($institution, 'ana@example.com');
 
     $this->travel(8)->days();
 
-    $this->post(tenantUrl($institution, '/invitation'), [
-        'token' => $token,
-        'email' => $user->email,
-        'password' => 'mi-contrasena-nueva',
-        'password_confirmation' => 'mi-contrasena-nueva',
-    ])->assertSessionHasErrors(['email' => __('passwords.token')]);
-
-    $this->assertGuest();
+    accept($institution, $token)->assertSessionHasErrors(['email' => 'Esta invitación no es válida o ya caducó.']);
+    expect(User::query()->where('email', 'ana@example.com')->exists())->toBeFalse();
 });
 
 test('an invalid invitation token is rejected', function () {
     $institution = tenant();
-    $user = User::factory()->for($institution)->unverified()->create();
-    inviteAndGetToken($user);
+    invitationToken($institution, 'ana@example.com');
 
-    $this->post(tenantUrl($institution, '/invitation'), [
-        'token' => 'not-the-token',
-        'email' => $user->email,
-        'password' => 'mi-contrasena-nueva',
-        'password_confirmation' => 'mi-contrasena-nueva',
-    ])->assertSessionHasErrors('email');
-
-    $this->assertGuest();
+    accept($institution, 'not-the-token')->assertSessionHasErrors(['email' => 'Esta invitación no es válida o ya caducó.']);
+    expect(User::query()->where('email', 'ana@example.com')->exists())->toBeFalse();
 });
 
-test('a deactivated user who accepts an invitation is not logged in', function () {
+test('an invitation can only be used once', function () {
     $institution = tenant();
-    $user = User::factory()->for($institution)->unverified()->inactive()->create();
-    $token = inviteAndGetToken($user);
+    $token = invitationToken($institution, 'ana@example.com');
+    accept($institution, $token)->assertSessionHasNoErrors();
 
-    $response = $this->post(tenantUrl($institution, '/invitation'), [
-        'token' => $token,
-        'email' => $user->email,
-        'password' => 'mi-contrasena-nueva',
-        'password_confirmation' => 'mi-contrasena-nueva',
-    ]);
+    accept($institution, $token)->assertSessionHasErrors(['email' => 'Esta invitación no es válida o ya caducó.']);
+});
 
-    $response->assertRedirect(route('login'));
-    $this->assertGuest();
+test('a cancelled invitation can not be used', function () {
+    $institution = tenant();
+    $token = invitationToken($institution, 'ana@example.com');
+    useTenant($institution);
+    InvitationModel::query()->sole()->forceFill(['status' => 'cancelled'])->save();
+    leaveTenant();
+
+    accept($institution, $token)->assertSessionHasErrors(['email' => 'Esta invitación no es válida o ya caducó.']);
+});
+
+test('an invitation is only valid for the institution that sent it', function () {
+    $institution = tenant();
+    $token = invitationToken($institution, 'ana@example.com');
+    $other = tenant();
+    leaveTenant();
+
+    accept($other, $token)->assertSessionHasErrors(['email' => 'Esta invitación no es válida o ya caducó.']);
+});
+
+test('an email that already has an account can not accept a link yet', function () {
+    $elsewhere = tenant();
+    User::factory()->for($elsewhere)->create(['email' => 'ana@example.com', 'password' => 'la-de-siempre']);
+    $institution = tenant();
+    $token = invitationToken($institution, 'ana@example.com');
+
+    accept($institution, $token)->assertSessionHasErrors('email');
+
+    $account = User::query()->where('email', 'ana@example.com')->sole();
+    expect(Hash::check('la-de-siempre', $account->password))->toBeTrue();
+
+    useTenant($institution);
+    expect(DB::table('institution_memberships')->where('user_id', $account->id)->exists())->toBeFalse();
+});
+
+test('invitation links sent before SPEC-004 still work', function () {
+    $institution = tenant();
+    invitationToken($institution, 'ana@example.com');
+    useTenant($institution);
+    // The password broker kept a bcrypt hash of the token (IDG-R09.6).
+    InvitationModel::query()->sole()->forceFill(['token_hash' => Hash::make('legacy-token')])->save();
+    leaveTenant();
+
+    $this->get(tenantUrl($institution, '/invitation/legacy-token?email=ana@example.com'))
+        ->assertRedirect(centralUrl("/invitaciones/{$institution->subdomain}/legacy-token?email=ana%40example.com"));
+
+    leaveTenant();
+    accept($institution, 'legacy-token')->assertSessionHasNoErrors();
 });

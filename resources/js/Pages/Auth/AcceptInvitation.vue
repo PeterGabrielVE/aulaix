@@ -15,6 +15,10 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    subdomain: {
+        type: String,
+        required: true,
+    },
 });
 
 const form = useForm({
@@ -25,7 +29,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('invitation.store'), {
+    form.post(route('invitations.store', props.subdomain), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
@@ -36,10 +40,10 @@ const submit = () => {
         <Head title="Activar cuenta" />
 
         <h1 class="mb-1 text-lg font-semibold text-gray-900">
-            Activa tu cuenta
+            Acepta la invitación
         </h1>
         <p class="mb-4 text-sm text-gray-600">
-            Elige la contraseña con la que vas a iniciar sesión.
+            Crea tu cuenta de AulaX: elige la contraseña con la que vas a iniciar sesión.
         </p>
 
         <form @submit.prevent="submit">
@@ -101,7 +105,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Activar cuenta
+                    Crear cuenta y aceptar
                 </PrimaryButton>
             </div>
         </form>

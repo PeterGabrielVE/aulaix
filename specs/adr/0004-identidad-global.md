@@ -7,6 +7,8 @@ backlog: F1-06, F1-07
 
 # ADR 0004 — Identidad global con membresías por plantel
 
+> **Modificado por el [ADR 0006](0006-rls-identidad-global.md)** (2026-10-15): las decisiones 6 (funciones `SECURITY DEFINER`) y 7 (`legacy_credentials`) se sustituyen por la RLS de `users` según haya o no plantel activo, y por filas duplicadas marcadas hasta consolidar.
+
 ## Contexto
 
 F1-06 se implementó con **cuentas por plantel**: `users` tiene

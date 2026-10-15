@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use AulaX\IdentityAccess\Application\Home\ResolveHomeScreenHandler;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,15 +12,14 @@ class HomeController extends Controller
 {
     /**
      * The "dashboard" route every login, verification and password flow
-     * redirects to: forwards each user to their role's home screen
-     * (User::HOME_ROUTES).
+     * redirects to: forwards each user to their role's home screen.
      */
-    public function redirect(Request $request): RedirectResponse|Response
+    public function redirect(Request $request, ResolveHomeScreenHandler $resolveHomeScreen): RedirectResponse|Response
     {
-        $route = $request->user()->homeRoute();
+        $homeScreen = $resolveHomeScreen((int) $request->user()->getAuthIdentifier());
 
-        return $route
-            ? redirect()->route($route)
+        return $homeScreen
+            ? redirect()->route("{$homeScreen->value}.home")
             : Inertia::render('Home/NoRole');
     }
 

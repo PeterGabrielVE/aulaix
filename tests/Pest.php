@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use AulaX\Tenancy\Application\TenantActivator;
 use AulaX\Tenancy\Application\TenantContext;
 use AulaX\Tenancy\Infrastructure\Persistence\InstitutionMapper;
@@ -8,6 +8,7 @@ use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\RouteCollection;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /*
@@ -80,6 +81,30 @@ function tenantUrl(Institution $institution, string $path = '/'): string
     return 'http://'.$institution->subdomain.'.'.config('app.domain').$path;
 }
 
+function centralUrl(string $path = '/'): string
+{
+    return 'http://'.config('app.domain').$path;
+}
+
+/**
+ * Make an existing institution the active tenant again, as a request to its
+ * subdomain would.
+ */
+function useTenant(Institution $institution): void
+{
+    app(TenantActivator::class)->activate(TenantContext::of(InstitutionMapper::toDomain($institution)));
+}
+
+/**
+ * What a request to the central domain starts from: no institution active,
+ * no one logged in (sessions are per domain).
+ */
+function leaveTenant(): void
+{
+    app(TenantActivator::class)->deactivate();
+    auth()->forgetGuards();
+}
+
 /**
  * A user of the given institution holding one of the roles seeded by
  * RolePermissionSeeder (seeded here on demand; it's idempotent).
@@ -90,6 +115,31 @@ function userWithRole(Institution $institution, string $role, array $attributes 
 
     $user = User::factory()->for($institution)->create($attributes);
     $user->assignRole($role);
+
+    return $user;
+}
+
+/**
+ * Make an existing account also a member of another institution (SPEC-004:
+ * one person, one account, one membership per institution), optionally with
+ * a base role there. Leaves that institution active.
+ */
+function joinInstitution(User $user, Institution $institution, ?string $role = null): User
+{
+    app(TenantActivator::class)->activate(TenantContext::of(InstitutionMapper::toDomain($institution)));
+
+    DB::table('institution_memberships')->insert([
+        'institution_id' => $institution->id,
+        'user_id' => $user->id,
+        'status' => 'active',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    if ($role !== null) {
+        RolePermissionSeeder::seedForInstitution($institution);
+        $user->assignRole($role);
+    }
 
     return $user;
 }

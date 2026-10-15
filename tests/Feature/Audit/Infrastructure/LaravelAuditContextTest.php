@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\User;
 use AulaX\Audit\Application\AuditContext;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use Illuminate\Support\Facades\Route;
 
 /**

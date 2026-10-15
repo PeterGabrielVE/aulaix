@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 
 test('confirm password screen can be rendered', function () {
     $institution = tenant();

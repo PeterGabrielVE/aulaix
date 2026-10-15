@@ -3,79 +3,74 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Verified;
+use App\Http\Requests\AcceptInvitationRequest;
+use AulaX\IdentityAccess\Application\Auth\AcceptInvitationCommand;
+use AulaX\IdentityAccess\Application\Auth\AcceptInvitationHandler;
+use AulaX\Tenancy\Application\CurrentTenant;
+use AulaX\Tenancy\Application\ResolveTenant\ResolveTenantHandler;
+use AulaX\Tenancy\Application\ResolveTenant\ResolveTenantQuery;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Accepting an invitation, on the central domain (SPEC-004): the account is
+ * global, so it is created there and not in the institution that invited.
+ */
 class AcceptInvitationController extends Controller
 {
     /**
-     * Display the "choose your password" view for an invited user.
+     * The "choose your password" screen of an invitation link.
      */
-    public function create(Request $request): Response
+    public function create(Request $request, string $subdomain, string $token): Response
     {
         return Inertia::render('Auth/AcceptInvitation', [
-            'email' => $request->email,
-            'token' => $request->route('token'),
+            'email' => (string) $request->query('email', ''),
+            'token' => $token,
+            'subdomain' => $subdomain,
         ]);
     }
 
     /**
-     * Set the invited user's password, verify their email (they just proved
-     * they receive mail there) and log them in.
-     *
-     * @throws ValidationException
+     * Create the account and its membership (IDG-R04.4).
      */
-    public function store(Request $request): RedirectResponse
+    public function store(AcceptInvitationRequest $request, string $subdomain, AcceptInvitationHandler $acceptInvitation): RedirectResponse
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        $institution = $acceptInvitation(new AcceptInvitationCommand(
+            $subdomain,
+            $request->validated('email'),
+            $request->validated('token'),
+            $request->validated('password'),
+        ));
+
+        return redirect()->route('invitations.accepted', ['subdomain' => $institution->subdomain]);
+    }
+
+    /**
+     * Until the central login exists (SPEC-004 PR B), the new member signs
+     * in on the institution's own subdomain.
+     */
+    public function accepted(string $subdomain, ResolveTenantHandler $resolveTenant): Response
+    {
+        $institution = $resolveTenant(new ResolveTenantQuery($subdomain));
+
+        return Inertia::render('Auth/InvitationAccepted', [
+            'institutionName' => $institution->name,
+            'loginUrl' => route('login', ['tenant' => $institution->subdomain]),
         ]);
+    }
 
-        $acceptedUser = null;
-
-        $status = Password::broker('invitations')->reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user) use ($request, &$acceptedUser) {
-                $user->forceFill([
-                    'password' => $request->password,
-                    'remember_token' => Str::random(60),
-                ]);
-
-                if ($user->markEmailAsVerified()) {
-                    event(new Verified($user));
-                }
-
-                event(new PasswordReset($user));
-
-                $acceptedUser = $user;
-            }
-        );
-
-        if ($status !== Password::PASSWORD_RESET) {
-            throw ValidationException::withMessages([
-                'email' => [trans($status)],
-            ]);
-        }
-
-        if (! $acceptedUser->isActive()) {
-            return redirect()->route('login')->withErrors(['email' => __('auth.inactive')]);
-        }
-
-        Auth::login($acceptedUser);
-        $request->session()->regenerate();
-
-        return redirect()->route('dashboard');
+    /**
+     * Links sent before SPEC-004 point to the institution's subdomain; they
+     * keep working until they expire (IDG-R09.6).
+     */
+    public function legacy(Request $request, string $token, CurrentTenant $tenant): RedirectResponse
+    {
+        return redirect()->route('invitations.accept', [
+            'subdomain' => $tenant->context()->subdomain,
+            'token' => $token,
+            'email' => (string) $request->query('email', ''),
+        ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use AulaX\Audit\Application\AuditEvent;
 use AulaX\Audit\Application\AuditSubject;
 use AulaX\Audit\Application\AuditTrail;
@@ -8,6 +7,7 @@ use AulaX\Audit\Application\FieldChange;
 use AulaX\Audit\Application\ListEntries\AuditEntryView;
 use AulaX\Audit\Application\ListEntries\AuditLog;
 use AulaX\Audit\Application\ListEntries\AuditLogFilter;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use AulaX\Shared\Application\TransactionManager;
 
 /**

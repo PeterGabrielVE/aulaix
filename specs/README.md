@@ -56,7 +56,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [002 Identidad y acceso](002-identidad-acceso/) | `IdentityAccess` | implementada¹ | borrador | borrador |
 | [003 Catálogos globales](003-catalogos/) | `Catalogs` | implementada¹ | implementada (v2) | implementada (v2) |
 | [005 Bitácora de auditoría](005-auditoria/) | `Audit` | implementada | implementada | implementada |
-| [004 Identidad global](004-identidad-global/) | `IdentityAccess` | aprobada v3 (D1 legal pendiente) | — | — |
+| [004 Identidad global](004-identidad-global/) | `IdentityAccess` | aprobada v3 (D1 legal pendiente) | aprobada | borrador (PR A, B, C) |
 
 ¹ Los requisitos de 001–003 documentan el comportamiento que **ya existe**
 (Fase 1, F1-01 a F1-07), extraído del código y de los tests actuales. Los
@@ -87,5 +87,6 @@ Las specs siguientes de la Fase 1 y sus bloqueos están en [roadmap.md](roadmap.
 | [0001](adr/0001-arquitectura-hexagonal.md) | Arquitectura hexagonal modular en `src/` | propuesta |
 | [0002](adr/0002-spec-driven-development.md) | Spec-driven development propio en el repositorio | propuesta |
 | [0003](adr/0003-rls-limite-seguridad.md) | Row Level Security como límite de seguridad multi-tenant | aceptada (retroactiva) |
-| [0004](adr/0004-identidad-global.md) | Identidad global con membresías por plantel | aceptada |
+| [0004](adr/0004-identidad-global.md) | Identidad global con membresías por plantel | aceptada (§6 y §7 sustituidas por 0006) |
 | [0005](adr/0005-auditoria-explicita.md) | Auditoría explícita en los casos de uso, dentro de la transacción | aceptada |
+| [0006](adr/0006-rls-identidad-global.md) | Aislamiento de la identidad global sin funciones privilegiadas (modifica 0004) | aceptada |

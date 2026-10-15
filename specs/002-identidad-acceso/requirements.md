@@ -283,11 +283,11 @@ administración ni escalar privilegios.
 | IAM-R02.10 | `tests/Feature/Auth/AuthenticationTest.php` › «users can logout» |
 | IAM-R03.1 | `tests/Feature/Auth/AuthenticationTest.php` › «a user deactivated mid-session is logged out on their next request» |
 | IAM-R04.1 | `tests/Feature/Auth/InvitationTest.php` › «the invitation screen can be rendered» |
-| IAM-R04.2 | `tests/Feature/Auth/InvitationTest.php` › «accepting an invitation sets the password, verifies the email and logs the user in» |
+| IAM-R04.2 | `tests/Feature/Auth/InvitationTest.php` › «accepting an invitation creates the account, verifies the email and joins the institution» (sustituido por IDG-R04.4) |
 | IAM-R04.3 | `tests/Feature/Auth/InvitationTest.php` › «an invitation is still valid days later, unlike a password reset link» |
 | IAM-R04.4 | `tests/Feature/Auth/InvitationTest.php` › «an invitation expires after a week» |
 | IAM-R04.5 | `tests/Feature/Auth/InvitationTest.php` › «an invalid invitation token is rejected» |
-| IAM-R04.6 | `tests/Feature/Auth/InvitationTest.php` › «a deactivated user who accepts an invitation is not logged in» |
+| IAM-R04.6 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a suspended or ended membership ends the session in that institution» (sustituido por IDG-R03.8) |
 | IAM-R05.1 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link screen can be rendered» |
 | IAM-R05.2 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link can be requested»; `tests/Feature/Auth/PasswordResetTest.php` › «the reset email links to the institution subdomain and states the 60 minute expiry» |
 | IAM-R05.3 | `tests/Feature/Auth/PasswordResetTest.php` › «an unknown email gets the same answer as a registered one and no email is sent» |
@@ -314,15 +314,15 @@ administración ni escalar privilegios.
 | IAM-R09.2 | `tests/Feature/UserManagementTest.php` › «users without the gestionar-usuarios permission can not manage users» |
 | IAM-R09.3 | `tests/Feature/UserManagementTest.php` › «administrators can list the users of their institution»; `tests/Feature/UserManagementTest.php` › «a director can manage the users of their institution» |
 | IAM-R09.4 | `tests/Feature/UserManagementTest.php` › «the user list never includes users of another institution»; `tests/Feature/UserManagementTest.php` › «a user of another institution can not be edited» |
-| IAM-R09.5 | `tests/Feature/UserManagementTest.php` › «an administrator creates a user with a role and an invitation is sent» |
-| IAM-R09.6 | `tests/Feature/UserManagementTest.php` › «the email must be unique within the institution» |
-| IAM-R09.7 | `tests/Feature/UserManagementTest.php` › «the same email can be used in a different institution» |
+| IAM-R09.5 | `tests/Feature/UserManagementTest.php` › «an administrator invites a person with a role and the link is emailed» (sustituido por IDG-R04.1) |
+| IAM-R09.6 | `tests/Feature/UserManagementTest.php` › «a member of the institution can not be invited again» (sustituido por IDG-R04.3) |
+| IAM-R09.7 | `tests/Feature/UserManagementTest.php` › «inviting someone who belongs to another institution gets the same answer as anyone else» (sustituido por IDG-R04.2) |
 | IAM-R09.8 | `tests/Feature/UserManagementTest.php` › «at least one role is required» |
 | IAM-R09.9 | `tests/Feature/UserManagementTest.php` › «only roles that exist in the institution can be assigned» |
 | IAM-R09.10 | `tests/Feature/UserManagementTest.php` › «a user can be given several roles in the same institution» |
 | IAM-R09.11 | `tests/Feature/UserManagementTest.php` › «the edit screen shows the user with their role»; `tests/Feature/UserManagementTest.php` › «an administrator can change a user's role and deactivate them» |
 | IAM-R09.12 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be resent» |
-| IAM-R09.13 | `tests/Feature/UserManagementTest.php` › «an invitation can not be resent to a user who already activated their account» |
+| IAM-R09.13 | `tests/Feature/UserManagementTest.php` › «an invitation that is no longer pending can not be resent» (sustituido por IDG-R04.8) |
 | IAM-R10.1 | `tests/Feature/UserManagementTest.php` › «a director can not make anyone an administrador»; `tests/Feature/UserManagementTest.php` › «a director can not take the administrador role away» |
 | IAM-R10.2 | `tests/Feature/UserManagementTest.php` › «a director can edit an administrador without touching that role» |
 | IAM-R10.3 | `tests/Feature/UserManagementTest.php` › «an administrador can not swap their own role for director» |

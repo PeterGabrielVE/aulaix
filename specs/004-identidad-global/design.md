@@ -1,6 +1,6 @@
 ---
 spec: 004-identidad-global
-estado: aprobada
+estado: implementada
 fecha: 2026-10-15
 requisitos: requirements.md
 depende-de: 001-tenancy, 005-auditoria
@@ -450,3 +450,37 @@ Ajustes hechos al implementar, sin cambiar ningún criterio:
   subdominio y lleva a la pantalla central de planteles.
 - **Redirecciones entre dominios.** Las respuestas que llevan a otro dominio
   usan `Inertia::location`, para que también funcionen en visitas de Inertia.
+
+## Notas de implementación (PR C)
+
+Ajustes hechos al implementar, sin cambiar ningún criterio:
+
+- **Dónde vive cada acción.** La cuenta (nombre, correo, contraseña y
+  eliminación) se gestiona solo en `aulaix.com/cuenta` (IDG-R03.1). El
+  perfil de cada plantel muestra la cuenta, enlaza a esa página y ofrece
+  «Salir de este plantel» (IDG-R07.4).
+- **Cambio de correo.** El enlace de verificación vale 24 horas. Si el nuevo
+  correo ya tiene cuenta, quien lo pidió recibe la respuesta de siempre y el
+  aviso va a esa dirección (IDG-R05.4). Una cuenta por unificar no puede
+  cambiar de correo hasta unificarse.
+- **Volver a un plantel.** Quien sale (o cuya membresía terminó) solo vuelve
+  con una invitación nueva: al aceptarla, la membresía terminada empieza de
+  nuevo, en la misma fila, con los roles de la invitación. Un gestor sigue
+  sin poder reactivar una membresía terminada.
+- **Revocación al salir o suspender (IDG-R07.2).** La tabla `sessions` no
+  guarda el dominio de cada sesión. La sesión del plantel se cierra al salir
+  y la comprobación por petición (`EnsureActiveMembership`) corta las demás
+  en su siguiente petición.
+- **Bloqueo del último Administrador.** Cuenta los otros Administradores
+  activos, así sigue bloqueando al final del plazo, cuando la membresía de la
+  propia persona está suspendida por la eliminación (IDG-R08.10).
+- **Aplazamiento.** Si al vencer el plazo algo sigue bloqueando, el cierre
+  se aplaza 7 días y se avisa al titular y a soporte
+  (`IDENTITY_SUPPORT_EMAIL`). La tarea `identity:close-due-accounts` corre a
+  diario a las 03:00.
+- **Cierre.** La cuenta pasa a `closed`, su contraseña se sustituye por una
+  que nadie conoce, sus membresías terminan y sus roles se retiran. No se
+  borra ni se anonimiza ningún dato (D1).
+- **Puntos de extensión.** SPEC-008 y SPEC-009 registran sus bloqueos
+  implementando `DeletionBlocker` y etiquetándolo con
+  `IdentityAccessServiceProvider::DELETION_BLOCKERS`.

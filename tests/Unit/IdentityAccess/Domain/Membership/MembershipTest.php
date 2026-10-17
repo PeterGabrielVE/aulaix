@@ -53,3 +53,13 @@ it('never comes back once ended', function () {
     expect($ended->status)->toBe(MembershipStatus::Ended)
         ->and(fn () => $ended->reactivate())->toThrow(BusinessRuleViolation::class);
 });
+
+it('starts afresh, active, when someone who left is invited and joins again', function () {
+    $ended = Membership::reconstitute(4, AccountId::fromInt(7), InstitutionId::fromInt(1), MembershipStatus::Ended, null);
+
+    $rejoined = Membership::rejoin($ended);
+
+    expect($rejoined->id)->toBe(4)
+        ->and($rejoined->isActive())->toBeTrue()
+        ->and(fn () => Membership::rejoin(Membership::start(AccountId::fromInt(7), InstitutionId::fromInt(1))))->toThrow(LogicException::class);
+});

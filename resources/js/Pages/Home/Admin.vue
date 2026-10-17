@@ -13,7 +13,7 @@ const links = [
 <template>
     <HomeScreen
         title="Panel de administración"
-        description="Gestiona la institución y sus usuarios."
+        description="Gestiona el plantel y sus usuarios."
         :links="links"
     />
 </template>

@@ -16,6 +16,7 @@ use AulaX\IdentityAccess\Domain\Invitation\InvitationNotUsable;
 use AulaX\IdentityAccess\Domain\Invitation\InvitationRepository;
 use AulaX\IdentityAccess\Domain\Membership\Membership;
 use AulaX\IdentityAccess\Domain\Membership\MembershipRepository;
+use AulaX\IdentityAccess\Domain\Membership\MembershipStatus;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
 use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\BusinessRuleViolation;
@@ -63,6 +64,11 @@ final readonly class JoinInstitutionHandler
             throw InvitationNotUsable::create();
         }
 
+        // IDG-R08.8: not while the account waits to be deleted.
+        if (! $account->isActive()) {
+            throw BusinessRuleViolation::onField('email', 'Tu cuenta está en proceso de eliminación: cancélala para aceptar invitaciones.');
+        }
+
         if (! $invitedEmail->equals($account->email)) {
             throw InvitationEmailMismatch::create();
         }
@@ -78,11 +84,16 @@ final readonly class JoinInstitutionHandler
                     throw InvitationNotUsable::create();
                 }
 
-                if ($this->memberships->of($account->id, $institution->institutionId) !== null) {
-                    throw BusinessRuleViolation::onField('email', 'Ya perteneces o perteneciste a este plantel; pide a su administración que te reactive.');
+                $previous = $this->memberships->of($account->id, $institution->institutionId);
+
+                if ($previous !== null && $previous->status !== MembershipStatus::Ended) {
+                    throw BusinessRuleViolation::onField('email', 'Ya perteneces a este plantel.');
                 }
 
-                $membership = $this->memberships->save(Membership::start($account->id, $institution->institutionId));
+                // Someone who left comes back through a new invitation only.
+                $membership = $this->memberships->save($previous === null
+                    ? Membership::start($account->id, $institution->institutionId)
+                    : Membership::rejoin($previous));
                 $this->roles->assign($account->id, $invitation->roles);
                 $this->invitations->save($invitation->acceptBy($account->id, $now));
 

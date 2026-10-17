@@ -16,5 +16,6 @@ final readonly class CentralHome
         public array $institutions,
         public array $invitations,
         public bool $canConsolidate,
+        public bool $pendingDeletion = false,
     ) {}
 }

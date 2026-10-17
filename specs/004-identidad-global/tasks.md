@@ -1,6 +1,6 @@
 ---
 spec: 004-identidad-global
-estado: implementando
+estado: implementada
 fecha: 2026-10-15
 diseño: design.md
 depende-de: 001-tenancy (implementada), 005-auditoria (implementada)
@@ -149,23 +149,23 @@ roles, pantalla de inicio, recuperación) conservan su lógica (Q-03).
 
 ## PR C — Cuenta del titular y eliminación
 
-- [ ] **C-01** — `ChangeName`; `RequestEmailChange` / `ConfirmEmailChange`
+- [x] **C-01** — `ChangeName`; `RequestEmailChange` / `ConfirmEmailChange`
   (verificar el nuevo email, avisar al anterior, rechazar un email en uso sin
   revelar el motivo).
   - Criterios: IDG-R05.1 – R05.4
-- [ ] **C-02** — `ChangePassword` desde la cuenta (cierra las otras sesiones).
+- [x] **C-02** — `ChangePassword` desde la cuenta (cierra las otras sesiones).
   - Criterios: IDG-R06.1, R06.2
-- [ ] **C-03** — `LeavePlantel` (con `LastAdministratorRule`, revoca las
+- [x] **C-03** — `LeavePlantel` (con `LastAdministratorRule`, revoca las
   sesiones de ese plantel, conserva los registros). Reescribir los tests de IAM-R08.4 y R08.5.
   - Criterios: IDG-R07.1 – R07.4
-- [ ] **C-04** — `RequestDeletion` / `CancelDeletion` (bloqueos, gracia de 30
+- [x] **C-04** — `RequestDeletion` / `CancelDeletion` (bloqueos, gracia de 30
   días, suspensión `account_deletion`, revocación, avisos, pantalla limitada
   durante la gracia, invitaciones rechazadas).
   - Criterios: IDG-R08.1 – R08.9, R08.14
-- [ ] **C-05** — Tarea programada diaria `identity:close-due-accounts`
+- [x] **C-05** — Tarea programada diaria `identity:close-due-accounts`
   (vuelve a comprobar los bloqueos; aplaza o cierra).
   - Criterios: IDG-R08.10, R08.11, R08.13
-- [ ] **C-06** — Terminología «plantel» en toda la interfaz, incluidas las
+- [x] **C-06** — Terminología «plantel» en toda la interfaz, incluidas las
   pantallas existentes.
   - Criterios: IDG-NF08
 - [ ] **Cierre de PR C** — suite en verde, `/security-review`, matriz

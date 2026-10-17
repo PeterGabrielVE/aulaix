@@ -306,10 +306,10 @@ administración ni escalar privilegios.
 | IAM-R07.3 | `tests/Feature/Auth/PasswordUpdateTest.php` › «password can be updated» |
 | IAM-R07.4 | `tests/Feature/Auth/PasswordUpdateTest.php` › «correct password must be provided to update password» |
 | IAM-R08.1 | `tests/Feature/ProfileTest.php` › «profile page is displayed» |
-| IAM-R08.2 | `tests/Feature/ProfileTest.php` › «profile information can be updated» |
-| IAM-R08.3 | `tests/Feature/ProfileTest.php` › «email verification status is unchanged when the email address is unchanged» |
-| IAM-R08.4 | `tests/Feature/ProfileTest.php` › «user can delete their account» |
-| IAM-R08.5 | `tests/Feature/ProfileTest.php` › «correct password must be provided to delete account» |
+| IAM-R08.2 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «the owner can change their name»; `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «a new email is only used once verified at that address, and the old one is told» (sustituido por IDG-R05.1 – R05.3) |
+| IAM-R08.3 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «an institution's profile only links to the account» (sustituido por IDG-R03.1, R05) |
+| IAM-R08.4 | `tests/Feature/ProfileTest.php` › «a member can leave the institution, keeping their account and other memberships» (sustituido por IDG-R07.1) |
+| IAM-R08.5 | `tests/Feature/ProfileTest.php` › «leaving the institution and deleting the account are separate actions, in separate places» (sustituido por IDG-R07.4, R08.1) |
 | IAM-R09.1 | `tests/Feature/UserManagementTest.php` › «guests are sent to the login screen» |
 | IAM-R09.2 | `tests/Feature/UserManagementTest.php` › «users without the gestionar-usuarios permission can not manage users» |
 | IAM-R09.3 | `tests/Feature/UserManagementTest.php` › «administrators can list the users of their institution»; `tests/Feature/UserManagementTest.php` › «a director can manage the users of their institution» |

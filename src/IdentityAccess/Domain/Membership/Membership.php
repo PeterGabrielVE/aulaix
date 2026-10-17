@@ -28,6 +28,20 @@ final readonly class Membership
         return new self(null, $accountId, $institutionId, MembershipStatus::Active, null);
     }
 
+    /**
+     * Someone who left (or was removed) is invited again and accepts: a new
+     * start, in the same row. An ended membership is never reactivated by a
+     * manager; only a new invitation brings the person back.
+     */
+    public static function rejoin(self $ended): self
+    {
+        if ($ended->status !== MembershipStatus::Ended) {
+            throw new \LogicException('Only an ended membership can start again.');
+        }
+
+        return new self($ended->id, $ended->accountId, $ended->institutionId, MembershipStatus::Active, null);
+    }
+
     public static function reconstitute(
         int $id,
         AccountId $accountId,

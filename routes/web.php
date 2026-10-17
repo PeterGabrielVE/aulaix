@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\HandoffController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Central\AccountController;
 use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
@@ -54,11 +55,23 @@ Route::domain(config('app.domain'))->group(function () {
         Route::post('/planteles/{subdomain}', [InstitutionsController::class, 'open'])->name('central.open');
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('central.logout');
 
+        // The account, managed only here (IDG-R03.1).
+        Route::get('/cuenta', [AccountController::class, 'show'])->name('central.account');
+        Route::patch('/cuenta/nombre', [AccountController::class, 'updateName'])->name('central.account.name');
+        Route::post('/cuenta/eliminar/cancelar', [AccountController::class, 'cancelDeletion'])->name('central.account.deletion.cancel');
+        Route::put('/cuenta/contrasena', [AccountController::class, 'updatePassword'])
+            ->middleware('throttle:6,1')
+            ->name('central.account.password');
+
         Route::get('/confirmar-contrasena', [ConfirmablePasswordController::class, 'show'])->name('central.password.confirm');
         Route::post('/confirmar-contrasena', [ConfirmablePasswordController::class, 'store'])->middleware('throttle:6,1');
 
         // Sensitive: the password again, typed less than 10 minutes ago (IDG-NF05).
         Route::middleware('password.confirm:central.password.confirm,600')->group(function () {
+            Route::post('/cuenta/eliminar', [AccountController::class, 'requestDeletion'])->name('central.account.delete');
+            Route::post('/cuenta/correo', [AccountController::class, 'requestEmailChange'])
+                ->middleware('throttle:6,1')
+                ->name('central.account.email');
             Route::get('/cuenta/unificar', [ConsolidationController::class, 'show'])->name('central.consolidation');
             Route::post('/cuenta/unificar/codigo', [ConsolidationController::class, 'sendCode'])
                 ->middleware('throttle:3,1')
@@ -68,6 +81,12 @@ Route::domain(config('app.domain'))->group(function () {
                 ->name('central.consolidation.complete');
         });
     });
+
+    // The link sent to a new email address: it proves who receives mail
+    // there, logged in or not (IDG-R05.3).
+    Route::get('/cuenta/correo/{token}', [AccountController::class, 'confirmEmailChange'])
+        ->middleware('throttle:6,1')
+        ->name('central.account.email.confirm');
 
     // SPEC-004: accounts are global, so invitations are accepted here.
     Route::middleware('guest')->group(function () {
@@ -156,8 +175,7 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
 
     Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::post('/profile/salir', [ProfileController::class, 'leave'])->name('profile.leave');
     });
 
     require __DIR__.'/auth.php';

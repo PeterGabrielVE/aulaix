@@ -8,6 +8,7 @@ use AulaX\IdentityAccess\Application\Port\Authenticator;
 use AulaX\IdentityAccess\Application\Port\LoginThrottle;
 use AulaX\IdentityAccess\Domain\Account\Account;
 use AulaX\IdentityAccess\Domain\Account\AccountRepository;
+use AulaX\IdentityAccess\Domain\Account\AccountState;
 use AulaX\IdentityAccess\Domain\Account\EmailAddress;
 use AulaX\IdentityAccess\Domain\Account\InvalidEmailAddress;
 
@@ -48,6 +49,13 @@ final readonly class LogInHandler
         }
 
         $this->throttle->clear($command->email, $command->ip);
+
+        // During the grace period: only the date and the way back (IDG-R08.7).
+        if ($account->state === AccountState::PendingDeletion) {
+            $this->authenticator->logIn($account->id);
+
+            return new LoggedIn($account->id->value, [], pendingDeletion: true);
+        }
 
         if (! $account->isActive()) {
             throw LoginFailed::accountNotActive();

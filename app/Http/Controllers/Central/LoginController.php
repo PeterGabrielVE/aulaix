@@ -39,6 +39,10 @@ class LoginController extends Controller
             (string) $request->ip(),
         ));
 
+        if ($loggedIn->pendingDeletion) {
+            return redirect()->route('central.account');
+        }
+
         // Back to what sent them to log in (e.g. an invitation), if anything did.
         if ($request->session()->has('url.intended')) {
             return redirect()->intended(route('central.home'));

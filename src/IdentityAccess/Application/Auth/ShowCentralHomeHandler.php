@@ -6,6 +6,7 @@ namespace AulaX\IdentityAccess\Application\Auth;
 
 use AulaX\IdentityAccess\Domain\Account\AccountId;
 use AulaX\IdentityAccess\Domain\Account\AccountRepository;
+use AulaX\IdentityAccess\Domain\Account\AccountState;
 use AulaX\IdentityAccess\Domain\Account\ConsolidationState;
 use AulaX\Shared\Domain\NotFound;
 
@@ -31,6 +32,7 @@ final readonly class ShowCentralHomeHandler
             $this->institutions->activeFor($id),
             $this->institutions->pendingInvitationsFor($account->email),
             $account->consolidation === ConsolidationState::Pending,
+            $account->state === AccountState::PendingDeletion,
         );
     }
 }

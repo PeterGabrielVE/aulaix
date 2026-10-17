@@ -12,6 +12,7 @@ use AulaX\IdentityAccess\Application\Port\PasswordHasher;
 use AulaX\IdentityAccess\Application\Port\PasswordResetTokens;
 use AulaX\IdentityAccess\Application\Port\SessionRevoker;
 use AulaX\IdentityAccess\Domain\Account\AccountRepository;
+use AulaX\IdentityAccess\Domain\Account\AccountState;
 use AulaX\IdentityAccess\Domain\Account\EmailAddress;
 use AulaX\IdentityAccess\Domain\Account\InvalidEmailAddress;
 use AulaX\Shared\Application\TransactionManager;
@@ -49,7 +50,7 @@ final readonly class ResetPasswordHandler
 
         if ($account === null
             || $account->isUnderConsolidation()
-            || ! $account->isActive()
+            || ! in_array($account->state, [AccountState::Active, AccountState::PendingDeletion], true)
             || ! $this->tokens->isValid($account->id, $command->token)) {
             throw PasswordResetRejected::create();
         }

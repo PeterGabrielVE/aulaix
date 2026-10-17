@@ -7,12 +7,14 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\HandoffController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Central\AccountController;
 use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\ResolveTenant;
@@ -57,6 +59,9 @@ const MIGRATED_CONTROLLERS = [
     ConfirmablePasswordController::class,
     PasswordResetLinkController::class,
     NewPasswordController::class,
+    // SPEC-004 PR C
+    AccountController::class,
+    ProfileController::class,
 ];
 
 /**

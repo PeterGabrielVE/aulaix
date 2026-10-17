@@ -7,6 +7,7 @@ namespace AulaX\IdentityAccess\Application\Auth;
 use AulaX\IdentityAccess\Application\Port\AccountMailer;
 use AulaX\IdentityAccess\Application\Port\PasswordResetTokens;
 use AulaX\IdentityAccess\Domain\Account\AccountRepository;
+use AulaX\IdentityAccess\Domain\Account\AccountState;
 use AulaX\IdentityAccess\Domain\Account\EmailAddress;
 use AulaX\IdentityAccess\Domain\Account\InvalidEmailAddress;
 
@@ -47,7 +48,8 @@ final readonly class RequestPasswordResetHandler
             return;
         }
 
-        if (! $account->isActive() || $this->tokens->recentlyCreated($account->id)) {
+        // Also during the grace period, to reach the cancel screen (IDG-R08.7).
+        if (! in_array($account->state, [AccountState::Active, AccountState::PendingDeletion], true) || $this->tokens->recentlyCreated($account->id)) {
             return;
         }
 

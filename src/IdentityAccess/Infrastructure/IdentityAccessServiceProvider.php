@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AulaX\IdentityAccess\Infrastructure;
 
+use AulaX\IdentityAccess\Application\Account\DeletionBlockers;
+use AulaX\IdentityAccess\Application\Account\LastAdministratorBlocker;
 use AulaX\IdentityAccess\Application\Auth\AccountInstitutions;
 use AulaX\IdentityAccess\Application\Consolidation\ConsolidationCases;
 use AulaX\IdentityAccess\Application\Consolidation\ConsolidationOperators;
@@ -13,6 +15,7 @@ use AulaX\IdentityAccess\Application\Port\AccountMerger;
 use AulaX\IdentityAccess\Application\Port\Authenticator;
 use AulaX\IdentityAccess\Application\Port\ConsolidationCodes;
 use AulaX\IdentityAccess\Application\Port\HandoffTokens;
+use AulaX\IdentityAccess\Application\Port\InstitutionScope;
 use AulaX\IdentityAccess\Application\Port\InvitationMailer;
 use AulaX\IdentityAccess\Application\Port\LoginThrottle;
 use AulaX\IdentityAccess\Application\Port\PasswordHasher;
@@ -36,6 +39,7 @@ use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountInstitutions;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountMerger;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountRepository;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentConsolidationCases;
+use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentInstitutionScope;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentInvitationRepository;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentMemberDirectory;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentMembershipRepository;
@@ -48,6 +52,8 @@ use Illuminate\Support\ServiceProvider;
  */
 final class IdentityAccessServiceProvider extends ServiceProvider
 {
+    public const DELETION_BLOCKERS = 'identity.deletion_blockers';
+
     /**
      * @var array<class-string, class-string>
      */
@@ -70,7 +76,18 @@ final class IdentityAccessServiceProvider extends ServiceProvider
         AccountMerger::class => EloquentAccountMerger::class,
         ConsolidationCases::class => EloquentConsolidationCases::class,
         ConsolidationOperators::class => ConfigConsolidationOperators::class,
+        InstitutionScope::class => EloquentInstitutionScope::class,
     ];
+
+    public function register(): void
+    {
+        // Extension point (IDG-R08.3, R08.4): other modules tag their own
+        // DeletionBlocker with this tag.
+        $this->app->tag([LastAdministratorBlocker::class], self::DELETION_BLOCKERS);
+        $this->app->when(DeletionBlockers::class)
+            ->needs('$blockers')
+            ->giveTagged(self::DELETION_BLOCKERS);
+    }
 
     public function boot(): void
     {

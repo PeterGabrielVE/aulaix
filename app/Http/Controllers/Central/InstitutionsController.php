@@ -8,6 +8,7 @@ use AulaX\IdentityAccess\Application\Auth\IssueHandoffHandler;
 use AulaX\IdentityAccess\Application\Auth\PendingInvitationView;
 use AulaX\IdentityAccess\Application\Auth\ShowCentralHomeHandler;
 use DateTimeZone;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,9 +22,14 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
  */
 class InstitutionsController extends Controller
 {
-    public function show(Request $request, ShowCentralHomeHandler $showHome): Response
+    public function show(Request $request, ShowCentralHomeHandler $showHome): Response|RedirectResponse
     {
         $home = $showHome((int) $request->user()->getAuthIdentifier());
+
+        // During the grace period: only the date and the way back (IDG-R08.7).
+        if ($home->pendingDeletion) {
+            return redirect()->route('central.account');
+        }
 
         return Inertia::render('Central/Institutions', [
             'name' => $home->name,

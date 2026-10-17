@@ -15,4 +15,7 @@ enum ConsolidationState: string
 
     /** Same email but different names: only support may resolve it (IDG-R09.5, IDG-R11). */
     case Review = 'review';
+
+    /** Reviewed by support: different people sharing an email, never to be merged (IDG-R11.2). */
+    case Separated = 'separated';
 }

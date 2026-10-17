@@ -47,13 +47,13 @@ final readonly class UpdateMemberHandler
      */
     public function __invoke(UpdateMemberCommand $command): void
     {
-        $this->rules->institution();
+        $institution = $this->rules->institution();
         $actor = AccountId::fromInt($command->actorId);
         $member = AccountId::fromInt($command->memberId);
         $requested = RoleSet::of(...$command->roles);
 
-        $this->transactions->run(function () use ($command, $actor, $member, $requested) {
-            $membership = $this->memberships->ofAccount($member);
+        $this->transactions->run(function () use ($command, $institution, $actor, $member, $requested) {
+            $membership = $this->memberships->of($member, $institution->institutionId);
 
             if ($membership === null || $membership->status === MembershipStatus::Ended) {
                 throw new NotFound('Esta persona no es miembro del plantel.');

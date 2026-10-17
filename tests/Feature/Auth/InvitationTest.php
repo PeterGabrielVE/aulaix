@@ -83,8 +83,7 @@ test('the new member can then log in to the institution', function () {
             ->where('loginUrl', tenantUrl($institution, '/login'))
         );
 
-    $this->post(tenantUrl($institution, '/login'), ['email' => 'ana@example.com', 'password' => 'mi-contrasena-nueva'])
-        ->assertSessionHasNoErrors();
+    logInTo($institution, 'ana@example.com', 'mi-contrasena-nueva')->assertRedirect(tenantUrl($institution, '/dashboard'));
     $this->assertAuthenticated();
 });
 
@@ -142,13 +141,13 @@ test('an invitation is only valid for the institution that sent it', function ()
     accept($other, $token)->assertSessionHasErrors(['email' => 'Esta invitación no es válida o ya caducó.']);
 });
 
-test('an email that already has an account can not accept a link yet', function () {
+test('an email that already has an account must log in to accept', function () {
     $elsewhere = tenant();
     User::factory()->for($elsewhere)->create(['email' => 'ana@example.com', 'password' => 'la-de-siempre']);
     $institution = tenant();
     $token = invitationToken($institution, 'ana@example.com');
 
-    accept($institution, $token)->assertSessionHasErrors('email');
+    accept($institution, $token)->assertSessionHasErrors(['email' => 'Ya tienes una cuenta en AulaX con este correo: inicia sesión para aceptar la invitación.']);
 
     $account = User::query()->where('email', 'ana@example.com')->sole();
     expect(Hash::check('la-de-siempre', $account->password))->toBeTrue();
@@ -170,4 +169,78 @@ test('invitation links sent before SPEC-004 still work', function () {
 
     leaveTenant();
     accept($institution, 'legacy-token')->assertSessionHasNoErrors();
+});
+
+/**
+ * An account in one institution, invited to another, logged in centrally.
+ *
+ * @return array{0: User, 1: Institution}
+ */
+function invitedMember(array $roles = ['Docente']): array
+{
+    $elsewhere = tenant();
+    $ana = userWithRole($elsewhere, 'Docente', ['name' => 'Ana de Siempre', 'email' => 'ana@example.com', 'password' => 'la-de-siempre']);
+    $institution = tenant();
+    $token = invitationToken($institution, 'ana@example.com', $roles);
+
+    test()->post(centralUrl('/login'), ['email' => 'ana@example.com', 'password' => 'la-de-siempre']);
+
+    return [$ana, $institution, $token];
+}
+
+test('a person with an account accepts once logged in, keeping their name and password', function () {
+    [$ana, $institution, $token] = invitedMember(['Representante']);
+
+    $this->get(centralUrl("/invitaciones/{$institution->subdomain}/{$token}?email=ana@example.com"))
+        ->assertInertia(fn ($page) => $page->where('authenticatedEmail', 'ana@example.com'));
+
+    $response = $this->post(centralUrl("/invitaciones/{$institution->subdomain}/unirme"), ['email' => 'ana@example.com']);
+
+    // Straight into the institution just joined.
+    expect($response->headers->get('Location'))->toStartWith(tenantUrl($institution, '/auth/handoff?token='));
+    expect($ana->fresh()->name)->toBe('Ana de Siempre')
+        ->and(Hash::check('la-de-siempre', $ana->fresh()->password))->toBeTrue();
+
+    useTenant($institution);
+    expect(DB::table('institution_memberships')->where('user_id', $ana->id)->value('status'))->toBe('active')
+        ->and($ana->fresh()->getRoleNames()->all())->toBe(['Representante'])
+        ->and(InvitationModel::query()->sole()->status)->toBe('accepted');
+});
+
+test('an invitation for another email can not be accepted', function () {
+    [, $institution] = invitedMember();
+    $other = User::factory()->for(tenant())->create(['email' => 'otra@example.com']);
+    leaveTenant();
+    $this->actingAs($other);
+
+    $this->post(centralUrl("/invitaciones/{$institution->subdomain}/unirme"), ['email' => 'ana@example.com'])
+        ->assertForbidden();
+
+    useTenant($institution);
+    expect(InvitationModel::query()->sole()->status)->toBe('pending');
+});
+
+test('a guest with an account is brought back to the invitation after logging in', function () {
+    $elsewhere = tenant();
+    userWithRole($elsewhere, 'Docente', ['email' => 'ana@example.com']);
+    $institution = tenant();
+    $token = invitationToken($institution, 'ana@example.com');
+    $link = centralUrl("/invitaciones/{$institution->subdomain}/{$token}?email=ana%40example.com");
+
+    $this->get($link)->assertInertia(fn ($page) => $page->where('authenticatedEmail', null));
+
+    $this->post(centralUrl('/login'), ['email' => 'ana@example.com', 'password' => 'password'])
+        ->assertRedirect($link);
+});
+
+test('a pending invitation can be accepted from the welcome screen', function () {
+    [$ana, $institution] = invitedMember();
+
+    $this->get(centralUrl('/planteles'))
+        ->assertInertia(fn ($page) => $page->where('invitations.0.subdomain', $institution->subdomain));
+
+    $this->post(centralUrl("/invitaciones/{$institution->subdomain}/unirme"))->assertRedirect();
+
+    useTenant($institution);
+    expect(DB::table('institution_memberships')->where('user_id', $ana->id)->exists())->toBeTrue();
 });

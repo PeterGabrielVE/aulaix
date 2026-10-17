@@ -100,6 +100,22 @@ final readonly class Invitation
         return new self($this->id, $this->institutionId, $this->email, $this->name, $this->roles, $this->tokenHash, $this->expiresAt, InvitationStatus::Accepted, $this->invitedBy, $acceptedBy);
     }
 
+    /**
+     * Accepted by an account that logged in with the invited email: logging
+     * in already proves they receive mail there, so no token is needed
+     * (IDG-R04.5).
+     *
+     * @throws InvitationNotUsable
+     */
+    public function acceptBy(AccountId $acceptedBy, DateTimeImmutable $now): self
+    {
+        if (! $this->isUsable($now)) {
+            throw InvitationNotUsable::create();
+        }
+
+        return new self($this->id, $this->institutionId, $this->email, $this->name, $this->roles, $this->tokenHash, $this->expiresAt, InvitationStatus::Accepted, $this->invitedBy, $acceptedBy);
+    }
+
     public function correct(PersonName $name, EmailAddress $email, DateTimeImmutable $now): IssuedInvitation
     {
         $this->assertPending();

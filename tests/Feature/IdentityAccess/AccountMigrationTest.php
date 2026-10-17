@@ -52,6 +52,8 @@ function legacyRole(InstitutionModel $institution, int $userId, string $role): v
  */
 function oldShapedDatabase(): array
 {
+    // Later migrations first, newest to oldest: reset tokens became global in PR B.
+    (require database_path('migrations/2026_10_16_100000_make_password_reset_tokens_global.php'))->down();
     accountsMigration()->down();
 
     $norte = InstitutionModel::factory()->create(['subdomain' => 'norte']);

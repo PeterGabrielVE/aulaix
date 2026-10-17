@@ -15,16 +15,17 @@ use AulaX\Shared\Domain\InstitutionId;
 
 final class EloquentInvitationRepository implements InvitationRepository
 {
-    public function byId(int $id): ?Invitation
+    public function byId(InstitutionId $institutionId, int $id): ?Invitation
     {
-        $model = InvitationModel::query()->find($id);
+        $model = InvitationModel::query()->where('institution_id', $institutionId->value)->find($id);
 
         return $model === null ? null : self::toDomain($model);
     }
 
-    public function pendingFor(EmailAddress $email): ?Invitation
+    public function pendingFor(InstitutionId $institutionId, EmailAddress $email): ?Invitation
     {
         $model = InvitationModel::query()
+            ->where('institution_id', $institutionId->value)
             ->where('email', $email->value)
             ->where('status', InvitationStatus::Pending->value)
             ->first();

@@ -57,6 +57,11 @@ final class EloquentAccountRepository implements AccountRepository
         return self::toDomain($model);
     }
 
+    public function delete(AccountId $id): void
+    {
+        AccountModel::query()->whereKey($id->value)->delete();
+    }
+
     private static function toDomain(AccountModel $model): Account
     {
         return Account::reconstitute(

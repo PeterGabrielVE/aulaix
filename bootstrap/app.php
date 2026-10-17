@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveTenant;
 use App\Http\Middleware\TrustConfiguredProxies;
+use AulaX\IdentityAccess\Application\Auth\HandoffRejected;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use AulaX\Shared\Domain\BusinessRuleViolations;
@@ -43,6 +44,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Only the proxies in TRUSTED_PROXIES may set the client IP (SPEC-005).
         $middleware->replace(TrustProxies::class, TrustConfiguredProxies::class);
 
+        // The central domain has its own login and home (SPEC-004).
+        $isCentral = fn (Request $request) => $request->getHost() === config('app.domain');
+        $middleware->redirectGuestsTo(fn (Request $request) => $isCentral($request) ? route('central.login') : route('login'));
+        $middleware->redirectUsersTo(fn (Request $request) => $isCentral($request) ? route('central.home') : route('dashboard'));
+
         $middleware->alias([
             'tenant' => ResolveTenant::class,
             'active' => EnsureActiveMembership::class,
@@ -75,6 +81,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Domain exceptions → HTTP, in this one place (constitution C-06,
         // SPEC-000 FND-R05). Use cases throw them; controllers never
         // translate errors themselves.
+        // A rejected handoff says nothing about why: back to the central login.
+        $exceptions->render(fn (HandoffRejected $e) => redirect()->away(route('central.login')));
+
         $exceptions->map(BusinessRuleViolation::class, fn (BusinessRuleViolation $e) => ValidationException::withMessages([
             $e->field() ?? 'general' => $e->getMessage(),
         ]));

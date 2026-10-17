@@ -3,12 +3,15 @@
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use Illuminate\Support\Facades\DB;
 
-test('login screen can be rendered', function () {
+/**
+ * SPEC-002 IAM-R02 / R03 as rewritten by SPEC-004 (IDG-R03): an
+ * institution's login screen is the central one.
+ */
+test('the login screen of an institution is the central one', function () {
     $institution = tenant();
 
-    $response = $this->get(tenantUrl($institution, '/login'));
-
-    $response->assertStatus(200);
+    $this->get(tenantUrl($institution, '/login'))
+        ->assertRedirect(centralUrl("/login?plantel={$institution->subdomain}"));
 });
 
 test('unknown subdomains are rejected', function () {
@@ -17,80 +20,50 @@ test('unknown subdomains are rejected', function () {
     $response->assertStatus(404);
 });
 
-test('users can authenticate using the login screen', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
+test('users who log in from an institution land in it', function () {
+    $norte = tenant();
+    $user = userWithRole($norte, 'Docente');
+    $sur = tenant();
+    joinInstitution($user, $sur, 'Docente');
 
-    $response = $this->post(tenantUrl($institution, '/login'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+    // Two institutions, but they came from Sur's subdomain: no selector.
+    logInTo($sur, $user->email)->assertRedirect(tenantUrl($sur, '/dashboard'));
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $this->assertAuthenticatedAs($user);
 });
 
 test('users can not authenticate with invalid password', function () {
     $institution = tenant();
     $user = User::factory()->for($institution)->create();
 
-    $this->post(tenantUrl($institution, '/login'), [
-        'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
+    logInTo($institution, $user->email, 'wrong-password')->assertSessionHasErrors(['email' => __('auth.failed')]);
 
     $this->assertGuest();
 });
 
-test('users can not authenticate on another institution\'s subdomain', function () {
+test('logging in from an institution without membership does not open it', function () {
     $ownInstitution = tenant();
     $user = User::factory()->for($ownInstitution)->create();
-
     $otherInstitution = tenant();
 
-    $this->post(tenantUrl($otherInstitution, '/login'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
-
-    $this->assertGuest();
+    logInTo($otherInstitution, $user->email)->assertRedirect(tenantUrl($ownInstitution, '/dashboard'));
 });
 
-test('users can logout', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-
-    $response = $this->actingAs($user)->post(tenantUrl($institution, '/logout'));
-
-    $this->assertGuest();
-    $response->assertRedirect(route('login', absolute: false));
-});
-
-test('inactive users can not authenticate', function () {
+test('a suspended membership is not opened after login', function () {
     $institution = tenant();
     $user = User::factory()->for($institution)->inactive()->create();
 
-    $response = $this->post(tenantUrl($institution, '/login'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+    logInTo($institution, $user->email)->assertRedirect(centralUrl('/planteles'));
 
-    $this->assertGuest();
-    $response->assertSessionHasErrors(['email' => __('auth.inactive')]);
+    $this->get(centralUrl('/planteles'))->assertInertia(fn ($page) => $page->where('institutions', []));
 });
 
 test('inactive users with a wrong password get the generic error', function () {
     $institution = tenant();
     $user = User::factory()->for($institution)->inactive()->create();
 
-    $response = $this->post(tenantUrl($institution, '/login'), [
-        'email' => $user->email,
-        'password' => 'wrong-password',
-    ]);
-
-    // Don't reveal that the account exists (and is deactivated) to someone
-    // who doesn't know its password.
-    $response->assertSessionHasErrors(['email' => __('auth.failed')]);
+    // Don't reveal that the account exists to someone who doesn't know its password.
+    logInTo($institution, $user->email, 'wrong-password')->assertSessionHasErrors(['email' => __('auth.failed')]);
 });
 
 test('a user deactivated mid-session is logged out on their next request', function () {
@@ -98,14 +71,12 @@ test('a user deactivated mid-session is logged out on their next request', funct
     $user = User::factory()->for($institution)->create();
 
     $this->actingAs($user);
-    // The institution suspends the membership (SPEC-004: status lives there now).
     DB::table('institution_memberships')->where('user_id', $user->id)->update(['status' => 'suspended', 'suspension_reason' => 'institution']);
 
     $response = $this->get(tenantUrl($institution, '/profile'));
 
     $this->assertGuest();
-    $response->assertRedirect(route('login'));
-    $response->assertSessionHasErrors(['email' => __('auth.inactive')]);
+    $response->assertRedirect(centralUrl('/planteles'));
 });
 
 test('five failed logins lock the account out for a minute, even with the right password', function () {
@@ -114,40 +85,56 @@ test('five failed logins lock the account out for a minute, even with the right 
     $user = User::factory()->for($institution)->create();
 
     foreach (range(1, 5) as $attempt) {
-        $this->post(tenantUrl($institution, '/login'), [
-            'email' => $user->email,
-            'password' => 'wrong-password',
-        ]);
+        logInTo($institution, $user->email, 'wrong-password');
     }
 
-    $response = $this->post(tenantUrl($institution, '/login'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
+    logInTo($institution, $user->email)->assertSessionHasErrors(['email' => __('auth.throttle', ['seconds' => 60])]);
 
     $this->assertGuest();
-    $response->assertSessionHasErrors(['email' => __('auth.throttle', ['seconds' => 60, 'minutes' => 1])]);
 });
 
-test('failed logins in one institution do not lock out the same email in another', function () {
-    // SPEC-004: the same person is one account with a membership in each.
+test('failed logins lock the email out whatever institution it is used for', function () {
+    // SPEC-004: the same person is one account, so the lockout is too (IDG-R03.10).
     $institutionA = tenant();
     $person = User::factory()->for($institutionA)->create(['email' => 'shared@example.com']);
-
-    foreach (range(1, 5) as $attempt) {
-        $this->post(tenantUrl($institutionA, '/login'), [
-            'email' => 'shared@example.com',
-            'password' => 'wrong-password',
-        ]);
-    }
-
     $institutionB = tenant();
     joinInstitution($person, $institutionB);
 
-    $this->post(tenantUrl($institutionB, '/login'), [
-        'email' => 'shared@example.com',
-        'password' => 'password',
+    foreach (range(1, 5) as $attempt) {
+        logInTo($institutionA, 'shared@example.com', 'wrong-password');
+    }
+
+    logInTo($institutionB, 'shared@example.com')->assertSessionHasErrors('email');
+
+    $this->assertGuest();
+});
+
+test('users can logout', function () {
+    config(['session.driver' => 'database']);
+    $institution = tenant();
+    $user = User::factory()->for($institution)->create();
+    // Their sessions on the central domain and in another institution.
+    DB::table('sessions')->insert([
+        ['id' => 'central', 'user_id' => $user->id, 'payload' => '', 'last_activity' => time()],
+        ['id' => 'other-institution', 'user_id' => $user->id, 'payload' => '', 'last_activity' => time()],
     ]);
 
-    $this->assertAuthenticated();
+    $response = $this->actingAs($user)->post(tenantUrl($institution, '/logout'));
+
+    $this->assertGuest();
+    $response->assertRedirect(centralUrl('/login'));
+    expect(DB::table('sessions')->where('user_id', $user->id)->exists())->toBeFalse();
+});
+
+test('logging out on the central domain ends the institutions\' sessions too', function () {
+    config(['session.driver' => 'database']);
+    $institution = tenant();
+    $user = User::factory()->for($institution)->create();
+    DB::table('sessions')->insert(['id' => 'institution', 'user_id' => $user->id, 'payload' => '', 'last_activity' => time()]);
+    leaveTenant();
+
+    $this->actingAs($user)->post(centralUrl('/logout'))->assertRedirect(centralUrl('/login'));
+
+    $this->assertGuest();
+    expect(DB::table('sessions')->where('user_id', $user->id)->exists())->toBeFalse();
 });

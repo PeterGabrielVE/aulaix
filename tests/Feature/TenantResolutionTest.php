@@ -14,11 +14,8 @@ test('an active institution subdomain resolves', function () {
 
     $response = $this->get(tenantUrl($institution, '/login'));
 
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Auth/Login')
-        ->where('institution.subdomain', $institution->subdomain)
-    );
+    // SPEC-004: an institution's login forwards to the central one, naming it.
+    $response->assertRedirect(centralUrl("/login?plantel={$institution->subdomain}"));
 });
 
 test('an inactive institution subdomain is rejected', function () {

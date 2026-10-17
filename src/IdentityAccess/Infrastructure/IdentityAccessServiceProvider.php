@@ -4,17 +4,38 @@ declare(strict_types=1);
 
 namespace AulaX\IdentityAccess\Infrastructure;
 
+use AulaX\IdentityAccess\Application\Auth\AccountInstitutions;
+use AulaX\IdentityAccess\Application\Consolidation\ConsolidationCases;
+use AulaX\IdentityAccess\Application\Consolidation\ConsolidationOperators;
 use AulaX\IdentityAccess\Application\Members\MemberDirectory;
+use AulaX\IdentityAccess\Application\Port\AccountMailer;
+use AulaX\IdentityAccess\Application\Port\AccountMerger;
+use AulaX\IdentityAccess\Application\Port\Authenticator;
+use AulaX\IdentityAccess\Application\Port\ConsolidationCodes;
+use AulaX\IdentityAccess\Application\Port\HandoffTokens;
 use AulaX\IdentityAccess\Application\Port\InvitationMailer;
+use AulaX\IdentityAccess\Application\Port\LoginThrottle;
 use AulaX\IdentityAccess\Application\Port\PasswordHasher;
+use AulaX\IdentityAccess\Application\Port\PasswordResetTokens;
+use AulaX\IdentityAccess\Application\Port\SessionRevoker;
 use AulaX\IdentityAccess\Domain\Account\AccountRepository;
 use AulaX\IdentityAccess\Domain\Invitation\InvitationRepository;
 use AulaX\IdentityAccess\Domain\Membership\MembershipRepository;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
+use AulaX\IdentityAccess\Infrastructure\Auth\BrokerPasswordResetTokens;
+use AulaX\IdentityAccess\Infrastructure\Auth\CacheConsolidationCodes;
+use AulaX\IdentityAccess\Infrastructure\Auth\CacheHandoffTokens;
+use AulaX\IdentityAccess\Infrastructure\Auth\DatabaseSessionRevoker;
+use AulaX\IdentityAccess\Infrastructure\Auth\LaravelAuthenticator;
 use AulaX\IdentityAccess\Infrastructure\Auth\LaravelPasswordHasher;
+use AulaX\IdentityAccess\Infrastructure\Auth\RateLimiterLoginThrottle;
+use AulaX\IdentityAccess\Infrastructure\Notifications\NotificationAccountMailer;
 use AulaX\IdentityAccess\Infrastructure\Notifications\NotificationInvitationMailer;
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel;
+use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountInstitutions;
+use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountMerger;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountRepository;
+use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentConsolidationCases;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentInvitationRepository;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentMemberDirectory;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentMembershipRepository;
@@ -38,6 +59,17 @@ final class IdentityAccessServiceProvider extends ServiceProvider
         MemberDirectory::class => EloquentMemberDirectory::class,
         PasswordHasher::class => LaravelPasswordHasher::class,
         InvitationMailer::class => NotificationInvitationMailer::class,
+        Authenticator::class => LaravelAuthenticator::class,
+        AccountInstitutions::class => EloquentAccountInstitutions::class,
+        HandoffTokens::class => CacheHandoffTokens::class,
+        LoginThrottle::class => RateLimiterLoginThrottle::class,
+        SessionRevoker::class => DatabaseSessionRevoker::class,
+        PasswordResetTokens::class => BrokerPasswordResetTokens::class,
+        AccountMailer::class => NotificationAccountMailer::class,
+        ConsolidationCodes::class => CacheConsolidationCodes::class,
+        AccountMerger::class => EloquentAccountMerger::class,
+        ConsolidationCases::class => EloquentConsolidationCases::class,
+        ConsolidationOperators::class => ConfigConsolidationOperators::class,
     ];
 
     public function boot(): void

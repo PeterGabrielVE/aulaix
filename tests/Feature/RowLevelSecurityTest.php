@@ -36,48 +36,59 @@ dataset('ways to have no tenant', [
     'reset by raw SQL' => ['reset'],
 ]);
 
+/**
+ * A row of a table that stays strictly per institution (the audit log), in
+ * the active one. Memberships and invitations are readable from the central
+ * domain since ADR 0006 C, and users since ADR 0006 A.
+ */
+function probeRow(): void
+{
+    DB::table('audit_entries')->insert([
+        'occurred_at' => now(), 'event_type' => 'test.probe.created', 'subject_type' => 'probe',
+        'subject_id' => '1', 'origin' => 'system',
+    ]);
+}
+
 test('a query without a tenant returns no rows', function (string $how) {
-    $institutionA = tenant();
-    User::factory()->for($institutionA)->create();
-    $institutionB = tenant();
-    User::factory()->for($institutionB)->create();
+    tenant();
+    probeRow();
+    tenant();
+    probeRow();
 
     withoutTenant($how);
 
-    // users is a global table since SPEC-004 (ADR 0006); memberships are the
-    // institution-scoped rows every user now has.
-    expect(DB::table('institution_memberships')->count())->toBe(0);
-    expect(DB::select('select count(*) as total from institution_memberships')[0]->total)->toBe(0);
+    expect(DB::table('audit_entries')->count())->toBe(0);
+    expect(DB::select('select count(*) as total from audit_entries')[0]->total)->toBe(0);
 })->with('ways to have no tenant');
 
 test('without a tenant nothing can be written', function (string $how) {
     $institution = tenant();
-    $user = User::factory()->for($institution)->create();
+    probeRow();
 
     withoutTenant($how);
 
     // In a savepoint, so the rejected insert doesn't abort the test's
     // surrounding transaction for the checks that follow.
-    expect(fn () => DB::transaction(fn () => DB::table('institution_memberships')->insert([
-        'institution_id' => $institution->id,
-        'user_id' => $user->id,
-        'status' => 'active',
+    expect(fn () => DB::transaction(fn () => DB::table('audit_entries')->insert([
+        'institution_id' => $institution->id, 'occurred_at' => now(), 'event_type' => 'test.probe.created',
+        'subject_type' => 'probe', 'subject_id' => '2', 'origin' => 'system',
     ])))->toThrow(QueryException::class, 'row-level security');
 
-    // Invisible rows can't be updated or deleted either: nothing matches.
-    expect(DB::table('institution_memberships')->where('user_id', $user->id)->update(['status' => 'ended']))->toBe(0);
-    expect(DB::table('institution_memberships')->where('user_id', $user->id)->delete())->toBe(0);
+    // Invisible rows can't be updated or deleted either: nothing matches
+    // (so not even the audit log's immutability trigger fires).
+    expect(DB::table('audit_entries')->update(['subject_id' => '3']))->toBe(0);
+    expect(DB::table('audit_entries')->delete())->toBe(0);
 })->with('ways to have no tenant');
 
 test('switching back to a tenant after clearing it shows only its rows again', function () {
     $institution = tenant();
-    $user = User::factory()->for($institution)->create();
+    probeRow();
 
     RowLevelSecurity::clearInstitution();
-    expect(DB::table('institution_memberships')->count())->toBe(0);
+    expect(DB::table('audit_entries')->count())->toBe(0);
 
     RowLevelSecurity::setInstitution($institution->id);
-    expect(DB::table('institution_memberships')->pluck('user_id')->all())->toBe([$user->id]);
+    expect(DB::table('audit_entries')->pluck('institution_id')->all())->toBe([$institution->id]);
 });
 
 test('the application connects with a role that can not bypass Row Level Security', function () {

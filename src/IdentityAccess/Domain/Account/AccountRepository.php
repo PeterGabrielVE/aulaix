@@ -20,4 +20,9 @@ interface AccountRepository
      * Persists the account (and its new password, if set); returns it with its id.
      */
     public function save(Account $account): Account;
+
+    /**
+     * Only for the accounts merged away by a consolidation (ADR 0006 B).
+     */
+    public function delete(AccountId $id): void;
 }

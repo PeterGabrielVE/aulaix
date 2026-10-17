@@ -6,13 +6,14 @@ use AulaX\IdentityAccess\Application\Auth\HasActiveMembershipHandler;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Checks on every request that the logged-in person still has an active
  * membership in this institution, and an active account (IDG-R03.8). If not,
- * ends their session here only: sessions are per subdomain, so their other
- * institutions are untouched.
+ * ends their session here only (sessions are per domain, so their other
+ * institutions are untouched) and sends them to the central domain.
  *
  * Someone with no membership at all here never gets this far: Row Level
  * Security hides their account, so the guard treats them as a guest
@@ -35,7 +36,8 @@ class EnsureActiveMembership
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->withErrors(['email' => __('auth.inactive')]);
+            // Back to the central domain, where their other institutions are.
+            return Inertia::location(route('central.home'));
         }
 
         return $next($request);

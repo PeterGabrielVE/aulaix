@@ -98,6 +98,14 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                         >
                                             Mi perfil
                                         </DropdownLink>
+                                        <!-- Another domain: a full page load, not an Inertia visit. -->
+                                        <a
+                                            v-if="$page.props.switchInstitutionUrl"
+                                            :href="$page.props.switchInstitutionUrl"
+                                            class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-hidden"
+                                        >
+                                            Cambiar de plantel
+                                        </a>
                                         <DropdownLink
                                             :href="route('logout')"
                                             method="post"
@@ -203,6 +211,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 Mi perfil
                             </ResponsiveNavLink>
+                            <a
+                                v-if="$page.props.switchInstitutionUrl"
+                                :href="$page.props.switchInstitutionUrl"
+                                class="block w-full border-l-4 border-transparent py-2 pe-4 ps-3 text-start text-base font-medium text-gray-600 transition duration-150 ease-in-out hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800 focus:outline-hidden"
+                            >
+                                Cambiar de plantel
+                            </a>
                             <ResponsiveNavLink
                                 :href="route('logout')"
                                 method="post"

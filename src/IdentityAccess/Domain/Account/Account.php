@@ -46,6 +46,40 @@ final readonly class Account
         return new self($id, $email, $name, $state, $consolidation, $emailVerifiedAt);
     }
 
+    /**
+     * The whole account's password, for every institution (IDG-R06.1).
+     */
+    public function changePassword(HashedPassword $password): self
+    {
+        return new self($this->id, $this->email, $this->name, $this->state, $this->consolidation, $this->emailVerifiedAt, $password);
+    }
+
+    /**
+     * The account that survives a consolidation: a regular account again,
+     * the only one left with its email (ADR 0006 B).
+     */
+    public function consolidated(): self
+    {
+        if (! $this->isUnderConsolidation()) {
+            throw new \LogicException('Only an account awaiting consolidation can be consolidated.');
+        }
+
+        return new self($this->id, $this->email, $this->name, $this->state, null, $this->emailVerifiedAt, $this->newPassword);
+    }
+
+    /**
+     * Support decided these accounts belong to different people: they stay
+     * apart for good, each password opening its own institution (IDG-R11.2).
+     */
+    public function keptSeparate(): self
+    {
+        if ($this->consolidation !== ConsolidationState::Review) {
+            throw new \LogicException('Only an account under review can be kept separate.');
+        }
+
+        return new self($this->id, $this->email, $this->name, $this->state, ConsolidationState::Separated, $this->emailVerifiedAt, $this->newPassword);
+    }
+
     public function isActive(): bool
     {
         return $this->state === AccountState::Active;

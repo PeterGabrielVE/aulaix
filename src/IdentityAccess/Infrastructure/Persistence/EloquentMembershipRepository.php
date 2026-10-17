@@ -14,11 +14,25 @@ use Illuminate\Support\Facades\Date;
 
 final class EloquentMembershipRepository implements MembershipRepository
 {
-    public function ofAccount(AccountId $accountId): ?Membership
+    public function of(AccountId $accountId, InstitutionId $institutionId): ?Membership
     {
-        $model = MembershipModel::query()->where('user_id', $accountId->value)->first();
+        $model = MembershipModel::query()
+            ->where('institution_id', $institutionId->value)
+            ->where('user_id', $accountId->value)
+            ->first();
 
         return $model === null ? null : self::toDomain($model);
+    }
+
+    public function allOf(AccountId $accountId): array
+    {
+        return MembershipModel::query()
+            ->where('user_id', $accountId->value)
+            ->orderBy('id')
+            ->get()
+            ->map(fn (MembershipModel $model) => self::toDomain($model))
+            ->values()
+            ->all();
     }
 
     public function save(Membership $membership): Membership

@@ -108,3 +108,14 @@ it('invalidates the previous link when corrected or resent', function (string $h
         ->and($renewed->invitation->accept($renewed->token, AccountId::fromInt(5), at('2026-10-03 13:00'))->status)->toBe(InvitationStatus::Accepted)
         ->and($renewed->invitation->expiresAt->format(DATE_ATOM))->toBe('2026-10-10T12:00:00+00:00');
 })->with(['corrected', 'resent']);
+
+it('is accepted without its token by the account that logged in with its email, while it lasts', function () {
+    $invitation = issuedOn('2026-10-01 12:00')->invitation;
+
+    $accepted = $invitation->acceptBy(AccountId::fromInt(5), at('2026-10-08 12:00'));
+
+    expect($accepted->status)->toBe(InvitationStatus::Accepted)
+        ->and($accepted->acceptedBy->value)->toBe(5)
+        ->and(fn () => $invitation->acceptBy(AccountId::fromInt(5), at('2026-10-08 12:01')))->toThrow(InvitationNotUsable::class)
+        ->and(fn () => $accepted->acceptBy(AccountId::fromInt(5), at('2026-10-02 12:00')))->toThrow(InvitationNotUsable::class);
+});

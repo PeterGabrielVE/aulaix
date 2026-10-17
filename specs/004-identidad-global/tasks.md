@@ -113,34 +113,34 @@ roles, pantalla de inicio, recuperación) conservan su lógica (Q-03).
 
 ## PR B — Autenticación central y consolidación
 
-- [ ] **B-01** — Puertos `Authenticator`, `LoginThrottle` (email + IP),
+- [x] **B-01** — Puertos `Authenticator`, `LoginThrottle` (email + IP),
   `HandoffTokens`, `SessionRevoker` y sus adaptadores.
   - Criterios: IDG-R03.10, IDG-NF03
   - Test: `CacheHandoffTokensTest` (un solo uso, caducado a los 61 s, plantel ajeno)
-- [ ] **B-02** — `LogIn` central (cuentas normales y filas en consolidación;
+- [x] **B-02** — `LogIn` central (cuentas normales y filas en consolidación;
   0/1/n membresías) + pantallas de login, selector y bienvenida.
   - Criterios: IDG-R03.1, R03.3 – R03.6, R09.3
-- [ ] **B-03** — `IssueHandoff` / `ConsumeHandoff` + cambio de plantel desde el menú.
+- [x] **B-03** — `IssueHandoff` / `ConsumeHandoff` + cambio de plantel desde el menú.
   - Criterios: IDG-R03.7, IDG-NF03
-- [ ] **B-04** — Redirección del login de los subdominios al central, con
+- [x] **B-04** — Redirección del login de los subdominios al central, con
   vuelta al plantel. Reescribir los tests de IAM-R02.1 – R02.5.
   - Criterios: IDG-R03.2
-- [ ] **B-05** — `LogOut` global.
-- [ ] **B-06** — `password_reset_tokens` global (`enableOutsideTenants`) +
+- [x] **B-05** — `LogOut` global.
+- [x] **B-06** — `password_reset_tokens` global (`enableOutsideTenants`) +
   `RequestPasswordReset` / `ResetPassword` centrales
   (mantienen IAM-R05.2 – R05.9) + cerrar las otras sesiones + aviso.
   - Criterios: IDG-R06.1 – R06.3
-- [ ] **B-07** — `AcceptInvitation` para cuentas existentes (autenticarse y
+- [x] **B-07** — `AcceptInvitation` para cuentas existentes (autenticarse y
   coincidir con el email).
   - Criterios: IDG-R04.5, R04.6
-- [ ] **B-08** — `StartConsolidation` / `CompleteConsolidation` (código de un
+- [x] **B-08** — `StartConsolidation` / `CompleteConsolidation` (código de un
   solo uso, contraseña nueva, mover membresías y roles, borrar las filas sobrantes, aviso).
   - Criterios: IDG-R09.4, R09.7
-- [ ] **B-09** — Comandos `identity:consolidation:list` y
+- [x] **B-09** — Comandos `identity:consolidation:list` y
   `identity:consolidation:resolve` (lista de operadores autorizados, `--dry-run`,
   validación del estado, transacción, auditoría).
   - Criterios: IDG-R11.1 – R11.8, IDG-NF07
-- [ ] **B-10** — Reautenticación (`password.confirm`, 10 minutos) para las
+- [x] **B-10** — Reautenticación (`password.confirm`, 10 minutos) para las
   operaciones sensibles.
   - Criterios: IDG-NF05
 - [ ] **Cierre de PR B** — suite en verde, `/security-review`.

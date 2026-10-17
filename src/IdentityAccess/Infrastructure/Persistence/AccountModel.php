@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AulaX\IdentityAccess\Infrastructure\Persistence;
 
-use App\Notifications\ResetPasswordLink;
 use AulaX\IdentityAccess\Application\Auth\HasActiveMembershipHandler;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -70,14 +69,5 @@ class AccountModel extends Authenticatable
     public function isActive(): bool
     {
         return app(HasActiveMembershipHandler::class)((int) $this->id);
-    }
-
-    /**
-     * Email a "forgot your password?" link, valid for
-     * auth.passwords.users.expire minutes (Password::sendResetLink calls this).
-     */
-    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
-    {
-        $this->notify(new ResetPasswordLink($token));
     }
 }

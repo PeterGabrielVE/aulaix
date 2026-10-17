@@ -51,7 +51,7 @@ final readonly class MemberRules
      */
     public function pendingInvitation(int $id): Invitation
     {
-        $invitation = $this->invitations->byId($id) ?? throw new NotFound('La invitación no existe.');
+        $invitation = $this->invitations->byId($this->institution()->institutionId, $id) ?? throw new NotFound('La invitación no existe.');
 
         if ($invitation->status !== InvitationStatus::Pending) {
             throw new Conflict('Esta invitación ya no está pendiente.');
@@ -83,14 +83,14 @@ final readonly class MemberRules
         // With an institution active, only the accounts with a membership in
         // it are visible: this never finds an account of another institution.
         foreach ($this->accounts->byEmail($email) as $account) {
-            $membership = $this->memberships->ofAccount($account->id);
+            $membership = $this->memberships->of($account->id, $this->institution()->institutionId);
 
             if ($membership !== null && $membership->status !== MembershipStatus::Ended) {
                 return BusinessRuleViolation::onField('email', 'Esta persona ya es miembro del plantel.');
             }
         }
 
-        $pending = $this->invitations->pendingFor($email);
+        $pending = $this->invitations->pendingFor($this->institution()->institutionId, $email);
 
         if ($pending === null || $pending->id === $exceptInvitationId) {
             return null;

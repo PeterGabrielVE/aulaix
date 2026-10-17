@@ -271,16 +271,16 @@ administración ni escalar privilegios.
 |----------|---------|
 | IAM-R01.1 | `tests/Feature/Auth/RegistrationTest.php` › «there is no public registration screen» |
 | IAM-R01.2 | `tests/Feature/Auth/RegistrationTest.php` › «there is no public registration endpoint» |
-| IAM-R02.1 | `tests/Feature/Auth/AuthenticationTest.php` › «login screen can be rendered» |
+| IAM-R02.1 | `tests/Feature/Auth/AuthenticationTest.php` › «the login screen of an institution is the central one» (sustituido por IDG-R03.2) |
 | IAM-R02.2 | `tests/Feature/Auth/AuthenticationTest.php` › «unknown subdomains are rejected» |
-| IAM-R02.3 | `tests/Feature/Auth/AuthenticationTest.php` › «users can authenticate using the login screen» |
+| IAM-R02.3 | `tests/Feature/Auth/AuthenticationTest.php` › «users who log in from an institution land in it» (sustituido por IDG-R03.2) |
 | IAM-R02.4 | `tests/Feature/Auth/AuthenticationTest.php` › «users can not authenticate with invalid password» |
-| IAM-R02.5 | `tests/Feature/Auth/AuthenticationTest.php` › «users can not authenticate on another institution's subdomain» |
-| IAM-R02.6 | `tests/Feature/Auth/AuthenticationTest.php` › «inactive users can not authenticate» |
+| IAM-R02.5 | `tests/Feature/Auth/AuthenticationTest.php` › «logging in from an institution without membership does not open it» (sustituido por IDG-R03.9) |
+| IAM-R02.6 | `tests/Feature/Auth/AuthenticationTest.php` › «a suspended membership is not opened after login» (sustituido por IDG-R03.4) |
 | IAM-R02.7 | `tests/Feature/Auth/AuthenticationTest.php` › «inactive users with a wrong password get the generic error» |
 | IAM-R02.8 | `tests/Feature/Auth/AuthenticationTest.php` › «five failed logins lock the account out for a minute, even with the right password» |
-| IAM-R02.9 | `tests/Feature/Auth/AuthenticationTest.php` › «failed logins in one institution do not lock out the same email in another» |
-| IAM-R02.10 | `tests/Feature/Auth/AuthenticationTest.php` › «users can logout» |
+| IAM-R02.9 | `tests/Feature/Auth/AuthenticationTest.php` › «failed logins lock the email out whatever institution it is used for» (sustituido por IDG-R03.10) |
+| IAM-R02.10 | `tests/Feature/Auth/AuthenticationTest.php` › «users can logout» (cierre global desde SPEC-004) |
 | IAM-R03.1 | `tests/Feature/Auth/AuthenticationTest.php` › «a user deactivated mid-session is logged out on their next request» |
 | IAM-R04.1 | `tests/Feature/Auth/InvitationTest.php` › «the invitation screen can be rendered» |
 | IAM-R04.2 | `tests/Feature/Auth/InvitationTest.php` › «accepting an invitation creates the account, verifies the email and joins the institution» (sustituido por IDG-R04.4) |
@@ -289,7 +289,7 @@ administración ni escalar privilegios.
 | IAM-R04.5 | `tests/Feature/Auth/InvitationTest.php` › «an invalid invitation token is rejected» |
 | IAM-R04.6 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a suspended or ended membership ends the session in that institution» (sustituido por IDG-R03.8) |
 | IAM-R05.1 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link screen can be rendered» |
-| IAM-R05.2 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link can be requested»; `tests/Feature/Auth/PasswordResetTest.php` › «the reset email links to the institution subdomain and states the 60 minute expiry» |
+| IAM-R05.2 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link can be requested»; `tests/Feature/Auth/PasswordResetTest.php` › «the reset email links to the central domain and states the 60 minute expiry» (central desde SPEC-004, IDG-R06.3) |
 | IAM-R05.3 | `tests/Feature/Auth/PasswordResetTest.php` › «an unknown email gets the same answer as a registered one and no email is sent» |
 | IAM-R05.4 | `tests/Feature/Auth/PasswordResetTest.php` › «a second request within the broker throttle gets the same answer without sending another email» |
 | IAM-R05.5 | `tests/Feature/Auth/PasswordResetTest.php` › «the forgot password form is rate limited per client» |
@@ -297,7 +297,7 @@ administración ni escalar privilegios.
 | IAM-R05.7 | `tests/Feature/Auth/PasswordResetTest.php` › «a reset link still works 59 minutes after it was requested»; `tests/Feature/Auth/PasswordResetTest.php` › «a reset link expires after 60 minutes» |
 | IAM-R05.8 | `tests/Feature/Auth/PasswordResetTest.php` › «a reset link can only be used once» |
 | IAM-R05.9 | `tests/Feature/Auth/PasswordResetTest.php` › «an invalid reset token is rejected» |
-| IAM-R05.10 | `tests/Feature/Auth/PasswordResetTest.php` › «reset tokens for the same email are kept separately per institution»; `tests/Feature/Auth/PasswordResetTest.php` › «a reset token from one institution can not be used in another» |
+| IAM-R05.10 | `tests/Feature/Auth/PasswordResetTest.php` › «the new password is the account's, in every institution»; `tests/Feature/Auth/PasswordResetTest.php` › «reset tokens are never readable from an institution» (sustituido por IDG-R06.1) |
 | IAM-R06.1 | `tests/Feature/Auth/EmailVerificationTest.php` › «email verification screen can be rendered» |
 | IAM-R06.2 | `tests/Feature/Auth/EmailVerificationTest.php` › «email can be verified» |
 | IAM-R06.3 | `tests/Feature/Auth/EmailVerificationTest.php` › «email is not verified with invalid hash» |

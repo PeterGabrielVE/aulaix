@@ -49,6 +49,8 @@ class HandleInertiaRequests extends Middleware
                 'subdomain' => $institution->subdomain,
             ] : null,
             'appDomain' => config('app.domain'),
+            // The central selector, where switching institution needs no password (IDG-R03.7).
+            'switchInstitutionUrl' => $institution ? route('central.home') : null,
         ];
     }
 }

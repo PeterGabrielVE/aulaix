@@ -2,6 +2,7 @@
 estado: aceptada
 fecha-aceptación: 2026-10-15
 fecha: 2026-10-15
+enmendada: 2026-10-16 (decisión C)
 spec: 004-identidad-global
 modifica: ADR 0004 (decisiones 6 y 7)
 ---
@@ -55,6 +56,21 @@ y PostgreSQL, resultan inviables o contradictorios:
 - La consolidación, verificada por el titular o resuelta por soporte, mueve
   membresías y roles a una sola fila y borra las demás. Hasta entonces no se
   fusiona nada.
+
+### C. Membresías e invitaciones legibles sin plantel activo (enmienda, 2026-10-16)
+
+El login central, el selector de planteles, el traspaso y la consolidación
+necesitan leer, sin plantel activo, las membresías de una cuenta y las
+invitaciones pendientes de su email. `institution_memberships` e
+`invitations` aplican a la **lectura** el mismo criterio que `users`:
+
+| Comando | Política |
+|---------|----------|
+| `SELECT` | Visible si no hay plantel activo, o si la fila es del plantel activo. |
+| `INSERT`, `UPDATE`, `DELETE` | Solo en el plantel activo. |
+
+Con un plantel activo nada cambia. Sin plantel activo, la lectura queda en
+manos del código de `IdentityAccess`, como la de `users`.
 
 ## Consecuencias
 

@@ -85,7 +85,7 @@ src/IdentityAccess/
 
 ```
 users (identidad global; pierde institution_id y la RLS por plantel)
-  + consolidation_state  varchar NULL          -- null | pending | review
+  + consolidation_state  varchar NULL          -- null | pending | review | separated
   + account_state        varchar NOT NULL      -- active | pending_deletion | closed | deleted
   + deletion_requested_at, deletion_due_at timestamptz NULL
   + pending_email varchar NULL, pending_email_token_hash varchar NULL, pending_email_expires_at timestamptz NULL
@@ -364,3 +364,89 @@ Ajustes hechos al implementar, sin cambiar ningún criterio:
 - **Membresía no activa.** `EnsureActiveMembership` cierra la sesión del
   subdominio y lleva a su login, hasta que el PR B lleve al login central
   (B-04).
+
+## Cambios aprobados para el PR B (2026-10-16)
+
+Al empezar el PR B, el diseño no encajaba con el código en un punto y dejaba
+abiertos otros dos. Los tres se aprobaron el 2026-10-16.
+
+### 1. Leer membresías e invitaciones sin plantel activo
+
+**Problema.** El login central (IDG-R03.4 – R03.6), el selector, el traspaso
+y la consolidación necesitan saber, **sin plantel activo**, en qué planteles
+tiene membresía una cuenta y qué invitaciones pendientes tiene su email.
+Hoy `institution_memberships` e `invitations` usan `RowLevelSecurity::enable`:
+sin plantel activo se leen vacías. El ADR 0006 solo abre `users` en el
+dominio central.
+
+**Propuesta.** Aplicar a las dos tablas el mismo criterio que el ADR 0006 A
+aplica a `users`, solo para **lectura**:
+
+| Comando | Política |
+|---------|----------|
+| `SELECT` | Visible si no hay plantel activo, o si `institution_id` es el del plantel activo. |
+| `INSERT`, `UPDATE`, `DELETE` | Solo en el plantel activo (como hoy). |
+
+- Con un plantel activo nada cambia: cada plantel sigue viendo solo lo suyo
+  (S-01, IDG-NF01, NF02).
+- Sin plantel activo, solo el código del dominio central, la consola y las
+  tareas programadas leen; ese código vive en `IdentityAccess`, y los modelos
+  ya están protegidos por el test de arquitectura de módulos.
+- Se añade como decisión C del ADR 0006 (enmienda en este PR).
+
+**Alternativas.** Activar uno a uno todos los planteles para buscar las
+membresías de una cuenta: coste proporcional al número de planteles en cada
+login. Copiar las membresías en `users`: duplica datos y la RLS deja de
+proteger el estado de la membresía.
+
+### 2. Código de consolidación (B-08)
+
+El diseño pide «un código de un solo uso» sin decir dónde se guarda.
+**Propuesta:** código de 6 dígitos guardado **hasheado en caché** (Redis en
+producción), ligado a la cuenta, con 15 minutos de vida, un solo uso y 5
+intentos como máximo; pedir otro invalida el anterior (IDG-NF04). Sin tabla
+nueva, igual que el nonce del traspaso.
+
+### 3. Sesión central
+
+El dominio central conserva su propia sesión tras el login. Es la que
+permite cambiar de plantel sin contraseña (IDG-R03.7): «Cambiar de plantel»
+lleva al selector central, que emite un traspaso nuevo. Si la sesión central
+caducó, se pide el login otra vez. Cerrar sesión (B-05) borra **todas** las
+filas de `sessions` de la cuenta (central y subdominios), por eso
+`SESSION_DRIVER` debe ser `database` en todos los entornos salvo los tests,
+que lo fijan por test cuando lo necesitan.
+
+## Notas de implementación (PR B)
+
+Ajustes hechos al implementar, sin cambiar ningún criterio:
+
+- **Repositorios con plantel explícito.** Con la decisión C del ADR 0006, sin
+  plantel activo la RLS ya no limita la lectura de membresías e invitaciones.
+  Por eso `MembershipRepository` e `InvitationRepository` reciben siempre el
+  plantel, y `MemberDirectory` filtra por el plantel activo además de la RLS.
+- **Estado `separated`.** Cuando soporte decide «mantener separadas» las
+  cuentas de un caso en revisión (IDG-R11.2), pasan a `consolidation_state =
+  separated`: siguen compartiendo email (el índice parcial lo permite), cada
+  contraseña abre solo su plantel y nunca se ofrecen para unificar.
+- **Recuperación con cuentas por unificar.** Un email con varias cuentas
+  históricas no tiene una sola contraseña que restablecer: en lugar del
+  enlace recibe un correo que explica cómo unificarlas. La respuesta en
+  pantalla es la misma de siempre (IAM-R05.3).
+- **`password_reset_tokens` se reconstruye.** La tabla pasa a global y los
+  enlaces de recuperación pedidos antes del despliegue dejan de funcionar
+  (viven 60 minutos). Los enlaces antiguos del subdominio redirigen al
+  dominio central.
+- **Aceptar con una cuenta existente (B-07).** Estar autenticado con el email
+  invitado ya prueba que la persona recibe correo allí, así que no hace falta
+  el token: se acepta desde el enlace o desde la bienvenida. Tras aceptar, el
+  traspaso abre directamente el plantel. Volver a un plantel cuya membresía
+  terminó queda fuera de este PR (lo resuelve PR C, con «salir del plantel»).
+- **Reautenticación.** La confirmación de contraseña se comprueba contra la
+  cuenta de la sesión, nunca por email, porque un email por unificar tiene
+  varias cuentas. Las rutas sensibles exigen una confirmación de menos de
+  10 minutos (`password.confirm:…,600`).
+- **Membresía no activa.** `EnsureActiveMembership` cierra la sesión del
+  subdominio y lleva a la pantalla central de planteles.
+- **Redirecciones entre dominios.** Las respuestas que llevan a otro dominio
+  usan `Inertia::location`, para que también funcionen en visitas de Inertia.

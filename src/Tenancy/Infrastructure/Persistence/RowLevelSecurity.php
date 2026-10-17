@@ -60,6 +60,45 @@ final class RowLevelSecurity
         ");
     }
 
+    /**
+     * Policy names of enableWithCentralReads(), in creation order.
+     */
+    public const CENTRAL_READ_POLICIES = ['central_read', 'tenant_insert', 'tenant_update', 'tenant_delete'];
+
+    /**
+     * Like enable(), except that with no institution active every row is
+     * readable (writes still need the row's institution to be active). Only
+     * for the tables the central domain reads to authenticate a person
+     * across their institutions (ADR 0006 C).
+     */
+    public static function enableWithCentralReads(string $table): void
+    {
+        $current = self::CURRENT_INSTITUTION_SQL;
+        $own = "(institution_id = {$current})";
+
+        DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
+        DB::statement("ALTER TABLE {$table} FORCE ROW LEVEL SECURITY");
+        DB::statement("DROP POLICY IF EXISTS tenant_isolation ON {$table}");
+        DB::statement("CREATE POLICY central_read ON {$table} FOR SELECT USING ({$current} IS NULL OR institution_id = {$current})");
+        DB::statement("CREATE POLICY tenant_insert ON {$table} FOR INSERT WITH CHECK {$own}");
+        DB::statement("CREATE POLICY tenant_update ON {$table} FOR UPDATE USING {$own} WITH CHECK {$own}");
+        DB::statement("CREATE POLICY tenant_delete ON {$table} FOR DELETE USING {$own}");
+    }
+
+    /**
+     * Back from enableWithCentralReads() to enable().
+     */
+    public static function disableCentralReads(string $table): void
+    {
+        foreach (self::CENTRAL_READ_POLICIES as $policy) {
+            DB::statement("DROP POLICY IF EXISTS {$policy} ON {$table}");
+        }
+
+        $current = self::CURRENT_INSTITUTION_SQL;
+
+        DB::statement("CREATE POLICY tenant_isolation ON {$table} USING (institution_id = {$current}) WITH CHECK (institution_id = {$current})");
+    }
+
     public static function disable(string $table): void
     {
         DB::statement("DROP POLICY IF EXISTS tenant_isolation ON {$table}");

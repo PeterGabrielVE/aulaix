@@ -2,6 +2,14 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\HandoffController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Central\ConsolidationController;
+use App\Http\Controllers\Central\InstitutionsController;
+use App\Http\Controllers\Central\LoginController as CentralLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InvitationController;
@@ -40,6 +48,15 @@ const MIGRATED_CONTROLLERS = [
     AcceptInvitationController::class,
     HomeController::class,
     EnsureActiveMembership::class,
+    // SPEC-004 PR B
+    CentralLoginController::class,
+    InstitutionsController::class,
+    HandoffController::class,
+    AuthenticatedSessionController::class,
+    ConsolidationController::class,
+    ConfirmablePasswordController::class,
+    PasswordResetLinkController::class,
+    NewPasswordController::class,
 ];
 
 /**

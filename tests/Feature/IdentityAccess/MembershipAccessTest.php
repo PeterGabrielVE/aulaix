@@ -21,8 +21,7 @@ test('a suspended or ended membership ends the session in that institution', fun
     setMembership($teacher, $membership);
 
     $this->get(tenantUrl($institution, '/profile'))
-        ->assertRedirect(route('login'))
-        ->assertSessionHasErrors(['email' => __('auth.inactive')]);
+        ->assertRedirect(centralUrl('/planteles'));
     $this->assertGuest();
 })->with([
     'suspended' => [['status' => 'suspended', 'suspension_reason' => 'institution']],
@@ -34,7 +33,7 @@ test('an account that is no longer active loses access everywhere', function () 
     $teacher = userWithRole($institution, 'Docente');
     DB::table('users')->where('id', $teacher->id)->update(['account_state' => 'pending_deletion']);
 
-    $this->actingAs($teacher)->get(tenantUrl($institution, '/profile'))->assertRedirect(route('login'));
+    $this->actingAs($teacher)->get(tenantUrl($institution, '/profile'))->assertRedirect(centralUrl('/planteles'));
     $this->assertGuest();
 });
 
@@ -45,22 +44,19 @@ test('a suspension in one institution leaves the others untouched', function () 
     joinInstitution($teacher, $institutionB, 'Docente');
     setMembership($teacher, ['status' => 'suspended', 'suspension_reason' => 'institution']);
 
-    $this->actingAs($teacher)->get(tenantUrl($institutionB, '/profile'))->assertRedirect(route('login'));
+    $this->actingAs($teacher)->get(tenantUrl($institutionB, '/profile'))->assertRedirect(centralUrl('/planteles'));
 
     auth()->forgetGuards();
     $this->actingAs($teacher->fresh())->get(tenantUrl($institutionA, '/profile'))->assertOk();
 });
 
-test('someone without a membership can not log in, as if they had no account', function () {
+test('logging in from an institution without membership never opens it', function () {
     $elsewhere = tenant();
-    User::factory()->for($elsewhere)->create(['email' => 'ana@example.com', 'password' => 'secreta-123']);
+    User::factory()->for($elsewhere)->inactive()->create(['email' => 'ana@example.com', 'password' => 'secreta-123']);
     $institution = tenant();
 
-    $this->post(tenantUrl($institution, '/login'), ['email' => 'ana@example.com', 'password' => 'secreta-123'])
-        ->assertSessionHasErrors(['email' => __('auth.failed')]);
-    $this->post(tenantUrl($institution, '/login'), ['email' => 'nadie@example.com', 'password' => 'secreta-123'])
-        ->assertSessionHasErrors(['email' => __('auth.failed')]);
-    $this->assertGuest();
+    // Only the central welcome: neither this institution nor the suspended one.
+    logInTo($institution, 'ana@example.com', 'secreta-123')->assertRedirect(centralUrl('/planteles'));
 });
 
 test('a session can not be carried into an institution without membership', function () {

@@ -75,7 +75,7 @@ final readonly class AcceptInvitationHandler
         try {
             $this->transactions->run(function () use ($command, $institution, $email, $hasAccount) {
                 $now = $this->clock->now();
-                $invitation = $this->invitations->pendingFor($email);
+                $invitation = $this->invitations->pendingFor($institution->institutionId, $email);
 
                 if ($invitation === null || ! $invitation->isUsable($now) || ! $invitation->matches($command->token)) {
                     throw InvitationNotUsable::create();

@@ -9,6 +9,7 @@ use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 /*
@@ -84,6 +85,29 @@ function tenantUrl(Institution $institution, string $path = '/'): string
 function centralUrl(string $path = '/'): string
 {
     return 'http://'.config('app.domain').$path;
+}
+
+/**
+ * Log in the way a person does since SPEC-004: on the central login, coming
+ * from the institution's subdomain, then through the handoff into it.
+ * Returns the response of the handoff (or of the login, if it went nowhere).
+ */
+function logInTo(Institution $institution, string $email, string $password = 'password'): TestResponse
+{
+    leaveTenant();
+
+    $login = test()->post(centralUrl("/login?plantel={$institution->subdomain}"), ['email' => $email, 'password' => $password]);
+    $location = (string) $login->headers->get('Location');
+
+    if (! str_contains($location, '/auth/handoff?token=')) {
+        return $login;
+    }
+
+    // The subdomain has its own session (cookie): it starts empty.
+    test()->flushSession();
+    auth()->forgetGuards();
+
+    return test()->get($location);
 }
 
 /**

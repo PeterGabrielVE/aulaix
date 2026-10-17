@@ -80,3 +80,28 @@ test('historical accounts awaiting consolidation may share an email', function (
 
     expect(rawAccount('ana@colegio.ve', 'pending'))->toBeInt();
 });
+
+test('memberships and invitations of every institution are readable with no institution active', function () {
+    $norte = tenant();
+    rawMembership(rawAccount('norte@colegio.ve'), $norte->id);
+    DB::table('invitations')->insert(['email' => 'inv@colegio.ve', 'name' => 'X', 'roles' => '[]', 'token_hash' => 'h', 'expires_at' => now(), 'status' => 'pending']);
+    $sur = tenant();
+    rawMembership(rawAccount('sur@colegio.ve'), $sur->id);
+
+    expect(DB::table('institution_memberships')->count())->toBe(1);
+
+    RowLevelSecurity::clearInstitution();
+
+    expect(DB::table('institution_memberships')->count())->toBe(2)
+        ->and(DB::table('invitations')->count())->toBe(1);
+});
+
+test('memberships can only be written in the active institution', function () {
+    $norte = tenant();
+    $account = rawAccount('norte@colegio.ve');
+    RowLevelSecurity::clearInstitution();
+
+    // In a savepoint: the refused insert aborts it, not the test transaction.
+    expect(fn () => DB::transaction(fn () => rawMembership($account, $norte->id)))->toThrow(QueryException::class);
+    expect(DB::table('institution_memberships')->update(['status' => 'suspended']))->toBe(0);
+});

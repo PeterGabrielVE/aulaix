@@ -1,24 +1,36 @@
 <?php
 
-use App\Notifications\ResetPasswordLink;
+use AulaX\IdentityAccess\Infrastructure\Notifications\ConsolidationGuidance;
+use AulaX\IdentityAccess\Infrastructure\Notifications\PasswordChangedNotice;
+use AulaX\IdentityAccess\Infrastructure\Notifications\ResetPasswordLink;
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
-use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Testing\TestResponse;
 
 /**
- * Request a reset link for $user from their institution's forgot-password
- * form and return the token from the email.
+ * SPEC-002 IAM-R05 as kept by SPEC-004 IDG-R06: password recovery, now on
+ * the central domain and for the whole account.
  */
-function requestResetAndGetToken(Institution $institution, User $user): string
+function requestReset(string $email): TestResponse
+{
+    leaveTenant();
+
+    return test()->post(centralUrl('/forgot-password'), ['email' => $email]);
+}
+
+/**
+ * Request a reset link and return the token from the email.
+ */
+function requestResetAndGetToken(User $user): string
 {
     Notification::fake();
-
-    test()->post(tenantUrl($institution, '/forgot-password'), ['email' => $user->email]);
+    requestReset($user->email);
 
     $token = null;
-    Notification::assertSentTo($user, ResetPasswordLink::class, function (ResetPasswordLink $notification) use (&$token) {
-        $token = $notification->token;
+    Notification::assertSentOnDemand(ResetPasswordLink::class, function (ResetPasswordLink $mail) use (&$token) {
+        $token = $mail->token;
 
         return true;
     });
@@ -26,51 +38,50 @@ function requestResetAndGetToken(Institution $institution, User $user): string
     return $token;
 }
 
-function resetPasswordPayload(User $user, string $token, string $password = 'nueva-contrasena'): array
+function resetPassword(User $user, string $token, string $password = 'nueva-contrasena'): TestResponse
 {
-    return [
+    leaveTenant();
+
+    return test()->post(centralUrl('/reset-password'), [
         'token' => $token,
         'email' => $user->email,
         'password' => $password,
         'password_confirmation' => $password,
-    ];
+    ]);
 }
 
 test('reset password link screen can be rendered', function () {
+    $this->get(centralUrl('/forgot-password'))->assertOk();
+});
+
+test('an institution\'s forgot password screen is the central one', function () {
     $institution = tenant();
 
-    $response = $this->get(tenantUrl($institution, '/forgot-password'));
-
-    $response->assertStatus(200);
+    $this->get(tenantUrl($institution, '/forgot-password'))->assertRedirect(centralUrl('/forgot-password'));
 });
 
 test('reset password link can be requested', function () {
     Notification::fake();
+    $user = User::factory()->for(tenant())->create();
 
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-
-    $this->post(tenantUrl($institution, '/forgot-password'), ['email' => $user->email])
+    requestReset($user->email)
         ->assertSessionHasNoErrors()
         ->assertSessionHas('status', __('passwords.sent'));
 
-    Notification::assertSentTo($user, ResetPasswordLink::class);
+    Notification::assertSentOnDemand(ResetPasswordLink::class, fn ($mail, $channels, $notifiable) => $notifiable->routes['mail'] === $user->email);
 });
 
-test('the reset email links to the institution subdomain and states the 60 minute expiry', function () {
+test('the reset email links to the central domain and states the 60 minute expiry', function () {
     Notification::fake();
+    $user = User::factory()->for(tenant())->create(['name' => 'Ana Pérez']);
 
-    $institution = tenant(['name' => 'Colegio Los Próceres']);
-    $user = User::factory()->for($institution)->create();
+    requestReset($user->email);
 
-    $this->post(tenantUrl($institution, '/forgot-password'), ['email' => $user->email]);
+    Notification::assertSentOnDemand(ResetPasswordLink::class, function (ResetPasswordLink $notification) use ($user) {
+        $mail = $notification->toMail(new stdClass);
 
-    Notification::assertSentTo($user, ResetPasswordLink::class, function (ResetPasswordLink $notification) use ($user, $institution) {
-        $mail = $notification->toMail($user);
-
-        expect($mail->subject)->toContain('Colegio Los Próceres')
-            ->and($mail->actionUrl)->toBe(tenantUrl($institution, "/reset-password/{$notification->token}?email=".urlencode($user->email)))
-            ->and($mail->introLines)->toContain('Recibimos una solicitud para restablecer la contraseña de tu cuenta de Colegio Los Próceres en AulaX.')
+        expect($mail->actionUrl)->toBe(centralUrl("/reset-password/{$notification->token}?email=".urlencode($user->email)))
+            ->and($mail->greeting)->toBe('¡Hola, Ana Pérez!')
             ->and($mail->outroLines)->toContain('Este enlace vence en 60 minutos y solo puede usarse una vez.');
 
         return true;
@@ -80,10 +91,7 @@ test('the reset email links to the institution subdomain and states the 60 minut
 test('an unknown email gets the same answer as a registered one and no email is sent', function () {
     Notification::fake();
 
-    $institution = tenant();
-    User::factory()->for(tenant())->create(['email' => 'otra@example.com']);
-
-    $this->post(tenantUrl($institution, '/forgot-password'), ['email' => 'otra@example.com'])
+    requestReset('nadie@example.com')
         ->assertSessionHasNoErrors()
         ->assertSessionHas('status', __('passwords.sent'));
 
@@ -92,38 +100,31 @@ test('an unknown email gets the same answer as a registered one and no email is 
 
 test('a second request within the broker throttle gets the same answer without sending another email', function () {
     Notification::fake();
+    $user = User::factory()->for(tenant())->create();
 
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-
-    $this->post(tenantUrl($institution, '/forgot-password'), ['email' => $user->email]);
-    $this->post(tenantUrl($institution, '/forgot-password'), ['email' => $user->email])
+    requestReset($user->email);
+    requestReset($user->email)
         ->assertSessionHasNoErrors()
         ->assertSessionHas('status', __('passwords.sent'));
 
-    Notification::assertSentToTimes($user, ResetPasswordLink::class, 1);
+    Notification::assertSentOnDemandTimes(ResetPasswordLink::class, 1);
 });
 
 test('the forgot password form is rate limited per client', function () {
     Notification::fake();
 
-    $institution = tenant();
-
     foreach (range(1, 6) as $attempt) {
-        $this->post(tenantUrl($institution, '/forgot-password'), ['email' => "nadie{$attempt}@example.com"])
-            ->assertRedirect();
+        requestReset("nadie{$attempt}@example.com")->assertRedirect();
     }
 
-    $this->post(tenantUrl($institution, '/forgot-password'), ['email' => 'nadie7@example.com'])
-        ->assertTooManyRequests();
+    requestReset('nadie7@example.com')->assertTooManyRequests();
 });
 
 test('reset password screen can be rendered', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-    $token = requestResetAndGetToken($institution, $user);
+    $user = User::factory()->for(tenant())->create();
+    $token = requestResetAndGetToken($user);
 
-    $this->get(tenantUrl($institution, "/reset-password/{$token}?email={$user->email}"))
+    $this->get(centralUrl("/reset-password/{$token}?email={$user->email}"))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Auth/ResetPassword')
@@ -133,116 +134,105 @@ test('reset password screen can be rendered', function () {
 });
 
 test('password can be reset with valid token', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-    $token = requestResetAndGetToken($institution, $user);
+    $user = User::factory()->for(tenant())->create();
+    $token = requestResetAndGetToken($user);
 
-    $this->post(tenantUrl($institution, '/reset-password'), resetPasswordPayload($user, $token))
+    resetPassword($user, $token)
         ->assertSessionHasNoErrors()
-        ->assertRedirect(route('login'));
+        ->assertRedirect(centralUrl('/login'));
 
     expect(Hash::check('nueva-contrasena', $user->fresh()->password))->toBeTrue();
 });
 
+test('the new password is the account\'s, in every institution', function () {
+    $norte = tenant();
+    $user = userWithRole($norte, 'Docente');
+    $sur = tenant();
+    joinInstitution($user, $sur, 'Docente');
+    resetPassword($user, requestResetAndGetToken($user));
+
+    logInTo($sur, $user->email, 'nueva-contrasena')->assertRedirect(tenantUrl($sur, '/dashboard'));
+});
+
+test('resetting the password closes every session and tells the owner', function () {
+    config(['session.driver' => 'database']);
+    $user = User::factory()->for(tenant())->create();
+    $token = requestResetAndGetToken($user);
+    DB::table('sessions')->insert(['id' => 'stolen', 'user_id' => $user->id, 'payload' => '', 'last_activity' => time()]);
+
+    resetPassword($user, $token)->assertSessionHasNoErrors();
+
+    expect(DB::table('sessions')->where('user_id', $user->id)->exists())->toBeFalse();
+    Notification::assertSentOnDemand(PasswordChangedNotice::class, fn ($mail, $channels, $notifiable) => $notifiable->routes['mail'] === $user->email);
+});
+
+test('a password reset is recorded in the platform log, without the password', function () {
+    $user = User::factory()->for(tenant())->create();
+    resetPassword($user, requestResetAndGetToken($user));
+
+    $entry = DB::table('platform_audit_entries')->sole();
+    expect($entry->event_type)->toBe('identity.account.password_changed')
+        ->and($entry->subject_id)->toBe((string) $user->id)
+        ->and($entry->changes)->toBe('{}');
+});
+
 test('a reset link still works 59 minutes after it was requested', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-    $token = requestResetAndGetToken($institution, $user);
+    $user = User::factory()->for(tenant())->create();
+    $token = requestResetAndGetToken($user);
 
     $this->travel(59)->minutes();
 
-    $this->post(tenantUrl($institution, '/reset-password'), resetPasswordPayload($user, $token))
-        ->assertSessionHasNoErrors();
+    resetPassword($user, $token)->assertSessionHasNoErrors();
 
     expect(Hash::check('nueva-contrasena', $user->fresh()->password))->toBeTrue();
 });
 
 test('a reset link expires after 60 minutes', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-    $token = requestResetAndGetToken($institution, $user);
+    $user = User::factory()->for(tenant())->create();
+    $token = requestResetAndGetToken($user);
 
     $this->travel(61)->minutes();
 
-    $this->post(tenantUrl($institution, '/reset-password'), resetPasswordPayload($user, $token))
-        ->assertSessionHasErrors(['email' => __('passwords.token')]);
+    resetPassword($user, $token)->assertSessionHasErrors(['email' => __('passwords.token')]);
 
     expect(Hash::check('password', $user->fresh()->password))->toBeTrue();
 });
 
 test('a reset link can only be used once', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-    $token = requestResetAndGetToken($institution, $user);
+    $user = User::factory()->for(tenant())->create();
+    $token = requestResetAndGetToken($user);
 
-    $this->post(tenantUrl($institution, '/reset-password'), resetPasswordPayload($user, $token, 'primera-contrasena'))
-        ->assertSessionHasNoErrors();
-
-    $this->post(tenantUrl($institution, '/reset-password'), resetPasswordPayload($user, $token, 'segunda-contrasena'))
-        ->assertSessionHasErrors(['email' => __('passwords.token')]);
+    resetPassword($user, $token, 'primera-contrasena')->assertSessionHasNoErrors();
+    resetPassword($user, $token, 'segunda-contrasena')->assertSessionHasErrors(['email' => __('passwords.token')]);
 
     expect(Hash::check('primera-contrasena', $user->fresh()->password))->toBeTrue();
 });
 
 test('an invalid reset token is rejected', function () {
-    $institution = tenant();
-    $user = User::factory()->for($institution)->create();
-    requestResetAndGetToken($institution, $user);
+    $user = User::factory()->for(tenant())->create();
+    requestResetAndGetToken($user);
 
-    $this->post(tenantUrl($institution, '/reset-password'), resetPasswordPayload($user, 'not-the-token'))
-        ->assertSessionHasErrors(['email' => __('passwords.token')]);
+    resetPassword($user, 'not-the-token')->assertSessionHasErrors(['email' => __('passwords.token')]);
 
     expect(Hash::check('password', $user->fresh()->password))->toBeTrue();
 });
 
-test('reset tokens for the same email are kept separately per institution', function () {
-    Notification::fake();
+test('reset tokens are never readable from an institution', function () {
+    $user = User::factory()->for($institution = tenant())->create();
+    requestResetAndGetToken($user);
 
-    $institutionA = tenant();
-    $userA = User::factory()->for($institutionA)->create(['email' => 'shared@example.com']);
-    $this->post(tenantUrl($institutionA, '/forgot-password'), ['email' => 'shared@example.com']);
+    useTenant($institution);
 
-    // SPEC-004: one account, a membership in each institution; until the
-    // central password reset (PR B) each institution keeps its own token.
-    $institutionB = tenant();
-    $userB = joinInstitution($userA, $institutionB);
-    $this->post(tenantUrl($institutionB, '/forgot-password'), ['email' => 'shared@example.com']);
-
-    // Same account, two emails (one per institution): A's is the first one.
-    $tokenA = Notification::sent($userA, ResetPasswordLink::class)->first()->token;
-
-    // Requesting a reset in B used to overwrite A's pending token (the table
-    // was keyed by email alone). A's link must still work.
-    $this->post(tenantUrl($institutionA, '/reset-password'), [
-        'token' => $tokenA,
-        'email' => 'shared@example.com',
-        'password' => 'new-password-a',
-        'password_confirmation' => 'new-password-a',
-    ])->assertSessionHasNoErrors();
-
-    expect(Hash::check('new-password-a', $userA->fresh()->password))->toBeTrue();
+    expect(DB::table('password_reset_tokens')->count())->toBe(0);
 });
 
-test('a reset token from one institution can not be used in another', function () {
+test('an email awaiting consolidation gets guidance instead of a reset link', function () {
     Notification::fake();
+    User::factory()->for(tenant())->create(['email' => 'ana@example.com', 'consolidation_state' => 'pending']);
+    User::factory()->for(tenant())->create(['email' => 'ana@example.com', 'consolidation_state' => 'pending']);
 
-    $institutionA = tenant();
-    $userA = User::factory()->for($institutionA)->create(['email' => 'shared@example.com']);
-    $this->post(tenantUrl($institutionA, '/forgot-password'), ['email' => 'shared@example.com']);
+    requestReset('ana@example.com')->assertSessionHas('status', __('passwords.sent'));
 
-    $institutionB = tenant();
-    $userB = joinInstitution($userA, $institutionB);
-
-    Notification::assertSentTo($userA, ResetPasswordLink::class, function ($notification) use ($institutionB) {
-        $this->post(tenantUrl($institutionB, '/reset-password'), [
-            'token' => $notification->token,
-            'email' => 'shared@example.com',
-            'password' => 'hijacked-password',
-            'password_confirmation' => 'hijacked-password',
-        ])->assertSessionHasErrors('email');
-
-        return true;
-    });
-
-    expect(Hash::check('password', $userB->fresh()->password))->toBeTrue();
+    Notification::assertSentOnDemandTimes(ResetPasswordLink::class, 0);
+    Notification::assertSentOnDemandTimes(ConsolidationGuidance::class, 1);
 });

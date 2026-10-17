@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace AulaX\IdentityAccess\Domain\Invitation;
 
 use AulaX\IdentityAccess\Domain\Account\EmailAddress;
+use AulaX\Shared\Domain\InstitutionId;
 
 /**
- * Invitations of the active institution (Row Level Security limits every
- * read and write to it).
+ * Invitations are written only in the active institution, but read from the
+ * central domain too (ADR 0006 C): every lookup names its institution.
  */
 interface InvitationRepository
 {
-    public function byId(int $id): ?Invitation;
+    public function byId(InstitutionId $institutionId, int $id): ?Invitation;
 
-    public function pendingFor(EmailAddress $email): ?Invitation;
+    public function pendingFor(InstitutionId $institutionId, EmailAddress $email): ?Invitation;
 
     /**
      * Persists the invitation; returns it with its id.

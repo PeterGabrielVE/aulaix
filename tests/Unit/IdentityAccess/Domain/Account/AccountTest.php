@@ -45,3 +45,37 @@ it('is only active while its state says so', function (AccountState $state, bool
     [AccountState::PendingDeletion, false],
     [AccountState::Closed, false],
 ]);
+
+it('carries a new password only when one was set, keeping everything else', function () {
+    $account = Account::reconstitute(AccountId::fromInt(7), EmailAddress::fromString('ana@colegio.ve'), PersonName::fromString('Ana'), AccountState::Active, null, null);
+
+    $changed = $account->changePassword(HashedPassword::fromHash('nuevo-hash'));
+
+    expect($account->newPassword)->toBeNull()
+        ->and($changed->newPassword?->value())->toBe('nuevo-hash')
+        ->and($changed->id)->toEqual($account->id)
+        ->and($changed->email)->toEqual($account->email);
+});
+
+it('becomes a regular account once consolidated', function () {
+    $pending = Account::reconstitute(AccountId::fromInt(7), EmailAddress::fromString('ana@colegio.ve'), PersonName::fromString('Ana'), AccountState::Active, ConsolidationState::Pending, null);
+
+    expect($pending->consolidated()->isUnderConsolidation())->toBeFalse()
+        ->and($pending->consolidated()->id)->toEqual($pending->id);
+});
+
+it('can not be consolidated unless it is awaiting consolidation', function () {
+    $regular = Account::reconstitute(AccountId::fromInt(7), EmailAddress::fromString('ana@colegio.ve'), PersonName::fromString('Ana'), AccountState::Active, null, null);
+
+    expect(fn () => $regular->consolidated())->toThrow(LogicException::class);
+});
+
+it('is kept apart only when support reviewed it', function () {
+    $review = Account::reconstitute(AccountId::fromInt(7), EmailAddress::fromString('ana@colegio.ve'), PersonName::fromString('Ana'), AccountState::Active, ConsolidationState::Review, null);
+    $pending = Account::reconstitute(AccountId::fromInt(8), EmailAddress::fromString('ana@colegio.ve'), PersonName::fromString('Ana'), AccountState::Active, ConsolidationState::Pending, null);
+
+    expect($review->keptSeparate()->consolidation)->toBe(ConsolidationState::Separated)
+        // Still sharing its email: each password keeps opening only its institution.
+        ->and($review->keptSeparate()->isUnderConsolidation())->toBeTrue()
+        ->and(fn () => $pending->keptSeparate())->toThrow(LogicException::class);
+});

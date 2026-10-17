@@ -13,9 +13,11 @@ use AulaX\IdentityAccess\Domain\Invitation\InvitationStatus;
 use AulaX\IdentityAccess\Domain\Membership\MembershipStatus;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
 use AulaX\IdentityAccess\Domain\Role\RoleSet;
+use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\DB;
+use LogicException;
 
 /**
  * Members and invitations of the active institution, as Row Level Security
@@ -23,7 +25,10 @@ use Illuminate\Support\Facades\DB;
  */
 final readonly class EloquentMemberDirectory implements MemberDirectory
 {
-    public function __construct(private RoleCatalog $roles) {}
+    public function __construct(
+        private RoleCatalog $roles,
+        private CurrentTenant $tenant,
+    ) {}
 
     public function members(?string $search, int $page, int $perPage): MemberPage
     {
@@ -80,6 +85,7 @@ final readonly class EloquentMemberDirectory implements MemberDirectory
     {
         return DB::table('users')
             ->join('institution_memberships as membership', 'membership.user_id', '=', 'users.id')
+            ->where('membership.institution_id', $this->institutionId())
             ->where('membership.status', '!=', MembershipStatus::Ended->value)
             ->select('users.id', 'users.name', 'users.email', 'membership.status');
     }
@@ -89,7 +95,15 @@ final readonly class EloquentMemberDirectory implements MemberDirectory
      */
     private function invitationQuery(): Builder
     {
-        return InvitationModel::query()->where('status', InvitationStatus::Pending->value);
+        return InvitationModel::query()
+            ->where('institution_id', $this->institutionId())
+            ->where('status', InvitationStatus::Pending->value);
+    }
+
+    private function institutionId(): int
+    {
+        return $this->tenant->institutionId()?->value
+            ?? throw new LogicException('The member directory belongs to an institution: activate one first.');
     }
 
     private function toView(object $row): MemberView

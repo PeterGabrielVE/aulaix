@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\PasswordReset;
+use AulaX\IdentityAccess\Application\Auth\PasswordResetRejected;
+use AulaX\IdentityAccess\Application\Auth\ResetPasswordCommand;
+use AulaX\IdentityAccess\Application\Auth\ResetPasswordHandler;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Choosing a new password from a reset link, on the central domain
+ * (IDG-R06).
+ */
 class NewPasswordController extends Controller
 {
     /**
@@ -28,42 +30,33 @@ class NewPasswordController extends Controller
     }
 
     /**
-     * Handle an incoming new password request.
-     *
-     * @throws ValidationException
+     * @throws PasswordResetRejected
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ResetPasswordHandler $resetPassword): RedirectResponse
     {
         $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
+            'token' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+        $resetPassword(new ResetPasswordCommand(
+            $request->string('email')->toString(),
+            $request->string('token')->toString(),
+            $request->string('password')->toString(),
+        ));
 
-                event(new PasswordReset($user));
-            }
-        );
+        return redirect()->route('central.login')->with('status', __('passwords.reset'));
+    }
 
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        if ($status == Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('status', __($status));
-        }
-
-        throw ValidationException::withMessages([
-            'email' => [trans($status)],
-        ]);
+    /**
+     * An institution's own link, from before SPEC-004.
+     */
+    public function central(Request $request): RedirectResponse
+    {
+        return redirect()->away(route('password.reset', [
+            'token' => $request->route('token'),
+            'email' => (string) $request->query('email', ''),
+        ]));
     }
 }

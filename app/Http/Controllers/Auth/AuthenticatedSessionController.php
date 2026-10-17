@@ -3,50 +3,30 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use AulaX\IdentityAccess\Application\Auth\LogOutHandler;
+use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
+/**
+ * Login and logout, from an institution's subdomain or the central domain.
+ * Since SPEC-004 the login is the central one: an institution's only forwards
+ * there, remembering the institution so the person comes back to it
+ * (IDG-R03.2). Logging out ends the session everywhere.
+ */
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
-    public function create(): Response
+    public function create(CurrentTenant $tenant): RedirectResponse
     {
-        return Inertia::render('Auth/Login', [
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
-        ]);
+        return redirect()->away(route('central.login', ['plantel' => $tenant->context()->subdomain]));
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): RedirectResponse
+    public function destroy(LogOutHandler $logOut): SymfonyResponse
     {
-        $request->authenticate();
+        $logOut();
 
-        $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
-    }
-
-    /**
-     * Destroy an authenticated session.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login');
+        // From a subdomain, another domain: a full page load.
+        return Inertia::location(route('central.login'));
     }
 }

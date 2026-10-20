@@ -10,8 +10,11 @@ use AulaX\IdentityAccess\Application\Members\InviteMemberHandler;
 use AulaX\IdentityAccess\Application\Members\ListMembersHandler;
 use AulaX\IdentityAccess\Application\Members\MemberDirectory;
 use AulaX\IdentityAccess\Application\Members\MemberView;
+use AulaX\IdentityAccess\Application\Members\SetClosedTermGradeEditingHandler;
 use AulaX\IdentityAccess\Application\Members\UpdateMemberCommand;
 use AulaX\IdentityAccess\Application\Members\UpdateMemberHandler;
+use AulaX\IdentityAccess\Domain\Account\AccountId;
+use AulaX\IdentityAccess\Domain\Policy\RoleAssignmentPolicy;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
@@ -66,7 +69,7 @@ class UserController extends Controller
             ->with('success', "Se envió una invitación a {$request->validated('email')}.");
     }
 
-    public function edit(int $user, MemberDirectory $directory, RoleCatalog $roles): Response
+    public function edit(Request $request, int $user, MemberDirectory $directory, RoleCatalog $roles, RoleAssignmentPolicy $policy): Response
     {
         $member = $directory->member($user);
 
@@ -75,7 +78,21 @@ class UserController extends Controller
         return Inertia::render('Users/Edit', [
             'user' => self::member($member),
             'roles' => $roles->available()->inPriorityOrder(),
+            // CAL-R05.4: only an Administrador sees and changes the special permission.
+            'canGrantClosedTermEditing' => $policy->closedTermGradeEditing($roles->rolesOf(AccountId::fromInt((int) $request->user()->getAuthIdentifier()))) === null,
         ]);
+    }
+
+    /**
+     * SPEC-007 CAL-R05.4.
+     */
+    public function setClosedTermGrades(Request $request, int $user, SetClosedTermGradeEditingHandler $setClosedTermGradeEditing): RedirectResponse
+    {
+        $request->validate(['allowed' => ['required', 'boolean']]);
+
+        $setClosedTermGradeEditing((int) $request->user()->getAuthIdentifier(), $user, $request->boolean('allowed'));
+
+        return back()->with('success', 'Se guardó el permiso.');
     }
 
     public function update(UpdateMemberRequest $request, int $user, UpdateMemberHandler $updateMember): RedirectResponse
@@ -101,6 +118,7 @@ class UserController extends Controller
             'email' => $member->email,
             'roles' => $member->roles,
             'status' => $member->active ? 'active' : 'inactive',
+            'canEditClosedTermGrades' => $member->canEditClosedTermGrades,
         ];
     }
 

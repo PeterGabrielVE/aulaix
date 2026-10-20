@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\AppServiceProvider;
+use AulaX\AcademicCalendar\Infrastructure\AcademicCalendarServiceProvider;
 use AulaX\Ai\Infrastructure\AiServiceProvider;
 use AulaX\Audit\Infrastructure\AuditServiceProvider;
 use AulaX\Catalogs\Infrastructure\CatalogsServiceProvider;
@@ -16,4 +17,5 @@ return [
     TenancyServiceProvider::class,
     AuditServiceProvider::class,
     IdentityAccessServiceProvider::class,
+    AcademicCalendarServiceProvider::class,
 ];

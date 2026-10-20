@@ -26,13 +26,19 @@ it('lists its roles in priority order, unknown names last', function () {
     expect(RoleSet::of('Estudiante', 'Auditor externo', 'Director')->inPriorityOrder())->toBe(['Director', 'Estudiante', 'Auditor externo']);
 });
 
-test('each base role carries the permissions of SPEC-002 and SPEC-005', function (BaseRole $role, array $permissions) {
+test('each base role carries the permissions of SPEC-002, SPEC-005 and SPEC-007', function (BaseRole $role, array $permissions) {
     expect(array_map(fn (Permission $permission) => $permission->value, $role->permissions()))->toEqualCanonicalizing($permissions);
 })->with([
-    'Administrador' => [BaseRole::Administrador, ['gestionar-usuarios', 'gestionar-roles', 'ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-bitacora']],
-    'Director' => [BaseRole::Director, ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora']],
+    'Administrador' => [BaseRole::Administrador, ['gestionar-usuarios', 'gestionar-roles', 'ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario']],
+    'Director' => [BaseRole::Director, ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario']],
     'Coordinador' => [BaseRole::Coordinador, ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones']],
     'Docente' => [BaseRole::Docente, ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones']],
     'Representante' => [BaseRole::Representante, ['ver-calificaciones']],
     'Estudiante' => [BaseRole::Estudiante, ['ver-calificaciones']],
 ]);
+
+test('no base role carries the permission to change grades of closed terms', function () {
+    foreach (BaseRole::cases() as $role) {
+        expect($role->permissions())->not->toContain(Permission::EditClosedTermGrades);
+    }
+});

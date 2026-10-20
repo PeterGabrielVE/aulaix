@@ -218,14 +218,17 @@ administración ni escalar privilegios.
 
   | Rol | Permisos |
   |-----|----------|
-  | Administrador | todos (`gestionar-usuarios`, `gestionar-roles`, `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-bitacora`) |
-  | Director | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones`, `ver-bitacora` |
+  | Administrador | todos salvo `editar-notas-lapso-cerrado` (`gestionar-usuarios`, `gestionar-roles`, `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario`) |
+  | Director | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario` |
   | Coordinador | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
   | Docente | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
   | Representante | `ver-calificaciones` |
   | Estudiante | `ver-calificaciones` |
 
   `ver-bitacora` se añadió el 2026-10-11 (SPEC-005, AUD-R06.3).
+  `gestionar-calendario` y `editar-notas-lapso-cerrado` se añadieron el
+  2026-10-19 (SPEC-007, CAL-R05.4, R06.5); el segundo no lo trae ningún rol
+  base y se concede persona por persona.
 - **IAM-R11.2** — El sistema deberá tratar un rol con el mismo nombre en dos
   instituciones como dos roles independientes.
 - **IAM-R11.3** — El sistema deberá conceder a un usuario solo los permisos de

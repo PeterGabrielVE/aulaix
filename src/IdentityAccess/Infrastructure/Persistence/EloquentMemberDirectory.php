@@ -11,6 +11,7 @@ use AulaX\IdentityAccess\Application\Members\MemberView;
 use AulaX\IdentityAccess\Domain\Account\AccountId;
 use AulaX\IdentityAccess\Domain\Invitation\InvitationStatus;
 use AulaX\IdentityAccess\Domain\Membership\MembershipStatus;
+use AulaX\IdentityAccess\Domain\Role\Permission;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
 use AulaX\IdentityAccess\Domain\Role\RoleSet;
 use AulaX\Tenancy\Application\CurrentTenant;
@@ -114,6 +115,7 @@ final readonly class EloquentMemberDirectory implements MemberDirectory
             $row->email,
             $this->roles->rolesOf(AccountId::fromInt((int) $row->id))->inPriorityOrder(),
             $row->status === MembershipStatus::Active->value,
+            $this->roles->hasDirectPermission(AccountId::fromInt((int) $row->id), Permission::EditClosedTermGrades),
         );
     }
 

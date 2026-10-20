@@ -45,4 +45,16 @@ final class RoleAssignmentPolicy
 
         return $violations;
     }
+
+    /**
+     * CAL-R05.4: the permission to change grades of closed terms is granted
+     * person by person, only by an Administrador, as the Administrador role
+     * itself is (IAM-R10.1).
+     */
+    public function closedTermGradeEditing(RoleSet $actorRoles): ?BusinessRuleViolation
+    {
+        return $actorRoles->has(BaseRole::Administrador)
+            ? null
+            : BusinessRuleViolation::onField('closed_term_grades', 'Solo un Administrador puede conceder o retirar el permiso de editar notas de lapsos cerrados.');
+    }
 }

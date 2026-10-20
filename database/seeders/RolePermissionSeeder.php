@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use AulaX\IdentityAccess\Domain\Role\BaseRole;
+use AulaX\IdentityAccess\Domain\Role\Permission as PermissionName;
 use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -17,40 +19,22 @@ use Spatie\Permission\PermissionRegistrar;
  */
 class RolePermissionSeeder
 {
-    private const PERMISSIONS = [
-        'gestionar-usuarios',
-        'gestionar-roles',
-        'ver-estudiantes',
-        'gestionar-calificaciones',
-        'ver-calificaciones',
-        'ver-bitacora',
-    ];
-
-    /**
-     * The six base roles. Director runs the school (users, oversight) but
-     * not the role/permission setup, which stays with the Administrador;
-     * Coordinador handles the academic side of every section.
-     */
-    private const ROLES = [
-        'Administrador' => self::PERMISSIONS,
-        'Director' => ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora'],
-        'Coordinador' => ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones'],
-        'Docente' => ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones'],
-        'Representante' => ['ver-calificaciones'],
-        'Estudiante' => ['ver-calificaciones'],
-    ];
-
     public static function seedForInstitution(Institution $institution): void
     {
         app(PermissionRegistrar::class)->setPermissionsTeamId($institution->id);
 
-        $permissions = collect(self::PERMISSIONS)->mapWithKeys(
-            fn (string $name) => [$name => Permission::findOrCreate($name, 'web')]
-        );
+        // Every permission exists, also those no base role carries
+        // (editar-notas-lapso-cerrado, granted person by person).
+        foreach (PermissionName::cases() as $permission) {
+            Permission::findOrCreate($permission->value, 'web');
+        }
 
-        foreach (self::ROLES as $roleName => $permissionNames) {
-            $role = Role::findOrCreate($roleName, 'web');
-            $role->syncPermissions($permissions->only($permissionNames)->values());
+        // The base roles and their permissions come from the domain
+        // (BaseRole), so they are defined in a single place.
+        foreach (BaseRole::cases() as $base) {
+            Role::findOrCreate($base->value, 'web')->syncPermissions(
+                array_map(fn (PermissionName $permission) => $permission->value, $base->permissions()),
+            );
         }
     }
 }

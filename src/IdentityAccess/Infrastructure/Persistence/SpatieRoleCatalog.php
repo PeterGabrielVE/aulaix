@@ -50,6 +50,36 @@ final readonly class SpatieRoleCatalog implements RoleCatalog
         AccountModel::query()->findOrFail($account->value)->syncRoles($roles->names());
     }
 
+    public function hasDirectPermission(AccountId $account, Permission $permission): bool
+    {
+        return DB::table(config('permission.table_names.model_has_permissions').' as granted')
+            ->join('permissions', 'permissions.id', '=', 'granted.permission_id')
+            ->where('granted.model_type', (new AccountModel)->getMorphClass())
+            ->where('granted.model_id', $account->value)
+            ->where('granted.'.self::teamKey(), $this->institutionId())
+            ->where('permissions.name', $permission->value)
+            ->exists();
+    }
+
+    public function grantDirect(AccountId $account, Permission $permission): void
+    {
+        $this->institutionId();
+        AccountModel::query()->findOrFail($account->value)->givePermissionTo($permission->value);
+    }
+
+    public function revokeDirect(AccountId $account, Permission $permission): void
+    {
+        $this->institutionId();
+        AccountModel::query()->findOrFail($account->value)->revokePermissionTo($permission->value);
+    }
+
+    public function revokeEverything(AccountId $account): void
+    {
+        $model = AccountModel::query()->findOrFail($account->value);
+        $model->syncRoles([]);
+        $model->syncPermissions([]);
+    }
+
     public function activeHoldersOf(BaseRole $role): int
     {
         return $this->assignments()

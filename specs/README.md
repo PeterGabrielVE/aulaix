@@ -45,7 +45,7 @@ specs/
 ```
 
 Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
-(002), `CAT` (003), `IDG` (004), `AUD` (005).
+(002), `CAT` (003), `IDG` (004), `AUD` (005), `CAL` (007).
 
 ## Índice
 
@@ -57,6 +57,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [003 Catálogos globales](003-catalogos/) | `Catalogs` | implementada¹ | implementada (v2) | implementada (v2) |
 | [005 Bitácora de auditoría](005-auditoria/) | `Audit` | implementada | implementada | implementada |
 | [004 Identidad global](004-identidad-global/) | `IdentityAccess` | aprobada v3 (todo implementado salvo R08.12, bloqueado por D1) | implementada | implementada (PR A, B y C) |
+| [007 Año escolar y lapsos](007-anio-escolar/) | `AcademicCalendar` | implementada | implementada | implementada |
 
 ¹ Los requisitos de 001–003 documentan el comportamiento que **ya existe**
 (Fase 1, F1-01 a F1-07), extraído del código y de los tests actuales. Los
@@ -90,3 +91,4 @@ Las specs siguientes de la Fase 1 y sus bloqueos están en [roadmap.md](roadmap.
 | [0004](adr/0004-identidad-global.md) | Identidad global con membresías por plantel | aceptada (§6 y §7 sustituidas por 0006) |
 | [0005](adr/0005-auditoria-explicita.md) | Auditoría explícita en los casos de uso, dentro de la transacción | aceptada |
 | [0006](adr/0006-rls-identidad-global.md) | Aislamiento de la identidad global sin funciones privilegiadas (modifica 0004) | aceptada (enmienda C, 2026-10-16) |
+| [0007](adr/0007-concurrencia-calendario.md) | Reglas entre años escolares: bloqueo por plantel y restricciones de la base de datos | aceptada |

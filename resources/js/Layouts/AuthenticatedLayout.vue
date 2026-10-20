@@ -51,6 +51,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                     Usuarios
                                 </NavLink>
                                 <NavLink
+                                    v-if="can.manageCalendar"
+                                    :href="route('calendar.index')"
+                                    :active="route().current('calendar.*')"
+                                >
+                                    Año escolar
+                                </NavLink>
+                                <NavLink
                                     v-if="can.viewAudit"
                                     :href="route('audit.index')"
                                     :active="route().current('audit.*')"
@@ -182,6 +189,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             :active="route().current('users.*')"
                         >
                             Usuarios
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="can.manageCalendar"
+                            :href="route('calendar.index')"
+                            :active="route().current('calendar.*')"
+                        >
+                            Año escolar
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             v-if="can.viewAudit"

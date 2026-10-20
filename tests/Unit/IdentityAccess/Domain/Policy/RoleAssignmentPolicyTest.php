@@ -73,3 +73,10 @@ it('reports every broken rule at once, as the form did', function () {
     expect(violationsOf(assignment(['Director'], ['Docente'], targetRoles: ['Director'], self: true, active: false)))
         ->toBe([['roles', KEEP_OWN_MANAGEMENT], ['status', STAY_ACTIVE]]);
 });
+
+it('lets only an administrador grant the permission to change grades of closed terms', function () {
+    $policy = new RoleAssignmentPolicy;
+
+    expect($policy->closedTermGradeEditing(RoleSet::of('Administrador')))->toBeNull()
+        ->and($policy->closedTermGradeEditing(RoleSet::of('Director'))?->field())->toBe('closed_term_grades');
+});

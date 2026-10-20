@@ -15,7 +15,6 @@ use AulaX\IdentityAccess\Domain\Membership\MembershipRepository;
 use AulaX\IdentityAccess\Domain\Membership\MembershipStatus;
 use AulaX\IdentityAccess\Domain\Membership\SuspensionReason;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
-use AulaX\IdentityAccess\Domain\Role\RoleSet;
 use AulaX\Tenancy\Application\TenantContext;
 
 /**
@@ -56,7 +55,7 @@ final readonly class AccountMemberships
     {
         $this->change($account, function (Membership $membership) use ($account) {
             if ($membership->status !== MembershipStatus::Ended) {
-                $this->roles->assign($account, RoleSet::of());
+                $this->roles->revokeEverything($account);
             }
 
             return $membership->end();

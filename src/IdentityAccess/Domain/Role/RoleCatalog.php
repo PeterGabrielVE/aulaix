@@ -37,4 +37,19 @@ interface RoleCatalog
      * How many members with an active membership hold the role.
      */
     public function activeHoldersOf(BaseRole $role): int;
+
+    /**
+     * A permission given to the person, not through a role (CAL-R05.4).
+     */
+    public function hasDirectPermission(AccountId $account, Permission $permission): bool;
+
+    public function grantDirect(AccountId $account, Permission $permission): void;
+
+    public function revokeDirect(AccountId $account, Permission $permission): void;
+
+    /**
+     * Every role and direct permission of the account in the active
+     * institution, as it leaves it (IDG-R07.2).
+     */
+    public function revokeEverything(AccountId $account): void;
 }

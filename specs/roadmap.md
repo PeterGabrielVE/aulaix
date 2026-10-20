@@ -42,9 +42,9 @@ tienen dominio propio.
 | 001 Tenancy (refactor) | F1-01 – F1-03 | `Tenancy` | 000 | **implementada** |
 | 002 Identidad y acceso (refactor) | F1-05, F1-06 | `IdentityAccess` | se implementa con 004 | **se fusiona con 004**: no tiene sentido refactorizar el modelo de cuentas por plantel para cambiarlo justo después |
 | 005 Bitácora de auditoría | F1-08 | `Audit` | 001 | **implementada**. **Antes que 004 y que Evaluación**: identidad y notas nacen auditadas |
-| 004 Identidad global | F1-07, revisa F1-06 | `IdentityAccess` | 001, 005, ADR 0004 | requisitos v3 **aprobados** (Q1–Q8 resueltas). La eliminación efectiva depende de la validación legal (D1) |
+| 004 Identidad global | F1-07, revisa F1-06 | `IdentityAccess` | 001, 005, ADR 0004 | **implementada** (PR A, B y C). La eliminación efectiva (IDG-R08.12) espera la validación legal (D1) |
 | 006 Institución y configuración | F1-09, F1-10 | `Tenancy` | 001 | por escribir |
-| 007 Año escolar y lapsos | F1-13 – F1-15 | `AcademicCalendar` | 001 | por escribir. **Buen siguiente candidato**: reglas claras y pequeñas |
+| 007 Año escolar y lapsos | F1-13 – F1-15 | `AcademicCalendar` | 001 | **implementada** (ADR 0007). Expone `TermEditabilityQuery` para 011 |
 | 008 Estructura académica | F1-16 – F1-19 | `AcademicStructure` | 003, 007 | por escribir; necesita el ERD (F0-07) |
 | 009 Estudiantes y representantes | F1-20 – F1-24 | `Students` | 004 | por escribir; formato de cédula escolar por confirmar |
 | 010 Inscripción | F1-25 – F1-27 | `Enrollment` | 008, 009 | por escribir; **bloqueada por F0-03** (reglas de prosecución) |

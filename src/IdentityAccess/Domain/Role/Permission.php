@@ -12,4 +12,10 @@ enum Permission: string
     case ManageGrades = 'gestionar-calificaciones';
     case ViewGrades = 'ver-calificaciones';
     case ViewAuditLog = 'ver-bitacora';
+
+    /** SPEC-007 CAL-R06: the school year and its terms. */
+    case ManageCalendar = 'gestionar-calendario';
+
+    /** SPEC-007 CAL-R05.2: grades of a closed term. Granted person by person, never by a base role (CAL-R05.4). */
+    case EditClosedTermGrades = 'editar-notas-lapso-cerrado';
 }

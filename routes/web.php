@@ -15,6 +15,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -151,6 +153,21 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
         Route::get('/student', [HomeController::class, 'student'])
             ->middleware('role:Estudiante')->name('student.home');
 
+        // SPEC-007: the school year and its terms.
+        Route::middleware('permission:gestionar-calendario')->prefix('calendario')->group(function () {
+            Route::get('/', [SchoolYearController::class, 'index'])->name('calendar.index');
+
+            Route::middleware('throttle:30,1')->whereNumber(['year', 'term'])->group(function () {
+                Route::post('/anios', [SchoolYearController::class, 'store'])->name('calendar.years.store');
+                Route::put('/anios/{year}', [SchoolYearController::class, 'update'])->name('calendar.years.update');
+                Route::delete('/anios/{year}', [SchoolYearController::class, 'destroy'])->name('calendar.years.destroy');
+                Route::post('/anios/{year}/activar', [SchoolYearController::class, 'activate'])->name('calendar.years.activate');
+                Route::post('/anios/{year}/cerrar', [SchoolYearController::class, 'close'])->name('calendar.years.close');
+                Route::post('/anios/{year}/lapsos/cerrar', [TermController::class, 'close'])->name('calendar.terms.close');
+                Route::post('/anios/{year}/lapsos/{term}/reabrir', [TermController::class, 'reopen'])->name('calendar.terms.reopen');
+            });
+        });
+
         Route::middleware('permission:ver-bitacora')->group(function () {
             Route::get('/bitacora', [AuditLogController::class, 'index'])->name('audit.index');
             Route::get('/bitacora/{entry}', [AuditLogController::class, 'show'])
@@ -161,6 +178,9 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
         Route::middleware('permission:gestionar-usuarios')->group(function () {
             Route::resource('users', UserController::class)->except(['show', 'destroy'])
                 ->whereNumber('user');
+            Route::put('/users/{user}/permiso-lapsos-cerrados', [UserController::class, 'setClosedTermGrades'])
+                ->whereNumber('user')
+                ->name('users.closed-term-grades');
 
             Route::get('/invitations/{invitation}/edit', [InvitationController::class, 'edit'])
                 ->whereNumber('invitation')->name('invitations.edit');

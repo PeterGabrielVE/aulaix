@@ -14,7 +14,6 @@ use AulaX\IdentityAccess\Domain\Membership\MembershipRepository;
 use AulaX\IdentityAccess\Domain\Policy\LastAdministratorRule;
 use AulaX\IdentityAccess\Domain\Role\BaseRole;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
-use AulaX\IdentityAccess\Domain\Role\RoleSet;
 use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\BusinessRuleViolations;
 use AulaX\Shared\Domain\NotFound;
@@ -53,7 +52,7 @@ final readonly class LeaveInstitutionHandler
             )])));
 
             $this->memberships->save($membership->end());
-            $this->roles->assign($account, RoleSet::of());
+            $this->roles->revokeEverything($account);
 
             $this->audit->record(AuditEvent::of(
                 'identity.membership.ended',

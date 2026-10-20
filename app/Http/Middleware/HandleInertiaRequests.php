@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
                 'can' => [
                     'manageUsers' => (bool) $request->user()?->can('gestionar-usuarios'),
                     'viewAudit' => (bool) $request->user()?->can('ver-bitacora'),
+                    'manageCalendar' => (bool) $request->user()?->can('gestionar-calendario'),
                 ],
             ],
             'flash' => [

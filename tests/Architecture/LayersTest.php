@@ -15,6 +15,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\ResolveTenant;
@@ -62,6 +64,9 @@ const MIGRATED_CONTROLLERS = [
     // SPEC-004 PR C
     AccountController::class,
     ProfileController::class,
+    // SPEC-007
+    SchoolYearController::class,
+    TermController::class,
 ];
 
 /**

@@ -44,6 +44,8 @@ final class InstitutionModel extends Model
         'phone',
         'email',
         'logo_path',
+        'type',
+        'education_levels',
     ];
 
     /**
@@ -55,6 +57,7 @@ final class InstitutionModel extends Model
     {
         return [
             'status' => InstitutionStatus::class,
+            'education_levels' => 'array',
         ];
     }
 

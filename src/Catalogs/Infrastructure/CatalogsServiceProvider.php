@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace AulaX\Catalogs\Infrastructure;
 
+use AulaX\Catalogs\Application\Geography\GeographyDirectory;
 use AulaX\Catalogs\Application\Port\GeographySource;
 use AulaX\Catalogs\Application\Port\GeographyStore;
 use AulaX\Catalogs\Application\Port\SubjectSource;
 use AulaX\Catalogs\Application\Port\SubjectStore;
+use AulaX\Catalogs\Infrastructure\Persistence\EloquentGeographyDirectory;
 use AulaX\Catalogs\Infrastructure\Persistence\EloquentGeographyStore;
 use AulaX\Catalogs\Infrastructure\Persistence\EloquentSubjectStore;
 use AulaX\Catalogs\Infrastructure\Source\JsonGeographySource;
@@ -26,6 +28,7 @@ final class CatalogsServiceProvider extends ServiceProvider
         SubjectSource::class => MppeSubjectSource::class,
         SubjectStore::class => EloquentSubjectStore::class,
         GeographyStore::class => EloquentGeographyStore::class,
+        GeographyDirectory::class => EloquentGeographyDirectory::class,
     ];
 
     public function register(): void

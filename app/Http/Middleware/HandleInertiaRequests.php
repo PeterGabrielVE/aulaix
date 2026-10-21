@@ -40,6 +40,8 @@ class HandleInertiaRequests extends Middleware
                     'manageUsers' => (bool) $request->user()?->can('gestionar-usuarios'),
                     'viewAudit' => (bool) $request->user()?->can('ver-bitacora'),
                     'manageCalendar' => (bool) $request->user()?->can('gestionar-calendario'),
+                    'viewInstitution' => (bool) $request->user()?->can('ver-plantel'),
+                    'manageInstitution' => (bool) $request->user()?->can('gestionar-plantel'),
                 ],
             ],
             'flash' => [
@@ -48,6 +50,8 @@ class HandleInertiaRequests extends Middleware
             'institution' => $institution ? [
                 'name' => $institution->name,
                 'subdomain' => $institution->subdomain,
+                // Served to members only; the version changes with each logo (INS-R04.6).
+                'logoUrl' => $institution->logoVersion === null ? null : route('institution.logo', ['v' => $institution->logoVersion]),
             ] : null,
             'appDomain' => config('app.domain'),
             // The central selector, where switching institution needs no password (IDG-R03.7).

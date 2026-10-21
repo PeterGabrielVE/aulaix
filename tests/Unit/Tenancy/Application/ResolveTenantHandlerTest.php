@@ -9,28 +9,14 @@ use AulaX\Tenancy\Domain\InstitutionProfile;
 use AulaX\Tenancy\Domain\InstitutionRepository;
 use AulaX\Tenancy\Domain\InstitutionStatus;
 use AulaX\Tenancy\Domain\Subdomain;
+use Tests\Fixtures\Tenancy\InMemoryInstitutionRepository;
 
 /**
  * A repository holding the active institutions, keyed by subdomain.
  */
 function activeInstitutions(Institution ...$institutions): InstitutionRepository
 {
-    return new class($institutions) implements InstitutionRepository
-    {
-        /** @param  list<Institution>  $institutions */
-        public function __construct(private readonly array $institutions) {}
-
-        public function findActiveBySubdomain(Subdomain $subdomain): ?Institution
-        {
-            foreach ($this->institutions as $institution) {
-                if ($institution->subdomain->value === $subdomain->value && $institution->isActive()) {
-                    return $institution;
-                }
-            }
-
-            return null;
-        }
-    };
+    return new InMemoryInstitutionRepository(...$institutions);
 }
 
 function colegioNorte(): Institution

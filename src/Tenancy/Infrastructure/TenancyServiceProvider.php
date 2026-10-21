@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace AulaX\Tenancy\Infrastructure;
 
 use AulaX\Tenancy\Application\CurrentTenant;
+use AulaX\Tenancy\Application\Port\InstitutionFiles;
+use AulaX\Tenancy\Application\Port\InstitutionPermissions;
 use AulaX\Tenancy\Application\SearchInstitutions\InstitutionDirectory;
 use AulaX\Tenancy\Application\TenantActivationHook;
 use AulaX\Tenancy\Application\TenantActivator;
 use AulaX\Tenancy\Domain\InstitutionRepository;
+use AulaX\Tenancy\Domain\SignatureRepository;
+use AulaX\Tenancy\Infrastructure\Files\LaravelInstitutionFiles;
 use AulaX\Tenancy\Infrastructure\Persistence\EloquentInstitutionDirectory;
 use AulaX\Tenancy\Infrastructure\Persistence\EloquentInstitutionRepository;
+use AulaX\Tenancy\Infrastructure\Persistence\EloquentSignatureRepository;
 use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +32,8 @@ final class TenancyServiceProvider extends ServiceProvider
     public array $bindings = [
         InstitutionRepository::class => EloquentInstitutionRepository::class,
         InstitutionDirectory::class => EloquentInstitutionDirectory::class,
+        SignatureRepository::class => EloquentSignatureRepository::class,
+        InstitutionPermissions::class => GateInstitutionPermissions::class,
     ];
 
     public function register(): void
@@ -36,6 +43,11 @@ final class TenancyServiceProvider extends ServiceProvider
         // reader of the port too.
         $this->app->singleton(InMemoryCurrentTenant::class);
         $this->app->alias(InMemoryCurrentTenant::class, CurrentTenant::class);
+
+        $this->app->bind(InstitutionFiles::class, fn ($app) => new LaravelInstitutionFiles(
+            $app->make('filesystem')->disk(config('tenancy.files_disk')),
+            $app->make(CurrentTenant::class),
+        ));
 
         $this->app->bind(TenantActivator::class, fn ($app) => new PostgresTenantActivator(
             $app->make(InMemoryCurrentTenant::class),

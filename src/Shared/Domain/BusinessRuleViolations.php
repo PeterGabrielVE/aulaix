@@ -43,6 +43,14 @@ final class BusinessRuleViolations extends DomainException
     }
 
     /**
+     * @return list<BusinessRuleViolation>
+     */
+    public function violations(): array
+    {
+        return $this->violations;
+    }
+
+    /**
      * @return array<string, list<string>> Messages grouped by field ("general" when none).
      */
     public function messagesByField(): array

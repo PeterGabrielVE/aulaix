@@ -13,14 +13,20 @@ use AulaX\Tenancy\Domain\Institution;
  */
 final readonly class TenantContext
 {
+    /**
+     * @param  ?string  $logoVersion  Changes with each logo, so its URL is never stale; null without a logo (INS-R04.6).
+     */
     public function __construct(
         public InstitutionId $institutionId,
         public string $name,
         public string $subdomain,
+        public ?string $logoVersion = null,
     ) {}
 
     public static function of(Institution $institution): self
     {
-        return new self($institution->id, $institution->name, $institution->subdomain->value);
+        $logo = $institution->profile->logoPath;
+
+        return new self($institution->id, $institution->name, $institution->subdomain->value, $logo === null ? null : substr(hash('sha256', $logo), 0, 12));
     }
 }

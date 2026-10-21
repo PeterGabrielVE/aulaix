@@ -11,8 +11,11 @@ use App\Http\Controllers\Central\AccountController;
 use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
+use App\Http\Controllers\GeographyController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
@@ -166,6 +169,31 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
                 Route::post('/anios/{year}/lapsos/cerrar', [TermController::class, 'close'])->name('calendar.terms.close');
                 Route::post('/anios/{year}/lapsos/{term}/reabrir', [TermController::class, 'reopen'])->name('calendar.terms.reopen');
             });
+        });
+
+        // SPEC-006: the settings of the open institution.
+        Route::prefix('plantel')->group(function () {
+            Route::get('/', [InstitutionSettingsController::class, 'show'])
+                ->middleware('permission:ver-plantel')->name('institution.show');
+            Route::get('/logo', [InstitutionAssetController::class, 'logo'])->name('institution.logo');
+
+            Route::middleware('permission:gestionar-plantel')->whereIn('role', ['director', 'secretary'])->group(function () {
+                Route::put('/', [InstitutionSettingsController::class, 'update'])
+                    ->middleware('throttle:30,1')->name('institution.update');
+                Route::get('/firmas/{role}', [InstitutionAssetController::class, 'signature'])->name('institution.signatures.show');
+
+                Route::middleware('throttle:10,1')->group(function () {
+                    Route::post('/logo', [InstitutionAssetController::class, 'storeLogo'])->name('institution.logo.store');
+                    Route::delete('/logo', [InstitutionAssetController::class, 'destroyLogo'])->name('institution.logo.destroy');
+                    Route::post('/firmas/{role}', [InstitutionAssetController::class, 'storeSignature'])->name('institution.signatures.store');
+                    Route::delete('/firmas/{role}', [InstitutionAssetController::class, 'destroySignature'])->name('institution.signatures.destroy');
+                });
+            });
+        });
+
+        Route::prefix('api/geografia')->whereNumber(['state', 'municipality'])->group(function () {
+            Route::get('/estados/{state}/municipios', [GeographyController::class, 'municipalities'])->name('geography.municipalities');
+            Route::get('/municipios/{municipality}/parroquias', [GeographyController::class, 'parishes'])->name('geography.parishes');
         });
 
         Route::middleware('permission:ver-bitacora')->group(function () {

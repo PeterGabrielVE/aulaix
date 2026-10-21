@@ -11,8 +11,11 @@ use App\Http\Controllers\Central\AccountController;
 use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
+use App\Http\Controllers\GeographyController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
@@ -67,6 +70,10 @@ const MIGRATED_CONTROLLERS = [
     // SPEC-007
     SchoolYearController::class,
     TermController::class,
+    // SPEC-006
+    InstitutionSettingsController::class,
+    InstitutionAssetController::class,
+    GeographyController::class,
 ];
 
 /**

@@ -61,6 +61,13 @@ final readonly class EloquentMemberDirectory implements MemberDirectory
         return $row === null ? null : $this->toView($row);
     }
 
+    public function activeMemberByEmail(string $email): ?int
+    {
+        $id = $this->memberQuery()->where('users.email', mb_strtolower(trim($email)))->value('users.id');
+
+        return $id === null ? null : (int) $id;
+    }
+
     public function pendingInvitations(?string $search): array
     {
         return $this->invitationQuery()

@@ -1,7 +1,6 @@
 <?php
 
 use AulaX\IdentityAccess\Application\Account\DeletionBlocker;
-use AulaX\IdentityAccess\Domain\Account\AccountId;
 use AulaX\IdentityAccess\Infrastructure\IdentityAccessServiceProvider;
 use AulaX\IdentityAccess\Infrastructure\Notifications\DeletionPostponedNotice;
 use AulaX\IdentityAccess\Infrastructure\Notifications\DeletionScheduledNotice;
@@ -199,7 +198,7 @@ test('other modules can block a deletion through the extension point', function 
     // As SPEC-009 (only legal guardian) or SPEC-008 (only teacher) will.
     app()->bind('test.blocker', fn () => new class implements DeletionBlocker
     {
-        public function reasonsFor(AccountId $account): array
+        public function reasonsFor(int $accountId): array
         {
             return ['Eres el único representante legal de un estudiante.'];
         }

@@ -78,11 +78,22 @@ final class StudentAudit
      */
     public static function guardianUpdated(array $before, Guardian $guardian): AuditEvent
     {
-        return AuditEvent::of(
-            'students.guardian.updated',
-            AuditSubject::of('guardian', (int) $guardian->id()?->value),
-            ChangeSet::diff($before, self::guardianDetails($guardian)),
-        );
+        return AuditEvent::of('students.guardian.updated', self::guardianSubject($guardian), ChangeSet::diff($before, self::guardianDetails($guardian)));
+    }
+
+    private static function guardianSubject(Guardian $guardian): AuditSubject
+    {
+        return AuditSubject::of('guardian', (int) $guardian->id()?->value);
+    }
+
+    public static function guardianInvited(Guardian $guardian, int $invitationId): AuditEvent
+    {
+        return AuditEvent::of('students.guardian.invited', self::guardianSubject($guardian), [FieldChange::of('invitation_id', null, $invitationId)]);
+    }
+
+    public static function guardianLinked(Guardian $guardian): AuditEvent
+    {
+        return AuditEvent::of('students.guardian.account_linked', self::guardianSubject($guardian), [FieldChange::of('account_id', null, $guardian->accountId())]);
     }
 
     /**

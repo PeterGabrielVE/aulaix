@@ -1,6 +1,6 @@
 ---
 spec: 009-estudiantes
-estado: implementando
+estado: implementada
 fecha: 2026-10-21
 diseño: design.md
 depende-de: 001-tenancy (implementada), 003-catalogos (implementada), 004-identidad-global (implementada), 005-auditoria (implementada), ADR 0008 (aceptada)
@@ -188,7 +188,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 7 — Representantes con cuenta y correcciones
 
-- [ ] **T-22** — Cambios en IdentityAccess:
+- [x] **T-22** — Cambios en IdentityAccess:
   - `InviteMemberHandler` devuelve el id de la invitación;
   - `MemberDirectory::activeMemberByEmail`;
   - aceptar o unirse publica `MemberJoined` por el `EventBus` tras el
@@ -197,20 +197,20 @@ Tres PRs, cada uno usable por sí mismo:
   Los tests existentes de SPEC-004 pasan sin cambios en su lógica (Q-03).
   - Criterios: EST-R08.1 (prerrequisito)
   - Test: `tests/Feature/IdentityAccess/MemberJoinedTest.php`
-- [ ] **T-23** — `InviteGuardian` (siempre con el rol Representante; si el
+- [x] **T-23** — `InviteGuardian` (siempre con el rol Representante; si el
   email ya es de un miembro, vínculo directo) y `LinkGuardianAccount`
   (escucha `MemberJoined`, activa ese plantel y vincula la cuenta de la
   invitación pendiente).
   - Criterios: EST-R08.1
   - Test: `tests/Unit/Students/Application/GuardianAccountTest.php`;
     `tests/Feature/Students/GuardianInvitationTest.php`
-- [ ] **T-24** — `GuardianStudentsQuery` y `GuardianPortalController`:
+- [x] **T-24** — `GuardianStudentsQuery` y `GuardianPortalController`:
   - páginas `MyStudents/{Index,Show}.vue` sin salud;
   - 404 para un estudiante no representado;
   - `isGuardian` compartido y la entrada «Mis representados» del menú.
   - Criterios: EST-R08.2, R08.3
   - Test: `tests/Feature/Students/GuardianPortalTest.php`
-- [ ] **T-25** — Correcciones:
+- [x] **T-25** — Correcciones:
   - el agregado `CorrectionRequest`;
   - migración de `correction_requests` (RLS, `up` y `down` probados);
   - `RequestCorrection`, `ResolveCorrection` y `ListCorrections`;
@@ -218,7 +218,7 @@ Tres PRs, cada uno usable por sí mismo:
   - Criterios: EST-R08.4, R08.5
   - Test: `tests/Unit/Students/Domain/CorrectionRequestTest.php`;
     `tests/Feature/Students/CorrectionTest.php`
-- [ ] **T-26** — `SoleLegalGuardianBlocker`, etiquetado como
+- [x] **T-26** — `SoleLegalGuardianBlocker`, etiquetado como
   `DeletionBlocker`: recorre los planteles de la cuenta y bloquea si es el
   único representante legal de un estudiante activo. Actualiza la matriz de
   IDG-R08.3.
@@ -227,13 +227,13 @@ Tres PRs, cada uno usable por sí mismo:
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls` y `--group=perf`).
-- [ ] Tests de arquitectura en verde.
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
-- [ ] `migrate:fresh --seed` dos veces y rollback de las migraciones nuevas.
-- [ ] Matriz de trazabilidad completa.
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls` y `--group=perf`).
+- [x] Tests de arquitectura en verde.
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
+- [x] `migrate:fresh --seed` dos veces y rollback de las migraciones nuevas.
+- [x] Matriz de trazabilidad completa.
 - [ ] `/security-review` de cada PR (datos de menores, traslados y acceso del representante; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

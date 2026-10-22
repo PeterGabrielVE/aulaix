@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AulaX\Students\Application;
 
 use AulaX\Students\Application\FindGuardian\GuardianView;
+use AulaX\Students\Application\ListStudents\StudentListItem;
 use AulaX\Students\Application\ListStudents\StudentPage;
 use AulaX\Students\Application\ShowStudent\StudentView;
 use AulaX\Students\Domain\Identity\GuardianDocument;
@@ -27,4 +28,20 @@ interface StudentDirectory
     public function student(int $id, bool $includeHealth): ?StudentView;
 
     public function guardianByDocument(GuardianDocument $document): ?GuardianView;
+
+    /**
+     * The students this guardian represents, by family and given names
+     * (EST-R08.2).
+     *
+     * @return list<StudentListItem>
+     */
+    public function representedBy(int $guardianId): array;
+
+    /**
+     * The active students whose only legal guardian is this one, as "Given
+     * Family" names (EST-R08.6).
+     *
+     * @return list<string>
+     */
+    public function soleLegalGuardianOf(int $guardianId): array;
 }

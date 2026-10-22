@@ -59,7 +59,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [004 Identidad global](004-identidad-global/) | `IdentityAccess` | aprobada v3 (todo implementado salvo R08.12, bloqueado por D1) | implementada | implementada (PR A, B y C) |
 | [006 Institución y configuración](006-institucion/) | `Tenancy` | implementada | implementada | implementada |
 | [007 Año escolar y lapsos](007-anio-escolar/) | `AcademicCalendar` | implementada | implementada | implementada |
-| [009 Estudiantes y representantes](009-estudiantes/) | `Students` | aprobada | aprobada | implementando |
+| [009 Estudiantes y representantes](009-estudiantes/) | `Students` | implementada | implementada | implementada |
 
 ¹ Los requisitos de 001–003 documentan el comportamiento que **ya existe**
 (Fase 1, F1-01 a F1-07), extraído del código y de los tests actuales. Los

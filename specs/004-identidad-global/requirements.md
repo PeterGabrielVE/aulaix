@@ -419,7 +419,7 @@ Ninguna. Q1 a Q8 están resueltas en [Decisiones incorporadas](#decisiones-incor
 | IDG-R07.4 | `tests/Feature/ProfileTest.php` › «leaving the institution and deleting the account are separate actions, in separate places»; `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «an institution's profile only links to the account» |
 | IDG-R08.1 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «deleting the account asks for the password again and an explicit confirmation» |
 | IDG-R08.2 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «the last active administrador of an institution can not delete their account» |
-| IDG-R08.3 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «other modules can block a deletion through the extension point» (punto de extensión; el bloqueo lo registra SPEC-009) |
+| IDG-R08.3 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «other modules can block a deletion through the extension point» (punto de extensión); `tests/Feature/Students/AccountDeletionBlockTest.php` › «the only legal guardian of an active student can not delete its account» (SPEC-009, EST-R08.6) |
 | IDG-R08.4 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «other modules can block a deletion through the extension point» (punto de extensión; el bloqueo lo registra SPEC-008) |
 | IDG-R08.5 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «a deletion request starts 30 days of grace, suspends every membership and closes every session» |
 | IDG-R08.6 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «a deletion request starts 30 days of grace, suspends every membership and closes every session» |

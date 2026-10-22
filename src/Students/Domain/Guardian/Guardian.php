@@ -53,6 +53,32 @@ final class Guardian
     }
 
     /**
+     * Whether it already has an AulaX account linked (EST-R08.1).
+     */
+    public function hasAccess(): bool
+    {
+        return $this->accountId !== null;
+    }
+
+    /**
+     * Invited to the institution: the account that accepts this invitation
+     * will be linked to it.
+     */
+    public function awaitInvitation(int $invitationId): void
+    {
+        $this->pendingInvitationId = $invitationId;
+    }
+
+    /**
+     * Its account, which then sees its represented students (EST-R08.2).
+     */
+    public function linkAccount(int $accountId): void
+    {
+        $this->accountId = $accountId;
+        $this->pendingInvitationId = null;
+    }
+
+    /**
      * New data for every student it represents (EST-R03.8). A corrected
      * cédula does not invalidate the cédulas escolares already formed with
      * the old one: those are checked when assigned.

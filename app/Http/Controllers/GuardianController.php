@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GuardianRequest;
 use AulaX\Students\Application\FindGuardian\FindGuardianQuery;
+use AulaX\Students\Application\GuardianAccount\InviteGuardianHandler;
 use AulaX\Students\Application\UpdateGuardian\UpdateGuardianCommand;
 use AulaX\Students\Application\UpdateGuardian\UpdateGuardianHandler;
 use Illuminate\Http\JsonResponse;
@@ -30,6 +31,13 @@ class GuardianController extends Controller
             'email' => $guardian->email,
             'address' => $guardian->address,
         ]]);
+    }
+
+    public function invite(Request $request, int $guardian, InviteGuardianHandler $inviteGuardian): RedirectResponse
+    {
+        $inviteGuardian($guardian, (int) $request->user()->id);
+
+        return back()->with('success', 'Le dimos acceso al representante: si aún no era miembro del plantel, recibirá una invitación por correo.');
     }
 
     public function update(GuardianRequest $request, int $guardian, UpdateGuardianHandler $updateGuardian): RedirectResponse

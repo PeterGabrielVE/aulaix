@@ -43,7 +43,10 @@ final readonly class InviteMemberHandler
         private Clock $clock,
     ) {}
 
-    public function __invoke(InviteMemberCommand $command): void
+    /**
+     * @return int The invitation's id, so other modules can tell when it turns into a member (SPEC-009 EST-R08.1).
+     */
+    public function __invoke(InviteMemberCommand $command): int
     {
         $institution = $this->rules->institution();
         $actor = AccountId::fromInt($command->actorId);
@@ -77,5 +80,7 @@ final readonly class InviteMemberHandler
         });
 
         $this->mailer->send($issued->invitation, $issued->token, $institution);
+
+        return (int) $issued->invitation->id;
     }
 }

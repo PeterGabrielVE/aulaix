@@ -11,6 +11,7 @@ import { computed } from 'vue';
 const showingNavigationDropdown = ref(false);
 const institution = computed(() => usePage().props.institution);
 const can = computed(() => usePage().props.auth.can);
+const isGuardian = computed(() => usePage().props.auth.isGuardian);
 const flashSuccess = computed(() => usePage().props.flash?.success);
 </script>
 
@@ -58,6 +59,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                     Año escolar
                                 </NavLink>
                                 <NavLink
+                                    v-if="isGuardian"
+                                    :href="route('my-students.index')"
+                                    :active="route().current('my-students.*')"
+                                >
+                                    Mis representados
+                                </NavLink>
+                                <NavLink
                                     v-if="can.viewStudents"
                                     :href="route('students.index')"
                                     :active="route().current('students.*')"
@@ -70,6 +78,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                     :active="route().current('transfers.*')"
                                 >
                                     Traslados
+                                </NavLink>
+                                <NavLink
+                                    v-if="can.manageStudents"
+                                    :href="route('corrections.index')"
+                                    :active="route().current('corrections.*')"
+                                >
+                                    Correcciones
                                 </NavLink>
                                 <NavLink
                                     v-if="can.viewInstitution"
@@ -220,6 +235,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             Año escolar
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
+                            v-if="isGuardian"
+                            :href="route('my-students.index')"
+                            :active="route().current('my-students.*')"
+                        >
+                            Mis representados
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
                             v-if="can.viewStudents"
                             :href="route('students.index')"
                             :active="route().current('students.*')"
@@ -232,6 +254,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             :active="route().current('transfers.*')"
                         >
                             Traslados
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="can.manageStudents"
+                            :href="route('corrections.index')"
+                            :active="route().current('corrections.*')"
+                        >
+                            Correcciones
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             v-if="can.viewInstitution"

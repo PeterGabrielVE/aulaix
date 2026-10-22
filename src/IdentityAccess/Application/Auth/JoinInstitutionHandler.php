@@ -8,6 +8,7 @@ use AulaX\Audit\Application\AuditEvent;
 use AulaX\Audit\Application\AuditSubject;
 use AulaX\Audit\Application\AuditTrail;
 use AulaX\Audit\Application\FieldChange;
+use AulaX\IdentityAccess\Application\Events\MemberJoined;
 use AulaX\IdentityAccess\Domain\Account\AccountId;
 use AulaX\IdentityAccess\Domain\Account\AccountRepository;
 use AulaX\IdentityAccess\Domain\Account\EmailAddress;
@@ -18,6 +19,7 @@ use AulaX\IdentityAccess\Domain\Membership\Membership;
 use AulaX\IdentityAccess\Domain\Membership\MembershipRepository;
 use AulaX\IdentityAccess\Domain\Membership\MembershipStatus;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
+use AulaX\Shared\Application\EventBus;
 use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use AulaX\Shared\Domain\Clock;
@@ -47,6 +49,7 @@ final readonly class JoinInstitutionHandler
         private AuditTrail $audit,
         private TransactionManager $transactions,
         private Clock $clock,
+        private EventBus $events,
     ) {}
 
     /**
@@ -103,6 +106,7 @@ final readonly class JoinInstitutionHandler
                     AuditSubject::of('membership', (int) $membership->id),
                     [FieldChange::of('roles', [], $invitation->roles->inPriorityOrder())],
                 ));
+                $this->events->publish(new MemberJoined($institution->institutionId->value, $account->id->value, (int) $invitation->id, $now));
             });
         } finally {
             $this->tenantActivator->deactivate();

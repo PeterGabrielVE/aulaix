@@ -25,7 +25,7 @@ final readonly class DeletionBlockers
         $reasons = [];
 
         foreach ($this->blockers as $blocker) {
-            $reasons = [...$reasons, ...$blocker->reasonsFor($account)];
+            $reasons = [...$reasons, ...$blocker->reasonsFor($account->value)];
         }
 
         return $reasons;

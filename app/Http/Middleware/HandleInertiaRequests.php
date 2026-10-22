@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use AulaX\Students\Application\GuardianPortal\IsGuardianQuery;
 use AulaX\Tenancy\Application\CurrentTenant;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -36,6 +37,9 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                // SPEC-009 EST-R08.2: «Mis representados», by the account's link to a guardian here.
+                'isGuardian' => fn () => $institution !== null && $request->user() !== null
+                    && app(IsGuardianQuery::class)((int) $request->user()->id),
                 'can' => [
                     'manageUsers' => (bool) $request->user()?->can('gestionar-usuarios'),
                     'viewAudit' => (bool) $request->user()?->can('ver-bitacora'),

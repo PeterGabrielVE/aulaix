@@ -26,11 +26,12 @@ final readonly class LastAdministratorBlocker implements DeletionBlocker
         private RoleCatalog $roles,
     ) {}
 
-    public function reasonsFor(AccountId $account): array
+    public function reasonsFor(int $accountId): array
     {
+        $account = AccountId::fromInt($accountId);
         $reasons = [];
 
-        $this->institutions->forEachInstitutionOf($account, function (TenantContext $institution) use ($account, &$reasons) {
+        $this->institutions->forEachInstitutionOf($accountId, function (TenantContext $institution) use ($account, &$reasons) {
             $membership = $this->memberships->of($account, $institution->institutionId);
 
             if ($membership === null || $membership->status === MembershipStatus::Ended || ! $this->roles->rolesOf($account)->has(BaseRole::Administrador)) {

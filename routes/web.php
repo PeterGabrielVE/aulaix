@@ -11,8 +11,10 @@ use App\Http\Controllers\Central\AccountController;
 use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
+use App\Http\Controllers\CorrectionController;
 use App\Http\Controllers\GeographyController;
 use App\Http\Controllers\GuardianController;
+use App\Http\Controllers\GuardianPortalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
@@ -146,6 +148,13 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
         // Entry point after login: forwards to the user's role home.
         Route::get('/dashboard', [HomeController::class, 'redirect'])->name('dashboard');
 
+        // SPEC-009 EST-R08: a guardian's own students, by its account's link (no permission needed).
+        Route::get('/mis-representados', [GuardianPortalController::class, 'index'])->name('my-students.index');
+        Route::get('/mis-representados/{student}', [GuardianPortalController::class, 'show'])
+            ->whereNumber('student')->name('my-students.show');
+        Route::post('/mis-representados/correcciones', [CorrectionController::class, 'store'])
+            ->middleware('throttle:10,1')->name('corrections.store');
+
         Route::get('/admin', [HomeController::class, 'admin'])
             ->middleware('role:Administrador')->name('admin.home');
         Route::get('/director', [HomeController::class, 'director'])
@@ -214,7 +223,12 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
                     Route::post('/estudiantes/{student}/retiro', [StudentController::class, 'withdraw'])->name('students.withdraw');
                     Route::post('/estudiantes/{student}/reincorporacion', [StudentController::class, 'reinstate'])->name('students.reinstate');
                     Route::put('/representantes/{guardian}', [GuardianController::class, 'update'])->name('guardians.update');
+                    Route::post('/representantes/{guardian}/invitacion', [GuardianController::class, 'invite'])->name('guardians.invite');
                 });
+
+                Route::get('/correcciones', [CorrectionController::class, 'index'])->name('corrections.index');
+                Route::post('/correcciones/{correction}/atendida', [CorrectionController::class, 'resolve'])
+                    ->whereNumber('correction')->middleware('throttle:30,1')->name('corrections.resolve');
 
                 // Transfers between institutions (ADR 0008).
                 Route::get('/traslados', [TransferController::class, 'index'])->name('transfers.index');

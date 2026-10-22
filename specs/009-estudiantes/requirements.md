@@ -1,7 +1,7 @@
 ---
 spec: 009-estudiantes
 prefijo: EST
-estado: aprobada
+estado: implementada
 fecha: 2026-10-21
 aprobada: 2026-10-21
 backlog: F1-20 – F1-24
@@ -401,12 +401,12 @@ no usan AulaX; importación en lote.
 | EST-R07.6 | `tests/Unit/Students/Domain/TransferRequestTest.php` › «is rejected by the origin with a reason»; `tests/Unit/Students/Application/TransferTest.php` › «rejects with a reason, recorded, the student staying»; `tests/Feature/Students/TransferFlowTest.php` › «the origin rejects with a reason the destination sees, and the student stays» |
 | EST-R07.7 | `tests/Unit/Students/Domain/TransferRequestTest.php` › «expires after 15 calendar days without an answer»; `tests/Unit/Students/Application/TransferTest.php` › «does not answer an expired request»; `tests/Feature/Students/TransferFlowTest.php` › «an unanswered request expires after 15 days and can not be approved then» |
 | EST-R07.8 | `tests/Feature/Students/Infrastructure/TransferCopierTest.php` › «creates the student in the destination, reusing its guardians, and goes back to the origin» |
-| EST-R08.1 | |
-| EST-R08.2 | |
-| EST-R08.3 | |
-| EST-R08.4 | |
-| EST-R08.5 | |
-| EST-R08.6 | |
+| EST-R08.1 | `tests/Unit/Students/Application/GuardianAccountTest.php` › «links the account when the invitation becomes a member, in that institution»; `tests/Feature/Students/GuardianInvitationTest.php` › «invites the guardian and links the account that accepts the invitation» |
+| EST-R08.2 | `tests/Feature/Students/GuardianPortalTest.php` › «a guardian sees the basic record of its student, without health data» |
+| EST-R08.3 | `tests/Feature/Students/GuardianPortalTest.php` › «a student it does not represent does not exist for it» |
+| EST-R08.4 | `tests/Feature/Students/CorrectionTest.php` › «a guardian asks for a correction, a manager attends it, and the guardian sees it attended» |
+| EST-R08.5 | `tests/Feature/Students/CorrectionTest.php` › «a guardian asks for a correction, a manager attends it, and the guardian sees it attended»; `tests/Unit/Students/Domain/CorrectionRequestTest.php` › «is marked attended once» |
+| EST-R08.6 | `tests/Feature/Students/AccountDeletionBlockTest.php` › «the only legal guardian of an active student can not delete its account» |
 | EST-R09.1 | `tests/Unit/Students/Application/RegisterStudentTest.php` › «refuses whoever may not manage students»; `tests/Feature/Students/StudentManagementTest.php` › «a manager registers a student with its guardian and lands on its record»; `tests/Feature/Students/StudentManagementTest.php` › «who may not manage students gets 403 on every change» |
 | EST-R09.2 | `tests/Feature/Students/StudentPermissionsTest.php` › «existing institutions get gestionar-estudiantes for Administrador and Director only»; `tests/Unit/IdentityAccess/Domain/Role/RoleSetTest.php` › «each base role carries the permissions its specs give it» |
 | EST-R09.3 | `tests/Feature/Students/StudentManagementTest.php` › «teachers and coordinators see the students, without their health data»; `tests/Feature/Students/StudentManagementTest.php` › «a guardian or a student without ver-estudiantes does not see the list» |

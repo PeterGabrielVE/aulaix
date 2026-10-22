@@ -1,6 +1,6 @@
 ---
 spec: 009-estudiantes
-estado: aprobada
+estado: implementada
 fecha: 2026-10-21
 requisitos: requirements.md
 depende-de: 001-tenancy, 003-catalogos, 004-identidad-global, 005-auditoria
@@ -488,3 +488,29 @@ Ajustes del PR B (traslados, ADR 0008), sin cambiar ningún criterio:
     `students.student.transferred_in`;
   - en el origen: `students.student.withdrawn` y
     `students.transfer.approved` o `.rejected`.
+
+Ajustes del PR C (cuenta del representante), sin cambiar ningún criterio:
+
+- **Contratos de IdentityAccess con `int` (P-04, aprobado el 2026-10-22).**
+  `DeletionBlocker::reasonsFor()` e `InstitutionScope::forEachInstitutionOf()`
+  recibían un `AccountId`, del dominio de IdentityAccess. Students no
+  puede importarlo (A-06). Por eso ahora los dos reciben el id de la cuenta
+  como `int`, lo propio de un punto de extensión entre módulos.
+  - El agregador interno `DeletionBlockers` sigue con `AccountId`.
+  - El bloqueador de prueba de `AccountDeletionTest` solo cambia el tipo
+    del parámetro.
+- **Puerto `GuardianInvitations`.** `InviteGuardian` no llama directamente
+  a `InviteMemberHandler` y `MemberDirectory`, sino a través de este puerto.
+  Así el caso de uso se prueba en aislamiento. Su adaptador
+  (`IdentityAccessGuardianInvitations`) usa esos dos casos de uso
+  públicos.
+- **Acceso del representante.** Va por el vínculo cuenta → representante
+  (`LinkedGuardian`). Una cuenta sin vínculo en el plantel recibe 403 en
+  «Mis representados»; un estudiante que no representa, 404 (EST-R08.3). La
+  prop compartida `auth.isGuardian` muestra la entrada del menú.
+- **Lo que ve el representante.** La ficha básica sin salud; de los otros
+  representantes, solo el nombre y el parentesco, sin documentos ni
+  teléfonos.
+- **Correcciones sin bitácora.** Son mensajes, no cambios de datos; el
+  cambio real se hace en la ficha y queda en la bitácora por su caso de
+  uso.

@@ -22,7 +22,17 @@ interface GuardianRepository
     public function byDocument(GuardianDocument $document): ?Guardian;
 
     /**
-     * @throws Conflict When another guardian of the institution has its document.
+     * The guardian waiting for this invitation to be accepted (EST-R08.1).
+     */
+    public function byPendingInvitation(int $invitationId): ?Guardian;
+
+    /**
+     * The guardian of the institution linked to this account (EST-R08.2).
+     */
+    public function byAccount(int $accountId): ?Guardian;
+
+    /**
+     * @throws Conflict When another guardian of the institution has its document or its account.
      */
     public function save(Guardian $guardian): GuardianId;
 }

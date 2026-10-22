@@ -132,6 +132,42 @@ final class EloquentStudentDirectory implements StudentDirectory
         );
     }
 
+    public function representedBy(int $guardianId): array
+    {
+        return DB::table('students')
+            ->join('guardianships', 'guardianships.student_id', '=', 'students.id')
+            ->where('guardianships.guardian_id', $guardianId)
+            ->orderByRaw('students.family_names collate "es-x-icu", students.given_names collate "es-x-icu", students.id')
+            ->get(['students.id', 'students.given_names', 'students.family_names', 'students.identification_type', 'students.identification', 'students.status'])
+            ->map(fn (object $row) => new StudentListItem(
+                (int) $row->id,
+                "{$row->family_names}, {$row->given_names}",
+                $row->identification_type,
+                $row->identification,
+                $row->status,
+            ))
+            ->all();
+    }
+
+    public function soleLegalGuardianOf(int $guardianId): array
+    {
+        return DB::table('students')
+            ->join('guardianships', 'guardianships.student_id', '=', 'students.id')
+            ->where('guardianships.guardian_id', $guardianId)
+            ->where('guardianships.is_legal', true)
+            ->where('students.status', 'active')
+            ->whereNotExists(fn (Builder $other) => $other
+                ->selectRaw('1')
+                ->from('guardianships as other')
+                ->whereColumn('other.student_id', 'students.id')
+                ->where('other.guardian_id', '!=', $guardianId)
+                ->where('other.is_legal', true))
+            ->orderByRaw('students.family_names collate "es-x-icu", students.given_names collate "es-x-icu"')
+            ->get(['students.given_names', 'students.family_names'])
+            ->map(fn (object $row) => "{$row->given_names} {$row->family_names}")
+            ->all();
+    }
+
     /**
      * Names and family names as typed; identifications without the dots,
      * dashes and spaces people type. The LIKE wildcards are escaped (S-09).

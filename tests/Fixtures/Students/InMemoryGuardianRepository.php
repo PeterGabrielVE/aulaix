@@ -33,6 +33,28 @@ final class InMemoryGuardianRepository implements GuardianRepository
         return null;
     }
 
+    public function byPendingInvitation(int $invitationId): ?Guardian
+    {
+        foreach ($this->guardians as $guardian) {
+            if ($guardian->pendingInvitationId() === $invitationId) {
+                return clone $guardian;
+            }
+        }
+
+        return null;
+    }
+
+    public function byAccount(int $accountId): ?Guardian
+    {
+        foreach ($this->guardians as $guardian) {
+            if ($guardian->accountId() === $accountId) {
+                return clone $guardian;
+            }
+        }
+
+        return null;
+    }
+
     public function save(Guardian $guardian): GuardianId
     {
         $id = $guardian->id() ?? GuardianId::fromInt($this->nextId++);

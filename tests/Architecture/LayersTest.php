@@ -11,8 +11,10 @@ use App\Http\Controllers\Central\AccountController;
 use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
+use App\Http\Controllers\CorrectionController;
 use App\Http\Controllers\GeographyController;
 use App\Http\Controllers\GuardianController;
+use App\Http\Controllers\GuardianPortalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
@@ -81,6 +83,8 @@ const MIGRATED_CONTROLLERS = [
     StudentController::class,
     GuardianController::class,
     TransferController::class,
+    GuardianPortalController::class,
+    CorrectionController::class,
 ];
 
 /**
@@ -179,7 +183,11 @@ arch('in Students, only the transfer copier acts as another institution', functi
     // one adapter, so nothing else of the module writes as the destination.
     expect('AulaX\Students')
         ->not->toUse('AulaX\Tenancy\Application\TenantActivator')
-        ->ignoring('AulaX\Students\Infrastructure\TenantSwitchingTransferCopier');
+        ->ignoring([
+            'AulaX\Students\Infrastructure\TenantSwitchingTransferCopier',
+            // Links a guardian in the institution of the accepted invitation, then restores the open one.
+            'AulaX\Students\Application\GuardianAccount\LinkGuardianAccountHandler',
+        ]);
 });
 
 arch('every file in src declares strict types')

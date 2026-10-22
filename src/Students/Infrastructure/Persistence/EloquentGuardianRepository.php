@@ -33,6 +33,20 @@ final class EloquentGuardianRepository implements GuardianRepository
         return $model === null ? null : self::toDomain($model);
     }
 
+    public function byPendingInvitation(int $invitationId): ?Guardian
+    {
+        $model = GuardianModel::query()->where('pending_invitation_id', $invitationId)->first();
+
+        return $model === null ? null : self::toDomain($model);
+    }
+
+    public function byAccount(int $accountId): ?Guardian
+    {
+        $model = GuardianModel::query()->where('account_id', $accountId)->first();
+
+        return $model === null ? null : self::toDomain($model);
+    }
+
     public function save(Guardian $guardian): GuardianId
     {
         $data = $guardian->data();
@@ -54,7 +68,7 @@ final class EloquentGuardianRepository implements GuardianRepository
                 : tap(GuardianModel::query()->findOrFail($guardian->id()->value))->update($attributes);
         } catch (QueryException $exception) {
             if ($exception->getCode() === self::UNIQUE_VIOLATION) {
-                throw new Conflict('Ya hay un representante con ese documento en el plantel.', previous: $exception);
+                throw new Conflict('Ya hay un representante con ese documento o esa cuenta en el plantel.', previous: $exception);
             }
 
             throw $exception;

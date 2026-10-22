@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AulaX\IdentityAccess\Infrastructure;
 
+use AulaX\IdentityAccess\Application\Account\DeletionBlocker;
 use AulaX\IdentityAccess\Application\Account\DeletionBlockers;
 use AulaX\IdentityAccess\Application\Account\LastAdministratorBlocker;
 use AulaX\IdentityAccess\Application\Auth\AccountInstitutions;
@@ -52,7 +53,7 @@ use Illuminate\Support\ServiceProvider;
  */
 final class IdentityAccessServiceProvider extends ServiceProvider
 {
-    public const DELETION_BLOCKERS = 'identity.deletion_blockers';
+    public const DELETION_BLOCKERS = DeletionBlocker::TAG;
 
     /**
      * @var array<class-string, class-string>

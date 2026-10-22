@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AulaX\IdentityAccess\Infrastructure\Persistence;
 
 use AulaX\IdentityAccess\Application\Port\InstitutionScope;
-use AulaX\IdentityAccess\Domain\Account\AccountId;
 use AulaX\Shared\Domain\InstitutionId;
 use AulaX\Tenancy\Application\TenantActivator;
 use AulaX\Tenancy\Application\TenantContext;
@@ -20,11 +19,11 @@ final readonly class EloquentInstitutionScope implements InstitutionScope
 {
     public function __construct(private TenantActivator $tenantActivator) {}
 
-    public function forEachInstitutionOf(AccountId $account, callable $operation): void
+    public function forEachInstitutionOf(int $accountId, callable $operation): void
     {
         $institutions = DB::table('institution_memberships as membership')
             ->join('institutions', 'institutions.id', '=', 'membership.institution_id')
-            ->where('membership.user_id', $account->value)
+            ->where('membership.user_id', $accountId)
             ->orderBy('institutions.id')
             ->get(['institutions.id', 'institutions.name', 'institutions.subdomain']);
 

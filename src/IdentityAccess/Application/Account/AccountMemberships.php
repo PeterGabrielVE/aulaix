@@ -67,7 +67,7 @@ final readonly class AccountMemberships
      */
     private function change(AccountId $account, callable $transition): void
     {
-        $this->institutions->forEachInstitutionOf($account, function (TenantContext $institution) use ($account, $transition) {
+        $this->institutions->forEachInstitutionOf($account->value, function (TenantContext $institution) use ($account, $transition) {
             $membership = $this->memberships->of($account, $institution->institutionId);
 
             if ($membership === null) {

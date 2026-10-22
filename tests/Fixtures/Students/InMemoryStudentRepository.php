@@ -6,6 +6,7 @@ use AulaX\Students\Domain\Identity\StudentIdentification;
 use AulaX\Students\Domain\Student\Student;
 use AulaX\Students\Domain\Student\StudentId;
 use AulaX\Students\Domain\Student\StudentRepository;
+use AulaX\Students\Domain\Student\StudentStatus;
 
 /**
  * The students of one institution, kept in memory.
@@ -29,6 +30,17 @@ final class InMemoryStudentRepository implements StudentRepository
         $this->students[$id->value] = clone $student;
 
         return $id;
+    }
+
+    public function activeByIdentification(StudentIdentification $identification): ?Student
+    {
+        foreach ($this->students as $student) {
+            if ($student->identification()->value() === $identification->value() && $student->status() === StudentStatus::Active) {
+                return clone $student;
+            }
+        }
+
+        return null;
     }
 
     public function isIdentificationTaken(StudentIdentification $identification, ?StudentId $except): bool

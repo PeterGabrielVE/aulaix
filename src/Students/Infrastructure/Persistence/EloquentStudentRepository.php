@@ -47,6 +47,16 @@ final class EloquentStudentRepository implements StudentRepository
         }
     }
 
+    public function activeByIdentification(StudentIdentification $identification): ?Student
+    {
+        $model = StudentModel::query()
+            ->where('identification', $identification->value())
+            ->where('status', StudentStatus::Active->value)
+            ->first();
+
+        return $model === null ? null : $this->toDomain($model);
+    }
+
     public function isIdentificationTaken(StudentIdentification $identification, ?StudentId $except): bool
     {
         return StudentModel::query()

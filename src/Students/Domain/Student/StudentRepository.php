@@ -27,6 +27,12 @@ interface StudentRepository
     public function save(Student $student): StudentId;
 
     /**
+     * The active student of the institution with this identification, the
+     * one a transfer request is addressed to (ADR 0008).
+     */
+    public function activeByIdentification(StudentIdentification $identification): ?Student;
+
+    /**
      * Whether a student of the institution other than $except has this
      * identification (EST-R02.6).
      */

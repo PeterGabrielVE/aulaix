@@ -28,6 +28,12 @@ const RLS_EXEMPT_TABLES = ['roles', 'model_has_roles', 'model_has_permissions'];
  */
 const CENTRAL_READ_TABLES = ['institution_memberships', 'invitations'];
 
+/**
+ * Requests addressed to whichever institution holds an identification
+ * (ADR 0008): RowLevelSecurity::enableAddressedByIdentification().
+ */
+const ADDRESSED_TABLES = ['transfer_requests'];
+
 function createProbeTable(): void
 {
     Schema::create('tenant_probes', function (Blueprint $table) {
@@ -79,7 +85,9 @@ test('every table with an institution_id column enforces Row Level Security', fu
     $tables = collect(DB::select("
         select c.relname as name, c.relrowsecurity as enabled, c.relforcerowsecurity as forced,
                exists (select 1 from pg_policies p where p.tablename = c.relname and p.policyname = 'tenant_isolation') as has_policy,
-               (select count(*) from pg_policies p where p.tablename = c.relname and p.policyname in ('central_read', 'tenant_insert', 'tenant_update', 'tenant_delete')) as central_read_policies
+               (select count(*) from pg_policies p where p.tablename = c.relname and p.policyname in ('central_read', 'tenant_insert', 'tenant_update', 'tenant_delete')) as central_read_policies,
+               (select count(*) from pg_policies p where p.tablename = c.relname) as policies,
+               (select count(*) from pg_policies p where p.tablename = c.relname and p.policyname in ('addressed_read', 'addressed_insert', 'addressed_update')) as addressed_policies
         from pg_class c
         join information_schema.columns col on col.table_name = c.relname and col.table_schema = 'public'
         where col.column_name = 'institution_id' and c.relkind = 'r'
@@ -91,6 +99,13 @@ test('every table with an institution_id column enforces Row Level Security', fu
         if (in_array($table->name, CENTRAL_READ_TABLES, true)) {
             expect([$table->enabled, $table->forced, $table->has_policy, $table->central_read_policies])
                 ->toBe([true, true, false, 4], "La tabla {$table->name} debe usar RowLevelSecurity::enableWithCentralReads().");
+
+            continue;
+        }
+
+        if (in_array($table->name, ADDRESSED_TABLES, true)) {
+            expect([$table->enabled, $table->forced, $table->policies, $table->addressed_policies])
+                ->toBe([true, true, 3, 3], "La tabla {$table->name} debe usar solo RowLevelSecurity::enableAddressedByIdentification().");
 
             continue;
         }

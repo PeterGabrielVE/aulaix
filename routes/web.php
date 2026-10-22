@@ -22,6 +22,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TermController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -213,6 +214,15 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
                     Route::post('/estudiantes/{student}/retiro', [StudentController::class, 'withdraw'])->name('students.withdraw');
                     Route::post('/estudiantes/{student}/reincorporacion', [StudentController::class, 'reinstate'])->name('students.reinstate');
                     Route::put('/representantes/{guardian}', [GuardianController::class, 'update'])->name('guardians.update');
+                });
+
+                // Transfers between institutions (ADR 0008).
+                Route::get('/traslados', [TransferController::class, 'index'])->name('transfers.index');
+                Route::post('/traslados', [TransferController::class, 'store'])
+                    ->middleware('throttle:transfer-requests')->name('transfers.store');
+                Route::middleware('throttle:30,1')->whereNumber('transfer')->group(function () {
+                    Route::post('/traslados/{transfer}/aprobar', [TransferController::class, 'approve'])->name('transfers.approve');
+                    Route::post('/traslados/{transfer}/rechazar', [TransferController::class, 'reject'])->name('transfers.reject');
                 });
             });
 

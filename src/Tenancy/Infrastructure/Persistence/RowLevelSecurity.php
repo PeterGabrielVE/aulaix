@@ -99,6 +99,34 @@ final class RowLevelSecurity
         DB::statement("CREATE POLICY tenant_isolation ON {$table} USING (institution_id = {$current}) WITH CHECK (institution_id = {$current})");
     }
 
+    /**
+     * Policy names of enableAddressedByIdentification(), in creation order.
+     */
+    public const ADDRESSED_POLICIES = ['addressed_read', 'addressed_insert', 'addressed_update'];
+
+    /**
+     * For requests one institution addresses to whichever institution holds
+     * an identification (ADR 0008, the transfers of SPEC-009). A row is
+     * visible and answerable to the institution that created it, to the one
+     * that answered it (origin_institution_id), and, while pending, to the
+     * institution that has an active row of $holders with that
+     * identification. $holders is under its own Row Level Security, so the
+     * subquery only ever looks at the active institution's rows. Rows are
+     * never deleted.
+     */
+    public static function enableAddressedByIdentification(string $table, string $holders): void
+    {
+        $current = self::CURRENT_INSTITUTION_SQL;
+        $visible = "(institution_id = {$current} OR origin_institution_id = {$current}"
+            ." OR (status = 'pending' AND EXISTS (SELECT 1 FROM {$holders} holder WHERE holder.identification = {$table}.identification AND holder.status = 'active')))";
+
+        DB::statement("ALTER TABLE {$table} ENABLE ROW LEVEL SECURITY");
+        DB::statement("ALTER TABLE {$table} FORCE ROW LEVEL SECURITY");
+        DB::statement("CREATE POLICY addressed_read ON {$table} FOR SELECT USING {$visible}");
+        DB::statement("CREATE POLICY addressed_insert ON {$table} FOR INSERT WITH CHECK (institution_id = {$current})");
+        DB::statement("CREATE POLICY addressed_update ON {$table} FOR UPDATE USING {$visible} WITH CHECK (institution_id = {$current} OR origin_institution_id = {$current})");
+    }
+
     public static function disable(string $table): void
     {
         DB::statement("DROP POLICY IF EXISTS tenant_isolation ON {$table}");

@@ -46,7 +46,7 @@ tienen dominio propio.
 | 006 Institución y configuración | F1-09, F1-10 | `Tenancy` | 001 | **implementada**. Expone `InstitutionSettingsQuery` (tipo y niveles) para 008 e `InstitutionAssetsQuery` (logo y firmas) para 012. Escalas → 011; módulos por tipo → spec de cada módulo |
 | 007 Año escolar y lapsos | F1-13 – F1-15 | `AcademicCalendar` | 001 | **implementada** (ADR 0007). Expone `TermEditabilityQuery` para 011 |
 | 008 Estructura académica | F1-16 – F1-19 | `AcademicStructure` | 003, 007 | por escribir; necesita el ERD (F0-07) |
-| 009 Estudiantes y representantes | F1-20 – F1-24 | `Students` | 004 | requisitos **aprobados** (2026-10-21); diseño **aprobado** (ADR 0008); **PR A implementado** (ficha, representantes, salud, retiros); faltan PR B (traslados) y PR C (cuenta del representante) |
+| 009 Estudiantes y representantes | F1-20 – F1-24 | `Students` | 004 | requisitos **aprobados** (2026-10-21); diseño **aprobado** (ADR 0008); **PR A y PR B implementados** (ficha, representantes, salud, retiros, traslados); falta PR C (cuenta del representante) |
 | 010 Inscripción | F1-25 – F1-27 | `Enrollment` | 008, 009 | por escribir; **bloqueada por F0-03** (reglas de prosecución) |
 | 011 Evaluación | F1-28 – F1-31 | `Evaluation` | 005, 007, 008, 010 | **bloqueada por F0-03** (escalas, redondeo, literales) |
 | 012 Documentos | F1-32 – F1-36 | `Documents` | 006, 011 | **bloqueada por F0-02** (formatos oficiales del MPPE) |

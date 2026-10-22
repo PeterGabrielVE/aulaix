@@ -56,6 +56,18 @@ final class StudentAudit
         ]);
     }
 
+    /**
+     * In the destination's audit log: the student arrived by transfer
+     * (EST-R10.2), with its data as at a registration.
+     */
+    public static function transferredIn(Student $student, string $originName): AuditEvent
+    {
+        return AuditEvent::of('students.student.transferred_in', self::subject($student), [
+            FieldChange::of('origin', null, $originName),
+            ...ChangeSet::diff([], self::details($student)),
+        ]);
+    }
+
     public static function reinstated(Student $student): AuditEvent
     {
         return AuditEvent::of('students.student.reinstated', self::subject($student), [FieldChange::of('status', 'withdrawn', 'active')]);

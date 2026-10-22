@@ -393,14 +393,14 @@ no usan AulaX; importación en lote.
 | EST-R06.2 | `tests/Unit/Students/Domain/StudentLifecycleTest.php` › «needs the date and the reason of a withdrawal, not in the future»; `tests/Unit/Students/Application/WithdrawalTest.php` › «refuses a withdrawal dated after today, by the clock» |
 | EST-R06.3 | `tests/Unit/Students/Domain/StudentLifecycleTest.php` › «offers the four reasons of the list» |
 | EST-R06.4 | `tests/Unit/Students/Domain/StudentLifecycleTest.php` › «reinstates a withdrawn student, keeping the history of its withdrawals»; `tests/Unit/Students/Application/WithdrawalTest.php` › «reinstates a withdrawn student, recorded» |
-| EST-R07.1 | |
-| EST-R07.2 | |
-| EST-R07.3 | |
-| EST-R07.4 | |
-| EST-R07.5 | |
-| EST-R07.6 | |
-| EST-R07.7 | |
-| EST-R07.8 | |
+| EST-R07.1 | `tests/Unit/Students/Domain/TransferRequestTest.php` › «is requested for an identification, pending and without an origin»; `tests/Unit/Students/Application/TransferTest.php` › «asks for a student by its identification, recorded in the destination»; `tests/Feature/Students/TransferFlowTest.php` › «the destination gets the same answer whether or not the student exists» |
+| EST-R07.2 | `tests/Feature/Students/TransferPoliciesTest.php` › «the destination sees its request, and nothing of the origin»; `tests/Unit/Students/Application/TransferTest.php` › «answers the same whether or not some institution has the student»; `tests/Feature/Students/TransferFlowTest.php` › «the destination gets the same answer whether or not the student exists» |
+| EST-R07.3 | `tests/Unit/Students/Application/TransferTest.php` › «refuses to ask for a student the institution already has» |
+| EST-R07.4 | `tests/Feature/Students/TransferPoliciesTest.php` › «only the institution with the student active sees the pending request»; `tests/Feature/Students/TransferFlowTest.php` › «the origin sees the request with the destination and its student, and approves it» |
+| EST-R07.5 | `tests/Unit/Students/Domain/TransferRequestTest.php` › «is approved by the origin, which it then names»; `tests/Feature/Students/Infrastructure/TransferCopierTest.php` › «creates the student in the destination, reusing its guardians, and goes back to the origin»; `tests/Unit/Students/Application/TransferTest.php` › «approves: withdraws the student here and copies its record to the destination»; `tests/Feature/Students/TransferFlowTest.php` › «the origin sees the request with the destination and its student, and approves it» |
+| EST-R07.6 | `tests/Unit/Students/Domain/TransferRequestTest.php` › «is rejected by the origin with a reason»; `tests/Unit/Students/Application/TransferTest.php` › «rejects with a reason, recorded, the student staying»; `tests/Feature/Students/TransferFlowTest.php` › «the origin rejects with a reason the destination sees, and the student stays» |
+| EST-R07.7 | `tests/Unit/Students/Domain/TransferRequestTest.php` › «expires after 15 calendar days without an answer»; `tests/Unit/Students/Application/TransferTest.php` › «does not answer an expired request»; `tests/Feature/Students/TransferFlowTest.php` › «an unanswered request expires after 15 days and can not be approved then» |
+| EST-R07.8 | `tests/Feature/Students/Infrastructure/TransferCopierTest.php` › «creates the student in the destination, reusing its guardians, and goes back to the origin» |
 | EST-R08.1 | |
 | EST-R08.2 | |
 | EST-R08.3 | |
@@ -412,8 +412,8 @@ no usan AulaX; importación en lote.
 | EST-R09.3 | `tests/Feature/Students/StudentManagementTest.php` › «teachers and coordinators see the students, without their health data»; `tests/Feature/Students/StudentManagementTest.php` › «a guardian or a student without ver-estudiantes does not see the list» |
 | EST-R09.4 | `tests/Feature/Students/StudentManagementTest.php` › «who may not manage students gets 403 on every change»; `tests/Feature/Students/StudentManagementTest.php` › «a guardian or a student without ver-estudiantes does not see the list» |
 | EST-R10.1 | `tests/Unit/Students/Application/RegisterStudentTest.php` › «registers a student with a new guardian, recorded inside the transaction»; `tests/Unit/Students/Application/RegisterStudentTest.php` › «edits a student and records only what changed»; `tests/Unit/Students/Application/HealthAndGuardianTest.php` › «corrects a guardian once for every student it represents, recording the old and new values» |
-| EST-R10.2 | `tests/Unit/Students/Application/WithdrawalTest.php` › «withdraws a student with its date and reason, recorded»; `tests/Unit/Students/Application/WithdrawalTest.php` › «reinstates a withdrawn student, recorded» |
+| EST-R10.2 | `tests/Unit/Students/Application/WithdrawalTest.php` › «withdraws a student with its date and reason, recorded»; `tests/Unit/Students/Application/WithdrawalTest.php` › «reinstates a withdrawn student, recorded»; `tests/Unit/Students/Application/TransferTest.php` › «asks for a student by its identification, recorded in the destination»; `tests/Unit/Students/Application/TransferTest.php` › «approves: withdraws the student here and copies its record to the destination»; `tests/Unit/Students/Application/TransferTest.php` › «rejects with a reason, recorded, the student staying» |
 | EST-R10.3 | `tests/Unit/Students/Application/StudentAuditTest.php` › «records which health data changed, without their values»; `tests/Unit/Students/Application/HealthAndGuardianTest.php` › «changes the health data, recording which ones without their values» |
 | EST-R11.1 | `tests/Feature/Students/StudentIsolationTest.php` › «an institution only sees its own students, guardians and their records»; `tests/Feature/Students/StudentManagementTest.php` › «a student of another institution does not exist here, whatever the id» |
 | EST-R11.2 | `tests/Feature/Students/StudentManagementTest.php` › «a student of another institution does not exist here, whatever the id» |
-| EST-R11.3 | |
+| EST-R11.3 | `tests/Feature/Students/TransferPoliciesTest.php` › «the destination sees its request, and nothing of the origin»; `tests/Feature/Students/Infrastructure/TransferCopierTest.php` › «writes nothing in the destination when the student is already there, and still goes back to the origin»; `tests/Feature/Students/TransferFlowTest.php` › «the origin sees the request with the destination and its student, and approves it» |

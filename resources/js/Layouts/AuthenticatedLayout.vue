@@ -65,6 +65,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                     Estudiantes
                                 </NavLink>
                                 <NavLink
+                                    v-if="can.manageStudents"
+                                    :href="route('transfers.index')"
+                                    :active="route().current('transfers.*')"
+                                >
+                                    Traslados
+                                </NavLink>
+                                <NavLink
                                     v-if="can.viewInstitution"
                                     :href="route('institution.show')"
                                     :active="route().current('institution.*')"
@@ -218,6 +225,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             :active="route().current('students.*')"
                         >
                             Estudiantes
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="can.manageStudents"
+                            :href="route('transfers.index')"
+                            :active="route().current('transfers.*')"
+                        >
+                            Traslados
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             v-if="can.viewInstitution"

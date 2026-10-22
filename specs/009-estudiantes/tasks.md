@@ -145,12 +145,12 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 6 — Traslados
 
-- [ ] **T-17** — Agregado `TransferRequest`: solicitar, aprobar, rechazar;
+- [x] **T-17** — Agregado `TransferRequest`: solicitar, aprobar, rechazar;
   caducada a los 15 días naturales (el día 15 aún vigente, el 16 no; por
   `Clock`).
   - Criterios: EST-R07.1, R07.5 – R07.7
   - Test: `tests/Unit/Students/Domain/TransferRequestTest.php`
-- [ ] **T-18** — Migración de `transfer_requests` con las políticas de ADR
+- [x] **T-18** — Migración de `transfer_requests` con las políticas de ADR
   0008 (helper nuevo en `RowLevelSecurity`), con `up` y `down` probados.
   Tests de las políticas:
   - el destino no ve el origen;
@@ -159,7 +159,7 @@ Tres PRs, cada uno usable por sí mismo:
   - un estudiante retirado no la hace visible.
   - Criterios: EST-R07.2, R07.4, R11.3
   - Test: `tests/Feature/Students/TransferPoliciesTest.php` (grupo `rls`)
-- [ ] **T-19** — Puerto `TransferCopier` y `TenantSwitchingTransferCopier`:
+- [x] **T-19** — Puerto `TransferCopier` y `TenantSwitchingTransferCopier`:
   - crea en el destino al estudiante y sus representantes, sin vínculo de
     cuenta, reutilizando los que el destino ya tenga;
   - vuelve al origen en un `finally`.
@@ -168,14 +168,14 @@ Tres PRs, cada uno usable por sí mismo:
   - Criterios: EST-R07.5, R07.8, R11.3
   - Test: `tests/Feature/Students/Infrastructure/TransferCopierTest.php`;
     `tests/Architecture/LayersTest.php`
-- [ ] **T-20** — `RequestTransfer` (rechaza si el destino ya tiene la
+- [x] **T-20** — `RequestTransfer` (rechaza si el destino ya tiene la
   identificación o una solicitud pendiente igual; misma respuesta exista o
   no), `ApproveTransfer` (aprobar, retirar por cambio de plantel y copiar en
   una transacción; todo o nada), `RejectTransfer` y `ListTransfers`, con
   bitácora en las dos puntas.
   - Criterios: EST-R07.1 – R07.8, R10.2
   - Test: `tests/Unit/Students/Application/TransferTest.php`
-- [ ] **T-21** — Entrada HTTP y pantalla:
+- [x] **T-21** — Entrada HTTP y pantalla:
   - `TransferController`, el limitador `transfer-requests` (20 por hora
     por plantel) y la página `Transfers/Index.vue`;
   - la entrada «Traslados» del menú;

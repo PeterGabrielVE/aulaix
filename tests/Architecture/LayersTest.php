@@ -22,6 +22,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TermController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\ResolveTenant;
@@ -79,6 +80,7 @@ const MIGRATED_CONTROLLERS = [
     // SPEC-009
     StudentController::class,
     GuardianController::class,
+    TransferController::class,
 ];
 
 /**
@@ -171,6 +173,14 @@ arch('only IdentityAccess uses the account model', function (string $module) {
 
     expect("AulaX\\{$module}")->not->toUse('AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel');
 })->with('modules');
+
+arch('in Students, only the transfer copier acts as another institution', function () {
+    // ADR 0008: switching institution inside a transaction is confined to
+    // one adapter, so nothing else of the module writes as the destination.
+    expect('AulaX\Students')
+        ->not->toUse('AulaX\Tenancy\Application\TenantActivator')
+        ->ignoring('AulaX\Students\Infrastructure\TenantSwitchingTransferCopier');
+});
 
 arch('every file in src declares strict types')
     ->expect('AulaX')

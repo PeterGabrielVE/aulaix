@@ -456,3 +456,35 @@ Ajustes hechos al implementar el PR A, sin cambiar ningún criterio:
 - **Lista de módulos de la constitución.** No se tocó: ya estaba
   desactualizada (falta `Audit` y `AcademicCalendar`), y cambiarla requiere
   un ADR. Los tests de capas descubren los módulos solos.
+
+Ajustes del PR B (traslados, ADR 0008), sin cambiar ningún criterio:
+
+- **El estado «caducada» también se guarda.** Se calcula al leer, como
+  dice el diseño. Pero el índice «una solicitud pendiente por estudiante y
+  destino» bloquearía pedir de nuevo tras la caducidad. Por eso, al volver a
+  pedir, `RequestTransfer` marca `expired` la vieja
+  (`TransferRequest::expire`), y el `CHECK` admite ese valor.
+- **La solicitud conoce su destino y el nombre del origen.**
+  `TransferRequest` lleva:
+  - `destinationId`, que es la columna `institution_id`: el copiador sabe
+    dónde escribir, y el destino no puede aprobar su propia solicitud;
+  - `origin_name`, que se guarda al responder: el destino ve quién respondió
+    sin leer la tabla de planteles de Tenancy.
+- **`Tenancy\Application\InstitutionContexts`.** Es una consulta pública
+  nueva que da el `TenantContext` de un plantel por su id. El copiador la
+  usa para activar el destino.
+- **Savepoint en el copiador.** Las escrituras en el destino van en un
+  `DB::transaction` anidado. Si fallan (p. ej. el destino ya registró al
+  estudiante), se deshacen hasta el savepoint, la transacción del origen
+  sigue usable para reactivarlo, y luego se deshace entera.
+- **RLS genérica.** El helper se llama
+  `RowLevelSecurity::enableAddressedByIdentification(tabla, titulares)`.
+  `TenantTableTest` tiene una categoría nueva (`ADDRESSED_TABLES`) que exige
+  exactamente sus tres políticas.
+- **Retiro por traslado.** Se registra con la fecha de la aprobación y la
+  observación «Traslado a {plantel destino}».
+- **Bitácora:**
+  - en el destino: `students.transfer.requested` y
+    `students.student.transferred_in`;
+  - en el origen: `students.student.withdrawn` y
+    `students.transfer.approved` o `.rejected`.

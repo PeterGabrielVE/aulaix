@@ -26,6 +26,24 @@ interface MemberDirectory
     public function activeMemberByEmail(string $email): ?int;
 
     /**
+     * The active members of the open institution holding this role, among
+     * any others, by name. For other modules picking people (SPEC-008).
+     *
+     * @return list<array{id: int, name: string}>
+     */
+    public function activeMembersWithRole(string $role): array;
+
+    /**
+     * The names of these accounts, if they are or were members of the open
+     * institution, and whether their membership is active (SPEC-008
+     * EAC-R08.5). Accounts it can not see are left out.
+     *
+     * @param  list<int>  $accountIds
+     * @return array<int, array{name: string, active: bool}>
+     */
+    public function accountNames(array $accountIds): array;
+
+    /**
      * Pending invitations, newest first, optionally filtered by name or email.
      *
      * @return list<InvitationView>

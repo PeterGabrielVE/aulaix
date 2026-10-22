@@ -1,6 +1,6 @@
 ---
 spec: 008-estructura-academica
-estado: implementando
+estado: implementada
 fecha: 2026-10-22
 diseño: design.md
 depende-de: 003-catalogos (implementada), 004-identidad-global (implementada), 005-auditoria (implementada), 006-institucion (implementada), 007-anio-escolar (implementada)
@@ -127,25 +127,25 @@ Dos PRs, cada uno usable por sí mismo:
 
 ### Fase 6 — Dominio, personas y casos de uso
 
-- [ ] **T-14** — Asignaciones en el agregado:
+- [x] **T-14** — Asignaciones en el agregado:
   - docente por materia del pensum en una sección (uno por materia,
     reemplazo, quitar; en todos los niveles);
   - docente guía;
   - coordinadores por nivel o por grados del nivel, varios por nivel.
   - Criterios: EAC-R05.1, R05.3 – R05.5, R05.7, R06.1, R06.3, R06.5, R06.6
   - Test: `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php`
-- [ ] **T-15** — `MemberDirectory::activeMembersWithRole` (IdentityAccess) y
+- [x] **T-15** — `MemberDirectory::activeMembersWithRole` (IdentityAccess) y
   el puerto `StaffDirectory` con `IdentityAccessStaffDirectory`: miembro
   activo con un rol, por cualquiera de sus roles (un Director con rol
   Docente cuenta).
   - Criterios: EAC-R05.2, R06.2, R06.4, R12.3
   - Test: `tests/Feature/AcademicStructure/Infrastructure/StaffDirectoryTest.php`
-- [ ] **T-16** — `AssignTeacher`, `SetGuide`, `AssignCoordinator` y
+- [x] **T-16** — `AssignTeacher`, `SetGuide`, `AssignCoordinator` y
   `RemoveCoordinator`, con `StaffDirectory`, bloqueo, estado del año,
   bitácora (anterior y nuevo) y permisos.
   - Criterios: EAC-R05.1 – R05.5, R05.7, R06.1 – R06.6, R07.2, R11.1, R12.3
   - Test: `tests/Unit/AcademicStructure/Application/AssignmentsTest.php`
-- [ ] **T-17** — Consultas:
+- [x] **T-17** — Consultas:
   - `ShowStructure` muestra las personas asignadas y marca las que ya no
     son miembros activos; sus asignaciones se conservan;
   - `MyAssignments`;
@@ -153,7 +153,7 @@ Dos PRs, cada uno usable por sí mismo:
   - Criterios: EAC-R05.6, R08.2, R08.4, R08.5, NF02
   - Test: `tests/Feature/AcademicStructure/Infrastructure/AssignmentQueriesTest.php`
     (+ caso del grupo `perf`)
-- [ ] **T-18** — `ActiveAssignmentBlocker`, etiquetado como
+- [x] **T-18** — `ActiveAssignmentBlocker`, etiquetado como
   `DeletionBlocker`: dicta o guía en el año activo de algún plantel.
   Actualiza la matriz de IDG-R08.4.
   - Criterios: EAC-R09.1
@@ -161,7 +161,7 @@ Dos PRs, cada uno usable por sí mismo:
 
 ### Fase 7 — Entrada HTTP y pantallas
 
-- [ ] **T-19** — Entrada HTTP y pantallas:
+- [x] **T-19** — Entrada HTTP y pantallas:
   - `AssignmentController` (docente, guía, coordinadores) y
     `MyAssignmentsController`;
   - en `Structure/Index.vue`, los selectores de personas y el aviso de las
@@ -173,13 +173,13 @@ Dos PRs, cada uno usable por sí mismo:
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls` y `--group=perf`).
-- [ ] Tests de arquitectura en verde.
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
-- [ ] `migrate:fresh --seed` dos veces y rollback de las migraciones nuevas.
-- [ ] Matriz de trazabilidad completa.
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls` y `--group=perf`).
+- [x] Tests de arquitectura en verde.
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
+- [x] `migrate:fresh --seed` dos veces y rollback de las migraciones nuevas.
+- [x] Matriz de trazabilidad completa.
 - [ ] `/security-review` de cada PR (permisos y asignaciones que habilitarán la carga de notas; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

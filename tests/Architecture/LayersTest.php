@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
@@ -90,6 +92,8 @@ const MIGRATED_CONTROLLERS = [
     // SPEC-008
     StructureController::class,
     SectionController::class,
+    AssignmentController::class,
+    MyAssignmentsController::class,
 ];
 
 /**

@@ -45,7 +45,7 @@ tienen dominio propio.
 | 004 Identidad global | F1-07, revisa F1-06 | `IdentityAccess` | 001, 005, ADR 0004 | **implementada** (PR A, B y C). La eliminación efectiva (IDG-R08.12) espera la validación legal (D1) |
 | 006 Institución y configuración | F1-09, F1-10 | `Tenancy` | 001 | **implementada**. Expone `InstitutionSettingsQuery` (tipo y niveles) para 008 e `InstitutionAssetsQuery` (logo y firmas) para 012. Escalas → 011; módulos por tipo → spec de cada módulo |
 | 007 Año escolar y lapsos | F1-13 – F1-15 | `AcademicCalendar` | 001 | **implementada** (ADR 0007). Expone `TermEditabilityQuery` para 011 |
-| 008 Estructura académica | F1-16 – F1-19 | `AcademicStructure` | 003, 006, 007 | requisitos **aprobados** (2026-10-22); diseño **aprobado** (resuelve el ERD, F0-07); **PR A implementado** (grados, secciones, pensum, copia); falta PR B (asignaciones) |
+| 008 Estructura académica | F1-16 – F1-19 | `AcademicStructure` | 003, 006, 007 | **implementada** (PR A y B; resuelve el ERD, F0-07). Expone `TeachingQuery` (qué secciones y materias dicta cada docente) para 009, 010 y 011, y activa IDG-R08.4 |
 | 009 Estudiantes y representantes | F1-20 – F1-24 | `Students` | 004 | **implementada** (PR A, B y C; ADR 0008). Expone la ficha y los representantes para 010, 011 y 012, y activa IDG-R08.3 |
 | 010 Inscripción | F1-25 – F1-27 | `Enrollment` | 008, 009 | por escribir; **bloqueada por F0-03** (reglas de prosecución) |
 | 011 Evaluación | F1-28 – F1-31 | `Evaluation` | 005, 007, 008, 010 | **bloqueada por F0-03** (escalas, redondeo, literales) |

@@ -1,6 +1,6 @@
 ---
 spec: 008-estructura-academica
-estado: aprobada
+estado: implementada
 fecha: 2026-10-22
 requisitos: requirements.md
 depende-de: 003-catalogos, 004-identidad-global, 005-auditoria, 006-institucion, 007-anio-escolar
@@ -335,3 +335,25 @@ Ajustes hechos al implementar el PR A, sin cambiar ningún criterio:
   hace crecer, se reemplaza sin tocar la interfaz.
 - **Parámetros de las rutas.** El año a mostrar va en `?anio=`, y el año
   desde el que copiar, si no es el anterior, en `desde`.
+
+Ajustes hechos al implementar el PR B, también sin cambiar criterios:
+
+- **`MemberDirectory` de IdentityAccess** ganó `activeMembersWithRole(rol)` y
+  `accountNames(ids)`. El adaptador `IdentityAccessStaffDirectory` los usa
+  para el puerto `StaffDirectory` (`isActiveWithRole`, `candidates`,
+  `describe`), sin tocar el modelo de cuentas (A-06).
+- **Puerto `AssignmentDirectory`** (`teaches`, `sectionIdsOf`), con un
+  adaptador Eloquent. Sobre él se apoyan `TeachingQuery`, que se expone a
+  otros módulos, y `ActiveAssignmentBlocker`.
+- **Asignaciones huérfanas.** Incluyen las de docente guía (`subjectId`
+  nulo), no solo las de materia. La pantalla las lista y muestra a la
+  persona como «(inactivo)» en su selector, hasta que se reasigne.
+- **Rutas.** Docente de una materia:
+  `PUT /estructura/secciones/{sección}/materias/{materia}/docente`. Guía:
+  `PUT /estructura/secciones/{sección}/guia`. En los dos, `account_id` nulo
+  deja el puesto vacío. Coordinadores: `POST /estructura/{año}/coordinadores`
+  y `DELETE /estructura/{año}/coordinadores/{cuenta}/{nivel}`. «Mis
+  asignaciones» está en `GET /mis-asignaciones`.
+- **Entrada «Mis asignaciones» del menú.** Se muestra a quien tiene el rol
+  Docente en el plantel (`auth.isTeacher`, compartido por Inertia). La
+  página está abierta a cualquier miembro, y cada uno ve solo lo suyo.

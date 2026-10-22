@@ -17,6 +17,11 @@ final readonly class StructureView
      * @param  list<SectionView>  $sections  By grade, then letter.
      * @param  array<string, list<array{id: int, name: string}>>  $curriculum  Grade => subjects.
      * @param  array<string, list<array{id: int, code: string, name: string}>>  $subjectOptions  Level => catalog subjects.
+     * @param  list<array{accountId: int, level: string, grades: list<string>}>  $coordinators
+     * @param  array<int, array{name: string, active: bool}>  $people  Everyone assigned, by account id.
+     * @param  list<array{sectionId: int, subjectId: ?int, accountId: int}>  $orphans  Assignments (subject null: guide) of people no longer active (EAC-R08.5).
+     * @param  list<array{id: int, name: string}>  $teacherCandidates
+     * @param  list<array{id: int, name: string}>  $coordinatorCandidates
      */
     public function __construct(
         public ?int $schoolYearId,
@@ -26,5 +31,10 @@ final readonly class StructureView
         public array $sections,
         public array $curriculum,
         public array $subjectOptions,
+        public array $coordinators = [],
+        public array $people = [],
+        public array $orphans = [],
+        public array $teacherCandidates = [],
+        public array $coordinatorCandidates = [],
     ) {}
 }

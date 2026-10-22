@@ -12,6 +12,7 @@ const showingNavigationDropdown = ref(false);
 const institution = computed(() => usePage().props.institution);
 const can = computed(() => usePage().props.auth.can);
 const isGuardian = computed(() => usePage().props.auth.isGuardian);
+const isTeacher = computed(() => usePage().props.auth.isTeacher);
 const flashSuccess = computed(() => usePage().props.flash?.success);
 </script>
 
@@ -64,6 +65,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                     :active="route().current('structure.*')"
                                 >
                                     Estructura
+                                </NavLink>
+                                <NavLink
+                                    v-if="isTeacher"
+                                    :href="route('my-assignments')"
+                                    :active="route().current('my-assignments')"
+                                >
+                                    Mis asignaciones
                                 </NavLink>
                                 <NavLink
                                     v-if="isGuardian"
@@ -247,6 +255,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             :active="route().current('structure.*')"
                         >
                             Estructura
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="isTeacher"
+                            :href="route('my-assignments')"
+                            :active="route().current('my-assignments')"
+                        >
+                            Mis asignaciones
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             v-if="isGuardian"

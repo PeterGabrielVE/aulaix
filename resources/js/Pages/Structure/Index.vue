@@ -46,7 +46,34 @@ const saveCurriculum = (grade) => curriculumForm.put(route('structure.curriculum
 const copyForm = useForm({});
 const copyPrevious = () => copyForm.post(route('structure.copy', props.structure.schoolYearId), { preserveScroll: true });
 
-const selectClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
+// People (EAC-R05, R06, R08.5).
+const personName = (accountId) => props.structure.people[accountId]?.name ?? '—';
+const isInactive = (accountId) => accountId !== null && accountId !== undefined && props.structure.people[accountId]?.active === false;
+const sectionById = (id) => props.structure.sections.find((section) => section.id === id);
+const subjectName = (subjectId) => Object.values(props.structure.curriculum).flat().find((subject) => subject.id === subjectId)?.name ?? '';
+
+const assignmentErrors = ref({});
+const send = (method, url, data = {}) => router[method](url, data, {
+    preserveScroll: true,
+    onStart: () => { assignmentErrors.value = {}; },
+    onError: (errors) => { assignmentErrors.value = errors; },
+});
+const accountOf = (event) => (event.target.value === '' ? null : Number(event.target.value));
+const assignTeacher = (section, subject, event) => send('put', route('structure.teacher', [section.id, subject.id]), { account_id: accountOf(event) });
+const setGuide = (section, event) => send('put', route('structure.guide', section.id), { account_id: accountOf(event) });
+
+const levelLabels = { inicial: 'Educación Inicial', primaria: 'Primaria', media_general: 'Media General' };
+const levels = computed(() => [...new Set(props.structure.grades.map((grade) => grade.level))]);
+const gradeName = (code) => props.structure.grades.find((grade) => grade.code === code)?.name ?? code;
+const coordinatorForm = useForm({ account_id: '', level: '', grades: [] });
+const gradesOfLevel = computed(() => props.structure.grades.filter((grade) => grade.level === coordinatorForm.level));
+const assignCoordinator = () => coordinatorForm.post(route('structure.coordinators.store', props.structure.schoolYearId), {
+    preserveScroll: true,
+    onSuccess: () => coordinatorForm.reset(),
+});
+const removeCoordinator = (coordinator) => send('delete', route('structure.coordinators.destroy', [props.structure.schoolYearId, coordinator.accountId, coordinator.level]));
+
+const selectClass ='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
 </script>
 
 <template>
@@ -82,6 +109,64 @@ const selectClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focu
                     </section>
                     <InputError :message="copyForm.errors.school_year" />
 
+                    <section v-if="structure.orphans.length" class="rounded-md bg-red-50 p-4 text-sm text-red-800">
+                        <p class="font-medium">Asignaciones de personas que ya no están activas en el plantel:</p>
+                        <ul class="mt-2 list-disc space-y-1 ps-5">
+                            <li v-for="orphan in structure.orphans" :key="`${orphan.sectionId}-${orphan.subjectId}`">
+                                {{ personName(orphan.accountId) }} ·
+                                {{ sectionById(orphan.sectionId)?.gradeName }} «{{ sectionById(orphan.sectionId)?.letter }}» ·
+                                {{ orphan.subjectId === null ? 'docente guía' : subjectName(orphan.subjectId) }}
+                            </li>
+                        </ul>
+                    </section>
+                    <InputError :message="assignmentErrors.account_id || assignmentErrors.school_year || assignmentErrors.section" />
+
+                    <section v-if="structure.grades.length" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900">Coordinadores</h3>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li v-for="coordinator in structure.coordinators" :key="`${coordinator.accountId}-${coordinator.level}`" class="flex flex-wrap items-center justify-between gap-2">
+                                <span>
+                                    <span class="font-medium text-gray-900">{{ personName(coordinator.accountId) }}</span>
+                                    <span v-if="isInactive(coordinator.accountId)" class="text-red-700"> (inactivo)</span>
+                                    · {{ levelLabels[coordinator.level] ?? coordinator.level }}
+                                    <span v-if="coordinator.grades.length" class="text-gray-600">({{ coordinator.grades.map(gradeName).join(', ') }})</span>
+                                </span>
+                                <button v-if="editable" type="button" class="text-sm text-red-700" @click="removeCoordinator(coordinator)">Quitar</button>
+                            </li>
+                            <li v-if="!structure.coordinators.length" class="text-gray-500">Sin coordinadores.</li>
+                        </ul>
+
+                        <form v-if="editable" class="mt-4 grid gap-3 border-t border-gray-100 pt-4 sm:grid-cols-3 sm:items-end" @submit.prevent="assignCoordinator">
+                            <div>
+                                <InputLabel for="coordinator" value="Coordinador" />
+                                <select id="coordinator" v-model="coordinatorForm.account_id" :class="selectClass" required>
+                                    <option value="" disabled>Elige una persona</option>
+                                    <option v-for="person in structure.coordinatorCandidates" :key="person.id" :value="person.id">{{ person.name }}</option>
+                                </select>
+                                <InputError :message="coordinatorForm.errors.account_id" />
+                            </div>
+                            <div>
+                                <InputLabel for="coordinator_level" value="Nivel" />
+                                <select id="coordinator_level" v-model="coordinatorForm.level" :class="selectClass" required @change="coordinatorForm.grades = []">
+                                    <option value="" disabled>Elige un nivel</option>
+                                    <option v-for="level in levels" :key="level" :value="level">{{ levelLabels[level] ?? level }}</option>
+                                </select>
+                                <InputError :message="coordinatorForm.errors.level" />
+                            </div>
+                            <PrimaryButton :disabled="coordinatorForm.processing">Asignar</PrimaryButton>
+                            <fieldset v-if="coordinatorForm.level" class="sm:col-span-3">
+                                <legend class="text-sm text-gray-700">Grados a su cargo (ninguno: todo el nivel)</legend>
+                                <div class="mt-2 grid gap-2 sm:grid-cols-3">
+                                    <label v-for="grade in gradesOfLevel" :key="grade.code" class="flex items-center gap-2 text-sm text-gray-800">
+                                        <input v-model="coordinatorForm.grades" type="checkbox" :value="grade.code" class="rounded border-gray-300 text-indigo-600" />
+                                        {{ grade.name }}
+                                    </label>
+                                </div>
+                                <InputError :message="coordinatorForm.errors.grades" />
+                            </fieldset>
+                        </form>
+                    </section>
+
                     <p v-if="!structure.grades.length" class="rounded-md bg-yellow-50 p-3 text-sm text-yellow-800">
                         Indica en «Plantel» los niveles que ofrece el plantel para organizar sus grados.
                     </p>
@@ -105,6 +190,34 @@ const selectClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focu
                             <span class="font-medium">Pensum:</span>
                             {{ curriculumOf(grade).map((subject) => subject.name).join(', ') || 'sin materias' }}
                         </p>
+
+                        <div v-for="section in sectionsOf(grade)" :key="`people-${section.id}`" class="mt-4 rounded-md border border-gray-100 p-3">
+                            <h4 class="text-sm font-medium text-gray-900">Sección {{ section.letter }}</h4>
+                            <dl class="mt-2 grid gap-2 text-sm sm:grid-cols-2">
+                                <div>
+                                    <dt class="text-gray-600">Docente guía</dt>
+                                    <dd>
+                                        <select v-if="editable" :value="section.guideAccountId ?? ''" :class="selectClass" :aria-label="`Docente guía de la sección ${section.letter}`" @change="setGuide(section, $event)">
+                                            <option value="">Sin asignar</option>
+                                            <option v-if="isInactive(section.guideAccountId)" :value="section.guideAccountId">{{ personName(section.guideAccountId) }} (inactivo)</option>
+                                            <option v-for="person in structure.teacherCandidates" :key="person.id" :value="person.id">{{ person.name }}</option>
+                                        </select>
+                                        <span v-else :class="{ 'text-red-700': isInactive(section.guideAccountId) }">{{ section.guideAccountId ? personName(section.guideAccountId) : 'Sin asignar' }}</span>
+                                    </dd>
+                                </div>
+                                <div v-for="subject in curriculumOf(grade)" :key="subject.id">
+                                    <dt class="text-gray-600">{{ subject.name }}</dt>
+                                    <dd>
+                                        <select v-if="editable" :value="section.teachers[subject.id] ?? ''" :class="selectClass" :aria-label="`Docente de ${subject.name}, sección ${section.letter}`" @change="assignTeacher(section, subject, $event)">
+                                            <option value="">Sin asignar</option>
+                                            <option v-if="isInactive(section.teachers[subject.id])" :value="section.teachers[subject.id]">{{ personName(section.teachers[subject.id]) }} (inactivo)</option>
+                                            <option v-for="person in structure.teacherCandidates" :key="person.id" :value="person.id">{{ person.name }}</option>
+                                        </select>
+                                        <span v-else :class="{ 'text-red-700': isInactive(section.teachers[subject.id]) }">{{ section.teachers[subject.id] ? personName(section.teachers[subject.id]) : 'Sin asignar' }}</span>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
 
                         <div v-if="openGrade === grade.code" class="mt-4 space-y-6 border-t border-gray-100 pt-4">
                             <form class="grid gap-3 sm:grid-cols-3 sm:items-end" @submit.prevent="addSection">

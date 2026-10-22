@@ -6,10 +6,13 @@ namespace AulaX\AcademicStructure\Application\ShowStructure;
 
 use AulaX\AcademicCalendar\Application\ListSchoolYears\ListSchoolYearsHandler;
 use AulaX\AcademicCalendar\Application\ListSchoolYears\SchoolYearView;
+use AulaX\AcademicStructure\Application\Port\StaffDirectory;
 use AulaX\AcademicStructure\Application\Port\StructurePermissions;
 use AulaX\AcademicStructure\Application\StructureAccess;
 use AulaX\AcademicStructure\Application\StructureLoader;
+use AulaX\AcademicStructure\Domain\CoordinatorAssignment;
 use AulaX\AcademicStructure\Domain\Grade;
+use AulaX\AcademicStructure\Domain\SchoolYearStructure;
 use AulaX\AcademicStructure\Domain\Section;
 use AulaX\Catalogs\Application\Subjects;
 use AulaX\Tenancy\Application\InstitutionSettings\InstitutionSettingsQuery;
@@ -28,6 +31,7 @@ final readonly class ShowStructureQuery
         private ListSchoolYearsHandler $years,
         private InstitutionSettingsQuery $settings,
         private Subjects $subjects,
+        private StaffDirectory $staff,
         private StructurePermissions $permissions,
     ) {}
 
@@ -70,6 +74,8 @@ final readonly class ShowStructureQuery
         usort($sections, fn (Section $a, Section $b) => [array_search($a->grade(), Grade::cases(), true), $a->letter()->value]
             <=> [array_search($b->grade(), Grade::cases(), true), $b->letter()->value]);
 
+        $people = $this->staff->describe($this->assignedPeople($structure));
+
         return new StructureView(
             $chosen,
             $structure->status()->value,
@@ -90,7 +96,61 @@ final readonly class ShowStructureQuery
                 $structure->curricula(),
             ),
             $subjectOptions,
+            array_map(fn (CoordinatorAssignment $coordinator) => [
+                'accountId' => $coordinator->accountId,
+                'level' => $coordinator->level,
+                'grades' => array_map(fn (Grade $grade) => $grade->value, $coordinator->grades),
+            ], $structure->coordinators()),
+            $people,
+            $this->orphans($sections, $people),
+            $this->staff->candidates(StaffDirectory::TEACHER),
+            $this->staff->candidates(StaffDirectory::COORDINATOR),
         );
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function assignedPeople(SchoolYearStructure $structure): array
+    {
+        $people = array_map(fn (CoordinatorAssignment $coordinator) => $coordinator->accountId, $structure->coordinators());
+
+        foreach ($structure->sections() as $section) {
+            $people = [...$people, ...array_values($section->teachers())];
+
+            if ($section->guideAccountId() !== null) {
+                $people[] = $section->guideAccountId();
+            }
+        }
+
+        return array_values(array_unique($people));
+    }
+
+    /**
+     * The assignments kept for people who are no longer active members: the
+     * institution reassigns them by hand (EAC-R05.6, R08.5).
+     *
+     * @param  list<Section>  $sections
+     * @param  array<int, array{name: string, active: bool}>  $people
+     * @return list<array{sectionId: int, subjectId: ?int, accountId: int}>
+     */
+    private function orphans(array $sections, array $people): array
+    {
+        $orphans = [];
+
+        foreach ($sections as $section) {
+            if ($section->guideAccountId() !== null && ! $people[$section->guideAccountId()]['active']) {
+                $orphans[] = ['sectionId' => (int) $section->id(), 'subjectId' => null, 'accountId' => $section->guideAccountId()];
+            }
+
+            foreach ($section->teachers() as $subjectId => $accountId) {
+                if (! $people[$accountId]['active']) {
+                    $orphans[] = ['sectionId' => (int) $section->id(), 'subjectId' => $subjectId, 'accountId' => $accountId];
+                }
+            }
+        }
+
+        return $orphans;
     }
 
     /**

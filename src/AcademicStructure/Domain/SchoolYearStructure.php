@@ -245,6 +245,85 @@ final class SchoolYearStructure
         }
     }
 
+    /**
+     * Who teaches a subject of the curriculum in a section, replacing whoever
+     * did (EAC-R05.1, R05.3, R05.4), in any level (EAC-R05.7).
+     *
+     * @throws BusinessRuleViolation
+     */
+    public function assignTeacher(int $sectionId, int $subjectId, int $accountId): void
+    {
+        $this->assertWritable();
+        $section = $this->section($sectionId);
+
+        if (! in_array($subjectId, $this->curriculumOf($section->grade()), true)) {
+            throw BusinessRuleViolation::onField('subject', 'La materia no está en el pensum del grado.');
+        }
+
+        $section->assignTeacher($subjectId, $accountId);
+    }
+
+    /**
+     * The subject stays without teacher in the section (EAC-R05.5).
+     */
+    public function removeTeacher(int $sectionId, int $subjectId): void
+    {
+        $this->assertWritable();
+        $this->section($sectionId)->removeTeacher($subjectId);
+    }
+
+    /**
+     * The guide teacher of a section, replacing the one before; null removes
+     * it (EAC-R06.1, R06.5).
+     */
+    public function setGuide(int $sectionId, ?int $accountId): void
+    {
+        $this->assertWritable();
+        $this->section($sectionId)->setGuide($accountId);
+    }
+
+    /**
+     * A coordinator of a level of the institution, of all of it or some of
+     * its grades (EAC-R06.3); several per level (EAC-R06.6). Assigning a
+     * person again in the same level replaces what they coordinate there.
+     *
+     * @throws BusinessRuleViolation
+     */
+    public function assignCoordinator(CoordinatorAssignment $assignment): void
+    {
+        $this->assertWritable();
+
+        if (! in_array($assignment->level, $this->offeredLevels, true)) {
+            throw BusinessRuleViolation::onField('level', 'Ese nivel no es del plantel.');
+        }
+
+        foreach ($assignment->grades as $grade) {
+            if ($grade->level() !== $assignment->level) {
+                throw BusinessRuleViolation::onField('grades', 'Esos grados no son de ese nivel.');
+            }
+        }
+
+        $this->removeCoordinatorOf($assignment->accountId, $assignment->level);
+        $this->coordinators[] = $assignment;
+    }
+
+    /**
+     * EAC-R06.5.
+     */
+    public function removeCoordinator(int $accountId, string $level): void
+    {
+        $this->assertWritable();
+        $this->removeCoordinatorOf($accountId, $level);
+    }
+
+    private function removeCoordinatorOf(int $accountId, string $level): void
+    {
+        $this->coordinators = array_values(array_filter(
+            $this->coordinators,
+            fn (CoordinatorAssignment $coordinator) => ! ($coordinator->accountId === $accountId && $coordinator->level === $level),
+        ));
+    }
+
     private function offers(Grade $grade): bool
     {
         return in_array($grade->level(), $this->offeredLevels, true);

@@ -63,6 +63,41 @@ final class StructureAudit
         ]);
     }
 
+    public static function teacherAssigned(Section $section, int $subjectId, ?int $before, ?int $after): AuditEvent
+    {
+        return AuditEvent::of('structure.teacher.assigned', self::section($section), [
+            FieldChange::of('subject_id', null, $subjectId),
+            FieldChange::of('account_id', $before, $after),
+        ]);
+    }
+
+    public static function guideChanged(Section $section, ?int $before): AuditEvent
+    {
+        return AuditEvent::of('structure.guide.changed', self::section($section), [
+            FieldChange::of('guide_account_id', $before, $section->guideAccountId()),
+        ]);
+    }
+
+    /**
+     * @param  list<string>  $grades
+     */
+    public static function coordinatorAssigned(int $schoolYearId, int $accountId, string $level, array $grades): AuditEvent
+    {
+        return AuditEvent::of('structure.coordinator.assigned', self::year($schoolYearId), [
+            FieldChange::of('account_id', null, $accountId),
+            FieldChange::of('level', null, $level),
+            FieldChange::of('grades', null, $grades),
+        ]);
+    }
+
+    public static function coordinatorRemoved(int $schoolYearId, int $accountId, string $level): AuditEvent
+    {
+        return AuditEvent::of('structure.coordinator.removed', self::year($schoolYearId), [
+            FieldChange::of('account_id', $accountId, null),
+            FieldChange::of('level', $level, null),
+        ]);
+    }
+
     private static function section(Section $section): AuditSubject
     {
         return AuditSubject::of('section', (int) $section->id());

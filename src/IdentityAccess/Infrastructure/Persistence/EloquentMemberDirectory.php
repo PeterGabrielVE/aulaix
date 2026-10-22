@@ -68,6 +68,42 @@ final readonly class EloquentMemberDirectory implements MemberDirectory
         return $id === null ? null : (int) $id;
     }
 
+    public function activeMembersWithRole(string $role): array
+    {
+        $teamKey = config('permission.column_names.team_foreign_key');
+
+        return $this->memberQuery()
+            ->where('membership.status', MembershipStatus::Active->value)
+            ->whereExists(fn (QueryBuilder $assigned) => $assigned
+                ->selectRaw('1')
+                ->from(config('permission.table_names.model_has_roles').' as assigned')
+                ->join('roles', 'roles.id', '=', 'assigned.role_id')
+                ->whereColumn('assigned.model_id', 'users.id')
+                ->where('assigned.model_type', (new AccountModel)->getMorphClass())
+                ->where('assigned.'.$teamKey, $this->institutionId())
+                ->where('roles.name', $role))
+            ->orderByRaw('users.name collate "es-x-icu"')
+            ->orderBy('users.id')
+            ->get(['users.id', 'users.name'])
+            ->map(fn (object $row) => ['id' => (int) $row->id, 'name' => $row->name])
+            ->all();
+    }
+
+    public function accountNames(array $accountIds): array
+    {
+        if ($accountIds === []) {
+            return [];
+        }
+
+        return DB::table('users')
+            ->join('institution_memberships as membership', 'membership.user_id', '=', 'users.id')
+            ->where('membership.institution_id', $this->institutionId())
+            ->whereIn('users.id', $accountIds)
+            ->get(['users.id', 'users.name', 'membership.status'])
+            ->mapWithKeys(fn (object $row) => [(int) $row->id => ['name' => $row->name, 'active' => $row->status === MembershipStatus::Active->value]])
+            ->all();
+    }
+
     public function pendingInvitations(?string $search): array
     {
         return $this->invitationQuery()

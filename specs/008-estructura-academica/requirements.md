@@ -1,7 +1,7 @@
 ---
 spec: 008-estructura-academica
 prefijo: EAC
-estado: aprobada
+estado: implementada
 fecha: 2026-10-22
 aprobada: 2026-10-22
 backlog: F1-16 – F1-19
@@ -349,34 +349,34 @@ incorporadas](#decisiones-de-producto-incorporadas-2026-10-22).
 | EAC-R04.1 | `tests/Unit/AcademicStructure/Domain/CopyStructureTest.php` › «copies the sections and the curriculum, without the people»; `tests/Unit/AcademicCalendar/Application/SchoolYearLookupTest.php` › «finds the year just before another one»; `tests/Unit/AcademicStructure/Application/CurriculumAndCopyTest.php` › «copies the structure of the year before into a planned year, recorded» |
 | EAC-R04.2 | `tests/Unit/AcademicStructure/Domain/CopyStructureTest.php` › «copies only into a planned year with no structure yet» |
 | EAC-R04.3 | `tests/Unit/AcademicStructure/Domain/CopyStructureTest.php` › «copies only the grades the institution offers now» |
-| EAC-R05.1 | |
-| EAC-R05.2 | |
-| EAC-R05.3 | |
-| EAC-R05.4 | |
-| EAC-R05.5 | |
-| EAC-R05.6 | |
-| EAC-R05.7 | |
-| EAC-R06.1 | |
-| EAC-R06.2 | |
-| EAC-R06.3 | |
-| EAC-R06.4 | |
-| EAC-R06.5 | |
-| EAC-R06.6 | |
+| EAC-R05.1 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «assigns a teacher to a subject of the curriculum in a section, one per subject»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «assigns and replaces the teacher of a subject, recorded with old and new»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «a manager assigns the teacher of a subject, the guide and a coordinator»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «only a teacher of the institution can teach or guide» |
+| EAC-R05.2 | `tests/Feature/AcademicStructure/Infrastructure/StaffDirectoryTest.php` › «tells whether a person is an active member with a role»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «takes a teacher who is also Director, but not a Director who is not a teacher, nor someone inactive or unknown» |
+| EAC-R05.3 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «refuses a subject that is not in the curriculum of the section grade» |
+| EAC-R05.4 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «assigns a teacher to a subject of the curriculum in a section, one per subject»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «assigns and replaces the teacher of a subject, recorded with old and new» |
+| EAC-R05.5 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «removes a teacher, leaving the subject without one»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «removes a teacher» |
+| EAC-R05.6 | `tests/Feature/AcademicStructure/Infrastructure/AssignmentQueriesTest.php` › «names the people assigned and flags, without removing, those who are no longer active members» |
+| EAC-R05.7 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «assigns specialists in Inicial too, besides the guide» |
+| EAC-R06.1 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «names, replaces and removes the guide of a section»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «names and removes the guide teacher, only a teacher»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «a manager assigns the teacher of a subject, the guide and a coordinator» |
+| EAC-R06.2 | `tests/Feature/AcademicStructure/Infrastructure/StaffDirectoryTest.php` › «tells whether a person is an active member with a role»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «names and removes the guide teacher, only a teacher» |
+| EAC-R06.3 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «assigns coordinators to a whole level or to some of its grades, several per level»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «assigns and removes coordinators, only coordinators»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «who may not manage the structure gets 403 assigning people»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «a manager assigns the teacher of a subject, the guide and a coordinator» |
+| EAC-R06.4 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «refuses a level the institution does not offer, or grades of another level»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «assigns and removes coordinators, only coordinators» |
+| EAC-R06.5 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «names, replaces and removes the guide of a section»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «names and removes the guide teacher, only a teacher»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «assigns and removes coordinators, only coordinators» |
+| EAC-R06.6 | `tests/Unit/AcademicStructure/Domain/AssignmentsTest.php` › «assigns coordinators to a whole level or to some of its grades, several per level» |
 | EAC-R07.1 | `tests/Unit/AcademicStructure/Domain/SchoolYearStructureTest.php` › «allows any change while the year is planned, even of what is in use» |
-| EAC-R07.2 | `tests/Unit/AcademicStructure/Domain/SchoolYearStructureTest.php` › «allows creating, adding and changing while the year is active, but not removing what is in use» |
+| EAC-R07.2 | `tests/Unit/AcademicStructure/Domain/SchoolYearStructureTest.php` › «allows creating, adding and changing while the year is active, but not removing what is in use»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «assigns and replaces the teacher of a subject, recorded with old and new» |
 | EAC-R07.3 | `tests/Unit/AcademicStructure/Domain/SchoolYearStructureTest.php` › «allows creating, adding and changing while the year is active, but not removing what is in use»; `tests/Unit/AcademicStructure/Application/SectionsTest.php` › «removes a section, unless it has students in the active year»; `tests/Unit/AcademicStructure/Application/CurriculumAndCopyTest.php` › «does not take out of the active year a subject that has grades» |
 | EAC-R07.4 | `tests/Unit/AcademicStructure/Domain/SchoolYearStructureTest.php` › «changes nothing of a closed year»; `tests/Unit/AcademicStructure/Application/SectionsTest.php` › «changes nothing of a closed year, nor of a year it does not have» |
 | EAC-R08.1 | `tests/Feature/AcademicStructure/Infrastructure/StructureQueriesTest.php` › «shows the active year by default: its grades, sections in order and curriculum»; `tests/Feature/AcademicStructure/StructureManagementTest.php` › «the screen shows the structure to teachers and coordinators, read only» |
-| EAC-R08.2 | |
+| EAC-R08.2 | `tests/Feature/AcademicStructure/Infrastructure/AssignmentQueriesTest.php` › «lists a teacher assignments of the active year»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «a teacher sees its own classes» |
 | EAC-R08.3 | `tests/Feature/AcademicStructure/Infrastructure/StructureQueriesTest.php` › «tells other modules the sections of a year with their capacity» |
-| EAC-R08.4 | |
-| EAC-R08.5 | |
-| EAC-R09.1 | |
+| EAC-R08.4 | `tests/Feature/AcademicStructure/Infrastructure/AssignmentQueriesTest.php` › «tells other modules whether a person teaches a subject in a section of the active year, and their sections» |
+| EAC-R08.5 | `tests/Feature/AcademicStructure/Infrastructure/AssignmentQueriesTest.php` › «names the people assigned and flags, without removing, those who are no longer active members»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «the screen names the people assigned and warns of those no longer active» |
+| EAC-R09.1 | `tests/Feature/AcademicStructure/AccountDeletionBlockTest.php` › «whoever teaches a subject in the active year can not delete the account» |
 | EAC-R10.1 | `tests/Unit/AcademicStructure/Application/SectionsTest.php` › «refuses whoever may not manage the structure»; `tests/Feature/AcademicStructure/StructureManagementTest.php` › «a manager opens sections and sets the curriculum of the planned year»; `tests/Feature/AcademicStructure/StructureManagementTest.php` › «who may not manage the structure gets 403 on every change» |
 | EAC-R10.2 | `tests/Feature/AcademicStructure/StructurePermissionsTest.php` › «existing institutions get gestionar-estructura for Administrador and Director, and ver-estructura for teachers and coordinators too» |
 | EAC-R10.3 | `tests/Feature/AcademicStructure/StructurePermissionsTest.php` › «existing institutions get gestionar-estructura for Administrador and Director, and ver-estructura for teachers and coordinators too» |
-| EAC-R10.4 | `tests/Feature/AcademicStructure/StructureManagementTest.php` › «who may not manage the structure gets 403 on every change»; `tests/Feature/AcademicStructure/StructureManagementTest.php` › «a member without ver-estructura does not see the screen» |
-| EAC-R11.1 | `tests/Unit/AcademicStructure/Application/StructureAuditTest.php` › «records a new section with its grade, letter and capacity»; `tests/Unit/AcademicStructure/Application/SectionsTest.php` › «creates a section under the calendar lock, recorded inside the transaction»; `tests/Unit/AcademicStructure/Application/CurriculumAndCopyTest.php` › «keeps the curriculum of a grade with subjects of the catalog of its level, recorded»; `tests/Unit/AcademicStructure/Application/CurriculumAndCopyTest.php` › «copies the structure of the year before into a planned year, recorded» |
+| EAC-R10.4 | `tests/Feature/AcademicStructure/StructureManagementTest.php` › «who may not manage the structure gets 403 on every change»; `tests/Feature/AcademicStructure/StructureManagementTest.php` › «a member without ver-estructura does not see the screen»; `tests/Feature/AcademicStructure/AssignmentManagementTest.php` › «who may not manage the structure gets 403 assigning people» |
+| EAC-R11.1 | `tests/Unit/AcademicStructure/Application/StructureAuditTest.php` › «records a new section with its grade, letter and capacity»; `tests/Unit/AcademicStructure/Application/SectionsTest.php` › «creates a section under the calendar lock, recorded inside the transaction»; `tests/Unit/AcademicStructure/Application/CurriculumAndCopyTest.php` › «keeps the curriculum of a grade with subjects of the catalog of its level, recorded»; `tests/Unit/AcademicStructure/Application/CurriculumAndCopyTest.php` › «copies the structure of the year before into a planned year, recorded»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «assigns and replaces the teacher of a subject, recorded with old and new» |
 | EAC-R12.1 | `tests/Feature/AcademicStructure/StructureIsolationTest.php` › «an institution only sees its own structure»; `tests/Feature/AcademicStructure/StructureManagementTest.php` › «the structure of another institution does not exist here» |
 | EAC-R12.2 | `tests/Feature/AcademicStructure/StructureManagementTest.php` › «the structure of another institution does not exist here» |
-| EAC-R12.3 | |
+| EAC-R12.3 | `tests/Feature/AcademicStructure/Infrastructure/StaffDirectoryTest.php` › «does not take a member of another institution»; `tests/Unit/AcademicStructure/Application/AssignmentsTest.php` › «takes a teacher who is also Director, but not a Director who is not a teacher, nor someone inactive or unknown» |

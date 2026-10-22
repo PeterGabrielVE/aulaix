@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
@@ -222,7 +224,14 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
                 Route::put('/estructura/{year}/pensum/{grade}', [StructureController::class, 'curriculum'])
                     ->where('grade', '[a-z_0-9]+')->name('structure.curriculum');
                 Route::post('/estructura/{year}/copiar', [StructureController::class, 'copy'])->name('structure.copy');
+                Route::put('/estructura/secciones/{section}/materias/{subject}/docente', [AssignmentController::class, 'teacher'])
+                    ->whereNumber('subject')->name('structure.teacher');
+                Route::put('/estructura/secciones/{section}/guia', [AssignmentController::class, 'guide'])->name('structure.guide');
+                Route::post('/estructura/{year}/coordinadores', [AssignmentController::class, 'coordinator'])->name('structure.coordinators.store');
+                Route::delete('/estructura/{year}/coordinadores/{account}/{level}', [AssignmentController::class, 'removeCoordinator'])
+                    ->whereNumber('account')->where('level', '[a-z_]+')->name('structure.coordinators.destroy');
             });
+        Route::get('/mis-asignaciones', MyAssignmentsController::class)->name('my-assignments');
 
         // SPEC-009: the students and their guardians.
         Route::whereNumber(['student', 'guardian'])->group(function () {

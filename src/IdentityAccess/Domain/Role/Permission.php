@@ -25,6 +25,12 @@ enum Permission: string
     /** SPEC-009 EST-R09: registering, editing, withdrawing and transferring students, and their guardians. */
     case ManageStudents = 'gestionar-estudiantes';
 
+    /** SPEC-008 EAC-R10: sections, curriculum and who teaches, guides and coordinates. */
+    case ManageStructure = 'gestionar-estructura';
+
+    /** SPEC-008 EAC-R08.1: seeing that structure. */
+    case ViewStructure = 'ver-estructura';
+
     /** SPEC-007 CAL-R05.2: grades of a closed term. Granted person by person, never by a base role (CAL-R05.4). */
     case EditClosedTermGrades = 'editar-notas-lapso-cerrado';
 }

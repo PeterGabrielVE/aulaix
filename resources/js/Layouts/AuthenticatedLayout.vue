@@ -59,6 +59,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                                     Año escolar
                                 </NavLink>
                                 <NavLink
+                                    v-if="can.viewStructure"
+                                    :href="route('structure.show')"
+                                    :active="route().current('structure.*')"
+                                >
+                                    Estructura
+                                </NavLink>
+                                <NavLink
                                     v-if="isGuardian"
                                     :href="route('my-students.index')"
                                     :active="route().current('my-students.*')"
@@ -233,6 +240,13 @@ const flashSuccess = computed(() => usePage().props.flash?.success);
                             :active="route().current('calendar.*')"
                         >
                             Año escolar
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="can.viewStructure"
+                            :href="route('structure.show')"
+                            :active="route().current('structure.*')"
+                        >
+                            Estructura
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             v-if="isGuardian"

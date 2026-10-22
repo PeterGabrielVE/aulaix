@@ -22,6 +22,8 @@ use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\SectionController;
+use App\Http\Controllers\StructureController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\TransferController;
@@ -207,6 +209,20 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
             Route::get('/estados/{state}/municipios', [GeographyController::class, 'municipalities'])->name('geography.municipalities');
             Route::get('/municipios/{municipality}/parroquias', [GeographyController::class, 'parishes'])->name('geography.parishes');
         });
+
+        // SPEC-008: the structure of each school year.
+        Route::get('/estructura', [StructureController::class, 'show'])
+            ->middleware('permission:ver-estructura')->name('structure.show');
+        Route::middleware(['permission:gestionar-estructura', 'throttle:60,1'])
+            ->whereNumber(['year', 'section'])
+            ->group(function () {
+                Route::post('/estructura/{year}/secciones', [SectionController::class, 'store'])->name('structure.sections.store');
+                Route::put('/estructura/secciones/{section}/cupo', [SectionController::class, 'capacity'])->name('structure.sections.capacity');
+                Route::delete('/estructura/secciones/{section}', [SectionController::class, 'destroy'])->name('structure.sections.destroy');
+                Route::put('/estructura/{year}/pensum/{grade}', [StructureController::class, 'curriculum'])
+                    ->where('grade', '[a-z_0-9]+')->name('structure.curriculum');
+                Route::post('/estructura/{year}/copiar', [StructureController::class, 'copy'])->name('structure.copy');
+            });
 
         // SPEC-009: the students and their guardians.
         Route::whereNumber(['student', 'guardian'])->group(function () {

@@ -218,10 +218,10 @@ administración ni escalar privilegios.
 
   | Rol | Permisos |
   |-----|----------|
-  | Administrador | todos salvo `editar-notas-lapso-cerrado` (`gestionar-usuarios`, `gestionar-roles`, `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario`, `gestionar-plantel`, `ver-plantel`, `gestionar-estudiantes`) |
-  | Director | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario`, `ver-plantel`, `gestionar-estudiantes` |
-  | Coordinador | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
-  | Docente | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
+  | Administrador | todos salvo `editar-notas-lapso-cerrado` (`gestionar-usuarios`, `gestionar-roles`, `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario`, `gestionar-plantel`, `ver-plantel`, `gestionar-estudiantes`, `gestionar-estructura`, `ver-estructura`) |
+  | Director | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario`, `ver-plantel`, `gestionar-estudiantes`, `gestionar-estructura`, `ver-estructura` |
+  | Coordinador | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-estructura` |
+  | Docente | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-estructura` |
   | Representante | `ver-calificaciones` |
   | Estudiante | `ver-calificaciones` |
 
@@ -231,6 +231,8 @@ administración ni escalar privilegios.
   base y se concede persona por persona. `gestionar-plantel` y `ver-plantel`
   se añadieron el 2026-10-20 (SPEC-006, INS-R05.3, R05.4).
   `gestionar-estudiantes` se añadió el 2026-10-21 (SPEC-009, EST-R09.2).
+  `gestionar-estructura` y `ver-estructura` se añadieron el 2026-10-22
+  (SPEC-008, EAC-R10.2, R10.3).
 - **IAM-R11.2** — El sistema deberá tratar un rol con el mismo nombre en dos
   instituciones como dos roles independientes.
 - **IAM-R11.3** — El sistema deberá conceder a un usuario solo los permisos de

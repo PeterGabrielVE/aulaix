@@ -45,7 +45,7 @@ specs/
 ```
 
 Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
-(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007), `EST` (009).
+(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007), `EAC` (008), `EST` (009).
 
 ## Índice
 
@@ -59,6 +59,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [004 Identidad global](004-identidad-global/) | `IdentityAccess` | aprobada v3 (todo implementado salvo R08.12, bloqueado por D1) | implementada | implementada (PR A, B y C) |
 | [006 Institución y configuración](006-institucion/) | `Tenancy` | implementada | implementada | implementada |
 | [007 Año escolar y lapsos](007-anio-escolar/) | `AcademicCalendar` | implementada | implementada | implementada |
+| [008 Estructura académica](008-estructura-academica/) | `AcademicStructure` | aprobada | aprobada | implementando |
 | [009 Estudiantes y representantes](009-estudiantes/) | `Students` | implementada | implementada | implementada |
 
 ¹ Los requisitos de 001–003 documentan el comportamiento que **ya existe**

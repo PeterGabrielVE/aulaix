@@ -2,6 +2,7 @@
 
 use App\Providers\AppServiceProvider;
 use AulaX\AcademicCalendar\Infrastructure\AcademicCalendarServiceProvider;
+use AulaX\AcademicStructure\Infrastructure\AcademicStructureServiceProvider;
 use AulaX\Ai\Infrastructure\AiServiceProvider;
 use AulaX\Audit\Infrastructure\AuditServiceProvider;
 use AulaX\Catalogs\Infrastructure\CatalogsServiceProvider;
@@ -20,4 +21,5 @@ return [
     IdentityAccessServiceProvider::class,
     AcademicCalendarServiceProvider::class,
     StudentsServiceProvider::class,
+    AcademicStructureServiceProvider::class,
 ];

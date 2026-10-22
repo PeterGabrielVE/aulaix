@@ -46,6 +46,8 @@ class HandleInertiaRequests extends Middleware
                     'manageCalendar' => (bool) $request->user()?->can('gestionar-calendario'),
                     'viewInstitution' => (bool) $request->user()?->can('ver-plantel'),
                     'manageInstitution' => (bool) $request->user()?->can('gestionar-plantel'),
+                    'viewStructure' => (bool) $request->user()?->can('ver-estructura'),
+                    'manageStructure' => (bool) $request->user()?->can('gestionar-estructura'),
                     'viewStudents' => (bool) $request->user()?->can('ver-estudiantes'),
                     'manageStudents' => (bool) $request->user()?->can('gestionar-estudiantes'),
                 ],

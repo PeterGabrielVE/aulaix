@@ -22,6 +22,8 @@ use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\SectionController;
+use App\Http\Controllers\StructureController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\TransferController;
@@ -85,6 +87,9 @@ const MIGRATED_CONTROLLERS = [
     TransferController::class,
     GuardianPortalController::class,
     CorrectionController::class,
+    // SPEC-008
+    StructureController::class,
+    SectionController::class,
 ];
 
 /**

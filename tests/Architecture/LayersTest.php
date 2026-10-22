@@ -12,6 +12,7 @@ use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
 use App\Http\Controllers\GeographyController;
+use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveMembership;
@@ -74,6 +76,9 @@ const MIGRATED_CONTROLLERS = [
     InstitutionSettingsController::class,
     InstitutionAssetController::class,
     GeographyController::class,
+    // SPEC-009
+    StudentController::class,
+    GuardianController::class,
 ];
 
 /**

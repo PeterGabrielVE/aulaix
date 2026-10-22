@@ -12,6 +12,7 @@ use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
 use App\Http\Controllers\GeographyController;
+use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -194,6 +196,30 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
         Route::prefix('api/geografia')->whereNumber(['state', 'municipality'])->group(function () {
             Route::get('/estados/{state}/municipios', [GeographyController::class, 'municipalities'])->name('geography.municipalities');
             Route::get('/municipios/{municipality}/parroquias', [GeographyController::class, 'parishes'])->name('geography.parishes');
+        });
+
+        // SPEC-009: the students and their guardians.
+        Route::whereNumber(['student', 'guardian'])->group(function () {
+            Route::middleware('permission:gestionar-estudiantes')->group(function () {
+                Route::get('/estudiantes/nuevo', [StudentController::class, 'create'])->name('students.create');
+                Route::get('/estudiantes/{student}/editar', [StudentController::class, 'edit'])->name('students.edit');
+                Route::get('/representantes/buscar', [GuardianController::class, 'find'])
+                    ->middleware('throttle:60,1')->name('guardians.find');
+
+                Route::middleware('throttle:30,1')->group(function () {
+                    Route::post('/estudiantes', [StudentController::class, 'store'])->name('students.store');
+                    Route::put('/estudiantes/{student}', [StudentController::class, 'update'])->name('students.update');
+                    Route::put('/estudiantes/{student}/salud', [StudentController::class, 'health'])->name('students.health');
+                    Route::post('/estudiantes/{student}/retiro', [StudentController::class, 'withdraw'])->name('students.withdraw');
+                    Route::post('/estudiantes/{student}/reincorporacion', [StudentController::class, 'reinstate'])->name('students.reinstate');
+                    Route::put('/representantes/{guardian}', [GuardianController::class, 'update'])->name('guardians.update');
+                });
+            });
+
+            Route::middleware('permission:ver-estudiantes')->group(function () {
+                Route::get('/estudiantes', [StudentController::class, 'index'])->name('students.index');
+                Route::get('/estudiantes/{student}', [StudentController::class, 'show'])->name('students.show');
+            });
         });
 
         Route::middleware('permission:ver-bitacora')->group(function () {

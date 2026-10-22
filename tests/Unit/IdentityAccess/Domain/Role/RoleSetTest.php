@@ -26,11 +26,11 @@ it('lists its roles in priority order, unknown names last', function () {
     expect(RoleSet::of('Estudiante', 'Auditor externo', 'Director')->inPriorityOrder())->toBe(['Director', 'Estudiante', 'Auditor externo']);
 });
 
-test('each base role carries the permissions of SPEC-002, SPEC-005, SPEC-006 and SPEC-007', function (BaseRole $role, array $permissions) {
+test('each base role carries the permissions its specs give it', function (BaseRole $role, array $permissions) {
     expect(array_map(fn (Permission $permission) => $permission->value, $role->permissions()))->toEqualCanonicalizing($permissions);
 })->with([
-    'Administrador' => [BaseRole::Administrador, ['gestionar-usuarios', 'gestionar-roles', 'ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'gestionar-plantel', 'ver-plantel']],
-    'Director' => [BaseRole::Director, ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'ver-plantel']],
+    'Administrador' => [BaseRole::Administrador, ['gestionar-usuarios', 'gestionar-roles', 'ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'gestionar-plantel', 'ver-plantel', 'gestionar-estudiantes']],
+    'Director' => [BaseRole::Director, ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'ver-plantel', 'gestionar-estudiantes']],
     'Coordinador' => [BaseRole::Coordinador, ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones']],
     'Docente' => [BaseRole::Docente, ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones']],
     'Representante' => [BaseRole::Representante, ['ver-calificaciones']],

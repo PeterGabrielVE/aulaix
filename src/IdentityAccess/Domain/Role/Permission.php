@@ -22,6 +22,9 @@ enum Permission: string
     /** SPEC-006 INS-R05.3: seeing them, without the signatures. */
     case ViewInstitution = 'ver-plantel';
 
+    /** SPEC-009 EST-R09: registering, editing, withdrawing and transferring students, and their guardians. */
+    case ManageStudents = 'gestionar-estudiantes';
+
     /** SPEC-007 CAL-R05.2: grades of a closed term. Granted person by person, never by a base role (CAL-R05.4). */
     case EditClosedTermGrades = 'editar-notas-lapso-cerrado';
 }

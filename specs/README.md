@@ -45,7 +45,7 @@ specs/
 ```
 
 Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
-(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007).
+(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007), `EST` (009).
 
 ## Índice
 
@@ -59,6 +59,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [004 Identidad global](004-identidad-global/) | `IdentityAccess` | aprobada v3 (todo implementado salvo R08.12, bloqueado por D1) | implementada | implementada (PR A, B y C) |
 | [006 Institución y configuración](006-institucion/) | `Tenancy` | implementada | implementada | implementada |
 | [007 Año escolar y lapsos](007-anio-escolar/) | `AcademicCalendar` | implementada | implementada | implementada |
+| [009 Estudiantes y representantes](009-estudiantes/) | `Students` | aprobada | aprobada | implementando |
 
 ¹ Los requisitos de 001–003 documentan el comportamiento que **ya existe**
 (Fase 1, F1-01 a F1-07), extraído del código y de los tests actuales. Los
@@ -93,3 +94,4 @@ Las specs siguientes de la Fase 1 y sus bloqueos están en [roadmap.md](roadmap.
 | [0005](adr/0005-auditoria-explicita.md) | Auditoría explícita en los casos de uso, dentro de la transacción | aceptada |
 | [0006](adr/0006-rls-identidad-global.md) | Aislamiento de la identidad global sin funciones privilegiadas (modifica 0004) | aceptada (enmienda C, 2026-10-16) |
 | [0007](adr/0007-concurrencia-calendario.md) | Reglas entre años escolares: bloqueo por plantel y restricciones de la base de datos | aceptada |
+| [0008](adr/0008-traslados-entre-planteles.md) | Traslados entre planteles: visibilidad cruzada por la RLS y copia en una sola transacción | aceptada |

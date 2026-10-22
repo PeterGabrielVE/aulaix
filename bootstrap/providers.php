@@ -7,6 +7,7 @@ use AulaX\Audit\Infrastructure\AuditServiceProvider;
 use AulaX\Catalogs\Infrastructure\CatalogsServiceProvider;
 use AulaX\IdentityAccess\Infrastructure\IdentityAccessServiceProvider;
 use AulaX\Shared\Infrastructure\SharedServiceProvider;
+use AulaX\Students\Infrastructure\StudentsServiceProvider;
 use AulaX\Tenancy\Infrastructure\TenancyServiceProvider;
 
 return [
@@ -18,4 +19,5 @@ return [
     AuditServiceProvider::class,
     IdentityAccessServiceProvider::class,
     AcademicCalendarServiceProvider::class,
+    StudentsServiceProvider::class,
 ];

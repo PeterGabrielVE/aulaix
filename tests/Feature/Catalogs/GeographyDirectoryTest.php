@@ -32,3 +32,11 @@ test('it tells whether a parish exists and where it is', function () {
         ->and($directory->parishExists(999_999))->toBeFalse()
         ->and($directory->locationOf($parish))->toBe(['state_id' => $state, 'municipality_id' => $municipality, 'parish_id' => $parish]);
 });
+
+test('it tells whether a state exists', function () {
+    [$state] = geography();
+    $directory = app(GeographyDirectory::class);
+
+    expect($directory->stateExists($state))->toBeTrue()
+        ->and($directory->stateExists(999_999))->toBeFalse();
+});

@@ -23,6 +23,11 @@ final class EloquentGeographyDirectory implements GeographyDirectory
         return self::options(ParishModel::query()->where('municipality_id', $municipalityId)->orderBy('name')->get(['id', 'name']));
     }
 
+    public function stateExists(int $stateId): bool
+    {
+        return StateModel::query()->whereKey($stateId)->exists();
+    }
+
     public function parishExists(int $parishId): bool
     {
         return ParishModel::query()->whereKey($parishId)->exists();

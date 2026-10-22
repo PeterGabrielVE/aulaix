@@ -25,6 +25,8 @@ interface GeographyDirectory
      */
     public function parishesOf(int $municipalityId): array;
 
+    public function stateExists(int $stateId): bool;
+
     public function parishExists(int $parishId): bool;
 
     /**

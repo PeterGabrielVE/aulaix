@@ -76,6 +76,11 @@ function updateInstitution(array $data = []): void
             return [];
         }
 
+        public function stateExists(int $stateId): bool
+        {
+            return false;
+        }
+
         public function parishExists(int $parishId): bool
         {
             return $parishId === 10;

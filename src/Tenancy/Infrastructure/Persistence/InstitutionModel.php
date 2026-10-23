@@ -45,6 +45,7 @@ final class InstitutionModel extends Model
         'email',
         'logo_path',
         'type',
+        'dependency',
         'education_levels',
     ];
 

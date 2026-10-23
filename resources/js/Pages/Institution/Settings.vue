@@ -25,8 +25,13 @@ const form = useForm({
     phone: props.details.phone ?? '',
     email: props.details.email ?? '',
     type: props.details.type ?? '',
+    dependency: props.details.dependency ?? '',
     levels: [...props.details.levels],
 });
+
+// Only a public institution has a dependency (INS-R02.4, R02.5).
+const isPublic = computed(() => form.type === 'publica');
+const dependencyName = computed(() => props.options.dependencies.find((dependency) => dependency.code === props.details.dependency)?.name);
 
 // The location selectors walk the catalog: state → municipality → parish.
 const fetchList = async (url) => (await (await fetch(url, { headers: { Accept: 'application/json' } })).json()).data;
@@ -51,7 +56,9 @@ const chooseMunicipality = async () => {
         : [];
 };
 
-const save = () => form.put(route('institution.update'), { preserveScroll: true });
+const save = () => form
+    .transform((data) => ({ ...data, dependency: isPublic.value && data.dependency !== '' ? data.dependency : null }))
+    .put(route('institution.update'), { preserveScroll: true });
 
 const logoForm = useForm({ file: null });
 const uploadLogo = () => logoForm.post(route('institution.logo.store'), { preserveScroll: true, forceFormData: true, onSuccess: () => logoForm.reset() });
@@ -169,6 +176,16 @@ const typeName = computed(() => props.options.types.find((type) => type.code ===
                                 </select>
                                 <p v-else class="mt-1 text-sm text-gray-800">{{ typeName ?? 'Sin indicar' }}</p>
                                 <InputError class="mt-1" :message="form.errors.type" />
+                            </div>
+
+                            <div v-if="isPublic">
+                                <InputLabel for="dependency" value="Dependencia" />
+                                <select v-if="canManage" id="dependency" v-model="form.dependency" :class="selectClass">
+                                    <option value="">Sin indicar</option>
+                                    <option v-for="dependency in options.dependencies" :key="dependency.code" :value="dependency.code">{{ dependency.name }}</option>
+                                </select>
+                                <p v-else class="mt-1 text-sm text-gray-800">{{ dependencyName ?? 'Sin indicar' }}</p>
+                                <InputError class="mt-1" :message="form.errors.dependency" />
                             </div>
 
                             <fieldset>

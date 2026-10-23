@@ -287,6 +287,10 @@ y pedir que corrijan un dato, sin depender de ir al plantel.
 - **EST-R08.6** — Si la cuenta está vinculada al único representante legal
   de algún estudiante activo, entonces el sistema deberá impedir su
   eliminación (IDG-R08.3).
+- **EST-R08.7** — Cuando el sistema vincula a un representante la cuenta de
+  alguien que ya es miembro del plantel sin el rol Representante, el
+  sistema deberá darle ese rol y registrarlo en la bitácora. *(Añadido por
+  SPEC-013, 2026-10-23.)*
 
 ### EST-R09 — Permisos
 
@@ -407,6 +411,7 @@ no usan AulaX; importación en lote.
 | EST-R08.4 | `tests/Feature/Students/CorrectionTest.php` › «a guardian asks for a correction, a manager attends it, and the guardian sees it attended» |
 | EST-R08.5 | `tests/Feature/Students/CorrectionTest.php` › «a guardian asks for a correction, a manager attends it, and the guardian sees it attended»; `tests/Unit/Students/Domain/CorrectionRequestTest.php` › «is marked attended once» |
 | EST-R08.6 | `tests/Feature/Students/AccountDeletionBlockTest.php` › «the only legal guardian of an active student can not delete its account» |
+| EST-R08.7 | `tests/Unit/Students/Application/GuardianAccountTest.php` › «makes the member it links a Representante, before linking (SPEC-013 EST-R08.7)»; `tests/Feature/IdentityAccess/GrantRoleTest.php` › «adds the role to the ones the member has, and records it»; `tests/Feature/IdentityAccess/GrantRoleTest.php` › «does nothing when the member already has the role»; `tests/Feature/IdentityAccess/GrantRoleTest.php` › «nobody escalates to Administrador this way»; `tests/Feature/IdentityAccess/GrantRoleTest.php` › «refuses someone who is not a member of the open institution»; `tests/Feature/Students/GuardianInvitationTest.php` › «makes a member linked as guardian a Representante too, and records it (SPEC-013 EST-R08.7)» |
 | EST-R09.1 | `tests/Unit/Students/Application/RegisterStudentTest.php` › «refuses whoever may not manage students»; `tests/Feature/Students/StudentManagementTest.php` › «a manager registers a student with its guardian and lands on its record»; `tests/Feature/Students/StudentManagementTest.php` › «who may not manage students gets 403 on every change» |
 | EST-R09.2 | `tests/Feature/Students/StudentPermissionsTest.php` › «existing institutions get gestionar-estudiantes for Administrador and Director only»; `tests/Unit/IdentityAccess/Domain/Role/RoleSetTest.php` › «each base role carries the permissions its specs give it» |
 | EST-R09.3 | `tests/Feature/Students/StudentManagementTest.php` › «teachers and coordinators see the students, without their health data»; `tests/Feature/Students/StudentManagementTest.php` › «a guardian or a student without ver-estudiantes does not see the list» |

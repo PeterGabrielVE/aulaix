@@ -7,6 +7,7 @@ use AulaX\Tenancy\Application\ShowInstitution\ShowInstitutionHandler;
 use AulaX\Tenancy\Application\ShowInstitution\SignatureView;
 use AulaX\Tenancy\Application\UpdateInstitution\UpdateInstitutionCommand;
 use AulaX\Tenancy\Application\UpdateInstitution\UpdateInstitutionHandler;
+use AulaX\Tenancy\Domain\InstitutionDependency;
 use AulaX\Tenancy\Domain\InstitutionType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,12 @@ class InstitutionSettingsController extends Controller
         'subvencionada' => 'Subvencionado',
     ];
 
+    private const DEPENDENCY_NAMES = [
+        'nacional' => 'Nacional',
+        'estadal' => 'Estadal',
+        'municipal' => 'Municipal',
+    ];
+
     public function show(Request $request, ShowInstitutionHandler $showInstitution): Response
     {
         $canManage = (bool) $request->user()->can('gestionar-plantel');
@@ -43,6 +50,7 @@ class InstitutionSettingsController extends Controller
                 'phone' => $institution->phone,
                 'email' => $institution->email,
                 'type' => $institution->type,
+                'dependency' => $institution->dependency,
                 'levels' => $institution->levels,
                 'hasLogo' => $institution->hasLogo,
                 'signatures' => $institution->signatures === null ? null : array_map(fn (SignatureView $signature) => [
@@ -53,6 +61,7 @@ class InstitutionSettingsController extends Controller
             ],
             'options' => [
                 'types' => array_map(fn (InstitutionType $type) => ['code' => $type->value, 'name' => self::TYPE_NAMES[$type->value]], InstitutionType::cases()),
+                'dependencies' => array_map(fn (InstitutionDependency $dependency) => ['code' => $dependency->value, 'name' => self::DEPENDENCY_NAMES[$dependency->value]], InstitutionDependency::cases()),
                 'levels' => $institution->levelOptions,
                 'states' => $institution->states,
                 'municipalities' => $institution->municipalities,
@@ -74,6 +83,7 @@ class InstitutionSettingsController extends Controller
             email: $request->validated('email'),
             type: $request->validated('type'),
             levels: array_values($request->validated('levels')),
+            dependency: $request->validated('dependency'),
         ));
 
         return back()->with('success', 'Se guardaron los datos del plantel.');

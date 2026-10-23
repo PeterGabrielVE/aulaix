@@ -10,6 +10,7 @@ use AulaX\Tenancy\Application\TenantContext;
 use AulaX\Tenancy\Application\UpdateInstitution\UpdateInstitutionCommand;
 use AulaX\Tenancy\Application\UpdateInstitution\UpdateInstitutionHandler;
 use AulaX\Tenancy\Domain\Institution;
+use AulaX\Tenancy\Domain\InstitutionDependency;
 use AulaX\Tenancy\Domain\InstitutionProfile;
 use AulaX\Tenancy\Domain\InstitutionStatus;
 use AulaX\Tenancy\Domain\InstitutionType;
@@ -184,6 +185,27 @@ it('records nothing when nothing changed', function () {
     updateInstitution();
 
     expect($this->audit->types())->toHaveCount(1);
+});
+
+it('saves the dependency of a public institution and records it (SPEC-013 INS-R02.4)', function () {
+    updateInstitution(['type' => 'publica', 'dependency' => 'estadal']);
+
+    expect(openInstitution()->dependency)->toBe(InstitutionDependency::Estadal)
+        ->and($this->audit->changesOf(0)['dependency'])->toBe(['from' => null, 'to' => 'estadal']);
+});
+
+it('refuses a dependency for a private institution, or an unknown one (SPEC-013 INS-R02.4, R02.5)', function () {
+    expect(institutionErrors(['type' => 'privada', 'dependency' => 'nacional']))
+        ->toBe(['dependency' => ['La dependencia solo aplica a planteles públicos.']])
+        ->and(institutionErrors(['type' => 'publica', 'dependency' => 'federal']))
+        ->toBe(['dependency' => ['Elige nacional, estadal o municipal.']]);
+});
+
+it('drops the dependency when the institution stops being public (SPEC-013 INS-R02.5)', function () {
+    updateInstitution(['type' => 'publica', 'dependency' => 'municipal']);
+    updateInstitution(['type' => 'subvencionada']);
+
+    expect(openInstitution()->dependency)->toBeNull();
 });
 
 it('refuses whoever may not manage the institution', function () {

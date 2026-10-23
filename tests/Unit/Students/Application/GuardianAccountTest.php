@@ -112,6 +112,15 @@ it('links straight away a guardian who already is a member', function () {
         ->and($this->audit->types())->toBe(['students.guardian.account_linked']);
 });
 
+it('makes the member it links a Representante, before linking (SPEC-013 EST-R08.7)', function () {
+    $id = savedGuardianWithEmail();
+    $this->invitations->members['maria@correo.ve'] = 33;
+
+    inviteGuardian($id);
+
+    expect($this->invitations->granted)->toBe([['actor' => 7, 'member' => 33]]);
+});
+
 it('needs an email, and a guardian without access yet', function () {
     $withoutEmail = savedGuardianWithEmail(null);
 

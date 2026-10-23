@@ -27,6 +27,7 @@ final class InstitutionAudit
             'phone' => $institution->profile->phone,
             'email' => $institution->profile->email,
             'type' => $institution->type?->value,
+            'dependency' => $institution->dependency?->value,
             'levels' => $institution->levels?->codes(),
         ];
     }

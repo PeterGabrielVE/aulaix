@@ -6,6 +6,7 @@ namespace AulaX\Tenancy\Infrastructure\Persistence;
 
 use AulaX\Shared\Domain\InstitutionId;
 use AulaX\Tenancy\Domain\Institution;
+use AulaX\Tenancy\Domain\InstitutionDependency;
 use AulaX\Tenancy\Domain\InstitutionLevels;
 use AulaX\Tenancy\Domain\InstitutionProfile;
 use AulaX\Tenancy\Domain\InstitutionType;
@@ -31,6 +32,7 @@ final class InstitutionMapper
             ),
             $model->type === null ? null : InstitutionType::from($model->type),
             ($model->education_levels ?? []) === [] ? null : InstitutionLevels::of($model->education_levels),
+            $model->dependency === null ? null : InstitutionDependency::from($model->dependency),
         );
     }
 }

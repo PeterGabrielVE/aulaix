@@ -6,8 +6,9 @@ namespace AulaX\Students\Application\Port;
 
 /**
  * What Students asks IdentityAccess to give a guardian access (EST-R08.1):
- * whether the person already is a member of the open institution, and
- * inviting them as Representante otherwise.
+ * whether the person already is a member of the open institution, making a
+ * member Representante (EST-R08.7), and inviting them as Representante
+ * otherwise.
  */
 interface GuardianInvitations
 {
@@ -15,6 +16,11 @@ interface GuardianInvitations
      * The account id of the open institution's member with this email.
      */
     public function memberWithEmail(string $email): ?int;
+
+    /**
+     * Gives that member the Representante role too, if they lack it.
+     */
+    public function grantGuardianRole(int $actorId, int $memberId): void;
 
     /**
      * Invites the email to the open institution with the Representante role.

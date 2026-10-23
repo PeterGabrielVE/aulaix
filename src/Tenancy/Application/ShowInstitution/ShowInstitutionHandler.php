@@ -53,6 +53,7 @@ final readonly class ShowInstitutionHandler
             signatures: $includeSignatures
                 ? array_map(fn (Signature $signature) => new SignatureView($signature->role->value, $signature->signerName, $signature->signerTitle), $this->signatures->all())
                 : null,
+            dependency: $institution->dependency?->value,
         );
     }
 }

@@ -18,6 +18,7 @@ final readonly class InstitutionView
      * @param  list<array{id: int, name: string}>  $municipalities  Of the chosen state.
      * @param  list<array{id: int, name: string}>  $parishes  Of the chosen municipality.
      * @param  list<SignatureView>|null  $signatures  Null when not shown to this person.
+     * @param  ?string  $dependency  nacional, estadal or municipal; only for a public institution (INS-R02.4).
      */
     public function __construct(
         public string $name,
@@ -36,5 +37,6 @@ final readonly class InstitutionView
         public array $municipalities,
         public array $parishes,
         public ?array $signatures,
+        public ?string $dependency = null,
     ) {}
 }

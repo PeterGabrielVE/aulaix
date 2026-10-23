@@ -1,7 +1,10 @@
 <?php
 
+use AulaX\Shared\Domain\InstitutionId;
+use AulaX\Tenancy\Domain\InstitutionDependency;
 use AulaX\Tenancy\Domain\InstitutionRepository;
 use AulaX\Tenancy\Domain\InstitutionStatus;
+use AulaX\Tenancy\Domain\InstitutionType;
 use AulaX\Tenancy\Domain\Subdomain;
 use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel;
 
@@ -39,4 +42,16 @@ it('does not find an inactive institution', function () {
 
 it('does not find a subdomain no institution uses', function () {
     expect(app(InstitutionRepository::class)->findActiveBySubdomain(Subdomain::fromString('nadie')))->toBeNull();
+});
+
+it('saves and loads the dependency of a public institution (SPEC-013 INS-R02.4)', function () {
+    $stored = InstitutionModel::factory()->create(['subdomain' => 'publico']);
+    $repository = app(InstitutionRepository::class);
+    $institution = $repository->byId(InstitutionId::fromInt($stored->id))
+        ->changeType(InstitutionType::Publica)
+        ->changeDependency(InstitutionDependency::Municipal);
+
+    $repository->save($institution);
+
+    expect($repository->byId(InstitutionId::fromInt($stored->id))->dependency)->toBe(InstitutionDependency::Municipal);
 });

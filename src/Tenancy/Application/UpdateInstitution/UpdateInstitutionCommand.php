@@ -23,5 +23,6 @@ final readonly class UpdateInstitutionCommand
         public ?string $email,
         public string $type,
         public array $levels,
+        public ?string $dependency = null,
     ) {}
 }

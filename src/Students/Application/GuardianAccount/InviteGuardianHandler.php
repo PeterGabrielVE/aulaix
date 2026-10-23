@@ -20,7 +20,8 @@ use AulaX\Students\Domain\Guardian\GuardianRepository;
  * A manager gives a guardian access to AulaX (EST-R08.1): an invitation as
  * Representante, whose account is linked once accepted; or, when the email
  * already belongs to a member of the institution, that account straight
- * away (IdentityAccess does not invite its own members).
+ * away, made Representante too (EST-R08.7; IdentityAccess does not invite
+ * its own members).
  */
 final readonly class InviteGuardianHandler
 {
@@ -54,7 +55,9 @@ final readonly class InviteGuardianHandler
         $member = $this->invitations->memberWithEmail($email);
 
         if ($member !== null) {
-            $this->transactions->run(function () use ($guardian, $member) {
+            $this->transactions->run(function () use ($guardian, $member, $actorId) {
+                // EST-R08.7: nobody linked is left without the role (IAM-R12.3).
+                $this->invitations->grantGuardianRole($actorId, $member);
                 $guardian->linkAccount($member);
                 $this->guardians->save($guardian);
                 $this->audit->record(StudentAudit::guardianLinked($guardian));

@@ -65,6 +65,17 @@ it('links straight away a guardian who already is a member of the institution', 
     expect(DB::table('guardians')->value('account_id'))->toBe($teacher->id);
 });
 
+it('makes a member linked as guardian a Representante too, and records it (SPEC-013 EST-R08.7)', function () {
+    $teacher = userWithRole($this->institution, 'Docente', ['email' => 'maria@correo.ve']);
+    $guardian = studentWithGuardianEmail($this->institution, 'maria@correo.ve');
+
+    $this->actingAs($this->admin)->post(tenantUrl($this->institution, "/representantes/{$guardian}/invitacion"))->assertSessionHasNoErrors();
+
+    expect($teacher->fresh()->getRoleNames()->sort()->values()->all())->toBe(['Docente', 'Representante'])
+        ->and(DB::table('audit_entries')->where('event_type', 'identity.membership.roles_changed')->value('actor_user_id'))->toBe($this->admin->id)
+        ->and(DB::table('audit_entries')->where('event_type', 'students.guardian.account_linked')->exists())->toBeTrue();
+});
+
 it('needs the guardian email', function () {
     $guardian = studentWithGuardianEmail($this->institution, '');
 

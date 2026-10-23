@@ -42,6 +42,7 @@ final class EloquentInstitutionRepository implements InstitutionRepository
             'email' => $institution->profile->email,
             'logo_path' => $institution->profile->logoPath,
             'type' => $institution->type?->value,
+            'dependency' => $institution->dependency?->value,
             'education_levels' => json_encode($institution->levels?->codes() ?? []),
             'updated_at' => now(),
         ]);

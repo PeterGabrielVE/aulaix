@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use AulaX\Tenancy\Domain\InstitutionDependency;
 use AulaX\Tenancy\Domain\InstitutionType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,6 +31,7 @@ class InstitutionRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:30'],
             'email' => ['nullable', 'string', 'email', 'max:255'],
             'type' => ['required', Rule::enum(InstitutionType::class)],
+            'dependency' => ['nullable', Rule::enum(InstitutionDependency::class)],
             'levels' => ['required', 'array', 'list'],
             'levels.*' => ['string'],
         ];

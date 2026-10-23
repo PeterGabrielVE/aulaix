@@ -17,14 +17,15 @@ use AulaX\Tenancy\Application\InstitutionAudit;
 use AulaX\Tenancy\Application\OpenInstitution;
 use AulaX\Tenancy\Application\Port\InstitutionPermissions;
 use AulaX\Tenancy\Domain\Institution;
+use AulaX\Tenancy\Domain\InstitutionDependency;
 use AulaX\Tenancy\Domain\InstitutionLevels;
 use AulaX\Tenancy\Domain\InstitutionProfile;
 use AulaX\Tenancy\Domain\InstitutionRepository;
 use AulaX\Tenancy\Domain\InstitutionType;
 
 /**
- * The manager saves the details, type and levels of the open institution
- * (INS-R01 – R03). Every broken rule is reported at once; only the fields
+ * The manager saves the details, type, dependency and levels of the open
+ * institution (INS-R01 – R03). Every broken rule is reported at once; only the fields
  * that changed reach the audit log (INS-R06.1).
  */
 final readonly class UpdateInstitutionHandler
@@ -82,6 +83,7 @@ final readonly class UpdateInstitutionHandler
             $command->deaCode, $command->rif, $command->parishId, $command->address, $command->phone, $command->email,
         )));
         $attempt(fn (Institution $current) => $current->changeType(InstitutionType::fromInput($command->type)));
+        $attempt(fn (Institution $current) => $current->changeDependency(InstitutionDependency::fromInput($command->dependency)));
         $attempt(fn (Institution $current) => $current->changeLevels($this->levels($command->levels)));
 
         $violations = [...$violations, ...$this->platformViolations($institution, $command)];

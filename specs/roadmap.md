@@ -23,15 +23,16 @@ siendo la fuente de prioridades; este documento, la de dependencias técnicas.
 | `Notifications` | Correo, internas, WhatsApp, citaciones | F2-05, F2-06, F6-06 |
 | `Ai` | Puerto de IA, seudonimización, cuotas, casos de uso de IA | IA base / docente / analítica (F2-08 – F2-14, F3-02 – F3-08) |
 | `Billing` | Conceptos de cobro, pagos, conciliación, morosidad | Pagos (F2-15 – F2-18, F3-01 – F3-03) |
+| `Workspace` | Layout, menú e inicio por rol (vista compuesta, sin tablas: ADR 0009) | F1-11, F1-12 |
 | `Reporting` | Reportes y tableros (solo lectura, CQRS) | F3-09, F3-10, F8-01, F8-02 |
 | `Platform` | Operadores de plataforma, superadministración, planes y suscripciones | SaaS (F4-05, F4-06) |
 
 Fases 4 a 8 (offline, personal, bienestar, aula virtual, integraciones):
 sus módulos se definen cuando se especifiquen.
 
-**Vistas, no módulos:** el portal del representante (F2-07), los dashboards
-por rol (F1-12) y las apps móviles componen queries de varios módulos. No
-tienen dominio propio.
+**Vistas como módulos sin tablas (ADR 0009):** el portal del representante (F2-07), los dashboards
+por rol (F1-12) y las apps móviles componen queries de varios módulos. Sus
+reglas de composición viven en su dominio; no tienen tablas ni escrituras.
 
 ## Specs de la Fase 1, en orden de dependencias
 
@@ -50,7 +51,7 @@ tienen dominio propio.
 | 010 Inscripción | F1-25 – F1-27 | `Enrollment` | 008, 009 | por escribir; **bloqueada por F0-03** (reglas de prosecución) |
 | 011 Evaluación | F1-28 – F1-31 | `Evaluation` | 005, 007, 008, 010 | **bloqueada por F0-03** (escalas, redondeo, literales) |
 | 012 Documentos | F1-32 – F1-36 | `Documents` | 006, 011 | **bloqueada por F0-02** (formatos oficiales del MPPE) |
-| 013 Layout y menú por rol | F1-11, F1-12 | `app/` (frontend) | 004 | por escribir; en paralelo |
+| 013 Layout y menú por rol | F1-11, F1-12 | `Workspace` (nuevo, ADR 0009), `app/` | 004 – 009 | requisitos y diseño **aprobados** (2026-10-23); **PR A implementado** (dependencia del plantel, rol Representante al vincular); faltan PR B – D |
 | 014 Superadministración de plataforma | F4-06 (y operación de IDG-R11) | `Platform` (nuevo) | 004, 005, ADR nuevo | por escribir. Hasta que exista, soporte opera con el comando de consola de IDG-R11. Ver [consideraciones](#014--superadministración-de-plataforma) |
 | — Infraestructura | F1-37, F1-38 | DevOps | — | CD listo (`.github/workflows/cd.yml`); faltan el servidor y los respaldos (F1-38) |
 

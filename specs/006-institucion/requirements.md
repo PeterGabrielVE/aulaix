@@ -120,6 +120,13 @@ cada tipo.
 - **INS-R02.3** — El sistema deberá permitir a otras funcionalidades
   consultar el tipo del plantel abierto, para que cada una decida qué
   ofrece según el tipo.
+- **INS-R02.4** — Mientras el plantel es público, el sistema deberá
+  permitir al Administrador indicar su dependencia: `nacional`, `estadal`
+  o `municipal`, y rechazar cualquier otro valor. *(Añadido por SPEC-013,
+  2026-10-23.)*
+- **INS-R02.5** — Mientras el plantel es privado o subvencionado, el
+  sistema no deberá guardar ninguna dependencia. *(Añadido por SPEC-013,
+  2026-10-23.)*
 
 ### INS-R03 — Niveles que ofrece el plantel
 
@@ -236,6 +243,8 @@ subdominio; escalas de evaluación (SPEC-011); qué módulos activa cada tipo
 | INS-R02.1 | `tests/Unit/Tenancy/Domain/InstitutionSettingsTest.php` › «knows the three kinds of institution»; `tests/Feature/Institution/Infrastructure/InstitutionRepositoryTest.php` › «stores the name, details, type and levels of an institution» |
 | INS-R02.2 | `tests/Unit/Tenancy/Domain/InstitutionSettingsTest.php` › «refuses any other kind»; `tests/Feature/Institution/SignatureIsolationTest.php` › «an institution has a known type, or none yet»; `tests/Feature/Institution/InstitutionSettingsTest.php` › «the form is checked at the edge too» |
 | INS-R02.3 | `tests/Feature/Institution/Infrastructure/InstitutionQueriesTest.php` › «tells other modules the type and levels of the open institution, without inventing them» |
+| INS-R02.4 | `tests/Unit/Tenancy/Domain/InstitutionDependencyTest.php` › «keeps the dependency of a public institution, or none»; `tests/Unit/Tenancy/Domain/InstitutionDependencyTest.php` › «refuses any other dependency»; `tests/Unit/Tenancy/Application/UpdateInstitutionTest.php` › «saves the dependency of a public institution and records it (SPEC-013 INS-R02.4)»; `tests/Feature/Tenancy/Infrastructure/Persistence/EloquentInstitutionRepositoryTest.php` › «saves and loads the dependency of a public institution (SPEC-013 INS-R02.4)»; `tests/Feature/Tenancy/Infrastructure/Persistence/InstitutionDependencyColumnTest.php` › «the database rejects an unknown dependency»; `tests/Feature/Institution/InstitutionSettingsTest.php` › «a public institution saves and shows its dependency (SPEC-013 INS-R02.4)» |
+| INS-R02.5 | `tests/Unit/Tenancy/Domain/InstitutionDependencyTest.php` › «refuses a dependency for an institution that is not public»; `tests/Unit/Tenancy/Domain/InstitutionDependencyTest.php` › «drops the dependency when the institution stops being public»; `tests/Unit/Tenancy/Application/UpdateInstitutionTest.php` › «drops the dependency when the institution stops being public (SPEC-013 INS-R02.5)»; `tests/Feature/Tenancy/Infrastructure/Persistence/InstitutionDependencyColumnTest.php` › «the database rejects a dependency for a private or subsidised institution, or without a type»; `tests/Feature/Institution/InstitutionSettingsTest.php` › «a dependency is refused for a private institution, or when unknown (SPEC-013 INS-R02.4, R02.5)» |
 | INS-R03.1 | `tests/Unit/Catalogs/Application/EducationLevelsTest.php` › «lists the catalog levels with their names»; `tests/Unit/Tenancy/Application/UpdateInstitutionTest.php` › «updates the details, type and levels of the open institution only» |
 | INS-R03.2 | `tests/Unit/Tenancy/Domain/InstitutionSettingsTest.php` › «offers one level at least, each once»; `tests/Unit/Tenancy/Application/UpdateInstitutionTest.php` › «rejects a level that is not in the catalog» |
 | INS-R03.3 | `tests/Feature/Institution/Infrastructure/InstitutionQueriesTest.php` › «tells other modules the type and levels of the open institution, without inventing them» |

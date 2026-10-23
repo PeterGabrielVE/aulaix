@@ -227,3 +227,33 @@ test('the new name shows in the institution and in the central selector', functi
     $this->actingAs($admin)->get(centralUrl('/planteles'))
         ->assertInertia(fn ($page) => $page->where('institutions.0.name', 'Colegio Nuevo'));
 });
+
+test('a public institution saves and shows its dependency (SPEC-013 INS-R02.4)', function () {
+    $institution = tenant();
+
+    asMember($institution, 'Administrador')
+        ->put(tenantUrl($institution, '/plantel'), institutionForm(['type' => 'publica', 'dependency' => 'estadal']))
+        ->assertSessionHasNoErrors();
+
+    expect($institution->fresh()->dependency)->toBe('estadal');
+
+    asMember($institution, 'Administrador')->get(tenantUrl($institution, '/plantel'))
+        ->assertInertia(fn ($page) => $page
+            ->where('details.dependency', 'estadal')
+            ->has('options.dependencies', 3)
+        );
+});
+
+test('a dependency is refused for a private institution, or when unknown (SPEC-013 INS-R02.4, R02.5)', function () {
+    $institution = tenant();
+
+    asMember($institution, 'Administrador')
+        ->put(tenantUrl($institution, '/plantel'), institutionForm(['type' => 'privada', 'dependency' => 'nacional']))
+        ->assertSessionHasErrors(['dependency' => 'La dependencia solo aplica a planteles públicos.']);
+
+    asMember($institution, 'Administrador')
+        ->put(tenantUrl($institution, '/plantel'), institutionForm(['type' => 'publica', 'dependency' => 'federal']))
+        ->assertSessionHasErrors('dependency');
+
+    expect($institution->fresh()->dependency)->toBeNull();
+});

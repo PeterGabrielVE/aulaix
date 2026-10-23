@@ -30,6 +30,15 @@ function registeredWithGuardian(Institution $institution, string $name, string $
     return (int) DB::table('students')->max('id');
 }
 
+/**
+ * Whether the menu offers «Mis representados» (EST-R08.2, now an entry of
+ * SPEC-013 NAV-R03).
+ */
+function offersMyStudents(iterable $groups): bool
+{
+    return collect($groups)->flatMap(fn ($group) => $group['entries'])->contains('key', 'my_students');
+}
+
 function asGuardian(string $path)
 {
     return test()->actingAs(test()->guardianUser)->get(tenantUrl(test()->institution, $path));
@@ -42,7 +51,7 @@ test('a guardian sees its represented students only', function () {
             ->component('MyStudents/Index')
             ->has('students', 1)
             ->where('students.0.id', $this->own)
-            ->where('auth.isGuardian', true));
+            ->where('layout.navigation', fn ($groups) => offersMyStudents($groups)));
 });
 
 test('a guardian sees the basic record of its student, without health data', function () {
@@ -67,7 +76,7 @@ test('an account that represents no student here has nothing to see', function (
     $teacher = userWithRole($this->institution, 'Docente');
 
     $this->actingAs($teacher)->get(tenantUrl($this->institution, '/mis-representados'))->assertForbidden();
-    $this->actingAs($teacher)->get(tenantUrl($this->institution, '/estudiantes'))->assertInertia(fn ($page) => $page->where('auth.isGuardian', false));
+    $this->actingAs($teacher)->get(tenantUrl($this->institution, '/estudiantes'))->assertInertia(fn ($page) => $page->where('layout.navigation', fn ($groups) => ! offersMyStudents($groups)));
 });
 
 test('the guardian of one institution sees nothing in another', function () {

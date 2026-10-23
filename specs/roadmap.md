@@ -51,7 +51,7 @@ reglas de composición viven en su dominio; no tienen tablas ni escrituras.
 | 010 Inscripción | F1-25 – F1-27 | `Enrollment` | 008, 009 | por escribir; **bloqueada por F0-03** (reglas de prosecución) |
 | 011 Evaluación | F1-28 – F1-31 | `Evaluation` | 005, 007, 008, 010 | **bloqueada por F0-03** (escalas, redondeo, literales) |
 | 012 Documentos | F1-32 – F1-36 | `Documents` | 006, 011 | **bloqueada por F0-02** (formatos oficiales del MPPE) |
-| 013 Layout y menú por rol | F1-11, F1-12 | `Workspace` (nuevo, ADR 0009), `app/` | 004 – 009 | requisitos y diseño **aprobados** (2026-10-23); **PR A implementado** (dependencia del plantel, rol Representante al vincular); faltan PR B – D |
+| 013 Layout y menú por rol | F1-11, F1-12 | `Workspace` (nuevo, ADR 0009), `app/` | 004 – 009 | requisitos y diseño **aprobados** (2026-10-23); **PR A y B implementados** (dependencia del plantel, rol Representante al vincular; módulo `Workspace`, barra superior, menú por permisos y layout); faltan PR C (inicio) y D (navegador) |
 | 014 Superadministración de plataforma | F4-06 (y operación de IDG-R11) | `Platform` (nuevo) | 004, 005, ADR nuevo | por escribir. Hasta que exista, soporte opera con el comando de consola de IDG-R11. Ver [consideraciones](#014--superadministración-de-plataforma) |
 | — Infraestructura | F1-37, F1-38 | DevOps | — | CD listo (`.github/workflows/cd.yml`); faltan el servidor y los respaldos (F1-38) |
 

@@ -231,7 +231,8 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
                 Route::delete('/estructura/{year}/coordinadores/{account}/{level}', [AssignmentController::class, 'removeCoordinator'])
                     ->whereNumber('account')->where('level', '[a-z_]+')->name('structure.coordinators.destroy');
             });
-        Route::get('/mis-asignaciones', MyAssignmentsController::class)->name('my-assignments');
+        // SPEC-008 EAC-R08.2, for the teachers; SPEC-013 NAV-R03.3: as its menu entry.
+        Route::get('/mis-asignaciones', MyAssignmentsController::class)->middleware('role:Docente')->name('my-assignments');
 
         // SPEC-009: the students and their guardians.
         Route::whereNumber(['student', 'guardian'])->group(function () {

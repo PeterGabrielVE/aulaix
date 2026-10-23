@@ -10,6 +10,7 @@ use AulaX\IdentityAccess\Infrastructure\IdentityAccessServiceProvider;
 use AulaX\Shared\Infrastructure\SharedServiceProvider;
 use AulaX\Students\Infrastructure\StudentsServiceProvider;
 use AulaX\Tenancy\Infrastructure\TenancyServiceProvider;
+use AulaX\Workspace\Infrastructure\WorkspaceServiceProvider;
 
 return [
     AppServiceProvider::class,
@@ -22,4 +23,5 @@ return [
     AcademicCalendarServiceProvider::class,
     StudentsServiceProvider::class,
     AcademicStructureServiceProvider::class,
+    WorkspaceServiceProvider::class,
 ];

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace AulaX\AcademicCalendar\Infrastructure;
 
+use AulaX\AcademicCalendar\Application\CalendarContext\CalendarContexts;
 use AulaX\AcademicCalendar\Application\CalendarLock;
 use AulaX\AcademicCalendar\Application\ListSchoolYears\SchoolYearList;
 use AulaX\AcademicCalendar\Domain\SchoolYearRepository;
+use AulaX\AcademicCalendar\Infrastructure\Persistence\DatabaseCalendarContexts;
 use AulaX\AcademicCalendar\Infrastructure\Persistence\DatabaseCalendarLock;
 use AulaX\AcademicCalendar\Infrastructure\Persistence\EloquentSchoolYearList;
 use AulaX\AcademicCalendar\Infrastructure\Persistence\EloquentSchoolYearRepository;
@@ -24,6 +26,7 @@ final class AcademicCalendarServiceProvider extends ServiceProvider
     public array $bindings = [
         SchoolYearRepository::class => EloquentSchoolYearRepository::class,
         SchoolYearList::class => EloquentSchoolYearList::class,
+        CalendarContexts::class => DatabaseCalendarContexts::class,
     ];
 
     public function register(): void

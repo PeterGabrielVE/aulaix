@@ -2,14 +2,17 @@
 
 namespace App\Http\Middleware;
 
-use AulaX\AcademicStructure\Application\Port\StaffDirectory;
-use AulaX\Students\Application\GuardianPortal\IsGuardianQuery;
+use App\Http\Navigation\MenuCatalog;
 use AulaX\Tenancy\Application\CurrentTenant;
+use AulaX\Workspace\Application\ShowLayout\LayoutView;
+use AulaX\Workspace\Application\ShowLayout\ShowLayoutQuery;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    private ?LayoutView $layoutView = null;
+
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -38,11 +41,6 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                // SPEC-009 EST-R08.2: «Mis representados», by the account's link to a guardian here.
-                'isGuardian' => fn () => $institution !== null && $request->user() !== null
-                    && app(IsGuardianQuery::class)((int) $request->user()->id),
-                // SPEC-008 EAC-R08.2: «Mis asignaciones», for the institution's teachers.
-                'isTeacher' => fn () => $institution !== null && (bool) $request->user()?->hasRole(StaffDirectory::TEACHER),
                 'can' => [
                     'manageUsers' => (bool) $request->user()?->can('gestionar-usuarios'),
                     'viewAudit' => (bool) $request->user()?->can('ver-bitacora'),
@@ -65,8 +63,36 @@ class HandleInertiaRequests extends Middleware
                 'logoUrl' => $institution->logoVersion === null ? null : route('institution.logo', ['v' => $institution->logoVersion]),
             ] : null,
             'appDomain' => config('app.domain'),
-            // The central selector, where switching institution needs no password (IDG-R03.7).
-            'switchInstitutionUrl' => $institution ? route('central.home') : null,
+            // SPEC-013: menu, year and term, person and role, from Workspace.
+            'layout' => fn () => $institution !== null && $request->user() !== null ? $this->layout($request) : null,
+            // The central selector, where switching institution needs no password (IDG-R03.7),
+            // offered to who has another institution (NAV-R02.5, R02.6).
+            'switchInstitutionUrl' => fn () => $institution !== null && $request->user() !== null && $this->layoutView($request)->canSwitchInstitution
+                ? route('central.home')
+                : null,
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function layout(Request $request): array
+    {
+        $layout = $this->layoutView($request);
+
+        return [
+            'navigation' => MenuCatalog::present($layout, $request),
+            'calendar' => ['year' => $layout->yearName, 'term' => $layout->openTerm],
+            'person' => ['name' => $request->user()->name, 'primaryRole' => $layout->primaryRole],
+            'canSwitchInstitution' => $layout->canSwitchInstitution,
+        ];
+    }
+
+    /**
+     * Built once per request: the layout and the switch link share it.
+     */
+    private function layoutView(Request $request): LayoutView
+    {
+        return $this->layoutView ??= app(ShowLayoutQuery::class)((int) $request->user()->id);
     }
 }

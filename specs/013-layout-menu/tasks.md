@@ -81,12 +81,12 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 2 — Dominio de `Workspace` (PHP puro)
 
-- [ ] **T-06** — Esqueleto del módulo (`src/Workspace`, ServiceProvider
+- [x] **T-06** — Esqueleto del módulo (`src/Workspace`, ServiceProvider
   registrado), `Capabilities`, `MenuGroup` y `MenuEntry` (las once entradas
   con grupo, orden y condición).
   - Criterios: NAV-R03.1
   - Test: `tests/Unit/Workspace/Domain/CapabilitiesTest.php`
-- [ ] **T-07** — Servicio `Navigation::for(Capabilities)`:
+- [x] **T-07** — Servicio `Navigation::for(Capabilities)`:
   - entradas visibles por condición, sumando roles y vínculo;
   - agrupadas, en orden y sin grupos vacíos;
   - «Inicio» siempre visible.
@@ -96,18 +96,18 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 3 — Consultas del layout
 
-- [ ] **T-08** — `CalendarContextQuery` (AcademicCalendar), con el puerto
+- [x] **T-08** — `CalendarContextQuery` (AcademicCalendar), con el puerto
   `CalendarContexts` y el adaptador `SqlCalendarContexts` (una consulta).
   Devuelve el año activo y su nombre, el lapso abierto y si hay un año
   planificado.
   - Criterios: NAV-R02.2, R02.3, R02.8
   - Test: `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php`
-- [ ] **T-09** — `MembershipContextQuery` (IdentityAccess): roles en el
+- [x] **T-09** — `MembershipContextQuery` (IdentityAccess): roles en el
   plantel abierto, rol principal (IAM-R12.2) y número de planteles con
   membresía activa.
   - Criterios: NAV-R02.4, R02.5, R02.6
   - Test: `tests/Feature/IdentityAccess/Infrastructure/MembershipContextQueryTest.php`
-- [ ] **T-10** — Puertos `ViewerCapabilities` y `CalendarSource`:
+- [x] **T-10** — Puertos `ViewerCapabilities` y `CalendarSource`:
   - `ShowLayoutQuery` → `LayoutView`;
   - adaptadores `GateViewerCapabilities` (memorizado por petición) y
     `AcademicCalendarSource`;
@@ -117,7 +117,7 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 4 — Adaptadores de entrada y layout
 
-- [ ] **T-11** — `app/Http/Navigation/MenuCatalog`: ruta, texto,
+- [x] **T-11** — `app/Http/Navigation/MenuCatalog`: ruta, texto,
   descripción y patrón de pantalla actual por `MenuEntry`.
   `HandleInertiaRequests` comparte `layout`:
   - quita `auth.isGuardian` y `auth.isTeacher`;
@@ -126,14 +126,14 @@ Cuatro PRs, cada uno usable por sí mismo:
   - Test: `tests/Feature/Workspace/LayoutPropsTest.php` (con y sin año
     activo, sin lapso abierto, rol principal, uno o varios planteles, y un
     año activado visible en la siguiente petición)
-- [ ] **T-12** — Paridad menú–rutas. Para cada rol base y para un
+- [x] **T-12** — Paridad menú–rutas. Para cada rol base y para un
   representante vinculado:
   - cada entrada visible responde 200;
   - cada entrada oculta responde 403 o lleva a otro inicio, como hoy;
   - toda clave de `MenuEntry` está en `MenuCatalog`.
   - Criterios: NAV-R03.3, R03.5
   - Test: `tests/Feature/Workspace/NavigationRouteParityTest.php`
-- [ ] **T-13** — Layout Vue:
+- [x] **T-13** — Layout Vue:
   - `AuthenticatedLayout` reescrito, con `Components/Layout/SideNav`,
     `TopBar` y `MobileNav`;
   - composable `useFocusTrap`;
@@ -142,8 +142,9 @@ Cuatro PRs, cada uno usable por sí mismo:
   - `npm run build`.
   - Criterios: NAV-R01.1 – R01.5, R02.1, R02.7
   - Test: `tests/Feature/Workspace/LayoutPropsTest.php` (props que dibuja).
-    El comportamiento en el navegador lo verifica T-24.
-- [ ] **T-14** — Rendimiento del layout: no más de 5 consultas por petición
+    El comportamiento en el navegador lo verifica T-25: R01.1 – R01.3,
+    R01.5, R02.1 y R02.7 quedan sin test hasta entonces.
+- [x] **T-14** — Rendimiento del layout: no más de 5 consultas por petición
   para `layout` (registro de consultas en una pantalla del plantel).
   - Criterios: NAV-NF03
   - Test: `tests/Feature/Workspace/LayoutQueryCountTest.php` (`group=perf`)

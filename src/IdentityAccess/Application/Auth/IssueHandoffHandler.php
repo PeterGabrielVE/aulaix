@@ -32,9 +32,12 @@ final readonly class IssueHandoffHandler
     {
         $account = AccountId::fromInt($accountId);
 
-        foreach ($this->institutions->activeFor($account) as $institution) {
+        $institutions = $this->institutions->activeFor($account);
+
+        foreach ($institutions as $institution) {
             if ($institution->subdomain === $subdomain) {
-                return $this->tokens->issue($account, InstitutionId::fromInt($institution->id));
+                // SPEC-013 NAV-R02.5: only here are all of them visible (ADR 0006).
+                return $this->tokens->issue($account, InstitutionId::fromInt($institution->id), count($institutions));
             }
         }
 

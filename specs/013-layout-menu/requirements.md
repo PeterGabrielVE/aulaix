@@ -374,7 +374,10 @@ aquí solo se citan:
   pantallas de inicio a las que IAM-R12 lleva.
 - **EAC-R08.2 (SPEC-008) y EST-R08.2 (SPEC-009):** sus entradas «Mis
   asignaciones» y «Mis representados» pasan a la tabla de NAV-R03, con las
-  mismas condiciones.
+  mismas condiciones. Por NAV-R03.3, «Mis asignaciones» responde 403 a
+  quien no tiene el rol Docente.
+- **IDG-R03.7 (SPEC-004):** «Cambiar de plantel» se ofrece solo a quien
+  tiene membresía activa en otro plantel (NAV-R02.5, R02.6).
 - **SPEC-006, criterios nuevos de dependencia:**
   - INS-R02.4 — Mientras el plantel es público, el sistema deberá
     permitir al Administrador indicar su dependencia: `nacional`,
@@ -428,21 +431,21 @@ incorporadas](#decisiones-de-producto-incorporadas-2026-10-23).
 | NAV-R01.1 | |
 | NAV-R01.2 | |
 | NAV-R01.3 | |
-| NAV-R01.4 | |
+| NAV-R01.4 | `tests/Feature/Workspace/LayoutPropsTest.php` › «groups the menu, with links and the current screen marked»; `tests/Feature/Workspace/LayoutPropsTest.php` › «marks the entry of a screen that depends on it» |
 | NAV-R01.5 | |
 | NAV-R02.1 | |
-| NAV-R02.2 | |
-| NAV-R02.3 | |
-| NAV-R02.4 | |
-| NAV-R02.5 | |
-| NAV-R02.6 | |
+| NAV-R02.2 | `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «names the active year and its open term»; `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «says when the active year has no open term»; `tests/Feature/Workspace/LayoutPropsTest.php` › «shows the active year, its open term, the person and their primary role» |
+| NAV-R02.3 | `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «says when there is no active year, and whether one is planned»; `tests/Unit/Workspace/Application/ShowLayoutTest.php` › «says there is no active year, and offers no switch to a member of one institution»; `tests/Feature/Workspace/LayoutPropsTest.php` › «says there is no active year, or no open term» |
+| NAV-R02.4 | `tests/Feature/IdentityAccess/Infrastructure/MembershipContextQueryTest.php` › «tells the roles, the highest-priority one and the active institutions of an account»; `tests/Feature/IdentityAccess/Infrastructure/MembershipContextQueryTest.php` › «has no primary role for a member without base roles»; `tests/Feature/Workspace/LayoutPropsTest.php` › «shows the active year, its open term, the person and their primary role» |
+| NAV-R02.5 | `tests/Feature/IdentityAccess/Infrastructure/MembershipContextQueryTest.php` › «takes the active institutions from the session, counted where all of them were visible»; `tests/Unit/Workspace/Application/ShowLayoutTest.php` › «shows the menu, the year and term, the primary role and the switch»; `tests/Feature/IdentityAccess/HandoffTest.php` › «the institution menu offers to switch institution»; `tests/Feature/IdentityAccess/Infrastructure/CacheHandoffTokensTest.php` › «carries how many institutions the account was active in (SPEC-013 NAV-R02.5)» |
+| NAV-R02.6 | `tests/Feature/IdentityAccess/HandoffTest.php` › «a member of one institution is not offered to switch (SPEC-013 NAV-R02.6)»; `tests/Unit/Workspace/Application/ShowLayoutTest.php` › «says there is no active year, and offers no switch to a member of one institution» |
 | NAV-R02.7 | |
-| NAV-R02.8 | |
-| NAV-R03.1 | |
-| NAV-R03.2 | |
-| NAV-R03.3 | |
-| NAV-R03.4 | |
-| NAV-R03.5 | |
+| NAV-R02.8 | `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «sees a year activated a moment ago, with one query»; `tests/Feature/Workspace/LayoutPropsTest.php` › «says there is no active year, or no open term» |
+| NAV-R03.1 | `tests/Unit/Workspace/Domain/CapabilitiesTest.php` › «shows each entry to whoever meets its condition»; `tests/Unit/Workspace/Domain/CapabilitiesTest.php` › «shows the home entry to every member»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «adds the entries of every role and link a person has»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «shows a teacher its classes and what it may consult» |
+| NAV-R03.2 | `tests/Unit/Workspace/Domain/CapabilitiesTest.php` › «knows the eleven entries of the menu, in order and by group»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «groups the entries of a Director, without the ones of other roles»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «hides the groups without entries for a guardian»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «leaves only the home entry to a member without roles»; `tests/Feature/Workspace/LayoutPropsTest.php` › «groups the menu, with links and the current screen marked» |
+| NAV-R03.3 | `tests/Feature/Workspace/NavigationRouteParityTest.php` › «an entry shows exactly when its screen opens»; `tests/Feature/Workspace/NavigationRouteParityTest.php` › «every entry has its presentation, and only those» |
+| NAV-R03.4 | `tests/Feature/Workspace/LayoutPropsTest.php` › «says there is no active year, or no open term»; `tests/Feature/Workspace/LayoutPropsTest.php` › «no longer shares the menu flags it replaces» |
+| NAV-R03.5 | `tests/Feature/Workspace/NavigationRouteParityTest.php` › «an entry shows exactly when its screen opens» |
 | NAV-R04.1 | |
 | NAV-R04.2 | |
 | NAV-R04.3 | |
@@ -475,7 +478,7 @@ incorporadas](#decisiones-de-producto-incorporadas-2026-10-23).
 | NAV-R10.3 | |
 | NAV-NF01 | |
 | NAV-NF02 | |
-| NAV-NF03 | |
+| NAV-NF03 | `tests/Feature/Workspace/LayoutQueryCountTest.php` › «the layout adds five queries at most to a page» |
 | NAV-NF04 | |
 | NAV-NF05 | |
 | INS-R02.4 (SPEC-006) | Ver la matriz de `specs/006-institucion/requirements.md` (`InstitutionDependencyTest`, `UpdateInstitutionTest`, `EloquentInstitutionRepositoryTest`, `InstitutionDependencyColumnTest`, `InstitutionSettingsTest`) |

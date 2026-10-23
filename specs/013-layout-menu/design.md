@@ -376,3 +376,35 @@ que ya existen:
   `Representante`, que no lleva permisos de gestión, por la política
   existente y con bitácora. Rollback: revertir el PR; los roles ya dados se
   quitan desde «Usuarios».
+
+## Notas de implementación
+
+### PR B
+
+- **Planteles de la cuenta, en la sesión** (decisión P-04, 2026-10-23). Con
+  un plantel abierto, la RLS oculta las demás membresías (ADR 0006), así
+  que `MembershipContextQuery` no puede contarlas. Las cuenta
+  `IssueHandoffHandler` en el dominio central, que sí las ve, y viajan en
+  el token de traspaso (`HandoffGrant`). `ConsumeHandoffHandler` las guarda
+  en la sesión del plantel con el puerto nuevo `MembershipSession`. Una
+  sesión sin traspaso cuenta 1. Si la persona entra a otro plantel durante
+  la sesión, el número se actualiza en su próximo traspaso.
+- **«Mis asignaciones» exige el rol Docente** (`role:Docente`). Antes abría
+  para cualquier miembro, con la lista vacía. NAV-R03.3 pide que una
+  pantalla abra si y solo si se ve su entrada, y el test de paridad lo
+  detectó.
+- **La entrada actual la marca el servidor.** `MenuCatalog::present` usa
+  `routeIs` con los patrones de cada entrada y envía `active`, en vez de
+  enviar los patrones al navegador.
+- **`ViewerCapabilities` pregunta al Gate** por los permisos que usan el
+  menú y el inicio. Los roles y el rol principal salen de
+  `MembershipContextQuery`, y `RoleSet` gana `primaryRole()`, que
+  reutiliza `homeScreen()`.
+- **Medida de NAV-NF03.** El test cuenta lo que añade el layout (3
+  consultas: roles, vínculo de representante y calendario). Los permisos
+  de la persona ya los carga `auth.can` en cada página.
+- **Tests que cambian solo dónde leen.** `GuardianPortalTest` comprobaba
+  la entrada «Mis representados» con `auth.isGuardian`. Ahora la busca en
+  `layout.navigation`. El test de `HandoffTest` sobre «Cambiar de plantel»
+  entra con dos planteles por el traspaso, y un caso nuevo cubre el de un
+  solo plantel (NAV-R02.6).

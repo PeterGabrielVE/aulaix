@@ -59,17 +59,25 @@ final readonly class RoleSet
     }
 
     /**
-     * The home screen of the highest-priority base role (IAM-R12.2), or null
-     * when there is none (IAM-R12.3).
+     * The highest-priority base role (IAM-R12.2), or null when there is none
+     * (IAM-R12.3).
      */
-    public function homeScreen(): ?HomeScreen
+    public function primaryRole(): ?BaseRole
     {
         foreach (BaseRole::cases() as $role) {
             if ($this->has($role)) {
-                return $role->homeScreen();
+                return $role;
             }
         }
 
         return null;
+    }
+
+    /**
+     * The home screen of the primary role, or null when there is none.
+     */
+    public function homeScreen(): ?HomeScreen
+    {
+        return $this->primaryRole()?->homeScreen();
     }
 }

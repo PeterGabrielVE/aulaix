@@ -103,9 +103,22 @@ test('an institution without membership answers like one that does not exist', f
 });
 
 test('the institution menu offers to switch institution', function () {
-    $institution = tenant();
+    // SPEC-013 NAV-R02.5 narrows IDG-R03.7: offered to who has another institution.
+    [, , $sur] = twoInstitutionTeacher();
+    $this->get(chooseInstitution($sur));
 
-    $this->actingAs(userWithRole($institution, 'Docente'))
-        ->get(tenantUrl($institution, '/profile'))
+    $this->get(tenantUrl($sur, '/profile'))
         ->assertInertia(fn ($page) => $page->where('switchInstitutionUrl', centralUrl('/planteles')));
+});
+
+test('a member of one institution is not offered to switch (SPEC-013 NAV-R02.6)', function () {
+    $institution = tenant();
+    userWithRole($institution, 'Docente', ['email' => 'luis@example.com']);
+    leaveTenant();
+    $handoff = $this->post(centralUrl('/login'), ['email' => 'luis@example.com', 'password' => 'password'])->headers->get('Location');
+    onSubdomainSession();
+    $this->get($handoff)->assertRedirect(tenantUrl($institution, '/dashboard'));
+
+    $this->get(tenantUrl($institution, '/profile'))
+        ->assertInertia(fn ($page) => $page->where('switchInstitutionUrl', null));
 });

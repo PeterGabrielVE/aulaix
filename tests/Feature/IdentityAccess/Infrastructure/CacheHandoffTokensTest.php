@@ -17,7 +17,7 @@ function handoffTokens(): HandoffTokens
 it('opens the institution it was issued for, once', function () {
     $token = handoffTokens()->issue(AccountId::fromInt(7), InstitutionId::fromInt(3));
 
-    expect(handoffTokens()->consume($token, InstitutionId::fromInt(3)))->toEqual(AccountId::fromInt(7))
+    expect(handoffTokens()->consume($token, InstitutionId::fromInt(3))->account)->toEqual(AccountId::fromInt(7))
         ->and(handoffTokens()->consume($token, InstitutionId::fromInt(3)))->toBeNull();
 });
 
@@ -37,7 +37,7 @@ it('does not open another institution', function () {
 
     expect(handoffTokens()->consume($token, InstitutionId::fromInt(4)))->toBeNull()
         // Refused tokens are not burnt: the right institution still opens.
-        ->and(handoffTokens()->consume($token, InstitutionId::fromInt(3)))->toEqual(AccountId::fromInt(7));
+        ->and(handoffTokens()->consume($token, InstitutionId::fromInt(3))->account)->toEqual(AccountId::fromInt(7));
 });
 
 it('rejects a forged or tampered token', function (string $token) {
@@ -47,3 +47,9 @@ it('rejects a forged or tampered token', function (string $token) {
     'empty' => [''],
     'unsigned payload' => [base64_encode('{"account":7,"institution":3,"expires":9999999999,"nonce":"x"}')],
 ]);
+
+it('carries how many institutions the account was active in (SPEC-013 NAV-R02.5)', function () {
+    $token = handoffTokens()->issue(AccountId::fromInt(7), InstitutionId::fromInt(3), activeInstitutions: 2);
+
+    expect(handoffTokens()->consume($token, InstitutionId::fromInt(3))->activeInstitutions)->toBe(2);
+});

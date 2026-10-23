@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AulaX\IdentityAccess\Infrastructure\Auth;
 
+use AulaX\IdentityAccess\Application\Auth\HandoffGrant;
 use AulaX\IdentityAccess\Application\Port\HandoffTokens;
 use AulaX\IdentityAccess\Domain\Account\AccountId;
 use AulaX\Shared\Domain\Clock;
@@ -28,17 +29,18 @@ final readonly class CacheHandoffTokens implements HandoffTokens
         private Clock $clock,
     ) {}
 
-    public function issue(AccountId $account, InstitutionId $institution): string
+    public function issue(AccountId $account, InstitutionId $institution, int $activeInstitutions = 1): string
     {
         return $this->encrypter->encryptString(json_encode([
             'account' => $account->value,
             'institution' => $institution->value,
+            'institutions' => $activeInstitutions,
             'expires' => $this->clock->now()->getTimestamp() + self::LIFETIME_SECONDS,
             'nonce' => bin2hex(random_bytes(16)),
         ], JSON_THROW_ON_ERROR));
     }
 
-    public function consume(#[\SensitiveParameter] string $token, InstitutionId $institution): ?AccountId
+    public function consume(#[\SensitiveParameter] string $token, InstitutionId $institution): ?HandoffGrant
     {
         try {
             $payload = json_decode($this->encrypter->decryptString($token), true, flags: JSON_THROW_ON_ERROR);
@@ -59,6 +61,6 @@ final readonly class CacheHandoffTokens implements HandoffTokens
             return null;
         }
 
-        return AccountId::fromInt($payload['account']);
+        return new HandoffGrant(AccountId::fromInt($payload['account']), max(1, (int) ($payload['institutions'] ?? 1)));
     }
 }

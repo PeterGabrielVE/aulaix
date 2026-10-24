@@ -446,38 +446,38 @@ incorporadas](#decisiones-de-producto-incorporadas-2026-10-23).
 | NAV-R03.3 | `tests/Feature/Workspace/NavigationRouteParityTest.php` › «an entry shows exactly when its screen opens»; `tests/Feature/Workspace/NavigationRouteParityTest.php` › «every entry has its presentation, and only those» |
 | NAV-R03.4 | `tests/Feature/Workspace/LayoutPropsTest.php` › «says there is no active year, or no open term»; `tests/Feature/Workspace/LayoutPropsTest.php` › «no longer shares the menu flags it replaces» |
 | NAV-R03.5 | `tests/Feature/Workspace/NavigationRouteParityTest.php` › «an entry shows exactly when its screen opens» |
-| NAV-R04.1 | |
-| NAV-R04.2 | |
-| NAV-R04.3 | |
-| NAV-R04.4 | |
-| NAV-R04.5 | |
-| NAV-R04.6 | |
-| NAV-R04.7 | |
-| NAV-R04.8 | |
-| NAV-R04.9 | |
-| NAV-R05.1 | |
-| NAV-R05.2 | |
-| NAV-R05.3 | |
-| NAV-R05.4 | |
-| NAV-R05.5 | |
-| NAV-R05.6 | |
-| NAV-R05.7 | |
-| NAV-R06.1 | |
-| NAV-R06.2 | |
-| NAV-R06.3 | |
-| NAV-R06.4 | |
-| NAV-R07.1 | |
-| NAV-R07.2 | |
-| NAV-R07.3 | |
-| NAV-R08.1 | |
-| NAV-R08.2 | |
-| NAV-R08.3 | |
-| NAV-R09.1 | |
-| NAV-R10.1 | |
-| NAV-R10.2 | |
-| NAV-R10.3 | |
-| NAV-NF01 | |
-| NAV-NF02 | |
+| NAV-R04.1 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «gives the administration pending tasks, indicators, its operations, the recent log and shortcuts, in order»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Administrador sees pending tasks with their links, indicators, the recent log and shortcuts» |
+| NAV-R04.2 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «leaves out every block whose screen the person may not open»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «fetches nothing for blocks the person may not see» |
+| NAV-R04.3 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Administrador pending tasks with their count and destination, without the ones at zero»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Administrador sees pending tasks with their links, indicators, the recent log and shortcuts» |
+| NAV-R04.4 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «says there are no pending tasks rather than showing an empty block» |
+| NAV-R04.5 | `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «counts the active students and the requests waiting for an answer»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Administrador sees pending tasks with their links, indicators, the recent log and shortcuts» |
+| NAV-R04.6 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «adds the personal blocks of the other roles and links, once»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives a Teacher its classes, and a Director who teaches them too»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Director gets no operational blocks, and the ones of its teaching» |
+| NAV-R04.7 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «adds the personal blocks of the other roles and links, once» |
+| NAV-R04.8 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «adds the personal blocks of the other roles and links, once» |
+| NAV-R04.9 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Administrador pending tasks with their count and destination, without the ones at zero»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Administrador sees pending tasks with their links, indicators, the recent log and shortcuts» |
+| NAV-R05.1 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Administrador pending tasks with their count and destination, without the ones at zero»; `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «counts the sections, capacity and pending tasks of the active year»; `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «counts the active students and the requests waiting for an answer»; `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «counts the active members by role and the invitations, valid or expired» |
+| NAV-R05.2 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «asks for an active year when there is none, and counts no structure» |
+| NAV-R05.3 | `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «counts the sections, capacity and pending tasks of the active year»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Administrador pending tasks with their count and destination, without the ones at zero» |
+| NAV-R05.4 | `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «counts the active students and the requests waiting for an answer»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Administrador pending tasks with their count and destination, without the ones at zero» |
+| NAV-R05.5 | `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «counts the active members by role and the invitations, valid or expired»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «asks the Director nothing operational»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Administrador sees pending tasks with their links, indicators, the recent log and shortcuts» |
+| NAV-R05.6 | `tests/Feature/Tenancy/Infrastructure/InstitutionGapsQueryTest.php` › «a new institution lacks its levels, DEA code and Director signature»; `tests/Feature/Tenancy/Infrastructure/InstitutionGapsQueryTest.php` › «a private institution also needs its RIF, and a public one its dependency»; `tests/Feature/Tenancy/Infrastructure/InstitutionGapsQueryTest.php` › «a complete institution lacks nothing»; `tests/Feature/Tenancy/Infrastructure/InstitutionGapsQueryTest.php` › «needs gestionar-plantel»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Administrador sees pending tasks with their links, indicators, the recent log and shortcuts» |
+| NAV-R05.7 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Administrador pending tasks with their count and destination, without the ones at zero»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «asks the Director nothing operational»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Director gets no operational blocks, and the ones of its teaching» |
+| NAV-R06.1 | `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «limits everything to the given grades»; `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «tells the grades a coordinator has in the active year, whole levels included»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Coordinator the figures of its grades»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Coordinator sees only the grades it coordinates» |
+| NAV-R06.2 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «gives the Coordinator the structure of its grades, without grades to open sections in»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives the Coordinator the figures of its grades» |
+| NAV-R06.3 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «tells a Coordinator without grades, or without an active year, instead of figures» |
+| NAV-R06.4 | `tests/Unit/Workspace/Application/ShowHomeTest.php` › «tells a Coordinator without grades, or without an active year, instead of figures» |
+| NAV-R07.1 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «gives the Teacher its classes and the Guardian its students»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives a Teacher its classes, and a Director who teaches them too»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «a Teacher gets its classes and none of the institution figures» |
+| NAV-R07.2 | `tests/Feature/Workspace/HomeVisibilityTest.php` › «the Director gets no operational blocks, and the ones of its teaching» |
+| NAV-R07.3 | `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «has nothing to count without an active year» |
+| NAV-R08.1 | `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «gives a guardian its students and corrections waiting, or nothing before any link»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «a Guardian sees its students by name and link, never their health data» |
+| NAV-R08.2 | `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «gives a guardian its students and corrections waiting, or nothing before any link»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «gives a Guardian its students and its corrections waiting» |
+| NAV-R08.3 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «gives the Guardian its block even before any student is linked»; `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php` › «gives a guardian its students and corrections waiting, or nothing before any link» |
+| NAV-R09.1 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «tells the Student its content is still to come»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «tells the Student its content is to come»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «a Student is told its content is to come» |
+| NAV-R10.1 | `tests/Feature/Workspace/WorkspaceIsolationTest.php` › «the home screen counts only the open institution»; `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «only reads the open institution» |
+| NAV-R10.2 | `tests/Unit/Workspace/Domain/HomePlanTest.php` › «leaves out every block whose screen the person may not open»; `tests/Unit/Workspace/Application/ShowHomeTest.php` › «fetches nothing for blocks the person may not see»; `tests/Feature/Workspace/HomeVisibilityTest.php` › «a Teacher gets its classes and none of the institution figures»; `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «needs ver-estructura» |
+| NAV-R10.3 | `tests/Feature/Workspace/HomeVisibilityTest.php` › «a Guardian sees its students by name and link, never their health data» |
+| NAV-NF01 | `tests/Architecture/LayersTest.php` › «Workspace has no tables nor writes of its own»; `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «needs ver-estructura»; `tests/Feature/Tenancy/Infrastructure/InstitutionGapsQueryTest.php` › «needs gestionar-plantel» |
+| NAV-NF02 | `tests/Feature/Workspace/HomePerformanceTest.php` › «the Director home of a large institution loads within 300 ms (p95)» |
 | NAV-NF03 | `tests/Feature/Workspace/LayoutQueryCountTest.php` › «the layout adds five queries at most to a page» |
 | NAV-NF04 | |
 | NAV-NF05 | |

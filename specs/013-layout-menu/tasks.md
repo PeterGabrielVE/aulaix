@@ -153,7 +153,7 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 5 — Dominio del inicio
 
-- [ ] **T-15** — `HomeKind`, `HomeBlock` y servicio `HomePlan::for(HomeKind,
+- [x] **T-15** — `HomeKind`, `HomeBlock` y servicio `HomePlan::for(HomeKind,
   Capabilities)`:
   - orden de bloques;
   - bloque solo con la condición de su pantalla de origen;
@@ -167,30 +167,36 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 6 — Consultas de resumen en los módulos dueños
 
-- [ ] **T-16** — `StructureOverviewQuery(?grados)` y
+- [x] **T-16** — `StructureOverviewQuery(?grados)` y
   `CoordinatedGradesQuery(cuenta)` (AcademicStructure), con el puerto
   `StructureStatistics` y su adaptador SQL; comprueban `ver-estructura`.
   - Criterios: NAV-R05.1, R05.3, R06.1, R06.2, R06.3
   - Test: `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php`
-- [ ] **T-17** — `StudentOverviewQuery` (Students):
+- [x] **T-17** — `StudentOverviewQuery` (Students):
   - estudiantes activos (con `ver-estudiantes`);
   - traslados recibidos pendientes y correcciones sin atender (con
     `gestionar-estudiantes`).
   - Criterios: NAV-R05.1, R05.4
-  - Test: `tests/Feature/Students/Infrastructure/StudentOverviewQueryTest.php`
-- [ ] **T-18** — `StaffOverviewQuery` (IdentityAccess): miembros activos por
+  - Hecho así: `StudentsSource` (Workspace) reutiliza `ListStudentsQuery`,
+    `ListTransfersQuery` y `ListCorrectionsQuery`, con sus permisos; no hizo
+    falta una consulta nueva en Students.
+  - Test: `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php`
+- [x] **T-18** — `StaffOverviewQuery` (IdentityAccess): miembros activos por
   rol base, e invitaciones pendientes y vencidas; comprueba
   `gestionar-usuarios`.
   - Criterios: NAV-R05.1, R05.5
-  - Test: `tests/Feature/IdentityAccess/Infrastructure/StaffOverviewQueryTest.php`
-- [ ] **T-19** — `InstitutionGapsQuery` (Tenancy): niveles, código DEA,
+  - Hecho así: `IdentityAccessStaffSource` (Workspace) reutiliza
+    `MemberDirectory`, el de la pantalla de usuarios; no hizo falta una
+    consulta nueva en IdentityAccess.
+  - Test: `tests/Feature/Workspace/Infrastructure/HomeSourcesTest.php`
+- [x] **T-19** — `InstitutionGapsQuery` (Tenancy): niveles, código DEA,
   firma del Director, RIF si es privado y dependencia si es público.
   - Criterios: NAV-R05.6
   - Test: `tests/Feature/Tenancy/Infrastructure/InstitutionGapsQueryTest.php`
 
 ### Fase 7 — Aplicación, HTTP y pantallas del inicio
 
-- [ ] **T-20** — `ShowHomeQuery`, con los puertos `StructureSource`,
+- [x] **T-20** — `ShowHomeQuery`, con los puertos `StructureSource`,
   `StudentSource`, `StaffSource`, `InstitutionSource` y `ActivitySource`,
   sus fixtures en memoria y sus adaptadores:
   - solo llama a los puertos de los bloques del plan;
@@ -201,7 +207,7 @@ Cuatro PRs, cada uno usable por sí mismo:
   - Criterios: NAV-R04.1, R04.3, R04.4, R04.5, R05.1 – R05.7, R06.1 –
     R06.4, R07.1 – R07.3, R08.1 – R08.3, R09.1, R10.2
   - Test: `tests/Unit/Workspace/Application/ShowHomeTest.php`
-- [ ] **T-21** — `HomeController`: cada acción envía `home` desde
+- [x] **T-21** — `HomeController`: cada acción envía `home` desde
   `ShowHomeQuery`, sin cambiar sus componentes ni su middleware
   (`RoleHomeTest` sin cambios, Q-03).
   - Criterios: NAV-R04.1 – R04.9, R05 – R09, R10.2, R10.3
@@ -211,12 +217,12 @@ Cuatro PRs, cada uno usable por sí mismo:
     - bloques sin permiso ausentes de los props;
     - representados sin datos de salud;
     - enlaces de cada pendiente a su entrada.
-- [ ] **T-22** — Aislamiento: dos planteles con estudiantes, secciones,
+- [x] **T-22** — Aislamiento: dos planteles con estudiantes, secciones,
   invitaciones y bitácora; el inicio solo cuenta los del plantel abierto.
   - Criterios: NAV-R10.1
   - Test: `tests/Feature/Workspace/WorkspaceIsolationTest.php`
     (`group=rls`)
-- [ ] **T-23** — Pantallas:
+- [x] **T-23** — Pantallas:
   - `Components/HomeScreen.vue` dibuja `home.blocks`;
   - un componente por bloque en `Components/Home/`;
   - las seis páginas `Home/*` usan los bloques;

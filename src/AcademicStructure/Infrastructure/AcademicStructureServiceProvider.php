@@ -9,8 +9,10 @@ use AulaX\AcademicStructure\Application\Port\AssignmentDirectory;
 use AulaX\AcademicStructure\Application\Port\RemovalGuard;
 use AulaX\AcademicStructure\Application\Port\StaffDirectory;
 use AulaX\AcademicStructure\Application\Port\StructurePermissions;
+use AulaX\AcademicStructure\Application\Port\StructureStatistics;
 use AulaX\AcademicStructure\Application\RemovalGuards;
 use AulaX\AcademicStructure\Domain\SchoolYearStructureRepository;
+use AulaX\AcademicStructure\Infrastructure\Persistence\DatabaseStructureStatistics;
 use AulaX\AcademicStructure\Infrastructure\Persistence\EloquentAssignmentDirectory;
 use AulaX\AcademicStructure\Infrastructure\Persistence\EloquentSchoolYearStructureRepository;
 use AulaX\IdentityAccess\Application\Account\DeletionBlocker;
@@ -29,6 +31,7 @@ final class AcademicStructureServiceProvider extends ServiceProvider
         StructurePermissions::class => GateStructurePermissions::class,
         StaffDirectory::class => IdentityAccessStaffDirectory::class,
         AssignmentDirectory::class => EloquentAssignmentDirectory::class,
+        StructureStatistics::class => DatabaseStructureStatistics::class,
     ];
 
     public function register(): void

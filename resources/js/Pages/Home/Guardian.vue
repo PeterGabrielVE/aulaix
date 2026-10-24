@@ -5,6 +5,6 @@ import HomeScreen from '@/Components/HomeScreen.vue';
 <template>
     <HomeScreen
         title="Inicio del representante"
-        description="Aquí verás el progreso y las calificaciones de tus representados."
+        description="Tus representados y lo que has pedido al plantel."
     />
 </template>

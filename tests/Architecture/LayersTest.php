@@ -199,6 +199,12 @@ arch('in Students, only the transfer copier acts as another institution', functi
         ]);
 });
 
+arch('Workspace has no tables nor writes of its own', function () {
+    // ADR 0009, SPEC-013 NAV-NF01: a composed view reads through the
+    // Application layer of the modules that own the data.
+    expect('AulaX\Workspace')->not->toUse(['Illuminate\Database', 'Illuminate\Support\Facades\DB', 'Illuminate\Support\Facades\Schema']);
+});
+
 arch('every file in src declares strict types')
     ->expect('AulaX')
     ->toUseStrictTypes();

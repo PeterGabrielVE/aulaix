@@ -408,3 +408,26 @@ que ya existen:
   `layout.navigation`. El test de `HandoffTest` sobre «Cambiar de plantel»
   entra con dos planteles por el traspaso, y un caso nuevo cubre el de un
   solo plantel (NAV-R02.6).
+
+### PR C
+
+- **Bloques más finos que en el diseño.** `HomeBlock` separa cada bloque
+  por su fuente (p. ej. `pending_structure`, `pending_students`,
+  `pending_invitations`), así cada uno lleva la condición de su pantalla.
+  La página agrupa los pendientes y los indicadores en una tarjeta cada uno.
+- **Students e IdentityAccess sin consultas nuevas.** Sus consultas
+  públicas ya daban las cifras: `ListStudentsQuery` (total),
+  `ListTransfersQuery`, `ListCorrectionsQuery` y `MemberDirectory`. Los
+  adaptadores de Workspace las reutilizan con sus permisos. Solo
+  AcademicStructure (`StructureOverviewQuery`, `CoordinatedGradesQuery`,
+  con el puerto `StructureStatistics`) y Tenancy (`InstitutionGapsQuery`)
+  ganan consultas.
+- **Presentación en `app/Http/Navigation/HomePresenter`.** Convierte los
+  destinos (claves de `MenuEntry`) en enlaces y las fechas de la bitácora a
+  la hora de Caracas. Los textos de cada pendiente e indicador viven en los
+  componentes de `Components/Home/`.
+- **Medida de NAV-NF02.** Se mide en caliente, con una llamada previa:
+  como entre peticiones reales, la caché de permisos ya está cargada. En
+  frío, la primera llamada ronda los 440 ms.
+- **Regla de arquitectura nueva** (NAV-NF01, ADR 0009): `Workspace` no usa
+  la base de datos.

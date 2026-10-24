@@ -1,0 +1,9 @@
+[
+    {
+        "code": "VE-A",
+        "name": "Distrito Capital",
+        "municipalities": [
+            { "code": "VE-A-01", "name": "Libertador" }
+        ]
+    }
+]

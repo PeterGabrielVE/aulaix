@@ -6,12 +6,20 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
+const props = defineProps({
+    // The central domain's or the institution's confirm route.
+    action: {
+        type: String,
+        required: true,
+    },
+});
+
 const form = useForm({
     password: '',
 });
 
 const submit = () => {
-    form.post(route('password.confirm'), {
+    form.post(props.action, {
         onFinish: () => form.reset(),
     });
 };

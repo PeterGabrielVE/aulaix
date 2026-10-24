@@ -5,6 +5,6 @@ import HomeScreen from '@/Components/HomeScreen.vue';
 <template>
     <HomeScreen
         title="Inicio docente"
-        description="Aquí verás tus secciones, estudiantes y calificaciones."
+        description="Las materias que dictas y las secciones que guías este año."
     />
 </template>

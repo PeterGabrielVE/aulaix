@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Contracts\AIServiceClient;
+use AulaX\Ai\Application\AIServiceClient;
 use Illuminate\Console\Command;
 
 class CheckAiServiceHealth extends Command
 {
     protected $signature = 'ai:health';
 
-    protected $description = 'Checks connectivity to the decoupled AI service through App\Contracts\AIServiceClient';
+    protected $description = 'Checks connectivity to the decoupled AI service through AulaX\Ai\Application\AIServiceClient';
 
     public function handle(AIServiceClient $client): int
     {

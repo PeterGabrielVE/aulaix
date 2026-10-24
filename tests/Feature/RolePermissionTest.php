@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 use Database\Seeders\RolePermissionSeeder;
 use Spatie\Permission\Models\Role;
 
@@ -71,19 +71,22 @@ test('each base role carries its permissions', function (string $role, array $gr
 ]);
 
 test('the same person can hold different roles in each institution', function () {
+    // SPEC-004: one account, a membership with its own roles in each institution.
     $institutionA = tenant();
-    $teacherInA = userWithRole($institutionA, 'Docente', ['email' => 'compartido@example.com']);
+    $person = userWithRole($institutionA, 'Docente');
 
     $institutionB = tenant();
-    $guardianInB = userWithRole($institutionB, 'Representante', ['email' => 'compartido@example.com']);
+    joinInstitution($person, $institutionB, 'Representante');
 
-    $this->actingAs($teacherInA)->get(tenantUrl($institutionA, '/dashboard'))
+    // fresh() per request, as a real request loads the user anew: Spatie
+    // keeps the roles of the first institution loaded on the instance.
+    $this->actingAs($person->fresh())->get(tenantUrl($institutionA, '/dashboard'))
         ->assertRedirect(route('teacher.home'));
-    $this->actingAs($teacherInA)->get(tenantUrl($institutionA, '/guardian'))->assertForbidden();
+    $this->actingAs($person->fresh())->get(tenantUrl($institutionA, '/guardian'))->assertForbidden();
 
-    $this->actingAs($guardianInB)->get(tenantUrl($institutionB, '/dashboard'))
+    $this->actingAs($person->fresh())->get(tenantUrl($institutionB, '/dashboard'))
         ->assertRedirect(route('guardian.home'));
-    $this->actingAs($guardianInB)->get(tenantUrl($institutionB, '/teacher'))->assertForbidden();
+    $this->actingAs($person->fresh())->get(tenantUrl($institutionB, '/teacher'))->assertForbidden();
 });
 
 test('the roles migration adds director and coordinador to existing institutions', function () {

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Institution;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Spatie\Permission\Models\Role;

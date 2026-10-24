@@ -1,0 +1,458 @@
+---
+spec: 004-identidad-global
+prefijo: IDG
+estado: aprobada
+versión: 3
+fecha: 2026-10-10
+aprobada: 2026-10-10
+backlog: F1-07 (y revisión de F1-06)
+adr: 0004
+depende-de: 001-tenancy, 005-auditoria
+---
+
+# Requisitos — Identidad global, membresías y acceso centralizado
+
+## Contexto
+
+Una persona puede trabajar, estudiar o tener representados en varios
+planteles. Hoy necesita una cuenta y una contraseña por colegio. F1-07 pide
+que tenga una sola identidad y elija qué plantel abrir.
+
+Principio de producto: **la identidad pertenece a la persona; la relación
+con cada plantel la administra el plantel.** Una acción administrativa en un
+colegio nunca altera la identidad de la persona ni su acceso a los demás.
+
+Las decisiones de producto que fijan esta versión son las del documento
+«Decisiones de producto para la SPEC-004» (2026-10-10), resumidas en
+[Decisiones incorporadas](#decisiones-incorporadas).
+
+## Alcance
+
+- **Incluye:** cuenta global, membresías, invitaciones, autenticación
+  centralizada, selector de plantel, gestión de la identidad por su titular,
+  salir de un plantel, eliminar la cuenta, consolidación y migración de las
+  cuentas actuales.
+- **Excluye:** SSO con proveedores externos, solicitud de acceso a un plantel
+  (no está en el backlog), alta de instituciones (F4-04) y panel de
+  superadministración (F4-06).
+
+## Glosario
+
+| Término | Significado |
+|---------|-------------|
+| Cuenta / identidad | Identidad global de una persona: email normalizado único, contraseña y nombre. |
+| Titular | La persona dueña de una cuenta. |
+| Membresía | Relación cuenta ↔ plantel, con estado, motivo de suspensión y roles (`institution_memberships`). |
+| Estado de la cuenta | `active`, `pending_deletion` (período de gracia), `closed` (acceso revocado de forma permanente y datos intactos a la espera de las reglas legales), `deleted` (datos tratados según la tabla de conservación; bloqueado por D1). |
+| Motivo de suspensión | Por qué está suspendida una membresía: `institution` (decisión del plantel), `security` o `account_deletion` (eliminación pendiente). |
+| Invitación | Propuesta pendiente de incorporar a un email a un plantel con unos roles (`invitations`). |
+| Desvinculación | Fin de una membresía: la persona deja de pertenecer al plantel. |
+| Suspensión | Bloqueo, temporal o no, del acceso a un plantel, sin terminar la membresía. |
+| Eliminación de cuenta | Proceso global de supresión de la identidad y de sus datos eliminables. |
+| Consolidación | Unión, verificada por el titular, de varias cuentas históricas con el mismo email. |
+| Email normalizado | Email sin espacios alrededor y en minúsculas. Sin reglas por proveedor (p. ej., no se quitan puntos en Gmail). |
+
+## Decisiones incorporadas
+
+| Pregunta | Decisión |
+|----------|----------|
+| Q1 Email duplicado entre planteles | Identidad única. La consolidación se hace solo tras verificar la titularidad; si hay indicios de que son personas distintas, no se fusiona automáticamente. |
+| Q2 Edición de nombre y email | Los gestiona el titular. El gestor administra membresías e invitaciones pendientes. |
+| Q3 «Eliminar mi cuenta» | Dos acciones distintas: salir de un plantel y eliminar la cuenta global. Los registros académicos se conservan. |
+| Q4 Dominio central | Punto único de autenticación y selector posterior al login. El buscador se conserva como directorio. |
+| Q5 Conservación legal | La spec se aprueba sin plazos legales. La **eliminación efectiva queda bloqueada** hasta tener criterios validados por asesoría legal (dependencia D1). Se construye todo lo que no prejuzga esa decisión. |
+| Q6 Consolidaciones dudosas | Comando de consola restringido y auditado, con modo de simulación, operado por soporte. El futuro panel de superadministración reutilizará las mismas reglas. |
+| Q7 Plazo de gracia | 30 días naturales en estado `pending_deletion`, cancelables. Es una decisión de producto, no un plazo legal. |
+| Q8 Terminología | «Plantel» en toda la interfaz. «Institución educativa» solo en textos formales. Los nombres técnicos siguen la convención del proyecto (`institution`). |
+
+## Criterios de SPEC-002 que sustituye
+
+| Criterio anterior | Lo sustituye |
+|-------------------|--------------|
+| IAM-R02.1 – R02.5 (login en el subdominio) | IDG-R03 |
+| IAM-R02.6, R02.7, R03.1, R04.6 (estado de la cuenta) | El estado pasa a la membresía: IDG-R02, IDG-R03.4, IDG-R03.8 |
+| IAM-R04 (invitación) | IDG-R04 |
+| IAM-R05 (recuperación por plantel) | IDG-R06 |
+| IAM-R08.2 (editar email desde el perfil) | IDG-R05 |
+| IAM-R08.4, R08.5 (eliminar cuenta) | IDG-R07, IDG-R08 |
+| IAM-R09.5 – R09.7, R09.11 – R09.13 (alta, unicidad, edición, reenvío) | IDG-R04, IDG-R05.5 |
+
+El resto de SPEC-002 (reglas de roles IAM-R10, roles base IAM-R11, pantalla
+por rol IAM-R12) se mantiene, aplicado a la membresía del plantel abierto.
+
+## Requisitos
+
+### IDG-R01 — Una persona, una identidad
+
+- **IDG-R01.1** — El sistema deberá identificar a cada persona con una única
+  cuenta, cuyo email normalizado sea único en todo el sistema.
+- **IDG-R01.2** — El sistema deberá normalizar todo email antes de guardarlo
+  y antes de buscar duplicados.
+- **IDG-R01.3** — El sistema deberá permitir que una cuenta tenga membresías
+  en varios planteles, con roles distintos en cada uno.
+
+### IDG-R02 — Membresías
+
+- **IDG-R02.1** — El sistema deberá conceder a una cuenta, en un plantel,
+  solo los roles y permisos de su membresía activa en ese plantel.
+- **IDG-R02.2** — Cuando un gestor suspende la membresía de una persona, el
+  sistema deberá bloquear su acceso a ese plantel sin afectar a su cuenta ni a
+  sus otras membresías.
+- **IDG-R02.3** — Cuando un gestor reactiva una membresía suspendida, el
+  sistema deberá devolverle el acceso con los roles que tenía.
+- **IDG-R02.4** — Cuando una membresía termina (desvinculación), el sistema
+  deberá conservar los registros académicos, administrativos y de auditoría
+  asociados a esa persona en el plantel.
+
+### IDG-R03 — Autenticación centralizada y selección de plantel
+
+**Historia:** Como docente de dos colegios, quiero entrar una sola vez y
+elegir en cuál trabajar.
+
+- **IDG-R03.1** — El sistema deberá ofrecer el inicio de sesión, la
+  recuperación de contraseña y la gestión de la cuenta únicamente en el
+  dominio central.
+- **IDG-R03.2** — Cuando se abre la página de login del subdominio de un
+  plantel, el sistema deberá redirigir al login central y, tras autenticarse,
+  abrir ese plantel si la persona tiene membresía activa en él.
+- **IDG-R03.3** — Si las credenciales no son válidas, entonces el sistema
+  deberá responder con el mensaje genérico, sin revelar si el email tiene
+  cuenta.
+- **IDG-R03.4** — Cuando una persona con exactamente una membresía activa se
+  autentica, el sistema deberá abrir directamente ese plantel.
+- **IDG-R03.5** — Cuando una persona con varias membresías activas se
+  autentica, el sistema deberá mostrar un selector solo con esos planteles.
+- **IDG-R03.6** — Cuando una persona sin membresías activas se autentica, el
+  sistema deberá mostrar una pantalla de bienvenida con sus invitaciones
+  pendientes y el directorio de colegios.
+- **IDG-R03.7** — Cuando una persona con varias membresías activas elige
+  otro plantel desde el menú, el sistema deberá abrirlo sin pedir de nuevo la
+  contraseña.
+- **IDG-R03.8** — El sistema deberá verificar en **cada petición** que la
+  persona tiene membresía activa en el plantel abierto. Si no la tiene,
+  entonces deberá denegar el acceso a ese plantel y mantener su sesión en los
+  demás.
+- **IDG-R03.9** — Si se elige o se escribe en la URL un plantel sin membresía
+  activa, entonces el sistema deberá denegarlo, con la misma respuesta que
+  para un plantel inexistente.
+- **IDG-R03.10** — El sistema deberá bloquear temporalmente los intentos
+  fallidos tras 5 por email e IP.
+
+### IDG-R04 — Invitaciones
+
+- **IDG-R04.1** — Cuando un gestor invita a un email con nombre y roles, el
+  sistema deberá registrar una invitación pendiente al plantel, válida durante
+  7 días, y enviarla por correo.
+- **IDG-R04.2** — El sistema deberá mostrar al gestor la misma respuesta
+  exista o no una cuenta con ese email, sin revelar si pertenece a otros
+  planteles.
+- **IDG-R04.3** — Si el email ya tiene una membresía en el plantel, entonces el
+  sistema deberá rechazar la invitación.
+- **IDG-R04.4** — Cuando una persona sin cuenta abre una invitación válida, el
+  sistema deberá permitirle crear su cuenta (nombre de la invitación,
+  contraseña nueva, email verificado por el propio enlace) y crear la
+  membresía con los roles de la invitación.
+- **IDG-R04.5** — Cuando una persona con cuenta abre una invitación válida, el
+  sistema deberá pedirle que se autentique y, al aceptar, crear la membresía,
+  sin cambiar su nombre ni su contraseña.
+- **IDG-R04.6** — Si la cuenta autenticada no tiene el email de la
+  invitación, entonces el sistema deberá rechazar la aceptación.
+- **IDG-R04.7** — Cuando un gestor corrige el nombre o el email de una
+  invitación pendiente, el sistema deberá invalidar el enlace anterior y
+  enviar uno nuevo.
+- **IDG-R04.8** — Cuando un gestor reenvía una invitación pendiente, el
+  sistema deberá invalidar el enlace anterior y enviar uno nuevo.
+- **IDG-R04.9** — Si una invitación está aceptada, caducada o anulada,
+  entonces el sistema deberá rechazar su uso.
+- **IDG-R04.10** — El sistema deberá permitir al gestor anular una
+  invitación pendiente.
+
+### IDG-R05 — Identidad bajo control del titular
+
+- **IDG-R05.1** — El sistema deberá permitir al titular cambiar su nombre
+  desde su cuenta.
+- **IDG-R05.2** — Cuando el titular pide cambiar su email, el sistema deberá
+  exigir reautenticación y enviar un enlace de verificación al **nuevo**
+  email, manteniendo el actual hasta que se verifique.
+- **IDG-R05.3** — Cuando se verifica el nuevo email, el sistema deberá
+  cambiarlo y avisar al email **anterior**.
+- **IDG-R05.4** — Si el nuevo email ya pertenece a otra cuenta, entonces el
+  sistema deberá rechazarlo sin revelar el motivo exacto a terceros.
+- **IDG-R05.5** — El sistema no deberá permitir a un gestor cambiar el nombre
+  ni el email de una cuenta. Solo podrá corregirlos en invitaciones
+  pendientes (IDG-R04.7).
+- **IDG-R05.6** — El sistema no deberá mostrar a un gestor las membresías que
+  una persona tiene en otros planteles.
+
+### IDG-R06 — Contraseña global
+
+- **IDG-R06.1** — Cuando el titular restablece o cambia su contraseña, el
+  sistema deberá aplicarla a toda la cuenta y avisarle por correo.
+- **IDG-R06.2** — Cuando se restablece o cambia la contraseña, el sistema
+  deberá cerrar todas las demás sesiones de la cuenta.
+- **IDG-R06.3** — El sistema deberá mantener los criterios de recuperación
+  de SPEC-002 (enlace de 60 minutos y de un solo uso, misma respuesta exista
+  o no la cuenta, límites de envío), ahora desde el dominio central.
+
+### IDG-R07 — Salir de un plantel
+
+- **IDG-R07.1** — Cuando una persona sale de un plantel, el sistema deberá
+  terminar esa membresía y conservar su cuenta y sus demás membresías.
+- **IDG-R07.2** — Cuando una membresía termina o se suspende, el sistema
+  deberá revocar los permisos y las sesiones abiertas en ese plantel.
+- **IDG-R07.3** — Si la persona es el único Administrador activo del plantel,
+  entonces el sistema deberá impedir que salga hasta que otra persona tenga
+  ese rol. Esto resuelve IAM-H01 para el plantel.
+- **IDG-R07.4** — El sistema deberá ofrecer «Salir de este plantel» y
+  «Eliminar mi cuenta» como acciones separadas, en lugares distintos.
+
+### IDG-R08 — Eliminar la cuenta global
+
+**Solicitud**
+
+- **IDG-R08.1** — Cuando el titular inicia la eliminación de su cuenta, el
+  sistema deberá exigir reautenticación, mostrar las consecuencias («afectará
+  tu acceso a todos los planteles asociados») y pedir una confirmación
+  explícita.
+- **IDG-R08.2** — Si la persona es el único Administrador activo de algún
+  plantel, entonces el sistema deberá impedir la eliminación hasta que
+  transfiera ese rol.
+- **IDG-R08.3** — Donde existan estudiantes representados (SPEC-009), si la
+  persona es el único representante legal de algún estudiante, entonces el
+  sistema deberá impedir la eliminación hasta que se resuelva esa relación.
+- **IDG-R08.4** — Donde existan asignaciones docentes (SPEC-008), si la
+  persona es la única responsable de una asignación activa, entonces el
+  sistema deberá impedir la eliminación hasta que se transfiera.
+**Período de gracia (`pending_deletion`, 30 días naturales)**
+
+- **IDG-R08.5** — Cuando el titular confirma la solicitud, el sistema deberá
+  poner la cuenta en `pending_deletion`, registrar la fecha de inicio y la
+  fecha prevista (inicio + 30 días naturales), e informarle de ambas por
+  correo, junto con cómo cancelar.
+- **IDG-R08.6** — Cuando la cuenta entra en `pending_deletion`, el sistema
+  deberá cerrar todas sus sesiones, invalidar sus tokens pendientes
+  (recuperación, verificación, traspaso) y suspender sus membresías activas
+  con motivo `account_deletion`.
+- **IDG-R08.7** — Mientras la cuenta está en `pending_deletion`, si el titular
+  se autentica (incluida la recuperación de contraseña), entonces el sistema
+  deberá mostrarle solo la fecha prevista y la opción de cancelar, sin abrir
+  ningún plantel.
+- **IDG-R08.8** — Mientras la cuenta está en `pending_deletion`, el sistema
+  deberá rechazar la aceptación de invitaciones dirigidas a su email. Las
+  invitaciones que la persona emitió como gestor seguirán vigentes: pertenecen
+  al plantel.
+- **IDG-R08.9** — Cuando el titular cancela la solicitud dentro del plazo, el
+  sistema deberá devolver la cuenta a `active` y reactivar **solo** las
+  membresías suspendidas con motivo `account_deletion`. Las suspendidas por
+  el plantel o por seguridad no se reactivan.
+- **IDG-R08.10** — El sistema deberá volver a comprobar los bloqueos de
+  IDG-R08.2 – R08.4 antes de ejecutar la eliminación al final del plazo. Si
+  alguno se cumple, la ejecución se aplaza y se avisa al titular y al soporte.
+
+**Ejecución al final del plazo**
+
+- **IDG-R08.11** — Cuando vence el plazo y no hay bloqueos, el sistema deberá
+  pasar la cuenta a `closed`: invalidar sus credenciales de forma permanente y
+  terminar todas sus membresías, sin borrar ni anonimizar datos.
+- **IDG-R08.12** — *(Bloqueado por D1.)* Cuando existan reglas de
+  conservación aprobadas, el sistema deberá tratar los datos de las cuentas
+  `closed` por categorías (eliminar, anonimizar o conservar) y pasarlas a
+  `deleted`.
+- **IDG-R08.13** — El sistema no deberá eliminar de forma irreversible
+  expedientes, calificaciones, actas ni registros históricos mientras D1 no
+  defina su tratamiento.
+- **IDG-R08.14** — El sistema deberá registrar cada solicitud de eliminación y
+  cada transición de estado (solicitada, cancelada, aplazada, cerrada,
+  eliminada) en la bitácora (IDG-R10).
+
+### IDG-R09 — Migración y consolidación de cuentas históricas
+
+- **IDG-R09.1** — Cuando se migran las cuentas actuales, el sistema deberá
+  convertir cada email normalizado con una sola cuenta en una identidad
+  global, conservando su contraseña, su verificación y su membresía (estado y
+  roles).
+- **IDG-R09.2** — Cuando un email normalizado tiene cuentas en varios
+  planteles, el sistema deberá crear una identidad **pendiente de
+  consolidación**, sin fusionar credenciales.
+- **IDG-R09.3** — Mientras una identidad está pendiente de consolidación, el
+  sistema deberá aceptar cada contraseña histórica **solo** para el plantel al
+  que pertenecía, y ofrecer la consolidación tras el login.
+- **IDG-R09.4** — Cuando el titular demuestra que controla el email (enlace o
+  código de un solo uso), el sistema deberá permitirle fijar una contraseña
+  única, asociar a la identidad las membresías verificadas, revocar las
+  credenciales históricas y avisarle por correo.
+- **IDG-R09.5** — Si hay indicios de que las cuentas pertenecen a personas
+  distintas (los nombres normalizados no coinciden), entonces el sistema no
+  deberá consolidarlas automáticamente: deberá marcar el caso para revisión
+  (IDG-R11) y mantener IDG-R09.3 mientras tanto.
+- **IDG-R09.6** — Cuando se migran las cuentas que aún no aceptaron su
+  invitación, el sistema deberá convertirlas en invitaciones pendientes con su
+  plazo original.
+- **IDG-R09.7** — El sistema nunca deberá copiar, transferir ni mostrar una
+  contraseña o su hash durante la migración o la consolidación.
+
+### IDG-R10 — Auditoría
+
+- **IDG-R10.1** — El sistema deberá registrar en la bitácora (SPEC-005):
+  - los cambios de identidad (nombre, email, contraseña);
+  - las altas, suspensiones y fines de membresía;
+  - los cambios de roles;
+  - las invitaciones;
+  - las consolidaciones;
+  - las solicitudes y ejecuciones de eliminación.
+- **IDG-R10.2** — El sistema deberá restringir la consulta de esos registros
+  a los roles autorizados y no registrar datos personales más allá de los
+  imprescindibles: IDs, no valores de contraseña ni tokens.
+
+### IDG-R11 — Revisión manual de consolidaciones dudosas
+
+**Historia:** Como soporte de la plataforma, quiero resolver los casos de
+identidad dudosos con una herramienta segura, sin tocar la base de datos a
+mano.
+
+- **IDG-R11.1** — El sistema deberá ofrecer un comando de consola que liste
+  los casos marcados para revisión y otro que resuelva un caso concreto.
+- **IDG-R11.2** — El comando de resolución deberá exigir la identificación
+  del operador, los identificadores de las cuentas implicadas, la decisión
+  (consolidar, mantener separadas) y un motivo.
+- **IDG-R11.3** — Si el operador no está en la lista de operadores
+  autorizados de la configuración del entorno, entonces el comando deberá
+  negarse a ejecutar.
+- **IDG-R11.4** — Cuando se ejecuta en modo simulación (`--dry-run`), el
+  comando deberá mostrar los cambios que haría sin aplicar ninguno.
+- **IDG-R11.5** — Si las cuentas indicadas no están marcadas para revisión, o
+  si su estado cambió desde que se marcaron, entonces el comando deberá
+  rechazar la operación sin cambios.
+- **IDG-R11.6** — Si la decisión es consolidar, el comando deberá exigir
+  constancia de la verificación de titularidad (referencia del procedimiento
+  de soporte) y aplicar la consolidación en una sola transacción: o se aplica
+  completa, o no se aplica nada.
+- **IDG-R11.7** — El comando deberá registrar en la bitácora el operador, la
+  fecha, la decisión, el motivo, el resultado y los identificadores afectados,
+  sin contraseñas, tokens ni datos personales innecesarios.
+- **IDG-R11.8** — El sistema nunca deberá consolidar un caso marcado para
+  revisión por ninguna vía automática.
+
+## Requisitos no funcionales
+
+- **IDG-NF01** (seguridad) — Los datos personales de una cuenta solo son
+  visibles para los planteles donde tiene membresía, y lo garantiza la base de
+  datos (ADR 0004).
+- **IDG-NF02** (privacidad) — Ninguna respuesta revela a un plantel en qué
+  otros planteles tiene membresía una persona, ni si un email tiene cuenta.
+- **IDG-NF03** (seguridad) — El cambio de plantel sin contraseña (IDG-R03.7)
+  usa un token de un solo uso, firmado, ligado a la cuenta y al plantel de
+  destino, con una vida de 60 segundos como máximo.
+- **IDG-NF04** (seguridad) — Contraseñas con hash adaptativo; tokens de
+  invitación, recuperación, verificación y consolidación hasheados, de un solo
+  uso y con caducidad.
+- **IDG-NF05** (seguridad) — Las operaciones sensibles (cambio de email,
+  eliminación, consolidación) exigen una reautenticación de hace menos de 10
+  minutos.
+- **IDG-NF06** (cumplimiento) — Verificación según OWASP ASVS 4.0 nivel 2,
+  capítulos V2 (autenticación) y V3 (sesiones).
+- **IDG-NF07** (mantenibilidad) — Las reglas de consolidación y de
+  eliminación viven en casos de uso de `IdentityAccess\Application`. El
+  comando de consola de hoy y el panel de superadministración de mañana
+  (F4-06) son solo adaptadores de entrada de esos mismos casos de uso.
+- **IDG-NF08** (UX) — La interfaz usa «plantel» de forma consistente en la
+  navegación, el selector, las membresías, los correos y los mensajes de error,
+  incluidas las pantallas existentes que hoy dicen «institución» (p. ej.
+  «Selecciona tu plantel», «Cambiar de plantel», «¿Deseas dejar de pertenecer
+  a este plantel?»). La terminología se valida con usuarios en F0-04.
+
+## Dependencias
+
+| ID | Dependencia | Bloquea | No bloquea |
+|----|-------------|---------|------------|
+| **D1** | Criterios de conservación validados por asesoría legal (LOPNNA, normativa del MPPE sobre expedientes, protección de datos): categorías de datos, y para cada una si se elimina, se anonimiza o se conserva, y durante cuánto tiempo. | IDG-R08.12 (paso a `deleted`) | La aprobación de esta spec y todo IDG-R08.1 – R08.11, R08.13 y R08.14: estados, solicitud, gracia, cancelación, cierre y registro. |
+| **D2** | SPEC-005 (bitácora de auditoría) implementada. | IDG-R10, IDG-R11.7, IDG-R08.14 | — |
+| **D3** | SPEC-008 y SPEC-009 implementadas. | Los bloqueos IDG-R08.3 y R08.4 se activan cuando existan esos datos. | — |
+
+## Preguntas abiertas
+
+Ninguna. Q1 a Q8 están resueltas en [Decisiones incorporadas](#decisiones-incorporadas).
+
+## Matriz de trazabilidad
+
+| Criterio | Test(s) |
+|----------|---------|
+| IDG-R01.1 | `tests/Feature/IdentityAccess/AccountIsolationTest.php` › «two regular accounts can not share an email» |
+| IDG-R01.2 | `tests/Unit/IdentityAccess/Domain/Account/EmailAddressTest.php` › «normalizes an email to lower case without surrounding spaces»; `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «emails are stored normalized» |
+| IDG-R01.3 | `tests/Feature/UserManagementTest.php` › «suspending a member keeps their membership in other institutions» |
+| IDG-R02.1 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a suspension in one institution leaves the others untouched» |
+| IDG-R02.2 | `tests/Feature/UserManagementTest.php` › «an administrator can change a user's role and deactivate them»; `tests/Feature/UserManagementTest.php` › «suspending a member keeps their membership in other institutions» |
+| IDG-R02.3 | `tests/Feature/UserManagementTest.php` › «a suspended member is reactivated with the roles they had» |
+| IDG-R02.4 | `tests/Feature/ProfileTest.php` › «a member can leave the institution, keeping their account and other memberships»; `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «an account is closed when its grace period ends, keeping every record» |
+| IDG-R03.1 | `tests/Feature/IdentityAccess/CentralLoginTest.php` › «the login screen is on the central domain» |
+| IDG-R03.2 | `tests/Feature/Auth/AuthenticationTest.php` › «the login screen of an institution is the central one»; `tests/Feature/Auth/AuthenticationTest.php` › «users who log in from an institution land in it» |
+| IDG-R03.3 | `tests/Feature/IdentityAccess/CentralLoginTest.php` › «wrong credentials get the same generic answer whether the email has an account or not» |
+| IDG-R03.4 | `tests/Feature/IdentityAccess/CentralLoginTest.php` › «a person with one active membership goes straight into that institution»; `tests/Feature/Auth/AuthenticationTest.php` › «a suspended membership is not opened after login» |
+| IDG-R03.5 | `tests/Feature/IdentityAccess/CentralLoginTest.php` › «a person with several active memberships chooses among them, and only them» |
+| IDG-R03.6 | `tests/Feature/IdentityAccess/CentralLoginTest.php` › «a person without active memberships is welcomed with their pending invitations» |
+| IDG-R03.7 | `tests/Feature/IdentityAccess/HandoffTest.php` › «choosing an institution opens it without asking for the password again»; `tests/Feature/IdentityAccess/HandoffTest.php` › «the institution menu offers to switch institution» |
+| IDG-R03.8 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a suspended or ended membership ends the session in that institution»; `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «an account that is no longer active loses access everywhere» |
+| IDG-R03.9 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «logging in from an institution without membership never opens it»; `tests/Feature/IdentityAccess/HandoffTest.php` › «an institution without membership answers like one that does not exist»; `tests/Feature/Auth/AuthenticationTest.php` › «logging in from an institution without membership does not open it»; `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a session can not be carried into an institution without membership» |
+| IDG-R03.10 | `tests/Feature/IdentityAccess/CentralLoginTest.php` › «five failed logins lock the email out for a minute, even with the right password»; `tests/Feature/Auth/AuthenticationTest.php` › «failed logins lock the email out whatever institution it is used for» |
+| IDG-R04.1 | `tests/Feature/UserManagementTest.php` › «an administrator invites a person with a role and the link is emailed»; `tests/Unit/IdentityAccess/Domain/Invitation/InvitationTest.php` › «is pending for seven days from when it was sent» |
+| IDG-R04.2 | `tests/Feature/UserManagementTest.php` › «inviting someone who belongs to another institution gets the same answer as anyone else» |
+| IDG-R04.3 | `tests/Feature/UserManagementTest.php` › «a member of the institution can not be invited again»; `tests/Feature/UserManagementTest.php` › «an email with a pending invitation can not be invited twice» |
+| IDG-R04.4 | `tests/Feature/Auth/InvitationTest.php` › «accepting an invitation creates the account, verifies the email and joins the institution»; `tests/Feature/Auth/InvitationTest.php` › «the new member can then log in to the institution» |
+| IDG-R04.5 | `tests/Feature/Auth/InvitationTest.php` › «a person with an account accepts once logged in, keeping their name and password»; `tests/Feature/Auth/InvitationTest.php` › «a guest with an account is brought back to the invitation after logging in»; `tests/Feature/Auth/InvitationTest.php` › «a pending invitation can be accepted from the welcome screen»; `tests/Feature/Auth/InvitationTest.php` › «an email that already has an account must log in to accept» |
+| IDG-R04.6 | `tests/Feature/Auth/InvitationTest.php` › «an invitation for another email can not be accepted» |
+| IDG-R04.7 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be corrected, which replaces its link» |
+| IDG-R04.8 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be resent»; `tests/Feature/UserManagementTest.php` › «an invitation that is no longer pending can not be resent» |
+| IDG-R04.9 | `tests/Feature/Auth/InvitationTest.php` › «an invitation expires after a week»; `tests/Feature/Auth/InvitationTest.php` › «an invalid invitation token is rejected»; `tests/Feature/Auth/InvitationTest.php` › «an invitation can only be used once»; `tests/Feature/Auth/InvitationTest.php` › «a cancelled invitation can not be used»; `tests/Feature/Auth/InvitationTest.php` › «an invitation is only valid for the institution that sent it» |
+| IDG-R04.10 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be cancelled» |
+| IDG-R05.1 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «the owner can change their name» |
+| IDG-R05.2 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «a new email is only used once verified at that address, and the old one is told»; `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «changing the email asks for the password again»; `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «an email verification link expires after a day» |
+| IDG-R05.3 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «a new email is only used once verified at that address, and the old one is told» |
+| IDG-R05.4 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «an email already in use is refused without telling why» |
+| IDG-R05.5 | `tests/Feature/UserManagementTest.php` › «a manager can not change the name or email of a member» |
+| IDG-R05.6 | `tests/Feature/UserManagementTest.php` › «the user list never includes users of another institution»; `tests/Feature/UserManagementTest.php` › «a user of another institution can not be edited»; `tests/Feature/UserManagementTest.php` › «an invitation of another institution can not be managed» |
+| IDG-R06.1 | `tests/Feature/Auth/PasswordResetTest.php` › «the new password is the account's, in every institution»; `tests/Feature/Auth/PasswordResetTest.php` › «resetting the password closes every session and tells the owner»; `tests/Feature/Auth/PasswordUpdateTest.php` › «password can be updated» |
+| IDG-R06.2 | `tests/Feature/Auth/PasswordResetTest.php` › «resetting the password closes every session and tells the owner»; `tests/Feature/Auth/AuthenticationTest.php` › «users can logout»; `tests/Feature/Auth/PasswordUpdateTest.php` › «changing the password closes the other sessions» |
+| IDG-R06.3 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link can be requested»; `tests/Feature/Auth/PasswordResetTest.php` › «an institution's forgot password screen is the central one»; `tests/Feature/Auth/PasswordResetTest.php` › «an unknown email gets the same answer as a registered one and no email is sent»; `tests/Feature/Auth/PasswordResetTest.php` › «a reset link expires after 60 minutes»; `tests/Feature/Auth/PasswordResetTest.php` › «a reset link can only be used once»; `tests/Feature/Auth/PasswordResetTest.php` › «an email awaiting consolidation gets guidance instead of a reset link» |
+| IDG-R07.1 | `tests/Feature/ProfileTest.php` › «a member can leave the institution, keeping their account and other memberships»; `tests/Feature/ProfileTest.php` › «someone who left can come back with a new invitation» |
+| IDG-R07.2 | `tests/Feature/ProfileTest.php` › «leaving takes away the roles and the access to that institution» |
+| IDG-R07.3 | `tests/Feature/UserManagementTest.php` › «the last active administrador can not be suspended»; `tests/Feature/ProfileTest.php` › «the last active administrador can not leave» |
+| IDG-R07.4 | `tests/Feature/ProfileTest.php` › «leaving the institution and deleting the account are separate actions, in separate places»; `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «an institution's profile only links to the account» |
+| IDG-R08.1 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «deleting the account asks for the password again and an explicit confirmation» |
+| IDG-R08.2 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «the last active administrador of an institution can not delete their account» |
+| IDG-R08.3 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «other modules can block a deletion through the extension point» (punto de extensión); `tests/Feature/Students/AccountDeletionBlockTest.php` › «the only legal guardian of an active student can not delete its account» (SPEC-009, EST-R08.6) |
+| IDG-R08.4 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «other modules can block a deletion through the extension point» (punto de extensión); `tests/Feature/AcademicStructure/AccountDeletionBlockTest.php` › «whoever teaches a subject in the active year can not delete the account» (SPEC-008, EAC-R09.1) |
+| IDG-R08.5 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «a deletion request starts 30 days of grace, suspends every membership and closes every session» |
+| IDG-R08.6 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «a deletion request starts 30 days of grace, suspends every membership and closes every session» |
+| IDG-R08.7 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «during the grace period a login only shows the date and the way to cancel»; `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «the password can still be recovered during the grace period» |
+| IDG-R08.8 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «invitations can not be accepted during the grace period» |
+| IDG-R08.9 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «cancelling reactivates only the memberships suspended for the deletion» |
+| IDG-R08.10 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «a closing that something still blocks is postponed, telling the owner and support»; `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «due accounts are closed every day» |
+| IDG-R08.11 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «an account is closed when its grace period ends, keeping every record» |
+| IDG-R08.12 | Bloqueado por la dependencia legal D1 (fuera de esta spec). |
+| IDG-R08.13 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «an account is closed when its grace period ends, keeping every record» |
+| IDG-R08.14 | `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «a deletion request starts 30 days of grace, suspends every membership and closes every session»; `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «cancelling reactivates only the memberships suspended for the deletion»; `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «a closing that something still blocks is postponed, telling the owner and support»; `tests/Feature/IdentityAccess/AccountDeletionTest.php` › «an account is closed when its grace period ends, keeping every record» |
+| IDG-R09.1 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «a regular account becomes a global account with an active membership, keeping its password»; `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «a deactivated user keeps the account with a membership suspended by the institution» |
+| IDG-R09.2 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «accounts sharing an email stay separate, each with its own password and institution» |
+| IDG-R09.3 | `tests/Feature/IdentityAccess/CentralLoginTest.php` › «each historical password of an email awaiting consolidation opens only its own institution»; `tests/Feature/IdentityAccess/CentralLoginTest.php` › «an account awaiting consolidation is offered to consolidate» |
+| IDG-R09.4 | `tests/Feature/IdentityAccess/ConsolidationTest.php` › «historical accounts are merged into the oldest one, with a code sent by email»; `tests/Feature/IdentityAccess/ConsolidationTest.php` › «the merge closes the merged accounts' sessions, tells the owner and is recorded»; `tests/Feature/IdentityAccess/ConsolidationTest.php` › «a wrong code is rejected, and five wrong codes burn it»; `tests/Feature/IdentityAccess/ConsolidationTest.php` › «a code expires after 15 minutes» |
+| IDG-R09.5 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «accounts sharing an email but not the name are left for support to review» |
+| IDG-R09.6 | `tests/Feature/IdentityAccess/AccountMigrationTest.php` › «a user who never accepted the invitation becomes a pending invitation whose link still works»; `tests/Feature/Auth/InvitationTest.php` › «invitation links sent before SPEC-004 still work» |
+| IDG-R09.7 | `tests/Feature/IdentityAccess/ConsolidationTest.php` › «no historical password survives the merge» |
+| IDG-R10.1 | `tests/Feature/IdentityAccess/ConsolidationTest.php` › «the merge closes the merged accounts' sessions, tells the owner and is recorded»; `tests/Feature/Auth/PasswordResetTest.php` › «a password reset is recorded in the platform log, without the password»; `tests/Feature/UserManagementTest.php` › «invitations and membership changes are recorded in the audit log» |
+| IDG-R10.2 | `tests/Feature/UserManagementTest.php` › «invitations and membership changes are recorded in the audit log»; `tests/Feature/Auth/PasswordResetTest.php` › «a password reset is recorded in the platform log, without the password»; `tests/Feature/Audit/AuditLogPageTest.php` › «a user without the ver-bitacora permission gets 403» |
+| IDG-R11.1 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «support lists the cases marked for review, and only those» |
+| IDG-R11.2 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «the operator, the decision and a reason are required»; `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «accounts kept separate stay apart for good» |
+| IDG-R11.3 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «only authorized operators may resolve a case» |
+| IDG-R11.4 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «a dry run shows the changes without making any» |
+| IDG-R11.5 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «accounts that are not, or no longer, under review are refused untouched» |
+| IDG-R11.6 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «consolidating needs proof of ownership and merges everything into the oldest account» |
+| IDG-R11.7 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «every resolution is recorded with its operator, decision, reason and accounts» |
+| IDG-R11.8 | `tests/Feature/IdentityAccess/ConsolidationTest.php` › «accounts marked for review can never be merged by their owner»; `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «accounts kept separate stay apart for good» |
+| IDG-NF01 | `tests/Feature/IdentityAccess/AccountIsolationTest.php` › «an institution only sees the people who are its members»; `tests/Feature/IdentityAccess/AccountIsolationTest.php` › «a member of another institution is invisible, even with raw SQL» |
+| IDG-NF02 | `tests/Feature/UserManagementTest.php` › «inviting someone who belongs to another institution gets the same answer as anyone else» |
+| IDG-NF03 | `tests/Feature/IdentityAccess/Infrastructure/CacheHandoffTokensTest.php` › «opens the institution it was issued for, once»; `tests/Feature/IdentityAccess/Infrastructure/CacheHandoffTokensTest.php` › «still works 60 seconds later but not 61»; `tests/Feature/IdentityAccess/Infrastructure/CacheHandoffTokensTest.php` › «does not open another institution»; `tests/Feature/IdentityAccess/Infrastructure/CacheHandoffTokensTest.php` › «rejects a forged or tampered token»; `tests/Feature/IdentityAccess/HandoffTest.php` › «a handoff link works only once»; `tests/Feature/IdentityAccess/HandoffTest.php` › «a handoff link expires after a minute»; `tests/Feature/IdentityAccess/HandoffTest.php` › «a handoff link does not open another institution»; `tests/Feature/IdentityAccess/HandoffTest.php` › «a membership suspended after choosing is not let in» |
+| IDG-NF04 | `tests/Unit/IdentityAccess/Domain/Invitation/InvitationTest.php` › «keeps only the hash of its token» |
+| IDG-NF05 | `tests/Feature/IdentityAccess/ConsolidationTest.php` › «merging asks for the password again after ten minutes» |
+| IDG-NF06 | Verificación ASVS 4.0 nivel 2 (V2, V3) en la revisión de seguridad del cierre (`/security-review`), sin test automatizado propio. |
+| IDG-NF07 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «consolidating needs proof of ownership and merges everything into the oldest account»; `tests/Feature/IdentityAccess/ConsolidationTest.php` › «historical accounts are merged into the oldest one, with a code sent by email» |
+| IDG-NF08 | `tests/Architecture/TerminologyTest.php` › «the interface calls them planteles» |

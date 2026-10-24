@@ -38,6 +38,16 @@ return [
             'report' => false,
         ],
 
+        // Logos and signatures of the institutions (SPEC-006): private and
+        // never served by the framework, only through the application.
+        'institution_files' => [
+            'driver' => 'local',
+            'root' => storage_path('app/institution-files'),
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

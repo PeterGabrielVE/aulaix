@@ -1,13 +1,16 @@
 <?php
 
-use App\Models\Institution;
-use App\Models\User;
-use App\Support\CurrentTenant;
-use App\Support\RowLevelSecurity;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
+use AulaX\Tenancy\Application\TenantActivator;
+use AulaX\Tenancy\Application\TenantContext;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionMapper;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\RouteCollection;
-use Spatie\Permission\PermissionRegistrar;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 /*
@@ -24,6 +27,15 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+// SPEC-013: run apart, with phpunit.browser.xml (see docker-compose.yml).
+// The pages load the built assets: a running Vite dev server (public/hot)
+// is out of the browser container's reach.
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->beforeEach(fn () => Vite::useHotFile(base_path('tests/Browser/no-vite-dev-server')))
+    ->group('browser')
+    ->in('Browser');
 
 /*
 |--------------------------------------------------------------------------
@@ -68,10 +80,9 @@ function tenant(array $attributes = []): Institution
 {
     $institution = Institution::factory()->create($attributes);
 
-    RowLevelSecurity::setInstitution($institution->id);
-
-    app(CurrentTenant::class)->set($institution);
-    app(PermissionRegistrar::class)->setPermissionsTeamId($institution->id);
+    // The same activation ResolveTenant runs on a real request: current
+    // tenant, RLS session variable and permission team, all at once.
+    app(TenantActivator::class)->activate(TenantContext::of(InstitutionMapper::toDomain($institution)));
 
     return $institution;
 }
@@ -79,6 +90,53 @@ function tenant(array $attributes = []): Institution
 function tenantUrl(Institution $institution, string $path = '/'): string
 {
     return 'http://'.$institution->subdomain.'.'.config('app.domain').$path;
+}
+
+function centralUrl(string $path = '/'): string
+{
+    return 'http://'.config('app.domain').$path;
+}
+
+/**
+ * Log in the way a person does since SPEC-004: on the central login, coming
+ * from the institution's subdomain, then through the handoff into it.
+ * Returns the response of the handoff (or of the login, if it went nowhere).
+ */
+function logInTo(Institution $institution, string $email, string $password = 'password'): TestResponse
+{
+    leaveTenant();
+
+    $login = test()->post(centralUrl("/login?plantel={$institution->subdomain}"), ['email' => $email, 'password' => $password]);
+    $location = (string) $login->headers->get('Location');
+
+    if (! str_contains($location, '/auth/handoff?token=')) {
+        return $login;
+    }
+
+    // The subdomain has its own session (cookie): it starts empty.
+    test()->flushSession();
+    auth()->forgetGuards();
+
+    return test()->get($location);
+}
+
+/**
+ * Make an existing institution the active tenant again, as a request to its
+ * subdomain would.
+ */
+function useTenant(Institution $institution): void
+{
+    app(TenantActivator::class)->activate(TenantContext::of(InstitutionMapper::toDomain($institution)));
+}
+
+/**
+ * What a request to the central domain starts from: no institution active,
+ * no one logged in (sessions are per domain).
+ */
+function leaveTenant(): void
+{
+    app(TenantActivator::class)->deactivate();
+    auth()->forgetGuards();
 }
 
 /**
@@ -91,6 +149,31 @@ function userWithRole(Institution $institution, string $role, array $attributes 
 
     $user = User::factory()->for($institution)->create($attributes);
     $user->assignRole($role);
+
+    return $user;
+}
+
+/**
+ * Make an existing account also a member of another institution (SPEC-004:
+ * one person, one account, one membership per institution), optionally with
+ * a base role there. Leaves that institution active.
+ */
+function joinInstitution(User $user, Institution $institution, ?string $role = null): User
+{
+    app(TenantActivator::class)->activate(TenantContext::of(InstitutionMapper::toDomain($institution)));
+
+    DB::table('institution_memberships')->insert([
+        'institution_id' => $institution->id,
+        'user_id' => $user->id,
+        'status' => 'active',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    if ($role !== null) {
+        RolePermissionSeeder::seedForInstitution($institution);
+        $user->assignRole($role);
+    }
 
     return $user;
 }

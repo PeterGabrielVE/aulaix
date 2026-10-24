@@ -218,13 +218,21 @@ administración ni escalar privilegios.
 
   | Rol | Permisos |
   |-----|----------|
-  | Administrador | todos (`gestionar-usuarios`, `gestionar-roles`, `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`) |
-  | Director | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones` |
-  | Coordinador | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
-  | Docente | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones` |
+  | Administrador | todos salvo `editar-notas-lapso-cerrado` (`gestionar-usuarios`, `gestionar-roles`, `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario`, `gestionar-plantel`, `ver-plantel`, `gestionar-estudiantes`, `gestionar-estructura`, `ver-estructura`) |
+  | Director | `gestionar-usuarios`, `ver-estudiantes`, `ver-calificaciones`, `ver-bitacora`, `gestionar-calendario`, `ver-plantel`, `gestionar-estudiantes`, `gestionar-estructura`, `ver-estructura` |
+  | Coordinador | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-estructura` |
+  | Docente | `ver-estudiantes`, `gestionar-calificaciones`, `ver-calificaciones`, `ver-estructura` |
   | Representante | `ver-calificaciones` |
   | Estudiante | `ver-calificaciones` |
 
+  `ver-bitacora` se añadió el 2026-10-11 (SPEC-005, AUD-R06.3).
+  `gestionar-calendario` y `editar-notas-lapso-cerrado` se añadieron el
+  2026-10-19 (SPEC-007, CAL-R05.4, R06.5); el segundo no lo trae ningún rol
+  base y se concede persona por persona. `gestionar-plantel` y `ver-plantel`
+  se añadieron el 2026-10-20 (SPEC-006, INS-R05.3, R05.4).
+  `gestionar-estudiantes` se añadió el 2026-10-21 (SPEC-009, EST-R09.2).
+  `gestionar-estructura` y `ver-estructura` se añadieron el 2026-10-22
+  (SPEC-008, EAC-R10.2, R10.3).
 - **IAM-R11.2** — El sistema deberá tratar un rol con el mismo nombre en dos
   instituciones como dos roles independientes.
 - **IAM-R11.3** — El sistema deberá conceder a un usuario solo los permisos de
@@ -270,25 +278,25 @@ administración ni escalar privilegios.
 |----------|---------|
 | IAM-R01.1 | `tests/Feature/Auth/RegistrationTest.php` › «there is no public registration screen» |
 | IAM-R01.2 | `tests/Feature/Auth/RegistrationTest.php` › «there is no public registration endpoint» |
-| IAM-R02.1 | `tests/Feature/Auth/AuthenticationTest.php` › «login screen can be rendered» |
+| IAM-R02.1 | `tests/Feature/Auth/AuthenticationTest.php` › «the login screen of an institution is the central one» (sustituido por IDG-R03.2) |
 | IAM-R02.2 | `tests/Feature/Auth/AuthenticationTest.php` › «unknown subdomains are rejected» |
-| IAM-R02.3 | `tests/Feature/Auth/AuthenticationTest.php` › «users can authenticate using the login screen» |
+| IAM-R02.3 | `tests/Feature/Auth/AuthenticationTest.php` › «users who log in from an institution land in it» (sustituido por IDG-R03.2) |
 | IAM-R02.4 | `tests/Feature/Auth/AuthenticationTest.php` › «users can not authenticate with invalid password» |
-| IAM-R02.5 | `tests/Feature/Auth/AuthenticationTest.php` › «users can not authenticate on another institution's subdomain» |
-| IAM-R02.6 | `tests/Feature/Auth/AuthenticationTest.php` › «inactive users can not authenticate» |
+| IAM-R02.5 | `tests/Feature/Auth/AuthenticationTest.php` › «logging in from an institution without membership does not open it» (sustituido por IDG-R03.9) |
+| IAM-R02.6 | `tests/Feature/Auth/AuthenticationTest.php` › «a suspended membership is not opened after login» (sustituido por IDG-R03.4) |
 | IAM-R02.7 | `tests/Feature/Auth/AuthenticationTest.php` › «inactive users with a wrong password get the generic error» |
-| IAM-R02.8 | Sin test propio (comportamiento heredado de Breeze). **Pendiente**: lo añade SPEC-000 T-09, antes de activar la validación de specs. |
-| IAM-R02.9 | `tests/Feature/Auth/AuthenticationTest.php` › «failed logins in one institution do not lock out the same email in another» |
-| IAM-R02.10 | `tests/Feature/Auth/AuthenticationTest.php` › «users can logout» |
+| IAM-R02.8 | `tests/Feature/Auth/AuthenticationTest.php` › «five failed logins lock the account out for a minute, even with the right password» |
+| IAM-R02.9 | `tests/Feature/Auth/AuthenticationTest.php` › «failed logins lock the email out whatever institution it is used for» (sustituido por IDG-R03.10) |
+| IAM-R02.10 | `tests/Feature/Auth/AuthenticationTest.php` › «users can logout» (cierre global desde SPEC-004) |
 | IAM-R03.1 | `tests/Feature/Auth/AuthenticationTest.php` › «a user deactivated mid-session is logged out on their next request» |
 | IAM-R04.1 | `tests/Feature/Auth/InvitationTest.php` › «the invitation screen can be rendered» |
-| IAM-R04.2 | `tests/Feature/Auth/InvitationTest.php` › «accepting an invitation sets the password, verifies the email and logs the user in» |
+| IAM-R04.2 | `tests/Feature/Auth/InvitationTest.php` › «accepting an invitation creates the account, verifies the email and joins the institution» (sustituido por IDG-R04.4) |
 | IAM-R04.3 | `tests/Feature/Auth/InvitationTest.php` › «an invitation is still valid days later, unlike a password reset link» |
 | IAM-R04.4 | `tests/Feature/Auth/InvitationTest.php` › «an invitation expires after a week» |
 | IAM-R04.5 | `tests/Feature/Auth/InvitationTest.php` › «an invalid invitation token is rejected» |
-| IAM-R04.6 | `tests/Feature/Auth/InvitationTest.php` › «a deactivated user who accepts an invitation is not logged in» |
+| IAM-R04.6 | `tests/Feature/IdentityAccess/MembershipAccessTest.php` › «a suspended or ended membership ends the session in that institution» (sustituido por IDG-R03.8) |
 | IAM-R05.1 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link screen can be rendered» |
-| IAM-R05.2 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link can be requested»; `tests/Feature/Auth/PasswordResetTest.php` › «the reset email links to the institution subdomain and states the 60 minute expiry» |
+| IAM-R05.2 | `tests/Feature/Auth/PasswordResetTest.php` › «reset password link can be requested»; `tests/Feature/Auth/PasswordResetTest.php` › «the reset email links to the central domain and states the 60 minute expiry» (central desde SPEC-004, IDG-R06.3) |
 | IAM-R05.3 | `tests/Feature/Auth/PasswordResetTest.php` › «an unknown email gets the same answer as a registered one and no email is sent» |
 | IAM-R05.4 | `tests/Feature/Auth/PasswordResetTest.php` › «a second request within the broker throttle gets the same answer without sending another email» |
 | IAM-R05.5 | `tests/Feature/Auth/PasswordResetTest.php` › «the forgot password form is rate limited per client» |
@@ -296,7 +304,7 @@ administración ni escalar privilegios.
 | IAM-R05.7 | `tests/Feature/Auth/PasswordResetTest.php` › «a reset link still works 59 minutes after it was requested»; `tests/Feature/Auth/PasswordResetTest.php` › «a reset link expires after 60 minutes» |
 | IAM-R05.8 | `tests/Feature/Auth/PasswordResetTest.php` › «a reset link can only be used once» |
 | IAM-R05.9 | `tests/Feature/Auth/PasswordResetTest.php` › «an invalid reset token is rejected» |
-| IAM-R05.10 | `tests/Feature/Auth/PasswordResetTest.php` › «reset tokens for the same email are kept separately per institution»; `tests/Feature/Auth/PasswordResetTest.php` › «a reset token from one institution can not be used in another» |
+| IAM-R05.10 | `tests/Feature/Auth/PasswordResetTest.php` › «the new password is the account's, in every institution»; `tests/Feature/Auth/PasswordResetTest.php` › «reset tokens are never readable from an institution» (sustituido por IDG-R06.1) |
 | IAM-R06.1 | `tests/Feature/Auth/EmailVerificationTest.php` › «email verification screen can be rendered» |
 | IAM-R06.2 | `tests/Feature/Auth/EmailVerificationTest.php` › «email can be verified» |
 | IAM-R06.3 | `tests/Feature/Auth/EmailVerificationTest.php` › «email is not verified with invalid hash» |
@@ -305,23 +313,23 @@ administración ni escalar privilegios.
 | IAM-R07.3 | `tests/Feature/Auth/PasswordUpdateTest.php` › «password can be updated» |
 | IAM-R07.4 | `tests/Feature/Auth/PasswordUpdateTest.php` › «correct password must be provided to update password» |
 | IAM-R08.1 | `tests/Feature/ProfileTest.php` › «profile page is displayed» |
-| IAM-R08.2 | `tests/Feature/ProfileTest.php` › «profile information can be updated» |
-| IAM-R08.3 | `tests/Feature/ProfileTest.php` › «email verification status is unchanged when the email address is unchanged» |
-| IAM-R08.4 | `tests/Feature/ProfileTest.php` › «user can delete their account» |
-| IAM-R08.5 | `tests/Feature/ProfileTest.php` › «correct password must be provided to delete account» |
+| IAM-R08.2 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «the owner can change their name»; `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «a new email is only used once verified at that address, and the old one is told» (sustituido por IDG-R05.1 – R05.3) |
+| IAM-R08.3 | `tests/Feature/IdentityAccess/AccountSettingsTest.php` › «an institution's profile only links to the account» (sustituido por IDG-R03.1, R05) |
+| IAM-R08.4 | `tests/Feature/ProfileTest.php` › «a member can leave the institution, keeping their account and other memberships» (sustituido por IDG-R07.1) |
+| IAM-R08.5 | `tests/Feature/ProfileTest.php` › «leaving the institution and deleting the account are separate actions, in separate places» (sustituido por IDG-R07.4, R08.1) |
 | IAM-R09.1 | `tests/Feature/UserManagementTest.php` › «guests are sent to the login screen» |
 | IAM-R09.2 | `tests/Feature/UserManagementTest.php` › «users without the gestionar-usuarios permission can not manage users» |
 | IAM-R09.3 | `tests/Feature/UserManagementTest.php` › «administrators can list the users of their institution»; `tests/Feature/UserManagementTest.php` › «a director can manage the users of their institution» |
 | IAM-R09.4 | `tests/Feature/UserManagementTest.php` › «the user list never includes users of another institution»; `tests/Feature/UserManagementTest.php` › «a user of another institution can not be edited» |
-| IAM-R09.5 | `tests/Feature/UserManagementTest.php` › «an administrator creates a user with a role and an invitation is sent» |
-| IAM-R09.6 | `tests/Feature/UserManagementTest.php` › «the email must be unique within the institution» |
-| IAM-R09.7 | `tests/Feature/UserManagementTest.php` › «the same email can be used in a different institution» |
+| IAM-R09.5 | `tests/Feature/UserManagementTest.php` › «an administrator invites a person with a role and the link is emailed» (sustituido por IDG-R04.1) |
+| IAM-R09.6 | `tests/Feature/UserManagementTest.php` › «a member of the institution can not be invited again» (sustituido por IDG-R04.3) |
+| IAM-R09.7 | `tests/Feature/UserManagementTest.php` › «inviting someone who belongs to another institution gets the same answer as anyone else» (sustituido por IDG-R04.2) |
 | IAM-R09.8 | `tests/Feature/UserManagementTest.php` › «at least one role is required» |
 | IAM-R09.9 | `tests/Feature/UserManagementTest.php` › «only roles that exist in the institution can be assigned» |
 | IAM-R09.10 | `tests/Feature/UserManagementTest.php` › «a user can be given several roles in the same institution» |
 | IAM-R09.11 | `tests/Feature/UserManagementTest.php` › «the edit screen shows the user with their role»; `tests/Feature/UserManagementTest.php` › «an administrator can change a user's role and deactivate them» |
 | IAM-R09.12 | `tests/Feature/UserManagementTest.php` › «a pending invitation can be resent» |
-| IAM-R09.13 | `tests/Feature/UserManagementTest.php` › «an invitation can not be resent to a user who already activated their account» |
+| IAM-R09.13 | `tests/Feature/UserManagementTest.php` › «an invitation that is no longer pending can not be resent» (sustituido por IDG-R04.8) |
 | IAM-R10.1 | `tests/Feature/UserManagementTest.php` › «a director can not make anyone an administrador»; `tests/Feature/UserManagementTest.php` › «a director can not take the administrador role away» |
 | IAM-R10.2 | `tests/Feature/UserManagementTest.php` › «a director can edit an administrador without touching that role» |
 | IAM-R10.3 | `tests/Feature/UserManagementTest.php` › «an administrador can not swap their own role for director» |

@@ -273,8 +273,8 @@ Cuatro PRs, cada uno usable por sí mismo:
 - [x] `migrate:fresh --seed` dos veces y rollback de la migración nueva.
 - [x] Matriz de trazabilidad completa (también INS-R02.4, R02.5 y
   EST-R08.7 en sus specs).
-- [ ] `/security-review` de cada PR (permisos del menú y del inicio, y el
-  rol al vincular; S-12).
+- [x] `/security-review` de cada PR (permisos del menú y del inicio, y el
+  rol al vincular; S-12): sin hallazgos de confianza alta o media (2026-10-23; ver «Revisión de seguridad» en `specs/roadmap.md`).
 - [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios

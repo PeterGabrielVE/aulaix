@@ -107,7 +107,7 @@ roles, pantalla de inicio, recuperación) conservan su lógica (Q-03).
 
 - [x] Suite completa, `rls` y `Architecture` en verde; `migrate:fresh --seed` (dos veces).
 - [ ] Migración de datos probada sobre una copia de staging.
-- [ ] `/security-review` (S-12).
+- [x] `/security-review` (S-12): sin hallazgos de confianza alta o media (2026-10-23; ver «Revisión de seguridad» en `specs/roadmap.md`).
 
 ---
 
@@ -143,7 +143,7 @@ roles, pantalla de inicio, recuperación) conservan su lógica (Q-03).
 - [x] **B-10** — Reautenticación (`password.confirm`, 10 minutos) para las
   operaciones sensibles.
   - Criterios: IDG-NF05
-- [ ] **Cierre de PR B** — suite en verde, `/security-review`.
+- [x] **Cierre de PR B** — suite en verde, `/security-review`: sin hallazgos de confianza alta o media (2026-10-23; ver «Revisión de seguridad» en `specs/roadmap.md`).
 
 ---
 
@@ -168,8 +168,8 @@ roles, pantalla de inicio, recuperación) conservan su lógica (Q-03).
 - [x] **C-06** — Terminología «plantel» en toda la interfaz, incluidas las
   pantallas existentes.
   - Criterios: IDG-NF08
-- [ ] **Cierre de PR C** — suite en verde, `/security-review`, matriz
-  completa, `estado: implementada`.
+- [x] **Cierre de PR C** — suite en verde, `/security-review`, matriz
+  completa, `estado: implementada`. Revisión: sin hallazgos de confianza alta o media (2026-10-23; ver «Revisión de seguridad» en `specs/roadmap.md`).
 
 ## Fuera de esta spec
 

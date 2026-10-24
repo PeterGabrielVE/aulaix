@@ -117,5 +117,5 @@ Regla transversal: al cerrar cada tarea, `php artisan test --compact`
 - [x] `migrate:fresh --seed` dos veces y rollback de las migraciones nuevas.
 - [ ] Disponibilidad de `btree_gist` comprobada en el servidor de producción (ADR 0007).
 - [x] Matriz de trazabilidad completa.
-- [ ] `/security-review` (toca permisos, S-12).
+- [x] `/security-review` (toca permisos, S-12): sin hallazgos de confianza alta o media (2026-10-23; ver «Revisión de seguridad» en `specs/roadmap.md`).
 - [x] `estado` de requirements/design/tasks actualizado.

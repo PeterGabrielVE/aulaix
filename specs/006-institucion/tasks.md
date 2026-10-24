@@ -95,5 +95,5 @@ Regla transversal: al cerrar cada tarea, `php artisan test --compact`
 - [x] `migrate:fresh --seed` dos veces y rollback de las migraciones nuevas.
 - [ ] Disco compartido (S3) configurado en producción antes de habilitar las subidas.
 - [x] Matriz de trazabilidad completa.
-- [ ] `/security-review` (subida de archivos y permisos, S-12).
+- [x] `/security-review` (subida de archivos y permisos, S-12): sin hallazgos de confianza alta o media (2026-10-23; ver «Revisión de seguridad» en `specs/roadmap.md`).
 - [x] `estado` de requirements/design/tasks actualizado.

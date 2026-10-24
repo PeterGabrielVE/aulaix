@@ -115,3 +115,35 @@ Conviene llevarlos a la constitución o a las specs antes de llegar a ellos:
   personales más allá de los imprescindibles.
 - **F8-08** — Auditoría de seguridad externa: el objetivo ASVS nivel 2 (S-13)
   prepara para ella.
+
+## Revisión de seguridad
+
+**2026-10-23**: `/security-review` de la rama de SPEC-004 (PR A – C), 006,
+007, 008, 009 y 013, en cuatro áreas:
+- identidad y sesión;
+- plantel, archivos, bitácora y calendario;
+- estudiantes y traslados;
+- estructura académica y Workspace.
+
+Resultado: **sin hallazgos de confianza alta o media**.
+
+Quedan anotados, por debajo del umbral, para revisarlos antes de
+producción:
+
+- **RLS por conexión.** `RowLevelSecurity::setInstitution` fija el plantel
+  con `set_config(..., false)`, que dura toda la conexión. Con conexiones
+  persistentes o un pool en modo transacción (PgBouncer), el plantel podría
+  pasar de una petición a otra. Antes de producción: fijarlo por
+  transacción, o garantizar que no hay pool de transacciones. Necesita spec
+  o ADR.
+- **Login CSRF con el traspaso.** Un miembro de un plantel podría enviar a
+  otra persona su propio enlace de traspaso (de un solo uso y válido 60 s)
+  y dejarla dentro con la sesión del atacante. El impacto es bajo; se
+  evitaría ligando el traspaso a la sesión central que lo pidió.
+- **Política `UPDATE` de `transfer_requests` (ADR 0008).** La base de datos
+  deja al plantel de destino cambiar `origin_institution_id` en su propia
+  fila. Ningún código de la aplicación lo expone; se cerraría con un
+  `WITH CHECK` más estricto.
+- **Cuentas históricas sin consolidar con el mismo correo.** Cada una
+  podría aceptar invitaciones a ese correo hasta que se consoliden
+  (IDG-R09). Depende de datos antiguos, no de código nuevo.

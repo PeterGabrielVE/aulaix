@@ -232,7 +232,7 @@ Tres PRs, cada uno usable por sí mismo:
 - [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
 - [x] `migrate:fresh --seed` dos veces y rollback de las migraciones nuevas.
 - [x] Matriz de trazabilidad completa.
-- [ ] `/security-review` de cada PR (datos de menores, traslados y acceso del representante; S-12).
+- [x] `/security-review` de cada PR (datos de menores, traslados y acceso del representante; S-12): sin hallazgos de confianza alta o media (2026-10-23; ver «Revisión de seguridad» en `specs/roadmap.md`).
 - [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios

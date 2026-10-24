@@ -15,7 +15,7 @@ defineProps({
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">{{ student.givenNames }} {{ student.familyNames }}</h2>
+                <h1 class="text-xl font-semibold leading-tight text-gray-800">{{ student.givenNames }} {{ student.familyNames }}</h1>
                 <Link :href="route('my-students.index')" class="text-sm font-medium text-indigo-700">Volver</Link>
             </div>
         </template>

@@ -62,7 +62,7 @@ const selectClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focu
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">{{ student.givenNames }} {{ student.familyNames }}</h2>
+                <h1 class="text-xl font-semibold leading-tight text-gray-800">{{ student.givenNames }} {{ student.familyNames }}</h1>
                 <span
                     class="rounded-full px-2 py-0.5 text-xs font-medium"
                     :class="student.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'"

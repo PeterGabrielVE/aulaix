@@ -28,7 +28,7 @@ const visit = (page = 1) => router.get(
     <AuthenticatedLayout>
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">Estudiantes</h2>
+                <h1 class="text-xl font-semibold leading-tight text-gray-800">Estudiantes</h1>
                 <Link
                     v-if="canManage"
                     :href="route('students.create')"

@@ -93,6 +93,23 @@ services:
         networks:
             - aulaix
 
+    # Browser tests (SPEC-013): only with `--profile browser`, e.g.
+    # docker compose --profile browser run --rm browser
+    browser:
+        profiles: ["browser"]
+        build:
+            context: .
+            dockerfile: docker/browser/Dockerfile
+        volumes:
+            - .:/var/www/html
+            - aulaix_vendor:/var/www/html/vendor
+            - aulaix_browser_node_modules:/var/www/html/node_modules
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - aulaix
+
 networks:
     aulaix:
         driver: bridge
@@ -103,4 +120,6 @@ volumes:
     aulaix_node_modules:
         driver: local
     aulaix_vendor:
+        driver: local
+    aulaix_browser_node_modules:
         driver: local

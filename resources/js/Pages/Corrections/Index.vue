@@ -17,7 +17,7 @@ const resolve = (correction) => form.post(route('corrections.resolve', correctio
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Correcciones pedidas por representantes</h2>
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">Correcciones pedidas por representantes</h1>
         </template>
 
         <div class="py-8">

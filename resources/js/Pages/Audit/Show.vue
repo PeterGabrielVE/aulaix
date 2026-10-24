@@ -30,9 +30,9 @@ function display(value) {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between gap-4">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                <h1 class="text-xl font-semibold leading-tight text-gray-800">
                     Registro #{{ entry.id }}
-                </h2>
+                </h1>
                 <Link :href="route('audit.index')" class="text-sm font-medium text-indigo-600 hover:text-indigo-800">
                     Volver a la bitácora
                 </Link>

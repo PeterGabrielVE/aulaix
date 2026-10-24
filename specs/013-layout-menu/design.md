@@ -1,6 +1,6 @@
 ---
 spec: 013-layout-menu
-estado: aprobada
+estado: implementada
 fecha: 2026-10-23
 aprobado: 2026-10-23
 requisitos: requirements.md
@@ -431,3 +431,25 @@ que ya existen:
   frío, la primera llamada ronda los 440 ms.
 - **Regla de arquitectura nueva** (NAV-NF01, ADR 0009): `Workspace` no usa
   la base de datos.
+
+### PR D
+
+- **Servicio `browser` en `docker-compose.yml`** (perfil `browser`), sobre
+  `docker/browser/Dockerfile`: Debian con PHP 8.4, Node 22 y Chromium de
+  Playwright 1.63.0. El contenedor `app` sigue en Alpine y
+  `Dockerfile.prod` no cambia. Se ejecuta con
+  `docker compose --profile browser run --rm browser`; antes de los tests
+  compila los assets, porque un Vite en modo desarrollo (`public/hot`)
+  queda fuera de su alcance.
+- **`phpunit.browser.xml`** aparte, con la suite `tests/Browser`,
+  `APP_DOMAIN=localhost` (Chromium resuelve `<plantel>.localhost` a la
+  máquina) y sesiones en archivo. `php artisan test` no ejecuta los tests de
+  navegador. En CI corren en el trabajo `browser`, en paralelo.
+- **`ext-sockets`** en la imagen de desarrollo y en CI: la exige
+  `pestphp/pest-plugin-browser`. Para compilarla en Alpine hace falta
+  `linux-headers`.
+- **Títulos de página en `h1`.** axe pedía un `h1` por página. El título de
+  las 19 páginas con cabecera pasa de `h2` a `h1`, y en los inicios y la
+  estructura los encabezados internos suben un nivel.
+- **axe en su nivel más estricto** (todas las severidades, buenas prácticas
+  incluidas), por encima del AA que pide NAV-NF04.

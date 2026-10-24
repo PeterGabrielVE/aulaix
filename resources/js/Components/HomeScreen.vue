@@ -31,7 +31,7 @@ const noticeTexts = {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">{{ title }}</h2>
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">{{ title }}</h1>
         </template>
 
         <div class="py-8">
@@ -53,7 +53,7 @@ const noticeTexts = {
                     <RecentActivity v-if="home.recentActivity" :entries="home.recentActivity" />
 
                     <section v-if="home.shortcuts.length" aria-labelledby="accesos">
-                        <h3 id="accesos" class="sr-only">Accesos directos</h3>
+                        <h2 id="accesos" class="sr-only">Accesos directos</h2>
                         <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             <li v-for="shortcut in home.shortcuts" :key="shortcut.key">
                                 <Link

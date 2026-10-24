@@ -1,7 +1,7 @@
 ---
 spec: 013-layout-menu
 prefijo: NAV
-estado: aprobada
+estado: implementada
 fecha: 2026-10-23
 aprobada: 2026-10-23
 backlog: F1-11, F1-12
@@ -428,18 +428,18 @@ incorporadas](#decisiones-de-producto-incorporadas-2026-10-23).
 
 | Criterio | Test(s) |
 |----------|---------|
-| NAV-R01.1 | |
-| NAV-R01.2 | |
-| NAV-R01.3 | |
-| NAV-R01.4 | `tests/Feature/Workspace/LayoutPropsTest.php` › «groups the menu, with links and the current screen marked»; `tests/Feature/Workspace/LayoutPropsTest.php` › «marks the entry of a screen that depends on it» |
-| NAV-R01.5 | |
-| NAV-R02.1 | |
+| NAV-R01.1 | `tests/Browser/LayoutTest.php` › «a wide screen shows the side menu, with the current screen marked» |
+| NAV-R01.2 | `tests/Browser/LayoutTest.php` › «below 1024 px the menu is a panel that keeps the focus and closes with Escape» |
+| NAV-R01.3 | `tests/Browser/LayoutTest.php` › «below 1024 px the menu is a panel that keeps the focus and closes with Escape»; `tests/Browser/LayoutTest.php` › «the panel closes with its button, and when an entry is chosen» |
+| NAV-R01.4 | `tests/Feature/Workspace/LayoutPropsTest.php` › «groups the menu, with links and the current screen marked»; `tests/Feature/Workspace/LayoutPropsTest.php` › «marks the entry of a screen that depends on it»; `tests/Browser/LayoutTest.php` › «a wide screen shows the side menu, with the current screen marked» |
+| NAV-R01.5 | `tests/Browser/LayoutTest.php` › «a success message shows above the content» |
+| NAV-R02.1 | `tests/Browser/LayoutTest.php` › «the top bar names the institution, the person and their role, with the account menu»; `tests/Browser/TenantSmokeTest.php` › «opens an institution page signed in» |
 | NAV-R02.2 | `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «names the active year and its open term»; `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «says when the active year has no open term»; `tests/Feature/Workspace/LayoutPropsTest.php` › «shows the active year, its open term, the person and their primary role» |
 | NAV-R02.3 | `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «says when there is no active year, and whether one is planned»; `tests/Unit/Workspace/Application/ShowLayoutTest.php` › «says there is no active year, and offers no switch to a member of one institution»; `tests/Feature/Workspace/LayoutPropsTest.php` › «says there is no active year, or no open term» |
 | NAV-R02.4 | `tests/Feature/IdentityAccess/Infrastructure/MembershipContextQueryTest.php` › «tells the roles, the highest-priority one and the active institutions of an account»; `tests/Feature/IdentityAccess/Infrastructure/MembershipContextQueryTest.php` › «has no primary role for a member without base roles»; `tests/Feature/Workspace/LayoutPropsTest.php` › «shows the active year, its open term, the person and their primary role» |
 | NAV-R02.5 | `tests/Feature/IdentityAccess/Infrastructure/MembershipContextQueryTest.php` › «takes the active institutions from the session, counted where all of them were visible»; `tests/Unit/Workspace/Application/ShowLayoutTest.php` › «shows the menu, the year and term, the primary role and the switch»; `tests/Feature/IdentityAccess/HandoffTest.php` › «the institution menu offers to switch institution»; `tests/Feature/IdentityAccess/Infrastructure/CacheHandoffTokensTest.php` › «carries how many institutions the account was active in (SPEC-013 NAV-R02.5)» |
 | NAV-R02.6 | `tests/Feature/IdentityAccess/HandoffTest.php` › «a member of one institution is not offered to switch (SPEC-013 NAV-R02.6)»; `tests/Unit/Workspace/Application/ShowLayoutTest.php` › «says there is no active year, and offers no switch to a member of one institution» |
-| NAV-R02.7 | |
+| NAV-R02.7 | `tests/Browser/LayoutTest.php` › «the top bar names the institution, the person and their role, with the account menu» |
 | NAV-R02.8 | `tests/Feature/AcademicCalendar/Infrastructure/CalendarContextQueryTest.php` › «sees a year activated a moment ago, with one query»; `tests/Feature/Workspace/LayoutPropsTest.php` › «says there is no active year, or no open term» |
 | NAV-R03.1 | `tests/Unit/Workspace/Domain/CapabilitiesTest.php` › «shows each entry to whoever meets its condition»; `tests/Unit/Workspace/Domain/CapabilitiesTest.php` › «shows the home entry to every member»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «adds the entries of every role and link a person has»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «shows a teacher its classes and what it may consult» |
 | NAV-R03.2 | `tests/Unit/Workspace/Domain/CapabilitiesTest.php` › «knows the eleven entries of the menu, in order and by group»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «groups the entries of a Director, without the ones of other roles»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «hides the groups without entries for a guardian»; `tests/Unit/Workspace/Domain/NavigationTest.php` › «leaves only the home entry to a member without roles»; `tests/Feature/Workspace/LayoutPropsTest.php` › «groups the menu, with links and the current screen marked» |
@@ -479,8 +479,8 @@ incorporadas](#decisiones-de-producto-incorporadas-2026-10-23).
 | NAV-NF01 | `tests/Architecture/LayersTest.php` › «Workspace has no tables nor writes of its own»; `tests/Feature/AcademicStructure/Infrastructure/StructureOverviewQueryTest.php` › «needs ver-estructura»; `tests/Feature/Tenancy/Infrastructure/InstitutionGapsQueryTest.php` › «needs gestionar-plantel» |
 | NAV-NF02 | `tests/Feature/Workspace/HomePerformanceTest.php` › «the Director home of a large institution loads within 300 ms (p95)» |
 | NAV-NF03 | `tests/Feature/Workspace/LayoutQueryCountTest.php` › «the layout adds five queries at most to a page» |
-| NAV-NF04 | |
-| NAV-NF05 | |
+| NAV-NF04 | `tests/Browser/AccessibilityTest.php` › «each home screen is accessible»; `tests/Browser/AccessibilityTest.php` › «a screen of the institution, with its menu, is accessible»; `tests/Browser/AccessibilityTest.php` › «the menu panel is accessible while open»; `tests/Browser/LayoutTest.php` › «the first thing to get the focus skips to the content»; `tests/Browser/LayoutTest.php` › «below 1024 px the menu is a panel that keeps the focus and closes with Escape» |
+| NAV-NF05 | `tests/Browser/AccessibilityTest.php` › «each home screen is accessible»; `tests/Browser/AccessibilityTest.php` › «a screen of the institution, with its menu, is accessible» |
 | INS-R02.4 (SPEC-006) | Ver la matriz de `specs/006-institucion/requirements.md` (`InstitutionDependencyTest`, `UpdateInstitutionTest`, `EloquentInstitutionRepositoryTest`, `InstitutionDependencyColumnTest`, `InstitutionSettingsTest`) |
 | INS-R02.5 (SPEC-006) | Ver la matriz de `specs/006-institucion/requirements.md` (`InstitutionDependencyTest`, `UpdateInstitutionTest`, `InstitutionDependencyColumnTest`, `InstitutionSettingsTest`) |
 | EST-R08.7 (SPEC-009) | Ver la matriz de `specs/009-estudiantes/requirements.md` (`GuardianAccountTest`, `GrantRoleTest`, `GuardianInvitationTest`) |

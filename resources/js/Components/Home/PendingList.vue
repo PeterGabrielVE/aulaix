@@ -29,7 +29,7 @@ const texts = {
 
 <template>
     <section aria-labelledby="pendientes" class="bg-white p-4 shadow-xs sm:rounded-lg sm:p-6">
-        <h3 id="pendientes" class="text-lg font-medium text-gray-900">Pendientes</h3>
+        <h2 id="pendientes" class="text-lg font-medium text-gray-900">Pendientes</h2>
         <p v-if="!items.length" class="mt-2 text-sm text-gray-700">No hay pendientes.</p>
         <ul v-else class="mt-3 divide-y divide-gray-100">
             <li v-for="item in items" :key="item.key">

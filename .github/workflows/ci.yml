@@ -19,8 +19,8 @@ permissions:
 env:
     PHP_VERSION: '8.4'
     NODE_VERSION: '22'
-    # Same extension set as docker/php/Dockerfile.
-    PHP_EXTENSIONS: pdo_pgsql, pgsql, pcntl, bcmath, zip, gd, intl, redis
+    # Same extension set as docker/php/Dockerfile (sockets: the browser tests' plugin).
+    PHP_EXTENSIONS: pdo_pgsql, pgsql, pcntl, bcmath, zip, gd, intl, redis, sockets
 
 jobs:
     lint:
@@ -197,6 +197,83 @@ jobs:
               with:
                   name: laravel-log
                   path: storage/logs/*.log
+                  retention-days: 7
+                  if-no-files-found: ignore
+
+    # SPEC-013 NAV-NF04, NF05: layout behaviour and accessibility in a real
+    # browser, in parallel with the main suite.
+    browser:
+        name: Browser tests (Pest + Playwright)
+        needs: frontend
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+
+        services:
+            postgres:
+                image: postgres:16-alpine
+                env:
+                    POSTGRES_DB: aulaix
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd "pg_isready -U postgres -d aulaix"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 10
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ env.PHP_VERSION }}
+                  extensions: ${{ env.PHP_EXTENSIONS }}
+                  coverage: none
+                  tools: composer:v2
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+                  cache: npm
+
+            - name: Resolve "postgres" to the service container
+              run: echo "127.0.0.1 postgres" | sudo tee -a /etc/hosts
+
+            - name: Create application role and test database
+              run: docker exec -i ${{ job.services.postgres.id }} psql -U postgres -d aulaix -v ON_ERROR_STOP=1 < docker/postgres/init.sql
+
+            - name: Cache Composer downloads
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/composer/files
+                  key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+                  restore-keys: composer-${{ runner.os }}-
+
+            - run: composer install --no-interaction --prefer-dist --no-progress
+            - run: npm ci
+            - run: npx playwright install --with-deps chromium
+
+            - name: Prepare environment
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate --ansi
+
+            - uses: actions/download-artifact@v4
+              with:
+                  name: vite-build
+                  path: public/build
+
+            - name: Browser tests
+              run: vendor/bin/pest --configuration=phpunit.browser.xml
+
+            - name: Upload screenshots
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: browser-screenshots
+                  path: tests/Browser/Screenshots
                   retention-days: 7
                   if-no-files-found: ignore
 

@@ -10,7 +10,7 @@ defineProps({
 <template>
     <section aria-labelledby="mis-clases" class="bg-white p-4 shadow-xs sm:rounded-lg sm:p-6">
         <div class="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 id="mis-clases" class="text-lg font-medium text-gray-900">Mis clases</h3>
+            <h2 id="mis-clases" class="text-lg font-medium text-gray-900">Mis clases</h2>
             <Link :href="route('my-assignments')" class="text-sm font-medium text-indigo-700 hover:underline">Ver mis asignaciones</Link>
         </div>
         <p v-if="!classes.hasActiveYear" class="mt-2 text-sm text-gray-700">No hay año escolar activo.</p>

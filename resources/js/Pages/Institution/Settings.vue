@@ -90,7 +90,7 @@ const typeName = computed(() => props.options.types.find((type) => type.code ===
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Plantel</h2>
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">Plantel</h1>
         </template>
 
         <div class="py-8">

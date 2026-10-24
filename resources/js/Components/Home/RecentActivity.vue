@@ -10,7 +10,7 @@ defineProps({
 <template>
     <section aria-labelledby="actividad" class="bg-white p-4 shadow-xs sm:rounded-lg sm:p-6">
         <div class="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 id="actividad" class="text-lg font-medium text-gray-900">Actividad reciente</h3>
+            <h2 id="actividad" class="text-lg font-medium text-gray-900">Actividad reciente</h2>
             <Link :href="route('audit.index')" class="text-sm font-medium text-indigo-700 hover:underline">Ver la bitácora</Link>
         </div>
         <p v-if="!entries.length" class="mt-2 text-sm text-gray-700">Aún no hay actividad registrada.</p>

@@ -32,7 +32,7 @@ const display = (indicator) => {
 
 <template>
     <section aria-labelledby="indicadores" class="bg-white p-4 shadow-xs sm:rounded-lg sm:p-6">
-        <h3 id="indicadores" class="text-lg font-medium text-gray-900">El plantel en cifras</h3>
+        <h2 id="indicadores" class="text-lg font-medium text-gray-900">El plantel en cifras</h2>
         <dl class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div v-for="indicator in indicators" :key="indicator.key" class="rounded-md border border-gray-100 p-3" :class="{ 'col-span-2 sm:col-span-3': indicator.key === 'staff' }">
                 <dt class="text-xs font-medium uppercase tracking-wide text-gray-600">{{ labels[indicator.key] ?? indicator.key }}</dt>

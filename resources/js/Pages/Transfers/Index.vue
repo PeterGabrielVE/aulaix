@@ -45,7 +45,7 @@ const selectClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focu
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Traslados</h2>
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">Traslados</h1>
         </template>
 
         <div class="py-8">

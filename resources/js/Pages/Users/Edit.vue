@@ -45,9 +45,9 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">
                 Editar usuario
-            </h2>
+            </h1>
         </template>
 
         <div class="py-12">

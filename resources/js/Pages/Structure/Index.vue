@@ -81,7 +81,7 @@ const selectClass ='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Estructura del año escolar</h2>
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">Estructura del año escolar</h1>
         </template>
 
         <div class="py-8">
@@ -122,7 +122,7 @@ const selectClass ='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus
                     <InputError :message="assignmentErrors.account_id || assignmentErrors.school_year || assignmentErrors.section" />
 
                     <section v-if="structure.grades.length" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">
-                        <h3 class="text-lg font-medium text-gray-900">Coordinadores</h3>
+                        <h2 class="text-lg font-medium text-gray-900">Coordinadores</h2>
                         <ul class="mt-3 space-y-2 text-sm">
                             <li v-for="coordinator in structure.coordinators" :key="`${coordinator.accountId}-${coordinator.level}`" class="flex flex-wrap items-center justify-between gap-2">
                                 <span>
@@ -173,7 +173,7 @@ const selectClass ='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus
 
                     <section v-for="grade in structure.grades" :key="grade.code" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">
                         <div class="flex flex-wrap items-center justify-between gap-2">
-                            <h3 class="text-lg font-medium text-gray-900">{{ grade.name }}</h3>
+                            <h2 class="text-lg font-medium text-gray-900">{{ grade.name }}</h2>
                             <button v-if="editable && openGrade !== grade.code" type="button" class="text-sm font-medium text-indigo-700" @click="open(grade)">Editar</button>
                         </div>
 
@@ -192,7 +192,7 @@ const selectClass ='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus
                         </p>
 
                         <div v-for="section in sectionsOf(grade)" :key="`people-${section.id}`" class="mt-4 rounded-md border border-gray-100 p-3">
-                            <h4 class="text-sm font-medium text-gray-900">Sección {{ section.letter }}</h4>
+                            <h3 class="text-sm font-medium text-gray-900">Sección {{ section.letter }}</h3>
                             <dl class="mt-2 grid gap-2 text-sm sm:grid-cols-2">
                                 <div>
                                     <dt class="text-gray-600">Docente guía</dt>

@@ -9,6 +9,7 @@ use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -26,6 +27,15 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+// SPEC-013: run apart, with phpunit.browser.xml (see docker-compose.yml).
+// The pages load the built assets: a running Vite dev server (public/hot)
+// is out of the browser container's reach.
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->beforeEach(fn () => Vite::useHotFile(base_path('tests/Browser/no-vite-dev-server')))
+    ->group('browser')
+    ->in('Browser');
 
 /*
 |--------------------------------------------------------------------------

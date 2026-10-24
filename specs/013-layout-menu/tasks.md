@@ -1,6 +1,6 @@
 ---
 spec: 013-layout-menu
-estado: implementando
+estado: implementada
 fecha: 2026-10-23
 aprobado: 2026-10-23
 diseño: design.md
@@ -236,7 +236,7 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 8 — Pest con Playwright
 
-- [ ] **T-24** — Spike y entorno (riesgos del diseño):
+- [x] **T-24** — Spike y entorno (riesgos del diseño):
   - `pestphp/pest-plugin-browser` y `playwright` como dependencias de
     desarrollo;
   - Chromium fuera de la imagen Alpine: servicio `browser` en `compose` o
@@ -249,14 +249,14 @@ Cuatro PRs, cada uno usable por sí mismo:
   - Criterios: — (habilita NAV-NF04 y NF05)
   - Test: `tests/Browser/TenantSmokeTest.php` › «opens an institution page
     signed in»
-- [ ] **T-25** — Comportamiento del layout en el navegador:
+- [x] **T-25** — Comportamiento del layout en el navegador:
   - panel bajo 1024 px, que retiene el foco;
   - cierre con Escape, con el botón y al navegar, devolviendo el foco;
   - «Saltar al contenido»;
   - entrada actual en una pantalla interna (ficha de estudiante).
   - Criterios: NAV-R01.1 – R01.5, R02.1, R02.7
   - Test: `tests/Browser/LayoutTest.php`
-- [ ] **T-26** — Accesibilidad y 360 px:
+- [x] **T-26** — Accesibilidad y 360 px:
   - `assertNoAccessibilityIssues` (AA) sobre una pantalla del plantel y los
     seis inicios, a 1280 px y a 360 px;
   - sin desplazamiento horizontal a 360 px.
@@ -265,17 +265,17 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls`,
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls`,
   `--group=perf` y `--group=browser`).
-- [ ] Tests de arquitectura en verde: `Workspace` sin `Persistence` ni
+- [x] Tests de arquitectura en verde: `Workspace` sin `Persistence` ni
   escrituras (NAV-NF01, ADR 0009).
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
-- [ ] `migrate:fresh --seed` dos veces y rollback de la migración nueva.
-- [ ] Matriz de trazabilidad completa (también INS-R02.4, R02.5 y
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
+- [x] `migrate:fresh --seed` dos veces y rollback de la migración nueva.
+- [x] Matriz de trazabilidad completa (también INS-R02.4, R02.5 y
   EST-R08.7 en sus specs).
 - [ ] `/security-review` de cada PR (permisos del menú y del inicio, y el
   rol al vincular; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

@@ -9,7 +9,7 @@ defineProps({
 
 <template>
     <section aria-labelledby="mis-representados" class="bg-white p-4 shadow-xs sm:rounded-lg sm:p-6">
-        <h3 id="mis-representados" class="text-lg font-medium text-gray-900">Mis representados</h3>
+        <h2 id="mis-representados" class="text-lg font-medium text-gray-900">Mis representados</h2>
         <p v-if="!represented.students.length" class="mt-2 text-sm text-gray-700">Aún no tienes representados en este plantel.</p>
         <ul v-else class="mt-3 divide-y divide-gray-100 text-sm">
             <li v-for="student in represented.students" :key="student.id">

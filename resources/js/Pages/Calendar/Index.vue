@@ -80,7 +80,7 @@ const day = (date) => date.split('-').reverse().join('/');
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Año escolar</h2>
+            <h1 class="text-xl font-semibold leading-tight text-gray-800">Año escolar</h1>
         </template>
 
         <div class="py-8">

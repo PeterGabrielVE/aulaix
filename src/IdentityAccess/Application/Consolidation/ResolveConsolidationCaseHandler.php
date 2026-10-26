@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AulaX\IdentityAccess\Application\Consolidation;
 
-use AulaX\Audit\Application\AuditContext;
 use AulaX\Audit\Application\AuditEvent;
 use AulaX\Audit\Application\AuditSubject;
 use AulaX\Audit\Application\AuditTrail;
@@ -20,8 +19,9 @@ use AulaX\Shared\Application\TransactionManager;
  * the accounts, with proof that one person owns them, or keep them separate
  * for good. Only authorized operators, only the whole case and only while it
  * is still under review; all or nothing, recorded with the operator, the
- * decision and the reason. The console command and the future super
- * administration panel are both inputs to this use case (IDG-NF07).
+ * decision and the reason. The console command and the platform panel are
+ * both inputs to this use case (IDG-NF07); each names its actor in the
+ * AuditContext before calling it (console operator or panel operator).
  */
 final readonly class ResolveConsolidationCaseHandler
 {
@@ -29,7 +29,6 @@ final readonly class ResolveConsolidationCaseHandler
         private ConsolidationOperators $operators,
         private AccountRepository $accounts,
         private AccountConsolidator $consolidator,
-        private AuditContext $auditContext,
         private AuditTrail $audit,
         private TransactionManager $transactions,
     ) {}
@@ -39,21 +38,15 @@ final readonly class ResolveConsolidationCaseHandler
      */
     public function __invoke(ResolveConsolidationCaseCommand $command): CaseResolution
     {
-        if (trim($command->operator) === '' || ! $this->operators->isAuthorized($command->operator)) {
-            throw CaseResolutionRefused::operatorNotAuthorized();
-        }
+        try {
+            $group = $this->checked($command);
+        } catch (CaseResolutionRefused $refused) {
+            $this->recordRefusal($command, $refused);
 
-        if (trim($command->reason) === '') {
-            throw CaseResolutionRefused::missing('el motivo');
+            throw $refused;
         }
 
         $verificationRef = trim((string) $command->verificationRef);
-
-        if ($command->decision === ConsolidationDecision::Consolidate && $verificationRef === '') {
-            throw CaseResolutionRefused::missing('la referencia de la verificación de titularidad');
-        }
-
-        $group = $this->caseOf($command->accountIds);
         $ids = array_map(fn (Account $account) => $account->id->value, $group);
         sort($ids);
 
@@ -64,8 +57,6 @@ final readonly class ResolveConsolidationCaseHandler
         if ($command->dryRun) {
             return $resolution;
         }
-
-        $this->auditContext->actAsConsoleOperator($command->operator);
 
         $context = [
             FieldChange::of('decision', null, $command->decision->value),
@@ -91,6 +82,50 @@ final readonly class ResolveConsolidationCaseHandler
         });
 
         return $resolution;
+    }
+
+    /**
+     * The operator, the reason, the proof of ownership and the case itself.
+     *
+     * @return list<Account>
+     *
+     * @throws CaseResolutionRefused
+     */
+    private function checked(ResolveConsolidationCaseCommand $command): array
+    {
+        if (trim($command->operator) === '' || ! $this->operators->isAuthorized($command->operator)) {
+            throw CaseResolutionRefused::operatorNotAuthorized();
+        }
+
+        if (trim($command->reason) === '') {
+            throw CaseResolutionRefused::missing('el motivo');
+        }
+
+        if ($command->decision === ConsolidationDecision::Consolidate && trim((string) $command->verificationRef) === '') {
+            throw CaseResolutionRefused::missing('la referencia de la verificación de titularidad');
+        }
+
+        return $this->caseOf($command->accountIds);
+    }
+
+    /**
+     * Every refusal goes to the platform log, dry run or not (SPEC-014 V3):
+     * who tried, on which accounts and why it was refused.
+     */
+    private function recordRefusal(ResolveConsolidationCaseCommand $command, CaseResolutionRefused $refused): void
+    {
+        $requested = array_values(array_unique($command->accountIds));
+        sort($requested);
+
+        $this->transactions->run(fn () => $this->audit->recordForPlatform(AuditEvent::of(
+            'identity.consolidation.refused',
+            AuditSubject::of('account', $requested[0] ?? 'ninguna'),
+            [
+                FieldChange::of('accounts', null, $requested),
+                FieldChange::of('decision', null, $command->decision->value),
+                FieldChange::of('refusal', null, $refused->getMessage()),
+            ],
+        )));
     }
 
     /**

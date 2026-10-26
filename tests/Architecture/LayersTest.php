@@ -255,6 +255,23 @@ arch('only the platform lists every institution and changes their status', funct
     'AulaX\Tenancy\Application\Administration\ShowInstitutionQuery',
 ]);
 
+arch('the platform log is read only by the panel, and the panel never reads an institution log', function () {
+    // SPEC-014 PLT-R07.2, R07.4 (AUD-R04.1).
+    expect('AulaX\Audit\Application\PlatformLog\ListPlatformEntriesQuery')->toOnlyBeUsedIn('AulaX\Platform');
+    expect('AulaX\Platform')->not->toUse([
+        'AulaX\Audit\Application\ListEntries\ListAuditEntriesHandler',
+        'AulaX\Audit\Application\ListEntries\AuditLog',
+    ]);
+});
+
+arch('a consolidation case is resolved only from the console command or the panel', function () {
+    // SPEC-014 PLT-R06.5, V3 (IDG-NF07): one use case, two inputs.
+    expect('AulaX\IdentityAccess\Application\Consolidation\ResolveConsolidationCaseHandler')->toOnlyBeUsedIn([
+        'App\Console\Commands\ResolveConsolidationCase',
+        'AulaX\Platform\Infrastructure\Consolidation\IdentityConsolidationDesk',
+    ]);
+});
+
 arch('Workspace has no tables nor writes of its own', function () {
     // ADR 0009, SPEC-013 NAV-NF01: a composed view reads through the
     // Application layer of the modules that own the data.

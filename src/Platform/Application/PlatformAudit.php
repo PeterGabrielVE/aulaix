@@ -97,6 +97,16 @@ final class PlatformAudit
         );
     }
 
+    public static function consolidationCaseViewed(int $accountId): AuditEvent
+    {
+        return AuditEvent::of('platform.consolidation_case.viewed', AuditSubject::of('account', $accountId));
+    }
+
+    public static function activityViewed(): AuditEvent
+    {
+        return AuditEvent::of('platform.activity.viewed', AuditSubject::of('platform_log', 'panel'));
+    }
+
     public static function operator(OperatorId $operator): AuditSubject
     {
         return AuditSubject::of('platform_operator', $operator->value);

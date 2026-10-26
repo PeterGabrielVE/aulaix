@@ -1,16 +1,23 @@
 <?php
 
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
+use AulaX\Platform\Domain\Operator;
+use AulaX\Platform\Domain\OperatorEmail;
+use AulaX\Platform\Domain\OperatorRepository;
+use AulaX\Platform\Domain\OperatorRole;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Testing\PendingCommand;
+
+require_once dirname(__DIR__, 2).'/Fixtures/Platform/platform_helpers.php';
 
 /**
  * SPEC-004 IDG-R11, IDG-NF07: support resolves the doubtful cases from the
  * console, with a restricted, audited and simulable tool.
  */
 beforeEach(function () {
-    config(['identity.consolidation_operators' => ['soporte.luis']]);
+    // SPEC-014 PLT-R06.6, V3: the operator is an active operator of the panel.
+    storedOperator('luis@aulax.ve', OperatorRole::Support);
     Notification::fake();
 });
 
@@ -32,7 +39,7 @@ function resolveCase(array $accounts, array $options = []): PendingCommand
 {
     return test()->artisan('identity:consolidation:resolve', [
         'accounts' => array_map(fn (User $account) => $account->id, $accounts),
-        '--operator' => 'soporte.luis',
+        '--operator' => 'luis@aulax.ve',
         '--decision' => 'consolidate',
         '--reason' => 'Cédula verificada por teléfono',
         '--verification-ref' => 'TICKET-123',
@@ -127,7 +134,7 @@ test('every resolution is recorded with its operator, decision, reason and accou
 
     $entry = DB::table('platform_audit_entries')->where('event_type', 'identity.account.consolidated')->sole();
     expect($entry->origin)->toBe('console')
-        ->and($entry->operator)->toBe('soporte.luis')
+        ->and($entry->operator)->toBe('luis@aulax.ve')
         ->and(json_decode($entry->changes, true))->toMatchArray([
             'merged_accounts' => ['from' => [$newer->id], 'to' => []],
             'decision' => ['from' => null, 'to' => 'consolidate'],
@@ -135,3 +142,26 @@ test('every resolution is recorded with its operator, decision, reason and accou
             'verification_ref' => ['from' => null, 'to' => 'TICKET-123'],
         ]);
 });
+
+test('accepts only an active operator of the panel (PLT-R06.6, V3)', function () {
+    [$older, $newer] = reviewCase();
+
+    resolveCase([$older, $newer], ['--operator' => 'LUIS@aulax.ve', '--dry-run' => true])->assertSuccessful();
+});
+
+test('refuses an inactive, pending or unknown operator, and records the refusal (V3)', function (string $operator) {
+    $repository = app(OperatorRepository::class);
+    $repository->save(Operator::invite('Pendiente', OperatorEmail::fromString('pendiente@aulax.ve'), OperatorRole::Support));
+    $inactive = $repository->byId(storedOperator('baja@aulax.ve', OperatorRole::Support));
+    $inactive->deactivate();
+    $repository->save($inactive);
+    [$older, $newer] = reviewCase();
+
+    resolveCase([$older, $newer], ['--operator' => $operator])->assertFailed();
+
+    $entry = DB::table('platform_audit_entries')->where('event_type', 'identity.consolidation.refused')->sole();
+    expect(User::query()->where('email', 'ana@example.com')->count())->toBe(2)
+        ->and($entry->origin)->toBe('console')
+        ->and($entry->operator)->toBe($operator)
+        ->and(json_decode($entry->changes, true)['refusal']['to'])->toBe('El operador no está autorizado para resolver consolidaciones.');
+})->with(['baja@aulax.ve', 'pendiente@aulax.ve', 'nadie@aulax.ve', 'soporte.luis']);

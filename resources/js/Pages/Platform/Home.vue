@@ -3,8 +3,7 @@ import PlatformLayout from '@/Layouts/PlatformLayout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
-// SPEC-014: the panel's landing page. Consolidations and the log arrive
-// with the next PR.
+// SPEC-014: the panel's landing page.
 const operator = computed(() => usePage().props.platform?.operator);
 const regenerate = () => router.post(route('platform.recovery-codes.regenerate'));
 </script>
@@ -18,6 +17,18 @@ const regenerate = () => router.post(route('platform.recovery-codes.regenerate')
                 <Link :href="route('platform.institutions')" class="block h-full rounded-lg bg-white p-5 shadow-xs hover:bg-gray-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-600">
                     <span class="block font-medium text-gray-900">Planteles</span>
                     <span class="mt-1 block text-sm text-gray-700">Su estado y su uso; activar y desactivar.</span>
+                </Link>
+            </li>
+            <li>
+                <Link :href="route('platform.consolidations')" class="block h-full rounded-lg bg-white p-5 shadow-xs hover:bg-gray-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-600">
+                    <span class="block font-medium text-gray-900">Consolidaciones</span>
+                    <span class="mt-1 block text-sm text-gray-700">Resolver las cuentas con el mismo correo marcadas para revisión.</span>
+                </Link>
+            </li>
+            <li>
+                <Link :href="route('platform.activity')" class="block h-full rounded-lg bg-white p-5 shadow-xs hover:bg-gray-50 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-600">
+                    <span class="block font-medium text-gray-900">Bitácora</span>
+                    <span class="mt-1 block text-sm text-gray-700">Qué hizo y qué consultó cada operador, y los eventos de la identidad global.</span>
                 </Link>
             </li>
             <li v-if="operator?.role === 'super_admin'">

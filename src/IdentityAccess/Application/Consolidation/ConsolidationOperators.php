@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace AulaX\IdentityAccess\Application\Consolidation;
 
 /**
- * The support staff allowed to resolve consolidation cases, configured per
- * environment (IDG-R11.3).
+ * Who may resolve consolidation cases (IDG-R11.3): since SPEC-014, the
+ * active operators of the platform panel, by email.
  */
 interface ConsolidationOperators
 {

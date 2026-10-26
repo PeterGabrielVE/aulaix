@@ -79,7 +79,7 @@ final class IdentityAccessServiceProvider extends ServiceProvider
         ConsolidationCodes::class => CacheConsolidationCodes::class,
         AccountMerger::class => EloquentAccountMerger::class,
         ConsolidationCases::class => EloquentConsolidationCases::class,
-        ConsolidationOperators::class => ConfigConsolidationOperators::class,
+        ConsolidationOperators::class => PlatformConsolidationOperators::class,
         InstitutionScope::class => EloquentInstitutionScope::class,
     ];
 

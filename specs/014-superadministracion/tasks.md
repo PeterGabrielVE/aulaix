@@ -1,6 +1,6 @@
 ---
 spec: 014-superadministracion
-estado: implementando
+estado: implementada
 fecha: 2026-10-26
 aprobado: 2026-10-26
 diseño: design.md
@@ -250,7 +250,7 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 7 — Consolidaciones y corte de la configuración
 
-- [ ] **T-20** — `ListCasesQuery`, `PreviewResolutionQuery` (`dryRun`) y
+- [x] **T-20** — `ListCasesQuery`, `PreviewResolutionQuery` (`dryRun`) y
   `ResolveCaseHandler`, sobre los casos de uso de IdentityAccess, con el
   operador de la sesión y `platform.consolidation_case.viewed`.
   `ConsolidationController` y sus pantallas: lista, detalle, vista previa y
@@ -258,7 +258,7 @@ Cuatro PRs, cada uno usable por sí mismo:
   - Criterios: PLT-R06.1 – R06.5, R07.1
   - Test: `tests/Unit/Platform/Application/ConsolidationTest.php`;
     `tests/Feature/Platform/ConsolidationTest.php`
-- [ ] **T-21** — Corte de `IDENTITY_CONSOLIDATION_OPERATORS` (V3):
+- [x] **T-21** — Corte de `IDENTITY_CONSOLIDATION_OPERATORS` (V3):
   - `ActiveOperatorQuery` y `PlatformConsolidationOperators` sustituyen a
     `ConfigConsolidationOperators`;
   - el comando registra cada rechazo (`identity.consolidation.refused`);
@@ -277,21 +277,21 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 8 — Bitácora de plataforma, accesibilidad y rendimiento
 
-- [ ] **T-22** — `ListPlatformEntriesQuery` (Audit), `ListPlatformActivityQuery`
+- [x] **T-22** — `ListPlatformEntriesQuery` (Audit), `ListPlatformActivityQuery`
   y `ActivityController`, con filtros por fecha, operador y tipo. Nunca la
   bitácora de un plantel. Cierra la dependencia D2 de SPEC-005.
   - Criterios: PLT-R07.2, R07.4
   - Test: `tests/Feature/Platform/PlatformActivityTest.php`
-- [ ] **T-23** — Bitácora completa de las acciones y consultas del panel,
+- [x] **T-23** — Bitácora completa de las acciones y consultas del panel,
   sin secretos (contraseñas, secreto TOTP, códigos ni tokens).
   - Criterios: PLT-R07.1, R07.3
   - Test: `tests/Feature/Platform/PlatformAuditTest.php`
-- [ ] **T-24** — Navegador: axe y 360 px sin desplazamiento horizontal en el
+- [x] **T-24** — Navegador: axe y 360 px sin desplazamiento horizontal en el
   inicio de sesión, la lista de planteles y el detalle de uno, abiertos en
   `admin.localhost`.
   - Criterios: PLT-NF07
   - Test: `tests/Browser/PlatformAccessibilityTest.php`
-- [ ] **T-25** — Rendimiento: lista con 500 planteles en menos de 500 ms y
+- [x] **T-25** — Rendimiento: lista con 500 planteles en menos de 500 ms y
   uso de un plantel en menos de 300 ms (p95).
   - Criterios: PLT-NF06
   - Test: `tests/Feature/Platform/PlatformPerformanceTest.php`
@@ -299,20 +299,20 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls` y
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls` y
   `--group=perf`) y tests de navegador en verde.
-- [ ] Tests de arquitectura en verde: activación de planteles y consultas de
+- [x] Tests de arquitectura en verde: activación de planteles y consultas de
   agregados solo desde Platform (ADR 0010).
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores;
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores;
   `composer audit` sin avisos de las dependencias nuevas.
-- [ ] `migrate:fresh --seed` dos veces y rollback de la migración nueva.
-- [ ] Verificaciones V1 a V5 cubiertas, cada una con sus tests en la matriz.
-- [ ] Notas del PR con el procedimiento de despliegue de V3: crear el
+- [x] `migrate:fresh --seed` dos veces y rollback de la migración nueva.
+- [x] Verificaciones V1 a V5 cubiertas, cada una con sus tests en la matriz.
+- [x] Notas del PR con el procedimiento de despliegue de V3: crear el
   Superadministrador, invitar a los operadores y probar con `--dry-run`.
-- [ ] Matriz de trazabilidad completa.
+- [x] Matriz de trazabilidad completa.
 - [ ] `/security-review` de cada PR (autenticación, MFA y activación de
   planteles; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

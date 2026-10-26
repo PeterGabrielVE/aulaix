@@ -22,6 +22,8 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MyAssignmentsController;
+use App\Http\Controllers\Platform\ActivityController as PlatformActivityController;
+use App\Http\Controllers\Platform\ConsolidationController as PlatformConsolidationController;
 use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
 use App\Http\Controllers\Platform\InstitutionController as PlatformInstitutionController;
 use App\Http\Controllers\Platform\InvitationController as PlatformInvitationController;
@@ -159,6 +161,16 @@ Route::domain('admin.'.config('app.domain'))->group(function () {
             Route::get('/planteles/{institution}', [PlatformInstitutionController::class, 'show'])->name('platform.institutions.show');
             Route::put('/planteles/{institution}/estado', [PlatformInstitutionController::class, 'active'])
                 ->middleware(['platform.super', 'platform.recent-totp'])->name('platform.institutions.active');
+        });
+
+        Route::get('/bitacora', PlatformActivityController::class)->name('platform.activity');
+
+        Route::whereNumber('account')->group(function () {
+            Route::get('/consolidaciones', [PlatformConsolidationController::class, 'index'])->name('platform.consolidations');
+            Route::get('/consolidaciones/{account}', [PlatformConsolidationController::class, 'show'])->name('platform.consolidations.show');
+            Route::post('/consolidaciones/{account}/vista-previa', [PlatformConsolidationController::class, 'preview'])->name('platform.consolidations.preview');
+            Route::post('/consolidaciones/{account}/resolver', [PlatformConsolidationController::class, 'resolve'])
+                ->middleware('platform.recent-totp')->name('platform.consolidations.resolve');
         });
 
         Route::middleware('platform.super')->whereNumber('operator')->group(function () {

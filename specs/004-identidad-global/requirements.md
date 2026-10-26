@@ -315,9 +315,11 @@ mano.
 - **IDG-R11.2** — El comando de resolución deberá exigir la identificación
   del operador, los identificadores de las cuentas implicadas, la decisión
   (consolidar, mantener separadas) y un motivo.
-- **IDG-R11.3** — Si el operador no está en la lista de operadores
-  autorizados de la configuración del entorno, entonces el comando deberá
-  negarse a ejecutar.
+- **IDG-R11.3** — Si el operador no es un operador activo del panel de
+  plataforma, entonces el comando deberá negarse a ejecutar y registrar el
+  rechazo en la bitácora de plataforma. *(Modificado por SPEC-014
+  PLT-R06.6: sustituye a la lista de operadores de la configuración del
+  entorno, `IDENTITY_CONSOLIDATION_OPERATORS`, que desaparece.)*
 - **IDG-R11.4** — Cuando se ejecuta en modo simulación (`--dry-run`), el
   comando deberá mostrar los cambios que haría sin aplicar ninguno.
 - **IDG-R11.5** — Si las cuentas indicadas no están marcadas para revisión, o
@@ -442,7 +444,7 @@ Ninguna. Q1 a Q8 están resueltas en [Decisiones incorporadas](#decisiones-incor
 | IDG-R10.2 | `tests/Feature/UserManagementTest.php` › «invitations and membership changes are recorded in the audit log»; `tests/Feature/Auth/PasswordResetTest.php` › «a password reset is recorded in the platform log, without the password»; `tests/Feature/Audit/AuditLogPageTest.php` › «a user without the ver-bitacora permission gets 403» |
 | IDG-R11.1 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «support lists the cases marked for review, and only those» |
 | IDG-R11.2 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «the operator, the decision and a reason are required»; `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «accounts kept separate stay apart for good» |
-| IDG-R11.3 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «only authorized operators may resolve a case» |
+| IDG-R11.3 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «only authorized operators may resolve a case»; `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «refuses an inactive, pending or unknown operator, and records the refusal (V3)» |
 | IDG-R11.4 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «a dry run shows the changes without making any» |
 | IDG-R11.5 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «accounts that are not, or no longer, under review are refused untouched» |
 | IDG-R11.6 | `tests/Feature/IdentityAccess/ConsolidationCommandsTest.php` › «consolidating needs proof of ownership and merges everything into the oldest account» |

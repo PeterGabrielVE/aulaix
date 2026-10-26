@@ -7,6 +7,7 @@ namespace AulaX\Audit\Infrastructure;
 use AulaX\Audit\Application\AuditContext;
 use AulaX\Audit\Application\AuditTrail;
 use AulaX\Audit\Application\ListEntries\AuditLog;
+use AulaX\Audit\Application\PlatformLog\PlatformAuditLog;
 use AulaX\Shared\Domain\Clock;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +21,7 @@ final class AuditServiceProvider extends ServiceProvider
      */
     public array $bindings = [
         AuditLog::class => DatabaseAuditLog::class,
+        PlatformAuditLog::class => DatabasePlatformAuditLog::class,
     ];
 
     public function register(): void

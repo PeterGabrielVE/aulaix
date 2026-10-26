@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AulaX\Platform\Infrastructure;
 
+use AulaX\Platform\Application\Port\ConsolidationDesk;
 use AulaX\Platform\Application\Port\InstitutionDirectory;
 use AulaX\Platform\Application\Port\InstitutionNotifier;
 use AulaX\Platform\Application\Port\InstitutionUsage;
@@ -15,6 +16,7 @@ use AulaX\Platform\Application\Port\SecurityLog;
 use AulaX\Platform\Application\Port\TotpCodes;
 use AulaX\Platform\Domain\OperatorInvitationRepository;
 use AulaX\Platform\Domain\OperatorRepository;
+use AulaX\Platform\Infrastructure\Consolidation\IdentityConsolidationDesk;
 use AulaX\Platform\Infrastructure\Institutions\MailInstitutionNotifier;
 use AulaX\Platform\Infrastructure\Institutions\TenancyInstitutionDirectory;
 use AulaX\Platform\Infrastructure\Institutions\TenantScopedInstitutionUsage;
@@ -43,5 +45,6 @@ final class PlatformServiceProvider extends ServiceProvider
         InstitutionDirectory::class => TenancyInstitutionDirectory::class,
         InstitutionUsage::class => TenantScopedInstitutionUsage::class,
         InstitutionNotifier::class => MailInstitutionNotifier::class,
+        ConsolidationDesk::class => IdentityConsolidationDesk::class,
     ];
 }

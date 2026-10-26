@@ -155,7 +155,7 @@ responder a un reclamo con evidencia.
 | ID | Dependencia | Bloquea | No bloquea |
 |----|-------------|---------|------------|
 | **D1** | La misma de SPEC-004: plazos de conservación validados por asesoría legal. | Cualquier borrado o anonimización de registros. | Toda esta spec. |
-| **D2** | SPEC-014 (superadministración). | La pantalla de la bitácora de plataforma. | Registrar eventos de plataforma (AUD-R04.2). |
+| **D2** | SPEC-014 (superadministración). **Resuelta** por SPEC-014 PR D (`ListPlatformEntriesQuery`). | La pantalla de la bitácora de plataforma. | Registrar eventos de plataforma (AUD-R04.2). |
 
 ## Preguntas abiertas
 

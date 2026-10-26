@@ -1,6 +1,6 @@
 ---
 spec: 014-superadministracion
-estado: aprobada
+estado: implementada
 fecha: 2026-10-26
 aprobado: 2026-10-26 (con las verificaciones V1 – V5)
 requisitos: requirements.md
@@ -562,3 +562,46 @@ PLT-R05.3, y nunca llega a la pantalla.
   `PUT /planteles/{id}/estado` con `platform.super` y
   `platform.recent-totp`. El motivo admite hasta 500 caracteres y es
   opcional al reactivar.
+
+### PR D
+
+- **Puerto `ConsolidationDesk`** (Platform), con el adaptador
+  `IdentityConsolidationDesk`, que llama a `ListConsolidationCasesHandler` y
+  a `ResolveConsolidationCaseHandler`. Es el mismo patrón que
+  `InstitutionDirectory`: los casos de uso del panel se prueban en
+  aislamiento, y las reglas siguen en IdentityAccess (IDG-NF07). Una regla
+  de arquitectura limita `ResolveConsolidationCaseHandler` al comando y a
+  este adaptador.
+- **`ShowCaseQuery`, además de `ListCasesQuery`:** abrir un caso muestra
+  nombres y correos, así que esa consulta es la que se registra
+  (`platform.consolidation_case.viewed`). La lista no se registra.
+- **La autorización se comprueba con el correo; la bitácora identifica al
+  operador por su id.**
+  - El caso de uso de IdentityAccess ya no fija el actor de la bitácora:
+    lo fija cada entrada antes de llamarlo. El comando usa
+    `actAsConsoleOperator(correo)` y el panel `actAsPlatformOperator(id)`.
+  - Así, una resolución desde el panel queda con origen `platform` y
+    operador «operador #id».
+  - El panel pasa a IdentityAccess el correo del operador de la sesión,
+    que `PlatformConsolidationOperators` comprueba con
+    `ActiveOperatorQuery`, igual que al usar el comando.
+- **Cada rechazo se registra** (`identity.consolidation.refused`) en el
+  caso de uso, venga del comando o del panel y sea simulación o no. Guarda
+  las cuentas, la decisión y el motivo del rechazo (V3).
+- **Resolver un caso exige un TOTP reciente** (`platform.recent-totp`),
+  aunque PLT-NF04 no lo enumera: une o separa cuentas para siempre. La
+  vista previa no lo exige.
+- **Bitácora de plataforma:**
+  - `Audit\Application\PlatformLog`: `ListPlatformEntriesQuery` y el
+    puerto `PlatformAuditLog`, con el adaptador `DatabasePlatformAuditLog`,
+    que solo lee `platform_audit_entries`.
+  - El filtro de operador compara el texto registrado («operador #id» o el
+    correo de consola). El de tipo es un prefijo, con el LIKE escapado.
+  - Consultarla registra `platform.activity.viewed`.
+  - Reglas de arquitectura: solo Platform la usa, y Platform nunca usa la
+    bitácora de un plantel (PLT-R07.4).
+- **Navegador:** se espera un segundo tras cada navegación de Inertia antes
+  de pasar axe, porque su barra de progreso (`role="bar"`, un rol que axe
+  no reconoce) solo existe mientras dura la visita.
+- **Rendimiento:** se mide por HTTP, con los middlewares del panel, el p95
+  de 20 peticiones calientes.

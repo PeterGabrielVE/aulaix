@@ -22,6 +22,9 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MyAssignmentsController;
+use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
+use App\Http\Controllers\Platform\InvitationController as PlatformInvitationController;
+use App\Http\Controllers\Platform\LoginController as PlatformLoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
@@ -31,6 +34,7 @@ use App\Http\Controllers\TermController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveMembership;
+use App\Http\Middleware\EnsurePlatformOperator;
 use App\Http\Middleware\ResolveTenant;
 
 /**
@@ -94,6 +98,11 @@ const MIGRATED_CONTROLLERS = [
     SectionController::class,
     AssignmentController::class,
     MyAssignmentsController::class,
+    // SPEC-014
+    PlatformLoginController::class,
+    PlatformInvitationController::class,
+    PlatformHomeController::class,
+    EnsurePlatformOperator::class,
 ];
 
 /**

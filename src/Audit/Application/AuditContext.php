@@ -22,4 +22,10 @@ interface AuditContext
      * changes that follow are attributed to them.
      */
     public function actAsConsoleOperator(string $operator): void;
+
+    /**
+     * For requests of the platform panel (SPEC-014): the changes and
+     * queries that follow are attributed to that operator.
+     */
+    public function actAsPlatformOperator(int $operatorId): void;
 }

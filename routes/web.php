@@ -22,6 +22,9 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MyAssignmentsController;
+use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
+use App\Http\Controllers\Platform\InvitationController as PlatformInvitationController;
+use App\Http\Controllers\Platform\LoginController as PlatformLoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
@@ -126,6 +129,24 @@ Route::domain(config('app.domain'))->group(function () {
 | institution called "www" (a reserved subdomain, see Institution). Must be
 | registered before the tenant group, whose {tenant} pattern matches it too.
 */
+Route::domain('admin.'.config('app.domain'))->group(function () {
+    // SPEC-014: the platform panel, with its own login and session (ADR 0010).
+    // Registered before the tenant group, whose {tenant} pattern matches it too.
+    Route::get('/login', [PlatformLoginController::class, 'create'])->name('platform.login');
+    Route::post('/login', [PlatformLoginController::class, 'store'])->middleware('throttle:platform-login');
+
+    Route::middleware('throttle:platform-links')->group(function () {
+        Route::get('/invitacion/{token}', [PlatformInvitationController::class, 'show'])->name('platform.invitation.show');
+        Route::post('/invitacion/{token}', [PlatformInvitationController::class, 'store'])->name('platform.invitation.store');
+    });
+    Route::get('/codigos-de-recuperacion', [PlatformInvitationController::class, 'recoveryCodes'])->name('platform.recovery-codes');
+
+    Route::middleware('platform')->group(function () {
+        Route::get('/', PlatformHomeController::class)->name('platform.home');
+        Route::post('/logout', [PlatformLoginController::class, 'destroy'])->name('platform.logout');
+    });
+});
+
 Route::domain('www.'.config('app.domain'))->group(function () {
     Route::get('/{path?}', fn (Request $request) => redirect()->away(
         $request->getScheme().'://'.config('app.domain').$request->getRequestUri(), 301

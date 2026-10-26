@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Navigation\MenuCatalog;
+use AulaX\Platform\Application\Access\CurrentOperator;
 use AulaX\Tenancy\Application\CurrentTenant;
 use AulaX\Workspace\Application\ShowLayout\LayoutView;
 use AulaX\Workspace\Application\ShowLayout\ShowLayoutQuery;
@@ -63,6 +64,8 @@ class HandleInertiaRequests extends Middleware
                 'logoUrl' => $institution->logoVersion === null ? null : route('institution.logo', ['v' => $institution->logoVersion]),
             ] : null,
             'appDomain' => config('app.domain'),
+            // SPEC-014: who is using the panel, only on admin.APP_DOMAIN (S-10).
+            'platform' => fn () => $this->platform($request),
             // SPEC-013: menu, year and term, person and role, from Workspace.
             'layout' => fn () => $institution !== null && $request->user() !== null ? $this->layout($request) : null,
             // The central selector, where switching institution needs no password (IDG-R03.7),
@@ -86,6 +89,18 @@ class HandleInertiaRequests extends Middleware
             'person' => ['name' => $request->user()->name, 'primaryRole' => $layout->primaryRole],
             'canSwitchInstitution' => $layout->canSwitchInstitution,
         ];
+    }
+
+    /**
+     * @return ?array{operator: array{name: string, role: string}}
+     */
+    private function platform(Request $request): ?array
+    {
+        $operator = $request->attributes->get('platform.operator');
+
+        return $operator instanceof CurrentOperator
+            ? ['operator' => ['name' => $operator->name, 'role' => $operator->role]]
+            : null;
     }
 
     /**

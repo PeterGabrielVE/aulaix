@@ -20,6 +20,8 @@ final class LaravelAuditContext implements AuditContext
 {
     private ?string $consoleOperator = null;
 
+    private ?int $platformOperator = null;
+
     public function __construct(private readonly Container $container) {}
 
     public function actorId(): ?int
@@ -37,11 +39,20 @@ final class LaravelAuditContext implements AuditContext
 
         $request = $this->container->make('request');
 
+        if ($this->platformOperator !== null) {
+            return AuditOrigin::platform($request->ip(), $this->platformOperator);
+        }
+
         return $request->route() !== null ? AuditOrigin::web($request->ip()) : AuditOrigin::system();
     }
 
     public function actAsConsoleOperator(string $operator): void
     {
         $this->consoleOperator = AuditOrigin::console($operator)->operator;
+    }
+
+    public function actAsPlatformOperator(int $operatorId): void
+    {
+        $this->platformOperator = $operatorId;
     }
 }

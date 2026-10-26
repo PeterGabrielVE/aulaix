@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureActiveMembership;
+use App\Http\Middleware\EnsurePlatformOperator;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\ResolveTenant;
 use App\Http\Middleware\TrustConfiguredProxies;
@@ -54,6 +55,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'active' => EnsureActiveMembership::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
+            'platform' => EnsurePlatformOperator::class,
         ]);
 
         // Laravel's default middleware priority list runs Authenticate

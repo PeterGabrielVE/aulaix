@@ -31,6 +31,14 @@ final readonly class AuditOrigin
         return new self('console', operator: $operator);
     }
 
+    /**
+     * SPEC-014: a platform operator in the panel, named by its id.
+     */
+    public static function platform(?string $ip, int $operatorId): self
+    {
+        return new self('platform', ip: $ip, operator: "operador #{$operatorId}");
+    }
+
     public static function system(): self
     {
         return new self('system');

@@ -1,6 +1,7 @@
 <?php
 
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel;
+use AulaX\Platform\Infrastructure\Persistence\OperatorModel;
 
 return [
 
@@ -42,6 +43,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // SPEC-014 (ADR 0010): platform operators, apart from every account.
+        'platform' => [
+            'driver' => 'session',
+            'provider' => 'operators',
+        ],
     ],
 
     /*
@@ -65,6 +72,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', AccountModel::class),
+        ],
+
+        'operators' => [
+            'driver' => 'eloquent',
+            'model' => OperatorModel::class,
         ],
 
         // 'users' => [

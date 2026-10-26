@@ -142,7 +142,7 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 4 — Operadores, MFA y TOTP reciente
 
-- [ ] **T-10** — `SuperAdminRules` (nunca sin un Superadministrador activo;
+- [x] **T-10** — `SuperAdminRules` (nunca sin un Superadministrador activo;
   nadie sobre sí mismo), `PlatformAccess` (`ensureSupport`,
   `ensureSuperAdmin`) y los casos de uso `ChangeOperatorRoleHandler`,
   `SetOperatorActiveHandler` y `ListOperatorsQuery`. Desactivar a un
@@ -150,7 +150,7 @@ Cuatro PRs, cada uno usable por sí mismo:
   - Criterios: PLT-R03.3 – R03.6, R03.8, NF05
   - Test: `tests/Unit/Platform/Domain/SuperAdminRulesTest.php`;
     `tests/Unit/Platform/Application/OperatorManagementTest.php`
-- [ ] **T-11** — `ResetOperatorMfaHandler`:
+- [x] **T-11** — `ResetOperatorMfaHandler`:
   - anula el TOTP y los códigos y sube la versión de sesión;
   - anula los enlaces pendientes y envía uno de reinscripción;
   - lo registra en la bitácora.
@@ -158,11 +158,11 @@ Cuatro PRs, cada uno usable por sí mismo:
   Además, `RegenerateRecoveryCodesHandler` para el propio operador.
   - Criterios: PLT-R03.7, R01.10
   - Test: `tests/Unit/Platform/Application/OperatorMfaResetTest.php`
-- [ ] **T-12** — `ConfirmTotpHandler` y el middleware `platform.recent-totp`
+- [x] **T-12** — `ConfirmTotpHandler` y el middleware `platform.recent-totp`
   (un TOTP de los últimos 10 minutos para las acciones sensibles).
   - Criterios: PLT-NF04
   - Test: `tests/Feature/Platform/RecentTotpTest.php`
-- [ ] **T-13** — HTTP y pantallas: `OperatorController` (invitar, nivel,
+- [x] **T-13** — HTTP y pantallas: `OperatorController` (invitar, nivel,
   activar, restablecer el MFA), detrás de `platform.role:super_admin` y
   `platform.recent-totp`, y `RecoveryCodesController`. Las sesiones de un
   operador cambiado se cierran en su siguiente petición.

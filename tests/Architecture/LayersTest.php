@@ -25,6 +25,8 @@ use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
 use App\Http\Controllers\Platform\InvitationController as PlatformInvitationController;
 use App\Http\Controllers\Platform\LoginController as PlatformLoginController;
+use App\Http\Controllers\Platform\OperatorController as PlatformOperatorController;
+use App\Http\Controllers\Platform\TotpController as PlatformTotpController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
@@ -35,6 +37,8 @@ use App\Http\Controllers\TransferController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\EnsurePlatformOperator;
+use App\Http\Middleware\RequireRecentTotp;
+use App\Http\Middleware\RequireSuperAdmin;
 use App\Http\Middleware\ResolveTenant;
 
 /**
@@ -103,6 +107,10 @@ const MIGRATED_CONTROLLERS = [
     PlatformInvitationController::class,
     PlatformHomeController::class,
     EnsurePlatformOperator::class,
+    PlatformOperatorController::class,
+    PlatformTotpController::class,
+    RequireRecentTotp::class,
+    RequireSuperAdmin::class,
 ];
 
 /**

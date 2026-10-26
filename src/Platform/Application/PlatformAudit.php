@@ -56,6 +56,30 @@ final class PlatformAudit
         return AuditEvent::of('platform.operator.totp_enrolled', self::operator($operator));
     }
 
+    public static function roleChanged(OperatorId $operator, string $from, string $to): AuditEvent
+    {
+        return AuditEvent::of('platform.operator.role_changed', self::operator($operator), [FieldChange::of('role', $from, $to)]);
+    }
+
+    public static function activeChanged(OperatorId $operator, bool $active, string $from, string $to): AuditEvent
+    {
+        return AuditEvent::of(
+            $active ? 'platform.operator.reactivated' : 'platform.operator.deactivated',
+            self::operator($operator),
+            [FieldChange::of('status', $from, $to)],
+        );
+    }
+
+    public static function mfaReset(OperatorId $operator): AuditEvent
+    {
+        return AuditEvent::of('platform.operator.mfa_reset', self::operator($operator));
+    }
+
+    public static function recoveryCodesRegenerated(OperatorId $operator): AuditEvent
+    {
+        return AuditEvent::of('platform.operator.recovery_codes_regenerated', self::operator($operator));
+    }
+
     public static function operator(OperatorId $operator): AuditSubject
     {
         return AuditSubject::of('platform_operator', $operator->value);

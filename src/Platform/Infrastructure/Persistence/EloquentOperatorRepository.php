@@ -32,6 +32,11 @@ final class EloquentOperatorRepository implements OperatorRepository
         return $model === null ? null : self::toDomain($model);
     }
 
+    public function all(): array
+    {
+        return OperatorModel::query()->orderBy('id')->get()->map(self::toDomain(...))->values()->all();
+    }
+
     public function save(Operator $operator): OperatorId
     {
         $model = $operator->id === null ? new OperatorModel : OperatorModel::query()->findOrFail($operator->id->value);

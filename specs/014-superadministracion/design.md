@@ -519,3 +519,18 @@ PLT-R05.3, y nunca llega a la pantalla.
 - **Limitadores con nombre:**
   - `platform-login`: 5 por minuto por correo e IP (PLT-NF03).
   - `platform-links`: 10 por minuto por IP, para abrir y aceptar enlaces.
+
+### PR B
+
+- **Middlewares** `platform.super` (`RequireSuperAdmin`) y
+  `platform.recent-totp` (`RequireRecentTotp`). La comprobación de los 10
+  minutos vive en `RecentTotpQuery`. Si falta un TOTP reciente, se guarda
+  la página de origen y se vuelve a ella tras confirmar el código en
+  `/confirmar-codigo`.
+- **El código de confirmación cuenta como usado,** igual que en el inicio de
+  sesión (PLT-NF03).
+- **Nadie restablece su propio segundo factor:** lo hace otro
+  Superadministrador. Así se cumple PLT-R03.7 («de otro operador») y nadie
+  se queda fuera del panel por error.
+- **Regenerar los códigos de recuperación** también exige un TOTP reciente.
+- **Ver la lista de operadores no exige TOTP reciente;** cualquier cambio sí.

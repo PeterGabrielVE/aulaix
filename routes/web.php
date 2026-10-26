@@ -25,6 +25,8 @@ use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
 use App\Http\Controllers\Platform\InvitationController as PlatformInvitationController;
 use App\Http\Controllers\Platform\LoginController as PlatformLoginController;
+use App\Http\Controllers\Platform\OperatorController as PlatformOperatorController;
+use App\Http\Controllers\Platform\TotpController as PlatformTotpController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
@@ -144,6 +146,22 @@ Route::domain('admin.'.config('app.domain'))->group(function () {
     Route::middleware('platform')->group(function () {
         Route::get('/', PlatformHomeController::class)->name('platform.home');
         Route::post('/logout', [PlatformLoginController::class, 'destroy'])->name('platform.logout');
+
+        // PLT-NF04: a fresh TOTP before sensitive actions.
+        Route::get('/confirmar-codigo', [PlatformTotpController::class, 'show'])->name('platform.totp.confirm');
+        Route::post('/confirmar-codigo', [PlatformTotpController::class, 'store'])->middleware('throttle:5,1');
+        Route::post('/codigos-de-recuperacion', [PlatformTotpController::class, 'regenerateRecoveryCodes'])
+            ->middleware('platform.recent-totp')->name('platform.recovery-codes.regenerate');
+
+        Route::middleware('platform.super')->whereNumber('operator')->group(function () {
+            Route::get('/operadores', [PlatformOperatorController::class, 'index'])->name('platform.operators');
+            Route::middleware('platform.recent-totp')->group(function () {
+                Route::post('/operadores', [PlatformOperatorController::class, 'store'])->name('platform.operators.store');
+                Route::put('/operadores/{operator}/nivel', [PlatformOperatorController::class, 'role'])->name('platform.operators.role');
+                Route::put('/operadores/{operator}/estado', [PlatformOperatorController::class, 'active'])->name('platform.operators.active');
+                Route::post('/operadores/{operator}/restablecer-mfa', [PlatformOperatorController::class, 'resetMfa'])->name('platform.operators.reset-mfa');
+            });
+        });
     });
 });
 

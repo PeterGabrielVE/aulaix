@@ -19,8 +19,9 @@ defineProps({
         <ul class="mt-4 grid grid-cols-2 gap-2 font-mono text-sm text-gray-900">
             <li v-for="code in codes" :key="code" class="rounded bg-gray-100 px-2 py-1">{{ code }}</li>
         </ul>
-        <Link :href="route('platform.login')" class="mt-6 inline-block text-sm font-medium text-indigo-700 hover:underline">
-            Ya los guardé, ir a entrar
+        <!-- Home sends whoever has no session to the login. -->
+        <Link :href="route('platform.home')" class="mt-6 inline-block text-sm font-medium text-indigo-700 hover:underline">
+            Ya los guardé
         </Link>
     </PlatformLayout>
 </template>

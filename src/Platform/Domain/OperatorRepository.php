@@ -11,6 +11,11 @@ interface OperatorRepository
     public function byEmail(OperatorEmail $email): ?Operator;
 
     /**
+     * @return list<Operator> In the order they were created.
+     */
+    public function all(): array;
+
+    /**
      * Inserts a new operator or updates an existing one.
      */
     public function save(Operator $operator): OperatorId;

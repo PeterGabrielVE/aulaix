@@ -35,6 +35,13 @@ final class InMemoryOperatorRepository implements OperatorRepository
         return null;
     }
 
+    public function all(): array
+    {
+        ksort($this->operators);
+
+        return array_values(array_map(fn (Operator $operator) => clone $operator, $this->operators));
+    }
+
     public function save(Operator $operator): OperatorId
     {
         $id = $operator->id ?? OperatorId::fromInt(count($this->operators) + 1);

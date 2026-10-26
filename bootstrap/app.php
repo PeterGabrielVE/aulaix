@@ -3,6 +3,8 @@
 use App\Http\Middleware\EnsureActiveMembership;
 use App\Http\Middleware\EnsurePlatformOperator;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\RequireRecentTotp;
+use App\Http\Middleware\RequireSuperAdmin;
 use App\Http\Middleware\ResolveTenant;
 use App\Http\Middleware\TrustConfiguredProxies;
 use AulaX\IdentityAccess\Application\Auth\HandoffRejected;
@@ -56,6 +58,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'platform' => EnsurePlatformOperator::class,
+            'platform.super' => RequireSuperAdmin::class,
+            'platform.recent-totp' => RequireRecentTotp::class,
         ]);
 
         // Laravel's default middleware priority list runs Authenticate

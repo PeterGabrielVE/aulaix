@@ -2,7 +2,6 @@
 
 use AulaX\Platform\Domain\OperatorRepository;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Testing\TestResponse;
 
 require_once dirname(__DIR__, 2).'/Fixtures/Platform/platform_helpers.php';
 
@@ -14,11 +13,6 @@ beforeEach(function () {
     leaveTenant();
     $this->operator = storedOperator();
 });
-
-function panelLogIn(string $email, string $password, string $code): TestResponse
-{
-    return test()->from(adminUrl('/login'))->post(adminUrl('/login'), ['email' => $email, 'password' => $password, 'code' => $code]);
-}
 
 test('an operator enters with email, password and TOTP, and only the admin host gets the cookie', function () {
     panelLogIn('ana@aulax.ve', 'clave-de-operador', currentCode($this->operator))

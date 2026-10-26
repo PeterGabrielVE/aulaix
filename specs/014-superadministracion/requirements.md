@@ -306,18 +306,18 @@ y el borrado de planteles.
 | PLT-R01.7 | `tests/Feature/Platform/OperatorLoginTest.php` › «the panel needs an operator session, and an account of an institution is none»; `tests/Feature/Platform/OperatorLoginTest.php` › «an operator email does not open the central login» |
 | PLT-R01.8 | `tests/Feature/Platform/OperatorLoginTest.php` › «the session ends after 30 minutes without activity» |
 | PLT-R01.9 | `tests/Unit/Platform/Application/LogInOperatorTest.php` › «ends the session on logout, and records it»; `tests/Feature/Platform/OperatorLoginTest.php` › «logging out ends the session on the server» |
-| PLT-R01.10 | `tests/Unit/Platform/Domain/RecoveryCodesTest.php` › «keeps ten codes, only as hashes»; `tests/Unit/Platform/Application/OperatorInvitationTest.php` › «activates the operator with its password and a confirmed TOTP, and gives ten recovery codes once»; `tests/Feature/Platform/OperatorInvitationTest.php` › «the link sets the password and the TOTP, then shows the ten recovery codes once» |
+| PLT-R01.10 | `tests/Unit/Platform/Domain/RecoveryCodesTest.php` › «keeps ten codes, only as hashes»; `tests/Unit/Platform/Application/OperatorInvitationTest.php` › «activates the operator with its password and a confirmed TOTP, and gives ten recovery codes once»; `tests/Feature/Platform/OperatorInvitationTest.php` › «the link sets the password and the TOTP, then shows the ten recovery codes once»; `tests/Unit/Platform/Application/OperatorManagementTest.php` › «regenerates the own recovery codes, voiding the old ones (PLT-R01.10)»; `tests/Feature/Platform/OperatorMfaResetTest.php` › «an operator regenerates its own recovery codes, which voids the old ones» |
 | PLT-R02.1 | `tests/Feature/Platform/PlatformBootstrapCommandTest.php` › «creates a pending SuperAdmin, sends its link and records it with console as origin» |
 | PLT-R02.2 | `tests/Feature/Platform/PlatformBootstrapCommandTest.php` › «refuses an email that already belongs to an operator» |
 | PLT-R02.3 | `tests/Feature/Platform/PlatformBootstrapCommandTest.php` › «creates a pending SuperAdmin, sends its link and records it with console as origin» |
-| PLT-R03.1 | `tests/Unit/Platform/Application/OperatorInvitationTest.php` › «invites a pending operator by email, keeping only the hash of the token, and records it»; `tests/Unit/Platform/Application/OperatorInvitationTest.php` › «lets only an active SuperAdmin invite from the panel» |
+| PLT-R03.1 | `tests/Unit/Platform/Application/OperatorInvitationTest.php` › «invites a pending operator by email, keeping only the hash of the token, and records it»; `tests/Unit/Platform/Application/OperatorInvitationTest.php` › «lets only an active SuperAdmin invite from the panel»; `tests/Feature/Platform/OperatorManagementTest.php` › «a SuperAdmin lists the operators and invites one» |
 | PLT-R03.2 | `tests/Unit/Platform/Domain/OperatorInvitationTest.php` › «lasts 48 hours, not a second more»; `tests/Unit/Platform/Domain/OperatorInvitationTest.php` › «is used once»; `tests/Feature/Platform/Infrastructure/OperatorPersistenceTest.php` › «a link is consumed once, even by two racing requests»; `tests/Feature/Platform/OperatorInvitationTest.php` › «a link lasts 48 hours, and not a minute more»; `tests/Feature/Platform/OperatorInvitationTest.php` › «a link is used once, even by two requests»; `tests/Feature/Platform/OperatorInvitationTest.php` › «a newer link revokes the older one»; `tests/Feature/Platform/OperatorInvitationTest.php` › «expired, used, revoked and unknown links answer alike» |
-| PLT-R03.3 | |
-| PLT-R03.4 | |
-| PLT-R03.5 | |
-| PLT-R03.6 | |
-| PLT-R03.7 | |
-| PLT-R03.8 | |
+| PLT-R03.3 | `tests/Unit/Platform/Application/OperatorManagementTest.php` › «changes the role of an operator, closing its sessions, and records it»; `tests/Unit/Platform/Application/OperatorManagementTest.php` › «deactivates an operator, closing its sessions and revoking its pending links (V4)»; `tests/Feature/Platform/OperatorManagementTest.php` › «a role change takes effect and closes that operator sessions» |
+| PLT-R03.4 | `tests/Unit/Platform/Application/OperatorManagementTest.php` › «changes the role of an operator, closing its sessions, and records it»; `tests/Feature/Platform/OperatorManagementTest.php` › «a role change takes effect and closes that operator sessions» |
+| PLT-R03.5 | `tests/Unit/Platform/Domain/SuperAdminRulesTest.php` › «refuses to leave the platform without an active SuperAdmin»; `tests/Unit/Platform/Application/OperatorManagementTest.php` › «never leaves the platform without an active SuperAdmin, nor lets one act on itself»; `tests/Feature/Platform/OperatorManagementTest.php` › «the last active SuperAdmin can not be demoted, nor demote itself» |
+| PLT-R03.6 | `tests/Unit/Platform/Domain/SuperAdminRulesTest.php` › «refuses that an operator demotes or deactivates itself»; `tests/Unit/Platform/Application/OperatorManagementTest.php` › «never leaves the platform without an active SuperAdmin, nor lets one act on itself» |
+| PLT-R03.7 | `tests/Unit/Platform/Application/OperatorManagementTest.php` › «resets the second factor of another operator and sends the only way back (PLT-R03.7, V4)»; `tests/Feature/Platform/OperatorMfaResetTest.php` › «the reset ends the operator sessions and leaves the link as its only way in» |
+| PLT-R03.8 | `tests/Unit/Platform/Application/OperatorManagementTest.php` › «lets no Support manage operators (PLT-R03.8)»; `tests/Feature/Platform/OperatorManagementTest.php` › «a Support gets 403 on every operator route» |
 | PLT-R04.1 | |
 | PLT-R04.2 | |
 | PLT-R04.3 | |
@@ -341,7 +341,7 @@ y el borrado de planteles.
 | PLT-NF01 | `tests/Feature/Platform/Infrastructure/OperatorTablesTest.php` › «an active institution sees no operator and writes none» |
 | PLT-NF02 | `tests/Feature/Platform/Infrastructure/OperatorPersistenceTest.php` › «saves and loads an operator, with its TOTP secret encrypted at rest»; `tests/Feature/Platform/Infrastructure/OperatorPersistenceTest.php` › «keeps only the hashes of the recovery codes, and their use»; `tests/Feature/Platform/Infrastructure/OperatorPersistenceTest.php` › «a new link revokes the pending ones of the same operator, and keeps only the token hash» |
 | PLT-NF03 | `tests/Unit/Platform/Domain/OperatorTest.php` › «accepts each TOTP step once, and none older than the last one used»; `tests/Feature/Platform/OperatorLoginTest.php` › «the sixth attempt in a minute is refused, whatever failed» |
-| PLT-NF04 | |
-| PLT-NF05 | |
+| PLT-NF04 | `tests/Feature/Platform/RecentTotpTest.php` › «right after login, a sensitive action goes through»; `tests/Feature/Platform/RecentTotpTest.php` › «after ten minutes it asks for a code, then lets the action through»; `tests/Feature/Platform/RecentTotpTest.php` › «a code used at login can not confirm again» |
+| PLT-NF05 | `tests/Unit/Platform/Application/OperatorManagementTest.php` › «lets no Support manage operators (PLT-R03.8)»; `tests/Feature/Platform/OperatorManagementTest.php` › «a Support gets 403 on every operator route» |
 | PLT-NF06 | |
 | PLT-NF07 | |

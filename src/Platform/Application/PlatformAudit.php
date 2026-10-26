@@ -80,6 +80,23 @@ final class PlatformAudit
         return AuditEvent::of('platform.operator.recovery_codes_regenerated', self::operator($operator));
     }
 
+    public static function institutionViewed(int $institutionId): AuditEvent
+    {
+        return AuditEvent::of('platform.institution.viewed', AuditSubject::of('institution', $institutionId));
+    }
+
+    public static function institutionStatusChanged(int $institutionId, bool $active, string $reason): AuditEvent
+    {
+        return AuditEvent::of(
+            $active ? 'platform.institution.reactivated' : 'platform.institution.deactivated',
+            AuditSubject::of('institution', $institutionId),
+            [
+                FieldChange::of('status', $active ? 'inactive' : 'active', $active ? 'active' : 'inactive'),
+                FieldChange::of('reason', null, $reason),
+            ],
+        );
+    }
+
     public static function operator(OperatorId $operator): AuditSubject
     {
         return AuditSubject::of('platform_operator', $operator->value);

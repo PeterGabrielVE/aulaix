@@ -32,4 +32,9 @@ interface InstitutionFiles
      * Deletes the image at this path, if it is the active institution's.
      */
     public function delete(string $path): void;
+
+    /**
+     * Bytes taken by the open institution's files (SPEC-014 PLT-R04.3).
+     */
+    public function usedBytes(): int;
 }

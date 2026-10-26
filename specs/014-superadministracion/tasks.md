@@ -178,7 +178,7 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 5 — Consultas de los módulos dueños y lectura acotada
 
-- [ ] **T-14** — `Shared\Application\PlatformReadScope` (V2) y
+- [x] **T-14** — `Shared\Application\PlatformReadScope` (V2) y
   `TenantScopedInstitutionUsage` (V1):
   - guarda el estado anterior y activa el plantel;
   - lee en una transacción de solo lectura;
@@ -196,7 +196,7 @@ Cuatro PRs, cada uno usable por sí mismo:
     - la bitácora del operador va a la plataforma (V1);
 
     y la regla de arquitectura en `tests/Architecture/LayersTest.php`.
-- [ ] **T-15** — Consultas de agregados, cada una exigiendo
+- [x] **T-15** — Consultas de agregados, cada una exigiendo
   `PlatformReadScope` (V2):
   - `MemberCountsQuery` y `AdministratorContactsQuery` (IdentityAccess);
   - `ActiveStudentCountQuery` (Students);
@@ -208,7 +208,7 @@ Cuatro PRs, cada uno usable por sí mismo:
   - Test: `tests/Feature/Platform/Infrastructure/AggregateQueriesTest.php`
     (cifras exactas, y cada consulta se niega fuera de una lectura de
     plataforma); `tests/Architecture/LayersTest.php`
-- [ ] **T-16** — `ListAllInstitutionsQuery` y `SetInstitutionStatusHandler`
+- [x] **T-16** — `ListAllInstitutionsQuery` y `SetInstitutionStatusHandler`
   (Tenancy). Regla de arquitectura: `SetInstitutionStatusHandler`, solo
   desde Platform.
   - Criterios: PLT-R04.1, R04.2, R05.1, R05.4, R05.5
@@ -216,7 +216,7 @@ Cuatro PRs, cada uno usable por sí mismo:
 
 ### Fase 6 — Casos de uso, HTTP y pantallas
 
-- [ ] **T-17** — `ListInstitutionsQuery`, `ShowInstitutionUsageQuery` y
+- [x] **T-17** — `ListInstitutionsQuery`, `ShowInstitutionUsageQuery` y
   `SetInstitutionActiveHandler`:
   - nivel del operador comprobado;
   - motivo obligatorio para desactivar;
@@ -225,7 +225,7 @@ Cuatro PRs, cada uno usable por sí mismo:
   - `platform.institution.viewed` en la bitácora.
   - Criterios: PLT-R04.1 – R04.4, R05.1 – R05.6, R07.1
   - Test: `tests/Unit/Platform/Application/InstitutionsTest.php`
-- [ ] **T-18** — `InstitutionController` y sus pantallas (lista con búsqueda
+- [x] **T-18** — `InstitutionController` y sus pantallas (lista con búsqueda
   y filtro; detalle con el uso; activar y desactivar con motivo, detrás de
   `platform.recent-totp`).
   - Criterios: PLT-R04.1 – R04.4, R05.1 – R05.6, NF04
@@ -240,7 +240,7 @@ Cuatro PRs, cada uno usable por sí mismo:
     `tests/Feature/Platform/PlatformAuthorizationTest.php`:
     - un miembro de un plantel no llega al panel;
     - sin sesión de operador, redirige al inicio de sesión.
-- [ ] **T-19** — Aislamiento: con varios planteles, el uso de uno solo
+- [x] **T-19** — Aislamiento: con varios planteles, el uso de uno solo
   cuenta los suyos, y el panel nunca deja un plantel activo al terminar la
   petición.
   - Criterios: PLT-NF01

@@ -23,6 +23,7 @@ use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
+use App\Http\Controllers\Platform\InstitutionController as PlatformInstitutionController;
 use App\Http\Controllers\Platform\InvitationController as PlatformInvitationController;
 use App\Http\Controllers\Platform\LoginController as PlatformLoginController;
 use App\Http\Controllers\Platform\OperatorController as PlatformOperatorController;
@@ -152,6 +153,13 @@ Route::domain('admin.'.config('app.domain'))->group(function () {
         Route::post('/confirmar-codigo', [PlatformTotpController::class, 'store'])->middleware('throttle:5,1');
         Route::post('/codigos-de-recuperacion', [PlatformTotpController::class, 'regenerateRecoveryCodes'])
             ->middleware('platform.recent-totp')->name('platform.recovery-codes.regenerate');
+
+        Route::whereNumber('institution')->group(function () {
+            Route::get('/planteles', [PlatformInstitutionController::class, 'index'])->name('platform.institutions');
+            Route::get('/planteles/{institution}', [PlatformInstitutionController::class, 'show'])->name('platform.institutions.show');
+            Route::put('/planteles/{institution}/estado', [PlatformInstitutionController::class, 'active'])
+                ->middleware(['platform.super', 'platform.recent-totp'])->name('platform.institutions.active');
+        });
 
         Route::middleware('platform.super')->whereNumber('operator')->group(function () {
             Route::get('/operadores', [PlatformOperatorController::class, 'index'])->name('platform.operators');

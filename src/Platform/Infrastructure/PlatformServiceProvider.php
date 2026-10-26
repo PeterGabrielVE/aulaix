@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace AulaX\Platform\Infrastructure;
 
+use AulaX\Platform\Application\Port\InstitutionDirectory;
+use AulaX\Platform\Application\Port\InstitutionNotifier;
+use AulaX\Platform\Application\Port\InstitutionUsage;
 use AulaX\Platform\Application\Port\OperatorMailer;
 use AulaX\Platform\Application\Port\OperatorPasswords;
 use AulaX\Platform\Application\Port\OperatorSession;
@@ -12,6 +15,9 @@ use AulaX\Platform\Application\Port\SecurityLog;
 use AulaX\Platform\Application\Port\TotpCodes;
 use AulaX\Platform\Domain\OperatorInvitationRepository;
 use AulaX\Platform\Domain\OperatorRepository;
+use AulaX\Platform\Infrastructure\Institutions\MailInstitutionNotifier;
+use AulaX\Platform\Infrastructure\Institutions\TenancyInstitutionDirectory;
+use AulaX\Platform\Infrastructure\Institutions\TenantScopedInstitutionUsage;
 use AulaX\Platform\Infrastructure\Notifications\NotificationOperatorMailer;
 use AulaX\Platform\Infrastructure\Persistence\EloquentOperatorInvitationRepository;
 use AulaX\Platform\Infrastructure\Persistence\EloquentOperatorRepository;
@@ -34,5 +40,8 @@ final class PlatformServiceProvider extends ServiceProvider
         PendingTotpSecrets::class => SessionPendingTotpSecrets::class,
         OperatorMailer::class => NotificationOperatorMailer::class,
         SecurityLog::class => LaravelSecurityLog::class,
+        InstitutionDirectory::class => TenancyInstitutionDirectory::class,
+        InstitutionUsage::class => TenantScopedInstitutionUsage::class,
+        InstitutionNotifier::class => MailInstitutionNotifier::class,
     ];
 }

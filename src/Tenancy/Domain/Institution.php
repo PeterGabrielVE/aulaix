@@ -54,6 +54,15 @@ final readonly class Institution
     }
 
     /**
+     * The platform's call only (SPEC-014 PLT-R05): an inactive institution
+     * keeps all its data and answers 404 at its subdomain (TEN-R03.3).
+     */
+    public function withStatus(InstitutionStatus $status): self
+    {
+        return new self($this->id, $this->name, $this->subdomain, $status, $this->profile, $this->type, $this->levels, $this->dependency);
+    }
+
+    /**
      * INS-R01.7: shown at once in the central selector and in the institution.
      */
     public function rename(string $name): self

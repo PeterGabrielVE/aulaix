@@ -35,6 +35,11 @@ final class InMemoryInstitutionFiles implements InstitutionFiles
         unset($this->files[$path]);
     }
 
+    public function usedBytes(): int
+    {
+        return array_sum(array_map(fn (StoredImage $file) => strlen($file->contents), $this->files));
+    }
+
     /**
      * @return list<string>
      */

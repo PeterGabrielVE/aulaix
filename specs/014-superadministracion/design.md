@@ -534,3 +534,31 @@ PLT-R05.3, y nunca llega a la pantalla.
   se queda fuera del panel por error.
 - **Regenerar los códigos de recuperación** también exige un TOTP reciente.
 - **Ver la lista de operadores no exige TOTP reciente;** cualquier cambio sí.
+
+### PR C
+
+- **La lectura acotada se llama `TenantScopedReader`** y es genérica
+  (`read(id, callback)`). La usan los dos adaptadores que necesitan un
+  plantel: `TenantScopedInstitutionUsage` (cifras) y
+  `MailInstitutionNotifier` (contactos de los Administradores). Así la
+  activación sigue en un único sitio revisable, y la regla de arquitectura
+  dice «en Platform, solo `TenantScopedReader` usa `TenantActivator`». Su
+  test es `TenantScopedReaderTest`, en lugar de
+  `TenantScopedInstitutionUsageTest`.
+- **La lectura se revierte siempre** (`ROLLBACK`), además de ser de solo
+  lectura: así también se deshace el `set_config` de RLS hecho dentro de
+  ella. Después se comprueba la variable y el plantel en memoria; si queda
+  rastro, lanza `LogicException`.
+- **Los casos de uso de Tenancy viven en `Application\Administration`:**
+  `ListAllInstitutionsQuery`, `ShowInstitutionQuery` (nuevo: un plantel,
+  activo o no) y `SetInstitutionStatusHandler`. Solo Platform los usa
+  (regla de arquitectura), a través de `TenancyInstitutionDirectory`.
+- **`UsedStorageQuery`** (Tenancy) envuelve `InstitutionFiles::usedBytes()`,
+  para que también ella exija `PlatformReadScope` (V2).
+- **El aviso no revierte nada:** `MailInstitutionNotifier` se llama después
+  de la transacción, encola `InstitutionStatusMail` y, si falla, solo lo
+  reporta en el log.
+- **Rutas:** `/planteles` y `/planteles/{id}` para cualquier operador;
+  `PUT /planteles/{id}/estado` con `platform.super` y
+  `platform.recent-totp`. El motivo admite hasta 500 caracteres y es
+  opcional al reactivar.

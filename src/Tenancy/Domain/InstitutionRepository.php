@@ -28,6 +28,11 @@ interface InstitutionRepository
     public function save(Institution $institution): void;
 
     /**
+     * The status alone, which save() never writes (SPEC-014 PLT-R05).
+     */
+    public function saveStatus(Institution $institution): void;
+
+    /**
      * Whether another institution than the given one has this DEA code
      * (TEN-R01.2, INS-R01.3).
      */

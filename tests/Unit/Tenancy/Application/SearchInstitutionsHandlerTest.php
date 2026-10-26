@@ -1,5 +1,6 @@
 <?php
 
+use AulaX\Tenancy\Application\Administration\InstitutionPage;
 use AulaX\Tenancy\Application\SearchInstitutions\InstitutionDirectory;
 use AulaX\Tenancy\Application\SearchInstitutions\InstitutionSummary;
 use AulaX\Tenancy\Application\SearchInstitutions\SearchInstitutionsHandler;
@@ -17,6 +18,16 @@ function directoryAnswering(InstitutionSummary ...$results): InstitutionDirector
 
         /** @param  list<InstitutionSummary>  $results */
         public function __construct(private readonly array $results) {}
+
+        public function page(string $text, ?string $status, int $page, int $perPage): InstitutionPage
+        {
+            return new InstitutionPage([], 0, $page, $perPage);
+        }
+
+        public function one(int $id): ?array
+        {
+            return null;
+        }
 
         public function searchActive(string $text, int $limit): array
         {

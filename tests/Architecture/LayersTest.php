@@ -216,6 +216,45 @@ arch('in Students, only the transfer copier acts as another institution', functi
         ]);
 });
 
+arch('in Platform, only the bounded reader activates an institution', function () {
+    // ADR 0010, SPEC-014 V1: one place, reviewed, always restored.
+    expect('AulaX\Platform')
+        ->not->toUse('AulaX\Tenancy\Application\TenantActivator')
+        ->ignoring('AulaX\Platform\Infrastructure\TenantScopedReader');
+});
+
+arch('only the bounded reader opens a platform read, and only the aggregate queries ask for one', function () {
+    // SPEC-014 V2.
+    expect('AulaX\Shared\Application\PlatformReadScope')->toOnlyBeUsedIn([
+        'AulaX\Platform\Infrastructure\TenantScopedReader',
+        'AulaX\IdentityAccess\Application\Members\MemberCountsQuery',
+        'AulaX\IdentityAccess\Application\Members\AdministratorContactsQuery',
+        'AulaX\Students\Application\ActiveStudentCountQuery',
+        'AulaX\Audit\Application\ListEntries\LastActivityQuery',
+        'AulaX\Tenancy\Application\InstitutionFiles\UsedStorageQuery',
+    ]);
+});
+
+arch('the aggregate queries serve the platform only', function (string $query) {
+    // SPEC-014 V2: no screen of an institution, nor another module, reaches them.
+    expect($query)->toOnlyBeUsedIn('AulaX\Platform\Infrastructure');
+})->with([
+    'AulaX\IdentityAccess\Application\Members\MemberCountsQuery',
+    'AulaX\IdentityAccess\Application\Members\AdministratorContactsQuery',
+    'AulaX\Students\Application\ActiveStudentCountQuery',
+    'AulaX\Audit\Application\ListEntries\LastActivityQuery',
+    'AulaX\Tenancy\Application\InstitutionFiles\UsedStorageQuery',
+]);
+
+arch('only the platform lists every institution and changes their status', function (string $useCase) {
+    // SPEC-014 PLT-R04, R05: an institution never sees the others nor its own status switch.
+    expect($useCase)->toOnlyBeUsedIn('AulaX\Platform');
+})->with([
+    'AulaX\Tenancy\Application\Administration\SetInstitutionStatusHandler',
+    'AulaX\Tenancy\Application\Administration\ListAllInstitutionsQuery',
+    'AulaX\Tenancy\Application\Administration\ShowInstitutionQuery',
+]);
+
 arch('Workspace has no tables nor writes of its own', function () {
     // ADR 0009, SPEC-013 NAV-NF01: a composed view reads through the
     // Application layer of the modules that own the data.

@@ -42,6 +42,11 @@ final class InMemoryInstitutionRepository implements InstitutionRepository
         return $this->institutions[$id->value] ?? null;
     }
 
+    public function saveStatus(Institution $institution): void
+    {
+        $this->institutions[$institution->id->value] = $institution;
+    }
+
     public function save(Institution $institution): void
     {
         if ($this->failOnSave !== null) {

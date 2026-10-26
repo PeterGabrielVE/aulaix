@@ -48,6 +48,14 @@ final class EloquentInstitutionRepository implements InstitutionRepository
         ]);
     }
 
+    public function saveStatus(Institution $institution): void
+    {
+        InstitutionModel::query()->whereKey($institution->id->value)->update([
+            'status' => $institution->status->value,
+            'updated_at' => now(),
+        ]);
+    }
+
     public function isDeaCodeTaken(string $deaCode, InstitutionId $except): bool
     {
         return InstitutionModel::query()->where('dea_code', $deaCode)->whereKeyNot($except->value)->exists();

@@ -59,6 +59,14 @@ final class LaravelInstitutionFiles implements InstitutionFiles
         }
     }
 
+    public function usedBytes(): int
+    {
+        return array_sum(array_map(
+            fn (string $path) => $this->disk->size($path),
+            $this->disk->allFiles($this->folder($this->institution())),
+        ));
+    }
+
     /**
      * Only the exact shape store() generates: no other folder, no `..`, no
      * other extension.

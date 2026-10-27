@@ -27,4 +27,23 @@ final class SwitchingTenantActivator implements TenantActivator
     {
         $this->tenant->clear();
     }
+
+    public function forRequest(TenantContext $context, callable $handle, callable $keep): mixed
+    {
+        $this->activate($context);
+
+        return $handle();
+    }
+
+    public function within(TenantContext $context, callable $operation): mixed
+    {
+        $previous = $this->tenant->context();
+        $this->activate($context);
+
+        try {
+            return $operation();
+        } finally {
+            $previous === null ? $this->deactivate() : $this->activate($previous);
+        }
+    }
 }

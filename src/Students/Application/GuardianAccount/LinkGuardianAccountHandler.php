@@ -10,7 +10,6 @@ use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\InstitutionId;
 use AulaX\Students\Application\StudentAudit;
 use AulaX\Students\Domain\Guardian\GuardianRepository;
-use AulaX\Tenancy\Application\CurrentTenant;
 use AulaX\Tenancy\Application\InstitutionContexts;
 use AulaX\Tenancy\Application\TenantActivator;
 
@@ -24,7 +23,6 @@ final readonly class LinkGuardianAccountHandler
     public function __construct(
         private GuardianRepository $guardians,
         private TenantActivator $activator,
-        private CurrentTenant $tenant,
         private InstitutionContexts $institutions,
         private AuditTrail $audit,
         private TransactionManager $transactions,
@@ -38,23 +36,16 @@ final readonly class LinkGuardianAccountHandler
             return;
         }
 
-        $previous = $this->tenant->context();
-        $this->activator->activate($institution);
+        $this->activator->within($institution, fn () => $this->transactions->run(function () use ($event) {
+            $guardian = $this->guardians->byPendingInvitation($event->invitationId);
 
-        try {
-            $this->transactions->run(function () use ($event) {
-                $guardian = $this->guardians->byPendingInvitation($event->invitationId);
+            if ($guardian === null) {
+                return;
+            }
 
-                if ($guardian === null) {
-                    return;
-                }
-
-                $guardian->linkAccount($event->accountId);
-                $this->guardians->save($guardian);
-                $this->audit->record(StudentAudit::guardianLinked($guardian));
-            });
-        } finally {
-            $previous === null ? $this->activator->deactivate() : $this->activator->activate($previous);
-        }
+            $guardian->linkAccount($event->accountId);
+            $this->guardians->save($guardian);
+            $this->audit->record(StudentAudit::guardianLinked($guardian));
+        }));
     }
 }

@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
+use AulaX\Tenancy\Application\TenantActivator;
+use AulaX\Tenancy\Application\TenantContext;
 use AulaX\Tenancy\Domain\InstitutionStatus;
+use AulaX\Tenancy\Infrastructure\Persistence\InstitutionMapper;
 use AulaX\Tenancy\Infrastructure\Persistence\InstitutionModel as Institution;
-use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -61,33 +63,33 @@ class InstitutionSeeder extends Seeder
             );
 
             // Tenant-scoped tables enforce RLS (F1-02) even for this seeder's
-            // own DB role, so writes to `users` need the same session
-            // variable ResolveTenant sets on every real request.
-            RowLevelSecurity::setInstitution($institution->id);
+            // own DB role, so its writes run with the institution active, in
+            // a transaction of their own (ADR 0011).
+            app(TenantActivator::class)->within(TenantContext::of(InstitutionMapper::toDomain($institution)), function () use ($institution, $data) {
+                RolePermissionSeeder::seedForInstitution($institution);
 
-            RolePermissionSeeder::seedForInstitution($institution);
+                foreach (self::DEMO_USERS as $prefix => $role) {
+                    // Global account (SPEC-004) plus its membership in this institution.
+                    $user = User::query()->updateOrCreate(
+                        ['email' => "{$prefix}@{$data['subdomain']}.aulaix.test"],
+                        [
+                            'name' => $role,
+                            'password' => Hash::make('password'),
+                            'email_verified_at' => now(),
+                        ],
+                    );
 
-            foreach (self::DEMO_USERS as $prefix => $role) {
-                // Global account (SPEC-004) plus its membership in this institution.
-                $user = User::query()->updateOrCreate(
-                    ['email' => "{$prefix}@{$data['subdomain']}.aulaix.test"],
-                    [
-                        'name' => $role,
-                        'password' => Hash::make('password'),
-                        'email_verified_at' => now(),
-                    ],
-                );
+                    DB::table('institution_memberships')->insertOrIgnore([
+                        'institution_id' => $institution->id,
+                        'user_id' => $user->id,
+                        'status' => 'active',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
 
-                DB::table('institution_memberships')->insertOrIgnore([
-                    'institution_id' => $institution->id,
-                    'user_id' => $user->id,
-                    'status' => 'active',
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-                $user->syncRoles([$role]);
-            }
+                    $user->syncRoles([$role]);
+                }
+            });
         }
     }
 }

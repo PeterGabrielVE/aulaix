@@ -161,7 +161,7 @@ modelo declara `#[UseFactory(InstitutionFactory::class)]`.
 | Tampering | Insertar filas con el `institution_id` de otra institución | Política RLS con `WITH CHECK` | TEN-R05.4 |
 | Information disclosure | Consulta que olvida filtrar o SQL crudo | `FORCE ROW LEVEL SECURITY` + rol `NOBYPASSRLS` | TEN-R05.1, TEN-R05.3, TEN-NF01 |
 | Information disclosure | Tabla nueva sin política | Test sobre el esquema real | TEN-NF02 |
-| Information disclosure | Conexión reutilizada (worker) que conserva el tenant anterior | `TenantActivator::deactivate()` limpia la variable de sesión | TEN-R05.6 |
+| Information disclosure | Conexión reutilizada (worker, pool) que conserva el tenant anterior | Desde SPEC-015 (ADR 0011), el plantel se fija solo para la transacción (`set_config(..., true)`) y cada petición de plantel corre en una; PostgreSQL lo olvida al terminar | TEN-R05.6, RLT-R01.2, R01.3 |
 | Denial of service | Búsqueda pública sin límite | **Abierto: TEN-H01** | — |
 | Elevation of privilege | Institución inactiva accesible por URL directa | `ResolveTenantHandler` solo resuelve activas | TEN-R03.3 |
 

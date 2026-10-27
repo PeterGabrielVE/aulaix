@@ -56,7 +56,7 @@ function inviteGuardian(GuardianId $id): void
 function memberJoined(int $invitationId, int $accountId = 90): void
 {
     $test = test();
-    (new LinkGuardianAccountHandler($test->guardians, $test->activator, $test->tenant, new InstitutionContexts($test->institutions), $test->audit, $test->transactions))(
+    (new LinkGuardianAccountHandler($test->guardians, $test->activator, new InstitutionContexts($test->institutions), $test->audit, $test->transactions))(
         new MemberJoined(4, $accountId, $invitationId, new DateTimeImmutable('2026-10-22')),
     );
 }

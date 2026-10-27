@@ -11,6 +11,7 @@ use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Testing\TestResponse;
+use Tests\IsolationTestCase;
 use Tests\TestCase;
 
 /*
@@ -27,6 +28,11 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+// SPEC-015: isolation between units of work, against real commits.
+pest()->extend(IsolationTestCase::class)
+    ->group('rls')
+    ->in('Isolation');
 
 // SPEC-013: run apart, with phpunit.browser.xml (see docker-compose.yml).
 // The pages load the built assets: a running Vite dev server (public/hot)

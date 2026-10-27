@@ -18,15 +18,14 @@ use AulaX\Students\Domain\Student\StudentRepository;
 use AulaX\Tenancy\Application\CurrentTenant;
 use AulaX\Tenancy\Application\InstitutionContexts;
 use AulaX\Tenancy\Application\TenantActivator;
-use Illuminate\Support\Facades\DB;
 use LogicException;
 
 /**
- * ADR 0008: activates the destination (Row Level Security variable and
- * permission team), writes the record there, and activates the origin again
- * whatever happens. The writes run in a savepoint, so a failure in the
- * destination rolls them back and leaves the origin's transaction usable to
- * switch back; the origin's transaction then rolls back everything.
+ * ADR 0008: writes the record in the destination, within() its savepoint
+ * (ADR 0011), which activates it (Row Level Security and permission team)
+ * and gives the origin back whatever happens. A failure in the destination
+ * rolls the savepoint back; the origin's transaction then rolls back
+ * everything.
  */
 final readonly class TenantSwitchingTransferCopier implements TransferCopier
 {
@@ -41,16 +40,10 @@ final readonly class TenantSwitchingTransferCopier implements TransferCopier
 
     public function copyTo(InstitutionId $destination, StudentTransferData $data): void
     {
-        $origin = $this->tenant->context() ?? throw new LogicException('A transfer is copied from an open institution.');
+        $this->tenant->context() ?? throw new LogicException('A transfer is copied from an open institution.');
         $target = $this->institutions->of($destination) ?? throw new LogicException("The destination institution {$destination->value} does not exist.");
 
-        $this->activator->activate($target);
-
-        try {
-            DB::transaction(fn () => $this->write($data));
-        } finally {
-            $this->activator->activate($origin);
-        }
+        $this->activator->within($target, fn () => $this->write($data));
     }
 
     private function write(StudentTransferData $data): void

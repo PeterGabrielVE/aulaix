@@ -20,7 +20,6 @@ use AulaX\IdentityAccess\Domain\Membership\MembershipRepository;
 use AulaX\IdentityAccess\Domain\Membership\MembershipStatus;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
 use AulaX\Shared\Application\EventBus;
-use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use AulaX\Shared\Domain\Clock;
 use AulaX\Shared\Domain\NotFound;
@@ -47,7 +46,6 @@ final readonly class JoinInstitutionHandler
         private InvitationRepository $invitations,
         private RoleCatalog $roles,
         private AuditTrail $audit,
-        private TransactionManager $transactions,
         private Clock $clock,
         private EventBus $events,
     ) {}
@@ -76,41 +74,35 @@ final readonly class JoinInstitutionHandler
             throw InvitationEmailMismatch::create();
         }
 
-        $this->tenantActivator->activate($institution);
+        $this->tenantActivator->within($institution, function () use ($account, $institution) {
+            $now = $this->clock->now();
+            $invitation = $this->invitations->pendingFor($institution->institutionId, $account->email);
 
-        try {
-            $this->transactions->run(function () use ($account, $institution) {
-                $now = $this->clock->now();
-                $invitation = $this->invitations->pendingFor($institution->institutionId, $account->email);
+            if ($invitation === null) {
+                throw InvitationNotUsable::create();
+            }
 
-                if ($invitation === null) {
-                    throw InvitationNotUsable::create();
-                }
+            $previous = $this->memberships->of($account->id, $institution->institutionId);
 
-                $previous = $this->memberships->of($account->id, $institution->institutionId);
+            if ($previous !== null && $previous->status !== MembershipStatus::Ended) {
+                throw BusinessRuleViolation::onField('email', 'Ya perteneces a este plantel.');
+            }
 
-                if ($previous !== null && $previous->status !== MembershipStatus::Ended) {
-                    throw BusinessRuleViolation::onField('email', 'Ya perteneces a este plantel.');
-                }
+            // Someone who left comes back through a new invitation only.
+            $membership = $this->memberships->save($previous === null
+                ? Membership::start($account->id, $institution->institutionId)
+                : Membership::rejoin($previous));
+            $this->roles->assign($account->id, $invitation->roles);
+            $this->invitations->save($invitation->acceptBy($account->id, $now));
 
-                // Someone who left comes back through a new invitation only.
-                $membership = $this->memberships->save($previous === null
-                    ? Membership::start($account->id, $institution->institutionId)
-                    : Membership::rejoin($previous));
-                $this->roles->assign($account->id, $invitation->roles);
-                $this->invitations->save($invitation->acceptBy($account->id, $now));
-
-                $this->audit->record(AuditEvent::of('identity.invitation.accepted', AuditSubject::of('invitation', (int) $invitation->id)));
-                $this->audit->record(AuditEvent::of(
-                    'identity.membership.created',
-                    AuditSubject::of('membership', (int) $membership->id),
-                    [FieldChange::of('roles', [], $invitation->roles->inPriorityOrder())],
-                ));
-                $this->events->publish(new MemberJoined($institution->institutionId->value, $account->id->value, (int) $invitation->id, $now));
-            });
-        } finally {
-            $this->tenantActivator->deactivate();
-        }
+            $this->audit->record(AuditEvent::of('identity.invitation.accepted', AuditSubject::of('invitation', (int) $invitation->id)));
+            $this->audit->record(AuditEvent::of(
+                'identity.membership.created',
+                AuditSubject::of('membership', (int) $membership->id),
+                [FieldChange::of('roles', [], $invitation->roles->inPriorityOrder())],
+            ));
+            $this->events->publish(new MemberJoined($institution->institutionId->value, $account->id->value, (int) $invitation->id, $now));
+        });
 
         return $institution;
     }

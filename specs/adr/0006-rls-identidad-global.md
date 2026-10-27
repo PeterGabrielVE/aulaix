@@ -95,3 +95,10 @@ manos del código de `IdentityAccess`, como la de `users`.
 | `SECURITY DEFINER` con un rol creado en el aprovisionamiento | Exige pasos manuales con superusuario en cada entorno, y el traspaso de las funciones sigue requiriendo que el rol de la app pueda asumir el rol privilegiado. |
 | Base de datos (o esquema y rol) de identidad separada | Transacciones distribuidas entre identidad y planteles (crear cuenta y membresía a la vez); demasiada infraestructura para esta escala. |
 | `legacy_credentials` (ADR 0004 §7) | Obliga a fusionar las filas antes de verificar; ver Contexto. |
+
+## Actualización (2026-10-26, ADR 0011)
+
+El plantel activo vive en la transacción, no en la conexión. Las lecturas
+«sin plantel activo» de este ADR siguen igual: fuera de una transacción de
+plantel no hay ninguno. Ver el
+[ADR 0011](0011-plantel-activo-por-transaccion.md).

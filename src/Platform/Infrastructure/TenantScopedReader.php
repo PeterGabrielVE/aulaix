@@ -16,9 +16,10 @@ use LogicException;
 /**
  * The only place the platform activates an institution (ADR 0010, SPEC-014
  * V1): for the length of one read, under that institution's RLS, in a
- * read-only transaction that is always rolled back. Rolling back also undoes
- * the RLS setting made inside it; the in-memory tenant is restored in
- * `finally`, and checked afterwards, failing loudly if any trace is left.
+ * read-only transaction that is always rolled back. The switch itself goes
+ * through TenantActivator::within() (ADR 0011), which gives the previous
+ * institution back; rolling back undoes the RLS setting too, and both are
+ * checked afterwards, failing loudly if any trace is left.
  */
 final readonly class TenantScopedReader
 {
@@ -50,17 +51,11 @@ final readonly class TenantScopedReader
 
         try {
             $this->connection->statement('SET TRANSACTION READ ONLY');
-            $this->activator->activate($target);
 
-            return PlatformReadScope::within($institutionId, $read);
+            return $this->activator->within($target, fn () => PlatformReadScope::within($institutionId, $read));
         } finally {
             $this->connection->rollBack();
-
-            try {
-                $previous === null ? $this->activator->deactivate() : $this->activator->activate($previous);
-            } finally {
-                $this->ensureRestored($expectedSetting, $previous?->institutionId?->value);
-            }
+            $this->ensureRestored($expectedSetting, $previous?->institutionId?->value);
         }
     }
 

@@ -84,3 +84,9 @@ para que vaya a la bitácora de plataforma y no a la del plantel.
 - **Fin de la lista del entorno:** la lista de operadores de
   `IDENTITY_CONSOLIDATION_OPERATORS` (IDG-R11.3) desaparece. El comando de
   consolidación pregunta a Platform.
+
+## Actualización (2026-10-26, ADR 0011)
+
+`TenantScopedReader` cambia de plantel con `TenantActivator::within()`,
+dentro de su transacción de solo lectura, que se sigue revirtiendo
+siempre. Ver el [ADR 0011](0011-plantel-activo-por-transaccion.md).

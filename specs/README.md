@@ -45,7 +45,7 @@ specs/
 ```
 
 Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
-(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007), `EAC` (008), `EST` (009), `NAV` (013), `PLT` (014).
+(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007), `EAC` (008), `EST` (009), `NAV` (013), `PLT` (014), `RLT` (015).
 
 ## Índice
 
@@ -63,6 +63,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [009 Estudiantes y representantes](009-estudiantes/) | `Students` | implementada | implementada | implementada |
 | [013 Layout, menú e inicio por rol](013-layout-menu/) | `Workspace` (nuevo), `app/` | implementada | implementada | implementada |
 | [014 Superadministración de plataforma](014-superadministracion/) | `Platform` (nuevo) | implementada | implementada | implementada |
+| [015 RLS por transacción y cierre de la revisión de seguridad](015-rls-transaccion/) | `Tenancy` (transversal), `IdentityAccess`, `Students` | aprobada | aprobada | implementando (PR A) |
 
 ¹ Los requisitos de 001–003 documentan el comportamiento que **ya existe**
 (Fase 1, F1-01 a F1-07), extraído del código y de los tests actuales. Los
@@ -100,3 +101,4 @@ Las specs siguientes de la Fase 1 y sus bloqueos están en [roadmap.md](roadmap.
 | [0008](adr/0008-traslados-entre-planteles.md) | Traslados entre planteles: visibilidad cruzada por la RLS y copia en una sola transacción | aceptada |
 | [0009](adr/0009-vistas-compuestas.md) | Vistas compuestas (layout, inicio, portal) en módulos sin tablas | aceptado |
 | [0010](adr/0010-identidad-y-lecturas-de-plataforma.md) | Identidad de plataforma aparte y lecturas de un plantel por activación acotada | aceptado |
+| [0011](adr/0011-plantel-activo-por-transaccion.md) | El plantel activo vive en la transacción, no en la conexión | aceptado |

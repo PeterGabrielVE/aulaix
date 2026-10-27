@@ -17,8 +17,11 @@ use AulaX\Tenancy\Infrastructure\Persistence\EloquentInstitutionDirectory;
 use AulaX\Tenancy\Infrastructure\Persistence\EloquentInstitutionRepository;
 use AulaX\Tenancy\Infrastructure\Persistence\EloquentSignatureRepository;
 use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
+use AulaX\Tenancy\Infrastructure\Queue\EnsureNoTenantOnJobStart;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -38,10 +41,11 @@ final class TenancyServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        // The port is an alias of the concrete singleton, so swapping the
+        // The port is an alias of the concrete instance, so swapping the
         // instance (as tests do to simulate "no tenant") swaps it for every
-        // reader of the port too.
-        $this->app->singleton(InMemoryCurrentTenant::class);
+        // reader of the port too. Scoped (SPEC-015 RLT-R03.1): a queue
+        // worker forgets it between jobs.
+        $this->app->scoped(InMemoryCurrentTenant::class);
         $this->app->alias(InMemoryCurrentTenant::class, CurrentTenant::class);
 
         $this->app->bind(InstitutionFiles::class, fn ($app) => new LaravelInstitutionFiles(
@@ -57,6 +61,8 @@ final class TenancyServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(JobProcessing::class, EnsureNoTenantOnJobStart::class);
+
         /*
          * The institution_id column of a tenant-scoped table (F1-01). It
          * defaults to the RLS session variable, so inserts that bypass

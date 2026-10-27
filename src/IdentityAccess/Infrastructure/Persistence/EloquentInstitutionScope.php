@@ -27,14 +27,11 @@ final readonly class EloquentInstitutionScope implements InstitutionScope
             ->orderBy('institutions.id')
             ->get(['institutions.id', 'institutions.name', 'institutions.subdomain']);
 
-        try {
-            foreach ($institutions as $institution) {
-                $context = new TenantContext(InstitutionId::fromInt((int) $institution->id), $institution->name, $institution->subdomain);
-                $this->tenantActivator->activate($context);
-                $operation($context);
-            }
-        } finally {
-            $this->tenantActivator->deactivate();
+        // Each institution in its own transaction, or savepoint, with only
+        // its Row Level Security (SPEC-015 RLT-R03.3).
+        foreach ($institutions as $institution) {
+            $context = new TenantContext(InstitutionId::fromInt((int) $institution->id), $institution->name, $institution->subdomain);
+            $this->tenantActivator->within($context, fn () => $operation($context));
         }
     }
 }

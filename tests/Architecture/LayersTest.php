@@ -204,6 +204,54 @@ arch('only IdentityAccess uses the account model', function (string $module) {
     expect("AulaX\\{$module}")->not->toUse('AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel');
 })->with('modules');
 
+test('no code sets the institution for a whole connection', function () {
+    // SPEC-015 RLT-R01.2, ADR 0011: set_config(..., false) would outlive its
+    // transaction and reach the next unit of work on a shared connection.
+    $offenders = [];
+
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2).'/src')) as $file) {
+        if ($file->isFile() && $file->getExtension() === 'php' && preg_match('/set_config\([^)]*,\s*false\s*\)/i', file_get_contents($file->getPathname()))) {
+            $offenders[] = $file->getFilename();
+        }
+    }
+
+    expect($offenders)->toBe([]);
+});
+
+test('no code activates an institution by hand; requests use forRequest() and switches within()', function () {
+    // SPEC-015 RLT-R02, ADR 0011: activate() would hold the institution for
+    // the rest of a transaction; a switch must give it back.
+    $offenders = [];
+
+    foreach (['src', 'app', 'database'] as $directory) {
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2).'/'.$directory)) as $file) {
+            if (! $file->isFile() || $file->getExtension() !== 'php' || str_ends_with($file->getPathname(), 'PostgresTenantActivator.php')) {
+                continue;
+            }
+
+            $code = file_get_contents($file->getPathname());
+
+            if (str_contains($code, 'TenantActivator') && preg_match('/[aA]ctivator->(activate|deactivate)\(/', $code)) {
+                $offenders[] = $file->getFilename();
+            }
+        }
+    }
+
+    // The queue listener only empties the tenant a job starts with (RLT-R03.1).
+    expect($offenders)->toBe(['EnsureNoTenantOnJobStart.php']);
+});
+
+arch('only the activator writes the institution Row Level Security applies', function () {
+    // ADR 0011: one place that switches, restores and checks.
+    expect('AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity')->toOnlyBeUsedIn([
+        'AulaX\Tenancy\Infrastructure\PostgresTenantActivator',
+        // Migrations call its enable*() helpers, and the provider its SQL
+        // default for institution_id; neither switches institution.
+        'AulaX\Tenancy\Infrastructure\Persistence',
+        'AulaX\Tenancy\Infrastructure\TenancyServiceProvider',
+    ]);
+});
+
 arch('in Students, only the transfer copier acts as another institution', function () {
     // ADR 0008: switching institution inside a transaction is confined to
     // one adapter, so nothing else of the module writes as the destination.

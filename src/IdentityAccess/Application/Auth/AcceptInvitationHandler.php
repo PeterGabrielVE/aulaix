@@ -20,7 +20,6 @@ use AulaX\IdentityAccess\Domain\Membership\Membership;
 use AulaX\IdentityAccess\Domain\Membership\MembershipRepository;
 use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
 use AulaX\Shared\Application\EventBus;
-use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\Clock;
 use AulaX\Tenancy\Application\ResolveTenant\InstitutionNotFound;
 use AulaX\Tenancy\Application\ResolveTenant\ResolveTenantHandler;
@@ -49,7 +48,6 @@ final readonly class AcceptInvitationHandler
         private RoleCatalog $roles,
         private PasswordHasher $hasher,
         private AuditTrail $audit,
-        private TransactionManager $transactions,
         private Clock $clock,
         private EventBus $events,
     ) {}
@@ -73,37 +71,31 @@ final readonly class AcceptInvitationHandler
         // Security hides every account that is not yet a member of it.
         $hasAccount = $this->accounts->byEmail($email) !== [];
 
-        $this->tenantActivator->activate($institution);
+        $this->tenantActivator->within($institution, function () use ($command, $institution, $email, $hasAccount) {
+            $now = $this->clock->now();
+            $invitation = $this->invitations->pendingFor($institution->institutionId, $email);
 
-        try {
-            $this->transactions->run(function () use ($command, $institution, $email, $hasAccount) {
-                $now = $this->clock->now();
-                $invitation = $this->invitations->pendingFor($institution->institutionId, $email);
+            if ($invitation === null || ! $invitation->isUsable($now) || ! $invitation->matches($command->token)) {
+                throw InvitationNotUsable::create();
+            }
 
-                if ($invitation === null || ! $invitation->isUsable($now) || ! $invitation->matches($command->token)) {
-                    throw InvitationNotUsable::create();
-                }
+            if ($hasAccount) {
+                throw AccountAlreadyExists::create();
+            }
 
-                if ($hasAccount) {
-                    throw AccountAlreadyExists::create();
-                }
+            $account = $this->accounts->save(Account::register($email, $invitation->name, $this->hasher->hash($command->password), $now));
+            $membership = $this->memberships->save(Membership::start($account->id, $institution->institutionId));
+            $this->roles->assign($account->id, $invitation->roles);
+            $this->invitations->save($invitation->accept($command->token, $account->id, $now));
 
-                $account = $this->accounts->save(Account::register($email, $invitation->name, $this->hasher->hash($command->password), $now));
-                $membership = $this->memberships->save(Membership::start($account->id, $institution->institutionId));
-                $this->roles->assign($account->id, $invitation->roles);
-                $this->invitations->save($invitation->accept($command->token, $account->id, $now));
-
-                $this->audit->record(AuditEvent::of('identity.invitation.accepted', AuditSubject::of('invitation', (int) $invitation->id)));
-                $this->audit->record(AuditEvent::of(
-                    'identity.membership.created',
-                    AuditSubject::of('membership', (int) $membership->id),
-                    [FieldChange::of('roles', [], $invitation->roles->inPriorityOrder())],
-                ));
-                $this->events->publish(new MemberJoined($institution->institutionId->value, $account->id->value, (int) $invitation->id, $now));
-            });
-        } finally {
-            $this->tenantActivator->deactivate();
-        }
+            $this->audit->record(AuditEvent::of('identity.invitation.accepted', AuditSubject::of('invitation', (int) $invitation->id)));
+            $this->audit->record(AuditEvent::of(
+                'identity.membership.created',
+                AuditSubject::of('membership', (int) $membership->id),
+                [FieldChange::of('roles', [], $invitation->roles->inPriorityOrder())],
+            ));
+            $this->events->publish(new MemberJoined($institution->institutionId->value, $account->id->value, (int) $invitation->id, $now));
+        });
 
         return $institution;
     }

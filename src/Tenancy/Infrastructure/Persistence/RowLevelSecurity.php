@@ -160,22 +160,31 @@ final class RowLevelSecurity
     }
 
     /**
-     * Scope the rest of this DB session to the given institution. Session-
-     * wide (not transaction-local) so it survives the transactions Eloquent
-     * and the test suite open and close along the way.
+     * Scope the rest of the current transaction to the given institution
+     * (ADR 0011): PostgreSQL forgets it at COMMIT or ROLLBACK, and undoes it
+     * when a savepoint is rolled back, so no connection ever keeps it for
+     * the next unit of work. Outside a transaction it would last a single
+     * statement, so only the TenantActivator calls it, inside one.
      */
     public static function setInstitution(int $institutionId): void
     {
-        DB::statement('select set_config(?, ?, false)', [self::SESSION_VARIABLE, (string) $institutionId]);
+        DB::statement('select set_config(?, ?, true)', [self::SESSION_VARIABLE, (string) $institutionId]);
     }
 
     /**
-     * Leave the current institution: from here on this DB session sees no
-     * tenant-scoped rows at all. For long-lived processes (queue workers,
-     * commands looping over institutions) that reuse one connection.
+     * Leave the institution for the rest of the current transaction: no
+     * tenant-scoped row is visible or writable.
      */
     public static function clearInstitution(): void
     {
-        DB::statement('select set_config(?, ?, false)', [self::SESSION_VARIABLE, '']);
+        DB::statement('select set_config(?, ?, true)', [self::SESSION_VARIABLE, '']);
+    }
+
+    /**
+     * The institution the database applies right now, empty when none.
+     */
+    public static function currentSetting(): string
+    {
+        return (string) DB::scalar('select current_setting(?, true)', [self::SESSION_VARIABLE]);
     }
 }

@@ -33,10 +33,10 @@ final readonly class EloquentAccountMerger implements AccountMerger
             ->where('membership.user_id', $from->value)
             ->get(['institutions.id', 'institutions.name', 'institutions.subdomain']);
 
-        try {
-            foreach ($memberships as $institution) {
-                $this->tenantActivator->activate(new TenantContext(InstitutionId::fromInt((int) $institution->id), $institution->name, $institution->subdomain));
+        foreach ($memberships as $institution) {
+            $context = new TenantContext(InstitutionId::fromInt((int) $institution->id), $institution->name, $institution->subdomain);
 
+            $this->tenantActivator->within($context, function () use ($institution, $from, $into) {
                 $roles = DB::table(config('permission.table_names.model_has_roles'))
                     ->where('model_type', (new AccountModel)->getMorphClass())
                     ->where(config('permission.column_names.team_foreign_key'), $institution->id)
@@ -48,14 +48,12 @@ final readonly class EloquentAccountMerger implements AccountMerger
                     MembershipModel::query()->where('user_id', $from->value)->delete();
                     $roles->delete();
 
-                    continue;
+                    return;
                 }
 
                 MembershipModel::query()->where('user_id', $from->value)->update(['user_id' => $into->value]);
                 $roles->update(['model_id' => $into->value]);
-            }
-        } finally {
-            $this->tenantActivator->deactivate();
+            });
         }
 
         $this->permissions->forgetCachedPermissions();

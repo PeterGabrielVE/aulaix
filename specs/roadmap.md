@@ -129,7 +129,10 @@ Conviene llevarlos a la constitución o a las specs antes de llegar a ellos:
 Resultado: **sin hallazgos de confianza alta o media**.
 
 Quedan anotados, por debajo del umbral, para revisarlos antes de
-producción:
+producción. **Los cuatro se cierran en SPEC-015** (2026-10-27): el plantel
+por transacción (ADR 0011), el traspaso ligado al navegador, el origen de
+`transfer_requests` protegido y las invitaciones bloqueadas mientras el
+correo espera consolidación.
 
 - **RLS por conexión.** `RowLevelSecurity::setInstitution` fija el plantel
   con `set_config(..., false)`, que dura toda la conexión. Con conexiones

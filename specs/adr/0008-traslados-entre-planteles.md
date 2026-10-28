@@ -34,8 +34,8 @@ crearse.** Su RLS tiene políticas propias:
 | Comando | Política |
 |---------|----------|
 | `SELECT` | Fila del plantel activo (destino), **o** respondida por el plantel activo (`origin_institution_id`), **o** pendiente y con un estudiante **activo** del plantel activo con esa identificación. |
-| `INSERT` | Solo como destino (`institution_id` = plantel activo). |
-| `UPDATE` | Las mismas filas que `SELECT`. `WITH CHECK`: destino u origen = plantel activo. |
+| `INSERT` | Solo como destino (`institution_id` = plantel activo), pendiente y sin origen. *(Origen y estado añadidos por SPEC-015.)* |
+| `UPDATE` | Las mismas filas que `SELECT`. `WITH CHECK`: destino u origen = plantel activo. Además, el *trigger* `guard_origin` (SPEC-015 RLT-R05): el destino y la identificación no cambian, y el origen solo lo fija, una vez y mientras está pendiente, el plantel que responde. |
 | `DELETE` | Nunca (se conservan como historial). |
 
 La tercera condición es una subconsulta a `students`, que a su vez está

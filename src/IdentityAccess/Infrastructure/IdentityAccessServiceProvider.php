@@ -14,6 +14,7 @@ use AulaX\IdentityAccess\Application\Members\MemberDirectory;
 use AulaX\IdentityAccess\Application\Port\AccountMailer;
 use AulaX\IdentityAccess\Application\Port\AccountMerger;
 use AulaX\IdentityAccess\Application\Port\Authenticator;
+use AulaX\IdentityAccess\Application\Port\BrowserBinding;
 use AulaX\IdentityAccess\Application\Port\ConsolidationCodes;
 use AulaX\IdentityAccess\Application\Port\HandoffTokens;
 use AulaX\IdentityAccess\Application\Port\InstitutionScope;
@@ -30,6 +31,7 @@ use AulaX\IdentityAccess\Domain\Role\RoleCatalog;
 use AulaX\IdentityAccess\Infrastructure\Auth\BrokerPasswordResetTokens;
 use AulaX\IdentityAccess\Infrastructure\Auth\CacheConsolidationCodes;
 use AulaX\IdentityAccess\Infrastructure\Auth\CacheHandoffTokens;
+use AulaX\IdentityAccess\Infrastructure\Auth\CookieBrowserBinding;
 use AulaX\IdentityAccess\Infrastructure\Auth\DatabaseSessionRevoker;
 use AulaX\IdentityAccess\Infrastructure\Auth\LaravelAuthenticator;
 use AulaX\IdentityAccess\Infrastructure\Auth\LaravelMembershipSession;
@@ -71,6 +73,7 @@ final class IdentityAccessServiceProvider extends ServiceProvider
         Authenticator::class => LaravelAuthenticator::class,
         AccountInstitutions::class => EloquentAccountInstitutions::class,
         HandoffTokens::class => CacheHandoffTokens::class,
+        BrowserBinding::class => CookieBrowserBinding::class,
         MembershipSession::class => LaravelMembershipSession::class,
         LoginThrottle::class => RateLimiterLoginThrottle::class,
         SessionRevoker::class => DatabaseSessionRevoker::class,

@@ -29,7 +29,7 @@ final readonly class CacheHandoffTokens implements HandoffTokens
         private Clock $clock,
     ) {}
 
-    public function issue(AccountId $account, InstitutionId $institution, int $activeInstitutions = 1): string
+    public function issue(AccountId $account, InstitutionId $institution, int $activeInstitutions = 1, string $browser = ''): string
     {
         return $this->encrypter->encryptString(json_encode([
             'account' => $account->value,
@@ -37,10 +37,11 @@ final readonly class CacheHandoffTokens implements HandoffTokens
             'institutions' => $activeInstitutions,
             'expires' => $this->clock->now()->getTimestamp() + self::LIFETIME_SECONDS,
             'nonce' => bin2hex(random_bytes(16)),
+            'browser' => $browser,
         ], JSON_THROW_ON_ERROR));
     }
 
-    public function consume(#[\SensitiveParameter] string $token, InstitutionId $institution): ?HandoffGrant
+    public function consume(#[\SensitiveParameter] string $token, InstitutionId $institution, string $browser = ''): ?HandoffGrant
     {
         try {
             $payload = json_decode($this->encrypter->decryptString($token), true, flags: JSON_THROW_ON_ERROR);
@@ -52,7 +53,8 @@ final readonly class CacheHandoffTokens implements HandoffTokens
             || ($payload['institution'] ?? null) !== $institution->value
             || ! is_int($payload['account'] ?? null)
             || ! is_string($payload['nonce'] ?? null)
-            || ($payload['expires'] ?? 0) < $this->clock->now()->getTimestamp()) {
+            || ($payload['expires'] ?? 0) < $this->clock->now()->getTimestamp()
+            || ! hash_equals((string) ($payload['browser'] ?? ''), $browser)) {
             return null;
         }
 

@@ -280,21 +280,21 @@ Resueltas al aprobar los requisitos (2026-10-26):
 | RLT-R03.1 | `tests/Isolation/QueueTenantTest.php` › «a job starts with no institution, even when the previous one left a transaction open with one» |
 | RLT-R03.2 | `tests/Isolation/QueueTenantTest.php` › «a job about an institution runs in it, and leaves no institution after it»; `tests/Isolation/QueueTenantTest.php` › «a job queued by a request runs only after the request commits» |
 | RLT-R03.3 | `tests/Isolation/ConsoleTenantTest.php` › «going through the institutions of an account applies to each only its own Row Level Security» |
-| RLT-R04.1 | |
-| RLT-R04.2 | |
-| RLT-R04.3 | |
-| RLT-R04.4 | |
-| RLT-R05.1 | |
-| RLT-R05.2 | |
-| RLT-R05.3 | |
-| RLT-R05.4 | |
-| RLT-R06.1 | |
-| RLT-R06.2 | |
-| RLT-R06.3 | |
-| RLT-R06.4 | |
-| RLT-R06.5 | |
+| RLT-R04.1 | `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «the browser that asked for it gets in»; `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «the browser cookie is HttpOnly, shared by the subdomains, and lives with the browser session» |
+| RLT-R04.2 | `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «another browser is sent to the central login, with the institution chosen, and nobody gets in (RLT-R04.2)»; `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «the owner can still use the link that someone else opened first» |
+| RLT-R04.3 | `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «the refusal says nothing about why (RLT-R04.3, NF05)» |
+| RLT-R04.4 | `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «a session of another account in the institution is not replaced (RLT-R04.4)» |
+| RLT-R05.1 | `tests/Feature/Students/TransferRequestOriginTest.php` › «the destination can not set an origin when it creates a request (RLT-R05.1)»; `tests/Feature/Students/TransferRequestOriginTest.php` › «the destination can not set or change the origin of its request (RLT-R05.1)» |
+| RLT-R05.2 | `tests/Feature/Students/TransferRequestOriginTest.php` › «the origin only puts itself as origin when it answers (RLT-R05.2)» |
+| RLT-R05.3 | `tests/Feature/Students/TransferRequestOriginTest.php` › «nobody changes the origin of an answered request, nor what it was asked for (RLT-R05.3)» |
+| RLT-R05.4 | `tests/Feature/Students/TransferRequestOriginTest.php` › «the writes of SPEC-009 keep working: the destination expires its request untouched (RLT-R05.4)»; `tests/Feature/Students/TransferFlowTest.php` (sin cambios) |
+| RLT-R06.1 | `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «refuses to join an institution while its email waits for consolidation, saying what to do (RLT-R06.1, R06.2, R06.5)»; `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «pending consolidation: offers to consolidate first, and joins nothing (RLT-R06.1)» |
+| RLT-R06.2 | `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «refuses to join an institution while its email waits for consolidation, saying what to do (RLT-R06.1, R06.2, R06.5)»; `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «under review: says support is reviewing the accounts (RLT-R06.2)» |
+| RLT-R06.3 | `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «the invitation keeps waiting, and is accepted once the email is consolidated (RLT-R06.3, R06.4)» |
+| RLT-R06.4 | `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «joins institutions only once its email is no longer waiting for consolidation (RLT-R06)»; `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «the invitation keeps waiting, and is accepted once the email is consolidated (RLT-R06.3, R06.4)» |
+| RLT-R06.5 | `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «refuses to join an institution while its email waits for consolidation, saying what to do (RLT-R06.1, R06.2, R06.5)»; `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «kept separate: asks for an invitation to another email (RLT-R06.5)» |
 | RLT-NF01 | |
 | RLT-NF02 | `tests/Architecture/LayersTest.php` › «no code sets the institution for a whole connection»; `tests/Architecture/LayersTest.php` › «only the activator writes the institution Row Level Security applies» |
 | RLT-NF03 | `tests/Isolation/RlsOverheadTest.php` › «holding the institution in the request transaction costs under 5 ms (p95)» |
 | RLT-NF04 | |
-| RLT-NF05 | |
+| RLT-NF05 | `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «the refusal says nothing about why (RLT-R04.3, NF05)»; `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «says on which field and in which state the join was refused» |

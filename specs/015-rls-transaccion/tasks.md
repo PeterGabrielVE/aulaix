@@ -157,12 +157,12 @@ de los dos.
 
 ### Fase 5 — Dominio y aplicación
 
-- [ ] **T-10** — `Account::ensureCanJoinInstitutions()` y la excepción
+- [x] **T-10** — `Account::ensureCanJoinInstitutions()` y la excepción
   `InvitationBlockedByConsolidation`, con un mensaje por estado.
   - Criterios: RLT-R06.1, R06.2, R06.5, NF05
   - Test: `tests/Unit/IdentityAccess/Domain/AccountTest.php`, con los
     cuatro estados (`null`, `pending`, `review`, `separated`).
-- [ ] **T-11** — Puerto `BrowserBinding`.
+- [x] **T-11** — Puerto `BrowserBinding`.
   - Cambia la firma de `HandoffTokens`: `issue(…, browserHash)` y
     `consume(…, ?browserSecret)`.
   - `IssueHandoffHandler` y `ConsumeHandoffHandler`:
@@ -173,7 +173,7 @@ de los dos.
   - Criterios: RLT-R04.1 – R04.4
   - Test: `tests/Unit/IdentityAccess/Application/HandoffBindingTest.php`,
     con un `BrowserBinding` falso.
-- [ ] **T-12** — `JoinInstitutionHandler` llama a
+- [x] **T-12** — `JoinInstitutionHandler` llama a
   `ensureCanJoinInstitutions()` antes de `within()`; la invitación no se
   toca.
   - Criterios: RLT-R06.1 – R06.4
@@ -182,7 +182,7 @@ de los dos.
 
 ### Fase 6 — Infraestructura y HTTP
 
-- [ ] **T-13** — `CookieBrowserBinding` y los cambios de HTTP.
+- [x] **T-13** — `CookieBrowserBinding` y los cambios de HTTP.
   - La cookie `aulax_browser`: dominio `.APP_DOMAIN`, HttpOnly, Secure
     según la configuración, SameSite=Lax, de sesión, cifrada.
   - Se rota al iniciar y al cerrar la sesión central.
@@ -196,7 +196,7 @@ de los dos.
 
     `CacheHandoffTokensTest` y `HandoffTest` solo cambian su preparación:
     reciben la cookie.
-- [ ] **T-14** — Migración `…_guard_transfer_request_origin`, en su propia
+- [x] **T-14** — Migración `…_guard_transfer_request_origin`, en su propia
   tarea:
   - política `addressed_insert` con origen nulo y estado `pending`;
   - *trigger* `guard_transfer_request_update()` sin `SECURITY DEFINER`;
@@ -213,7 +213,7 @@ de los dos.
 
     Además: `migrate:rollback` de la migración y vuelta a `migrate`, y
     `TransferTest`, el existente, sin cambiar su lógica.
-- [ ] **T-15** — HTTP de las invitaciones bloqueadas: el mensaje de cada
+- [x] **T-15** — HTTP de las invitaciones bloqueadas: el mensaje de cada
   estado, con el enlace a la consolidación cuando está pendiente.
   - Criterios: RLT-R06.1 – R06.5, NF05
   - Test: `tests/Feature/IdentityAccess/InvitationConsolidationTest.php`:
@@ -224,7 +224,7 @@ de los dos.
 
 ### Fase 7 — Documentación
 
-- [ ] **T-16** — Cambios en otras specs y ADRs:
+- [x] **T-16** — Cambios en otras specs y ADRs:
   - SPEC-001: nota sobre TEN-R05.6;
   - SPEC-004: IDG-NF03 e IDG-R04.5;
   - SPEC-009: nota en su `design.md`;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AulaX\IdentityAccess\Infrastructure\Auth;
 
 use AulaX\IdentityAccess\Application\Port\Authenticator;
+use AulaX\IdentityAccess\Application\Port\BrowserBinding;
 use AulaX\IdentityAccess\Domain\Account\AccountId;
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
@@ -17,6 +18,7 @@ final readonly class LaravelAuthenticator implements Authenticator
         private AuthFactory $auth,
         private Hasher $hasher,
         private Session $session,
+        private BrowserBinding $browser,
     ) {}
 
     public function passwordMatches(AccountId $account, #[\SensitiveParameter] string $password): bool
@@ -37,6 +39,8 @@ final readonly class LaravelAuthenticator implements Authenticator
         $this->auth->guard('web')->logout();
         $this->session->invalidate();
         $this->session->regenerateToken();
+        // SPEC-015 RLT-R04: handoff links issued before stop working here.
+        $this->browser->rotate();
     }
 
     public function current(): ?AccountId

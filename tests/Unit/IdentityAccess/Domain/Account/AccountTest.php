@@ -6,6 +6,7 @@ use AulaX\IdentityAccess\Domain\Account\AccountState;
 use AulaX\IdentityAccess\Domain\Account\ConsolidationState;
 use AulaX\IdentityAccess\Domain\Account\EmailAddress;
 use AulaX\IdentityAccess\Domain\Account\HashedPassword;
+use AulaX\IdentityAccess\Domain\Account\InvitationBlockedByConsolidation;
 use AulaX\IdentityAccess\Domain\Account\PersonName;
 
 it('registers an active account whose email is verified by the invitation link itself', function () {
@@ -78,4 +79,33 @@ it('is kept apart only when support reviewed it', function () {
         // Still sharing its email: each password keeps opening only its institution.
         ->and($review->keptSeparate()->isUnderConsolidation())->toBeTrue()
         ->and(fn () => $pending->keptSeparate())->toThrow(LogicException::class);
+});
+
+function accountInConsolidation(?ConsolidationState $state): Account
+{
+    return Account::reconstitute(AccountId::fromInt(3), EmailAddress::fromString('ana@colegio.ve'), PersonName::fromString('Ana'), AccountState::Active, $state, null);
+}
+
+it('joins institutions only once its email is no longer waiting for consolidation (RLT-R06)', function () {
+    accountInConsolidation(null)->ensureCanJoinInstitutions();
+
+    expect(true)->toBeTrue();
+});
+
+it('refuses to join an institution while its email waits for consolidation, saying what to do (RLT-R06.1, R06.2, R06.5)', function (ConsolidationState $state, string $message) {
+    expect(fn () => accountInConsolidation($state)->ensureCanJoinInstitutions())
+        ->toThrow(InvitationBlockedByConsolidation::class, $message);
+})->with([
+    'pending' => [ConsolidationState::Pending, 'Antes de aceptar, unifica tus cuentas con este correo.'],
+    'under review' => [ConsolidationState::Review, 'Soporte está revisando las cuentas con este correo. Podrás aceptar la invitación cuando termine.'],
+    'kept separate' => [ConsolidationState::Separated, 'Hay varias cuentas con este correo. Pide al plantel que te invite con otro correo.'],
+]);
+
+it('says on which field and in which state the join was refused', function () {
+    try {
+        accountInConsolidation(ConsolidationState::Pending)->ensureCanJoinInstitutions();
+    } catch (InvitationBlockedByConsolidation $refused) {
+        expect($refused->field())->toBe('email')
+            ->and($refused->state)->toBe(ConsolidationState::Pending);
+    }
 });

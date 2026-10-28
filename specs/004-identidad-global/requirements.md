@@ -154,7 +154,8 @@ elegir en cuál trabajar.
   membresía con los roles de la invitación.
 - **IDG-R04.5** — Cuando una persona con cuenta abre una invitación válida, el
   sistema deberá pedirle que se autentique y, al aceptar, crear la membresía,
-  sin cambiar su nombre ni su contraseña.
+  sin cambiar su nombre ni su contraseña. *(Salvo mientras su correo espera
+  consolidación: SPEC-015 RLT-R06.)*
 - **IDG-R04.6** — Si la cuenta autenticada no tiene el email de la
   invitación, entonces el sistema deberá rechazar la aceptación.
 - **IDG-R04.7** — Cuando un gestor corrige el nombre o el email de una
@@ -343,8 +344,9 @@ mano.
 - **IDG-NF02** (privacidad) — Ninguna respuesta revela a un plantel en qué
   otros planteles tiene membresía una persona, ni si un email tiene cuenta.
 - **IDG-NF03** (seguridad) — El cambio de plantel sin contraseña (IDG-R03.7)
-  usa un token de un solo uso, firmado, ligado a la cuenta y al plantel de
-  destino, con una vida de 60 segundos como máximo.
+  usa un token de un solo uso, firmado, ligado a la cuenta, al plantel de
+  destino y al navegador que lo pidió, con una vida de 60 segundos como
+  máximo. *(Navegador añadido por SPEC-015 RLT-R04.)*
 - **IDG-NF04** (seguridad) — Contraseñas con hash adaptativo; tokens de
   invitación, recuperación, verificación y consolidación hasheados, de un solo
   uso y con caducidad.

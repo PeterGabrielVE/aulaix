@@ -73,6 +73,20 @@ services:
         networks:
             - aulaix
 
+    # SPEC-015 RLT-NF01: the isolation tests through a pool in transaction
+    # mode. Only with `--profile pgbouncer`, e.g.
+    # docker compose --profile pgbouncer up -d pgbouncer
+    # docker compose exec app vendor/bin/pest --configuration=phpunit.pgbouncer.xml --group=rls
+    pgbouncer:
+        profiles: ["pgbouncer"]
+        build:
+            context: ./docker/pgbouncer
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - aulaix
+
     redis:
         image: redis:7-alpine
         networks:

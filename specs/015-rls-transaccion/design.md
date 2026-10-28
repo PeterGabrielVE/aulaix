@@ -381,3 +381,34 @@ el test lo comprueba.
 - **Coste:** `RlsOverheadTest` mide `forRequest()` frente a la misma
   consulta sin él, sobre confirmaciones reales (`tests/Isolation`, grupos
   `rls` y `perf`).
+
+### PR C
+
+- **Sin tests de unidad para `JoinInstitutionHandler` ni para los
+  manejadores del traspaso** (T-11, T-12). IdentityAccess no tiene
+  adaptadores en memoria para sus nueve dependencias. Los cubren
+  `InvitationConsolidationTest` y `HandoffBindingTest`, contra la base de
+  datos real: comprueban que se rechaza sin crear la membresía ni tocar la
+  invitación, y que el enlace no se quema.
+- **El puerto `BrowserBinding`** tiene `secret()`, `presented()` y
+  `rotate()`. `CookieBrowserBinding` no guarda estado: lee la petición en
+  curso y deja el secreto nuevo en sus atributos. Un enlace *scoped* habría
+  arrastrado la primera petición entre las de un test.
+- **El secreto se rota al cerrar sesión** (`LaravelAuthenticator::logOut`),
+  no al iniciarla. Al iniciar sesión se crea si falta.
+- **`HandoffTokens`** recibe el hash del secreto como parámetro opcional,
+  vacío por omisión. Así `CacheHandoffTokensTest` no cambia. Los
+  manejadores siempre pasan un hash real, y el token se compara con
+  `hash_equals` antes de quemarse.
+- **El rechazo lleva al login central con `?plantel=`** (RLT-R04.2). Por
+  eso cambia la URL esperada en cuatro aserciones de `HandoffTest`. Es el
+  único cambio de lógica en tests existentes, y lo exige este requisito.
+- **En los tests, `Tests\TestCase`** guarda la cookie del navegador entre
+  peticiones, como haría un navegador; `forgetBrowserCookies()` simula otro.
+- **La pantalla de la invitación** recibe el estado de consolidación de la
+  cuenta y, si está pendiente, enlaza a la consolidación. También muestra
+  el error del botón «Aceptar la invitación», que antes no se veía.
+- **`RowLevelSecurity::guardAddressedOrigin()`** y su inversa crean la
+  política `INSERT` y el *trigger*. `enableAddressedByIdentification()` no
+  los llama, para no cambiar la migración de SPEC-009: una tabla nueva de
+  este tipo llama a los dos.

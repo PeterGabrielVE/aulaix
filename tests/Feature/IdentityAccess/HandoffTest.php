@@ -60,7 +60,7 @@ test('a handoff link works only once', function () {
     $this->get($handoff);
     onSubdomainSession();
 
-    $this->get($handoff)->assertRedirect(centralUrl('/login'));
+    $this->get($handoff)->assertRedirect(centralUrl("/login?plantel={$sur->subdomain}"));
     $this->assertGuest();
 });
 
@@ -70,7 +70,7 @@ test('a handoff link expires after a minute', function () {
 
     $this->travel(61)->seconds();
 
-    $this->get($handoff)->assertRedirect(centralUrl('/login'));
+    $this->get($handoff)->assertRedirect(centralUrl("/login?plantel={$sur->subdomain}"));
     $this->assertGuest();
 });
 
@@ -78,7 +78,7 @@ test('a handoff link does not open another institution', function () {
     [, $norte, $sur] = twoInstitutionTeacher();
     $token = parse_url(chooseInstitution($sur), PHP_URL_QUERY);
 
-    $this->get(tenantUrl($norte, "/auth/handoff?{$token}"))->assertRedirect(centralUrl('/login'));
+    $this->get(tenantUrl($norte, "/auth/handoff?{$token}"))->assertRedirect(centralUrl("/login?plantel={$norte->subdomain}"));
     $this->assertGuest();
 });
 
@@ -88,7 +88,7 @@ test('a membership suspended after choosing is not let in', function () {
     useTenant($sur);
     DB::table('institution_memberships')->where('user_id', $teacher->id)->update(['status' => 'suspended', 'suspension_reason' => 'institution']);
 
-    $this->get($handoff)->assertRedirect(centralUrl('/login'));
+    $this->get($handoff)->assertRedirect(centralUrl("/login?plantel={$sur->subdomain}"));
     $this->assertGuest();
 });
 

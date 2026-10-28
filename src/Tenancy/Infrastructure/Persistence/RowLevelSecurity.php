@@ -127,6 +127,58 @@ final class RowLevelSecurity
         DB::statement("CREATE POLICY addressed_update ON {$table} FOR UPDATE USING {$visible} WITH CHECK (institution_id = {$current} OR origin_institution_id = {$current})");
     }
 
+    /**
+     * SPEC-015 RLT-R05: who answered a request addressed by identification
+     * can not be faked. A request is created with no origin and pending; the
+     * origin is set once, by the institution that answers it (not the one
+     * that asked), and never changed after; what was asked never changes.
+     * A plain trigger, run as the application's role: no privilege added
+     * (S-03). A new table of this kind calls it right after
+     * enableAddressedByIdentification(). The function is created OR
+     * REPLACEd: migrate:fresh drops tables, not functions.
+     */
+    public static function guardAddressedOrigin(string $table): void
+    {
+        $current = self::CURRENT_INSTITUTION_SQL;
+
+        DB::statement("DROP POLICY addressed_insert ON {$table}");
+        DB::statement("CREATE POLICY addressed_insert ON {$table} FOR INSERT WITH CHECK (institution_id = {$current} AND origin_institution_id IS NULL AND status = 'pending')");
+
+        DB::unprepared(<<<SQL
+            CREATE OR REPLACE FUNCTION guard_{$table}_origin() RETURNS trigger LANGUAGE plpgsql AS \$\$
+            BEGIN
+                IF NEW.institution_id IS DISTINCT FROM OLD.institution_id OR NEW.identification IS DISTINCT FROM OLD.identification THEN
+                    RAISE EXCEPTION '{$table}: what was asked can not change' USING ERRCODE = 'insufficient_privilege';
+                END IF;
+
+                IF NEW.origin_institution_id IS DISTINCT FROM OLD.origin_institution_id
+                    AND (OLD.origin_institution_id IS NOT NULL
+                        OR OLD.status <> 'pending'
+                        OR NEW.origin_institution_id IS DISTINCT FROM {$current}
+                        OR NEW.institution_id = {$current}) THEN
+                    RAISE EXCEPTION '{$table}: only the institution that answers sets itself as origin, once' USING ERRCODE = 'insufficient_privilege';
+                END IF;
+
+                RETURN NEW;
+            END
+            \$\$;
+            CREATE TRIGGER guard_origin BEFORE UPDATE ON {$table} FOR EACH ROW EXECUTE FUNCTION guard_{$table}_origin();
+            SQL);
+    }
+
+    /**
+     * Back to the guard of ADR 0008 alone.
+     */
+    public static function unguardAddressedOrigin(string $table): void
+    {
+        $current = self::CURRENT_INSTITUTION_SQL;
+
+        DB::statement("DROP TRIGGER guard_origin ON {$table}");
+        DB::statement("DROP FUNCTION guard_{$table}_origin()");
+        DB::statement("DROP POLICY addressed_insert ON {$table}");
+        DB::statement("CREATE POLICY addressed_insert ON {$table} FOR INSERT WITH CHECK (institution_id = {$current})");
+    }
+
     public static function disable(string $table): void
     {
         DB::statement("DROP POLICY IF EXISTS tenant_isolation ON {$table}");

@@ -20,6 +20,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
@@ -88,7 +89,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // SPEC-000 FND-R05). Use cases throw them; controllers never
         // translate errors themselves.
         // A rejected handoff says nothing about why: back to the central login.
-        $exceptions->render(fn (HandoffRejected $e) => redirect()->away(route('central.login')));
+        // SPEC-015 RLT-R04.2: with the institution already chosen.
+        $exceptions->render(fn (HandoffRejected $e, Request $request) => redirect()->away(route('central.login', [
+            'plantel' => Str::before($request->getHost(), '.'.config('app.domain')),
+        ])));
 
         $exceptions->map(BusinessRuleViolation::class, fn (BusinessRuleViolation $e) => ValidationException::withMessages([
             $e->field() ?? 'general' => $e->getMessage(),

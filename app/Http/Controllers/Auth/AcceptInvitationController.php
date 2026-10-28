@@ -39,6 +39,8 @@ class AcceptInvitationController extends Controller
             'token' => $token,
             'subdomain' => $subdomain,
             'authenticatedEmail' => $request->user()?->email,
+            // SPEC-015 RLT-R06.1: an account to consolidate first is told how.
+            'consolidation' => $request->user()?->consolidation_state,
         ]);
     }
 

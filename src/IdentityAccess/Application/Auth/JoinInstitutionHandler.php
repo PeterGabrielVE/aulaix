@@ -74,6 +74,11 @@ final readonly class JoinInstitutionHandler
             throw InvitationEmailMismatch::create();
         }
 
+        // SPEC-015 RLT-R06: not while the email has other historical
+        // accounts; refused before any institution is touched, so the
+        // invitation stays usable for later.
+        $account->ensureCanJoinInstitutions();
+
         $this->tenantActivator->within($institution, function () use ($account, $institution) {
             $now = $this->clock->now();
             $invitation = $this->invitations->pendingFor($institution->institutionId, $account->email);

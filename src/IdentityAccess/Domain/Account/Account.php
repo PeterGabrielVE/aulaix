@@ -206,6 +206,19 @@ final readonly class Account
         return $this->consolidation !== null;
     }
 
+    /**
+     * SPEC-015 RLT-R06: while its email is pending consolidation, under
+     * review or kept separate, an account joins no institution.
+     *
+     * @throws InvitationBlockedByConsolidation
+     */
+    public function ensureCanJoinInstitutions(): void
+    {
+        if ($this->consolidation !== null) {
+            throw InvitationBlockedByConsolidation::in($this->consolidation);
+        }
+    }
+
     private function assertPendingDeletion(): void
     {
         if ($this->state !== AccountState::PendingDeletion) {

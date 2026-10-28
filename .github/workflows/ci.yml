@@ -200,6 +200,78 @@ jobs:
                   retention-days: 7
                   if-no-files-found: ignore
 
+    # SPEC-015 RLT-R01.4, NF01 (ADR 0011): the isolation tests again, through
+    # PgBouncer in transaction mode with one server connection per database,
+    # as a pooled production would run them.
+    rls-pgbouncer:
+        name: Tenant isolation through PgBouncer
+        needs: frontend
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+
+        services:
+            postgres:
+                image: postgres:16-alpine
+                env:
+                    POSTGRES_DB: aulaix
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd "pg_isready -U postgres -d aulaix"
+                    --health-interval 5s
+                    --health-timeout 5s
+                    --health-retries 10
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ env.PHP_VERSION }}
+                  extensions: ${{ env.PHP_EXTENSIONS }}
+                  coverage: none
+                  tools: composer:v2
+
+            # Both config files pin their DB host with force="true".
+            - name: Resolve "postgres" and "pgbouncer" to this runner
+              run: echo "127.0.0.1 postgres pgbouncer" | sudo tee -a /etc/hosts
+
+            - name: Create application role and test database
+              run: docker exec -i ${{ job.services.postgres.id }} psql -U postgres -d aulaix -v ON_ERROR_STOP=1 < docker/postgres/init.sql
+
+            # Ubuntu 24.04 ships PgBouncer 1.22: named prepared statements work.
+            - name: Start PgBouncer in transaction mode
+              run: |
+                  sudo apt-get update -qq
+                  sudo apt-get install -y -qq pgbouncer
+                  sudo cp docker/pgbouncer/pgbouncer.ini docker/pgbouncer/userlist.txt /etc/pgbouncer/
+                  sudo systemctl restart pgbouncer
+                  pgbouncer --version
+
+            - name: Cache Composer downloads
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/composer/files
+                  key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+                  restore-keys: composer-${{ runner.os }}-
+
+            - run: composer install --no-interaction --prefer-dist --no-progress
+
+            - name: Prepare environment
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate --ansi
+
+            - uses: actions/download-artifact@v4
+              with:
+                  name: vite-build
+                  path: public/build
+
+            - name: Tenant isolation (RLS) through PgBouncer
+              run: vendor/bin/pest --configuration=phpunit.pgbouncer.xml --compact --group=rls
+
     # SPEC-013 NAV-NF04, NF05: layout behaviour and accessibility in a real
     # browser, in parallel with the main suite.
     browser:

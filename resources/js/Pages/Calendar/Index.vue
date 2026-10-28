@@ -16,6 +16,11 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    // SPEC-010 MAT-R16.1: who still lacks the result of the active year.
+    pendingResults: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const statusLabels = { planned: 'Planificado', active: 'Activo', closed: 'Cerrado' };
@@ -138,6 +143,14 @@ const day = (date) => date.split('-').reverse().join('/');
             <div v-if="pending" class="space-y-4 p-6">
                 <h2 class="text-lg font-medium text-gray-900">{{ confirmations[pending.action].title }}</h2>
                 <p class="text-sm text-gray-600">{{ confirmations[pending.action].text }}</p>
+                <div v-if="pending.action === 'closeYear' && pendingResults.length" class="rounded-md bg-amber-50 p-3 text-sm text-amber-900">
+                    <p class="font-medium">Estudiantes sin resultado de prosecución:</p>
+                    <ul class="mt-1 list-disc space-y-1 pl-5">
+                        <li v-for="section in pendingResults" :key="section.sectionId">
+                            {{ section.gradeName }} · Sección {{ section.letter }}: {{ section.count }}<span v-if="section.students.length"> ({{ section.students.join(', ') }})</span>
+                        </li>
+                    </ul>
+                </div>
 
                 <div v-if="pending.action === 'reopen'">
                     <InputLabel for="reason" value="Motivo" />

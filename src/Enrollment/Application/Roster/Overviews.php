@@ -27,6 +27,17 @@ final class Overviews
     }
 
     /**
+     * @param  list<string>  $names
+     * @return list<string>
+     */
+    public static function sortNames(array $names): array
+    {
+        (new Collator('es'))->sort($names);
+
+        return array_values($names);
+    }
+
+    /**
      * @template T of object
      *
      * @param  list<T>  $items

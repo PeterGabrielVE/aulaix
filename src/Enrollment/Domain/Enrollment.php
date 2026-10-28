@@ -20,6 +20,12 @@ final class Enrollment
 
     public const int HOURS_TO_ANNUL = 48;
 
+    private ?PromotionResult $result = null;
+
+    private ?DateTimeImmutable $resultRecordedAt = null;
+
+    private ?int $resultRecordedBy = null;
+
     private function __construct(
         private ?EnrollmentId $id,
         private readonly int $studentId,
@@ -69,8 +75,65 @@ final class Enrollment
         int $registeredBy,
         ?Annulment $annulment,
         ?int $previousId,
+        ?PromotionResult $result = null,
+        ?DateTimeImmutable $resultRecordedAt = null,
+        ?int $resultRecordedBy = null,
     ): self {
-        return new self($id, $studentId, $schoolYearId, $placement, $period, $endNote, $overCapacityReason, $ageException, $registeredAt, $registeredBy, $annulment, $previousId);
+        $enrollment = new self($id, $studentId, $schoolYearId, $placement, $period, $endNote, $overCapacityReason, $ageException, $registeredAt, $registeredBy, $annulment, $previousId);
+        $enrollment->result = $result;
+        $enrollment->resultRecordedAt = $resultRecordedAt;
+        $enrollment->resultRecordedBy = $resultRecordedBy;
+
+        return $enrollment;
+    }
+
+    /**
+     * The result of the year of a current enrollment, checked by the rules
+     * of its level (MAT-R06.3 – R06.7); a new one replaces it (MAT-R06.8).
+     *
+     * @param  list<int>  $curriculum  Subject ids of its grade that year.
+     *
+     * @throws BusinessRuleViolation
+     */
+    public function recordResult(PromotionResult $result, array $curriculum, DateTimeImmutable $at, int $by): void
+    {
+        $this->ensureCurrent();
+        PromotionRules::check($this->placement->level, $result, $curriculum);
+
+        $this->result = $result;
+        $this->resultRecordedAt = $at;
+        $this->resultRecordedBy = $by;
+    }
+
+    public function result(): ?PromotionResult
+    {
+        return $this->result;
+    }
+
+    public function resultRecordedAt(): ?DateTimeImmutable
+    {
+        return $this->resultRecordedAt;
+    }
+
+    public function resultRecordedBy(): ?int
+    {
+        return $this->resultRecordedBy;
+    }
+
+    /**
+     * Promoted from the last year with no pending subjects (MAT-R15.1).
+     */
+    public function graduates(): bool
+    {
+        return $this->result !== null && PromotionRules::graduates($this->placement->grade, $this->result);
+    }
+
+    /**
+     * Promoted from the last year with pending subjects (MAT-R15.2).
+     */
+    public function waitsToGraduate(): bool
+    {
+        return $this->result !== null && PromotionRules::waitsToGraduate($this->placement->grade, $this->result);
     }
 
     /**
@@ -153,6 +216,10 @@ final class Enrollment
     public function annul(?AnnulmentReason $reason, ?string $note, int $annulledBy, DateTimeImmutable $now, bool $byDirective, bool $hasGrades): void
     {
         $this->ensureCurrent();
+
+        if ($this->result !== null) {
+            throw AnnulmentNotAllowed::withResult();
+        }
 
         if (! $byDirective && $hasGrades) {
             throw AnnulmentNotAllowed::graded();

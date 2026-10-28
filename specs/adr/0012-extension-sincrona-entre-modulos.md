@@ -58,7 +58,7 @@ Con esta spec se usan cuatro puntos de extensión:
 |--------------------|-----------------------|---------------|-----------|
 | `RemovalGuard` (existente; gana `hasEnrollments`) | AcademicStructure | Enrollment | MAT-R10 |
 | `WithdrawalHook` (nuevo) | Students | Enrollment | MAT-R05 |
-| `YearClosingGuard` (nuevo) | AcademicCalendar | Enrollment | MAT-R16.2 |
+| `SchoolYearGuard` (nuevo; en el diseño, `YearClosingGuard`) | AcademicCalendar | Enrollment | MAT-R16.2; también impide borrar un año planificado con inscripciones |
 | `StudentVisibilityRule` (nuevo) | Students | Enrollment | MAT-R08 |
 
 Los efectos secundarios siguen en el `EventBus`, después del commit.

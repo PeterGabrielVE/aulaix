@@ -24,7 +24,7 @@ final class EloquentEnrollmentRepository implements EnrollmentRepository
     {
         $row = DB::table('enrollments')->where('id', $id->value)->first();
 
-        return $row === null ? null : EnrollmentRows::toDomain($row);
+        return $row === null ? null : EnrollmentRows::manyToDomain([$row])[0];
     }
 
     public function currentOf(int $studentId, int $schoolYearId): ?Enrollment
@@ -35,7 +35,7 @@ final class EloquentEnrollmentRepository implements EnrollmentRepository
             ->whereNull('ends_on')
             ->first();
 
-        return $row === null ? null : EnrollmentRows::toDomain($row);
+        return $row === null ? null : EnrollmentRows::manyToDomain([$row])[0];
     }
 
     public function currentOfStudent(int $studentId): array
@@ -45,8 +45,19 @@ final class EloquentEnrollmentRepository implements EnrollmentRepository
             ->whereNull('ends_on')
             ->orderBy('starts_on')
             ->get()
-            ->map(fn (object $row) => EnrollmentRows::toDomain($row))
-            ->all();
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
+    }
+
+    public function lastResultOf(int $studentId): ?Enrollment
+    {
+        $row = DB::table('enrollments')
+            ->where('student_id', $studentId)
+            ->whereNotNull('outcome')
+            ->orderByDesc('starts_on')
+            ->orderByDesc('id')
+            ->first();
+
+        return $row === null ? null : EnrollmentRows::manyToDomain([$row])[0];
     }
 
     public function currentCountIn(int $sectionId): int
@@ -66,6 +77,7 @@ final class EloquentEnrollmentRepository implements EnrollmentRepository
         try {
             if ($enrollment->id() !== null) {
                 DB::table('enrollments')->where('id', $enrollment->id()->value)->update([...$row, 'updated_at' => now()]);
+                $this->savePendingSubjects($enrollment);
 
                 return $enrollment->id();
             }
@@ -81,6 +93,20 @@ final class EloquentEnrollmentRepository implements EnrollmentRepository
 
         $enrollment->identify($id);
 
+        if ($enrollment->result() !== null) {
+            $this->savePendingSubjects($enrollment);
+        }
+
         return $id;
+    }
+
+    private function savePendingSubjects(Enrollment $enrollment): void
+    {
+        $id = $enrollment->id()?->value;
+        DB::table('enrollment_pending_subjects')->where('enrollment_id', $id)->delete();
+
+        foreach ($enrollment->result()?->pendingSubjects ?? [] as $subjectId) {
+            DB::table('enrollment_pending_subjects')->insert(['enrollment_id' => $id, 'subject_id' => $subjectId]);
+        }
     }
 }

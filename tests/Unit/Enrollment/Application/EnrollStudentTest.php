@@ -7,7 +7,10 @@ use AulaX\Enrollment\Application\EnrollStudent\EnrollStudentHandler;
 use AulaX\Enrollment\Application\Port\SectionFact;
 use AulaX\Enrollment\Domain\AgeOutOfRange;
 use AulaX\Enrollment\Domain\AlreadyEnrolled;
+use AulaX\Enrollment\Domain\EnrollmentId;
+use AulaX\Enrollment\Domain\Outcome;
 use AulaX\Enrollment\Domain\OverCapacity;
+use AulaX\Enrollment\Domain\PromotionResult;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use AulaX\Students\Application\StudentNotFound;
@@ -117,4 +120,19 @@ it('refuses whoever may not manage enrollments', function () {
 
     expect(fn () => enrollStudent())->toThrow(AuthorizationDenied::class)
         ->and($this->scene->enrollments->enrollments)->toBe([]);
+});
+
+it('a student waiting to graduate is not enrolled in a grade (MAT-R15.4)', function () {
+    $this->scene->structure->section(50, 2, 'media_5', 'A');
+    $this->scene->students->add(6, '2010-03-10');
+    $last = enrollStudent(student: 6, section: 50)->enrollmentId;
+    $enrollment = $this->scene->enrollments->byId(EnrollmentId::fromInt($last));
+    $enrollment->recordResult(PromotionResult::of(Outcome::PromotedWithPending, [4]), [4], new DateTimeImmutable('2027-07-10'), 3);
+    $this->scene->enrollments->save($enrollment);
+    $this->scene->calendar->year(3, 2027, 'planned');
+    $this->scene->structure->section(60, 3, 'media_5', 'A');
+    $this->scene->clock->now = new DateTimeImmutable('2027-09-20 09:00');
+
+    expect(fn () => enrollStudent(student: 6, section: 60, year: 3, date: '2027-09-16'))
+        ->toThrow(BusinessRuleViolation::class, 'Está pendiente de egresar: solo cursa sus materias pendientes.');
 });

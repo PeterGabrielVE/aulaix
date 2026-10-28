@@ -68,6 +68,11 @@ const changeYear = (event) => router.get(route('enrollments.index'), { anio: eve
         <div class="py-8">
             <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6">
                 <p v-if="flash" role="status" class="rounded-md bg-green-50 px-4 py-3 text-sm text-green-800">{{ flash }}</p>
+                <InputError :message="usePage().props.errors?.school_year" />
+
+                <p v-if="canManage && overview.status === 'active'" class="text-sm">
+                    <Link :href="route('next-year.show', overview.schoolYearId)" class="font-medium text-indigo-700 hover:underline">Inscribir en el año siguiente según la prosecución</Link>
+                </p>
 
                 <p v-if="!overview.schoolYearId" class="rounded-md bg-white px-4 py-6 text-sm text-gray-600 shadow-sm">
                     El plantel aún no tiene años escolares.

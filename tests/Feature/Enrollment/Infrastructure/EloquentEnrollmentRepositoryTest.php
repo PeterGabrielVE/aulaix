@@ -8,7 +8,9 @@ use AulaX\Enrollment\Domain\EndReason;
 use AulaX\Enrollment\Domain\Enrollment;
 use AulaX\Enrollment\Domain\EnrollmentId;
 use AulaX\Enrollment\Domain\EnrollmentRepository;
+use AulaX\Enrollment\Domain\Outcome;
 use AulaX\Enrollment\Domain\Placement;
+use AulaX\Enrollment\Domain\PromotionResult;
 use Illuminate\Support\Facades\DB;
 
 require_once dirname(__DIR__, 3).'/Fixtures/Enrollment/enrollment_helpers.php';
@@ -101,4 +103,29 @@ it('finds the current enrollments, counts them by section and tells whether a se
         ->and($list->currentStudentsOf($this->year))->toBe([$other])
         ->and(array_map(fn (Enrollment $enrollment) => $enrollment->studentId(), $list->currentIn($this->sectionA)))->toBe([$other])
         ->and($list->historyOf($this->student))->toHaveCount(1);
+});
+
+it('saves and reads back the result of the year with its pending subjects, and finds the latest result of a student', function () {
+    $math = DB::table('subjects')->insertGetId(['code' => 'T-'.uniqid(), 'name' => 'Matemática', 'education_level' => 'media_general']);
+    $physics = DB::table('subjects')->insertGetId(['code' => 'T-'.uniqid(), 'name' => 'Física', 'education_level' => 'media_general']);
+    $section = enrollmentSection($this->year, grade: 'media_3');
+    $enrollment = Enrollment::enroll($this->student, $this->year, Placement::of($section, 'media_3', 'media_general'), new DateTimeImmutable('2026-09-16'), new DateTimeImmutable('2026-10-15'), null, null, new DateTimeImmutable('2026-09-16 08:00:00'), 3);
+    $this->repository->save($enrollment);
+
+    expect($this->repository->lastResultOf($this->student))->toBeNull();
+
+    $enrollment->recordResult(PromotionResult::of(Outcome::PromotedWithPending, [$physics, $math]), [$math, $physics], new DateTimeImmutable('2027-07-10 10:00:00'), 9);
+    $this->repository->save($enrollment);
+    $read = $this->repository->byId($enrollment->id());
+
+    expect($read?->result())->toEqual(PromotionResult::of(Outcome::PromotedWithPending, [$math, $physics]))
+        ->and($read?->resultRecordedBy())->toBe(9)
+        ->and($read?->resultRecordedAt()?->format('Y-m-d H:i'))->toBe('2027-07-10 10:00')
+        ->and($this->repository->lastResultOf($this->student)?->id())->toEqual($enrollment->id());
+
+    $enrollment->recordResult(PromotionResult::of(Outcome::Repeats, []), [$math, $physics], new DateTimeImmutable('2027-07-11 10:00:00'), 9);
+    $this->repository->save($enrollment);
+
+    expect($this->repository->byId($enrollment->id())?->result())->toEqual(PromotionResult::of(Outcome::Repeats, []))
+        ->and(DB::table('enrollment_pending_subjects')->count())->toBe(0);
 });

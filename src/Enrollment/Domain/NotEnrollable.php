@@ -17,6 +17,11 @@ final class NotEnrollable extends BusinessRuleViolation
         return self::onField('student', 'El estudiante está retirado: reincorpóralo primero.');
     }
 
+    public static function waitingToGraduate(): self
+    {
+        return self::onField('student', 'Está pendiente de egresar: solo cursa sus materias pendientes.');
+    }
+
     public static function closedYear(): self
     {
         return self::onField('school_year', 'El año escolar está cerrado.');

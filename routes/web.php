@@ -24,6 +24,7 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MyAssignmentsController;
+use App\Http\Controllers\NextYearController;
 use App\Http\Controllers\Platform\ActivityController as PlatformActivityController;
 use App\Http\Controllers\Platform\ConsolidationController as PlatformConsolidationController;
 use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Platform\LoginController as PlatformLoginController;
 use App\Http\Controllers\Platform\OperatorController as PlatformOperatorController;
 use App\Http\Controllers\Platform\TotpController as PlatformTotpController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StructureController;
@@ -302,6 +304,11 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
                 Route::post('/inscripciones', [EnrollmentController::class, 'store'])->name('enrollments.store');
                 Route::post('/inscripciones/{enrollment}/seccion', [EnrollmentChangeController::class, 'section'])->name('enrollments.change-section');
                 Route::post('/inscripciones/{enrollment}/anular', [EnrollmentChangeController::class, 'annul'])->name('enrollments.annul');
+                // MAT-R06, R07: the results of the year and the next year's enrollment.
+                Route::get('/prosecucion/{year}/secciones/{section}', [PromotionController::class, 'section'])->name('promotion.section');
+                Route::put('/inscripciones/{enrollment}/resultado', [PromotionController::class, 'update'])->name('promotion.update');
+                Route::get('/prosecucion/{year}/lote', [NextYearController::class, 'show'])->name('next-year.show');
+                Route::post('/prosecucion/{year}/lote', [NextYearController::class, 'store'])->name('next-year.store');
             });
             Route::post('/inscripciones/{enrollment}/grado', [EnrollmentChangeController::class, 'grade'])
                 ->middleware(['permission:aprobar-excepciones-inscripcion', 'throttle:60,1'])->name('enrollments.change-grade');

@@ -27,6 +27,21 @@ interface EnrollmentList
     public function currentStudentsOf(int $schoolYearId): array;
 
     /**
+     * @return list<Enrollment> The current enrollments of the year.
+     */
+    public function currentInYear(int $schoolYearId): array;
+
+    /**
+     * @return list<Enrollment> The current enrollments of the year without a result (MAT-R16).
+     */
+    public function currentWithoutResult(int $schoolYearId): array;
+
+    /**
+     * Whether the year has any enrollment, current, ended or annulled.
+     */
+    public function hasAnyInYear(int $schoolYearId): bool;
+
+    /**
      * @return list<Enrollment> Every enrollment of a student, oldest first.
      */
     public function historyOf(int $studentId): array;

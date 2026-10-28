@@ -13,6 +13,8 @@ use AulaX\AcademicCalendar\Application\DeleteSchoolYear\DeleteSchoolYearHandler;
 use AulaX\AcademicCalendar\Application\ListSchoolYears\ListSchoolYearsHandler;
 use AulaX\AcademicCalendar\Application\ListSchoolYears\SchoolYearView;
 use AulaX\AcademicCalendar\Application\ListSchoolYears\TermView;
+use AulaX\Enrollment\Application\Roster\PendingResultsQuery;
+use AulaX\Enrollment\Application\Roster\PendingSection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,9 +27,20 @@ use Inertia\Response;
  */
 class SchoolYearController extends Controller
 {
-    public function index(ListSchoolYearsHandler $listSchoolYears): Response
+    public function index(ListSchoolYearsHandler $listSchoolYears, PendingResultsQuery $pendingResults): Response
     {
+        $years = $listSchoolYears();
+        $active = array_values(array_filter($years, fn (SchoolYearView $year) => $year->status === 'active'))[0] ?? null;
+
         return Inertia::render('Calendar/Index', [
+            // SPEC-010 MAT-R16.1: who still lacks the result of the active year, before closing it.
+            'pendingResults' => $active === null ? [] : array_map(fn (PendingSection $section) => [
+                'sectionId' => $section->sectionId,
+                'gradeName' => $section->gradeName,
+                'letter' => $section->letter,
+                'count' => $section->count,
+                'students' => $section->students,
+            ], $pendingResults($active->id)),
             'years' => array_map(fn (SchoolYearView $year) => [
                 'id' => $year->id,
                 'name' => $year->name,
@@ -40,7 +53,7 @@ class SchoolYearController extends Controller
                     'endsOn' => $term->endsOn,
                     'status' => $term->status,
                 ], $year->terms),
-            ], $listSchoolYears()),
+            ], $years),
         ]);
     }
 

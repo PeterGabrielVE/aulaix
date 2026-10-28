@@ -1,5 +1,7 @@
 <?php
 
+use AulaX\AcademicCalendar\Application\CloseSchoolYear\CloseSchoolYearHandler;
+use AulaX\AcademicCalendar\Application\DeleteSchoolYear\DeleteSchoolYearHandler;
 use AulaX\AcademicStructure\Application\ChangeCapacity\ChangeCapacityHandler;
 use AulaX\AcademicStructure\Application\RemoveSection\RemoveSectionHandler;
 use AulaX\AcademicStructure\Domain\StructureInUse;
@@ -77,4 +79,29 @@ it('the capacity of a section does not drop below its current enrollments', func
 
     expect(fn () => app(ChangeCapacityHandler::class)($this->section, 1, null))
         ->toThrow(BusinessRuleViolation::class, 'La sección tiene 2 estudiantes inscritos: el cupo no puede ser menor.');
+});
+
+it('the year does not close with students lacking their result, and a planned year with enrollments is not deleted', function () {
+    require_once dirname(__DIR__, 3).'/Fixtures/AcademicCalendar/calendar_helpers.php';
+    // Only one year is active at a time.
+    DB::table('school_years')->where('id', $this->year)->update(['status' => 'closed']);
+    $active = storedSchoolYear(2027, 'active', closedTerms: 3);
+    $section = enrollmentSection($active);
+    $other = enrollmentStudent('Álvarez', 'Luis');
+    $enrollment = enrollmentRow($other, $active, $section, ['starts_on' => '2027-09-16']);
+
+    expect(fn () => app(CloseSchoolYearHandler::class)($active, true))
+        ->toThrow(BusinessRuleViolation::class, 'Hay 1 estudiantes sin resultado de prosecución: regístralo o retíralos antes de cerrar el año.');
+
+    DB::table('enrollments')->where('id', $enrollment)->update(['outcome' => 'promoted', 'outcome_recorded_at' => now(), 'outcome_recorded_by' => 1]);
+    app(CloseSchoolYearHandler::class)($active, true);
+
+    expect(DB::table('school_years')->where('id', $active)->value('status'))->toBe('closed');
+
+    $planned = storedSchoolYear(2028);
+    enrollmentRow($other, $planned, enrollmentSection($planned), ['starts_on' => '2028-09-16']);
+
+    expect(fn () => app(DeleteSchoolYearHandler::class)($planned, true))
+        ->toThrow(BusinessRuleViolation::class, 'El año tiene inscripciones: no se puede eliminar.')
+        ->and(DB::table('school_years')->where('id', $planned)->exists())->toBeTrue();
 });

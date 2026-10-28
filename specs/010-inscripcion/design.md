@@ -398,3 +398,32 @@ entradas (MAT-R03.7, Q6).
 - **Riesgo pendiente:** borrar un año planificado que ya tenga inscripciones
   (p. ej. del lote del PR B) choca con la clave foránea `RESTRICT`. El PR B
   lo resuelve con el mismo punto de extensión que el cierre del año.
+
+### PR B
+
+- **`SchoolYearGuard` en lugar de `YearClosingGuard`.** Un solo punto de
+  extensión del calendario para el cierre del año (MAT-R16.2) y para el
+  borrado de un año planificado con inscripciones. Este segundo caso es el
+  riesgo que dejó pendiente el PR A: ahora da un mensaje, no un error 500.
+- **Resultado en la inscripción.** Columnas `outcome`, `outcome_recorded_at`
+  y `outcome_recorded_by`; las materias pendientes van en
+  `enrollment_pending_subjects`. Se reescriben al guardar, y una inscripción
+  nueva sin resultado no las toca.
+- **`PromotionRules::allowedOutcomes()`** da las opciones de la pantalla por
+  nivel. «Perdió por inasistencia» no cabe en Educación Inicial (Q7, sin
+  decidir), así que allí solo se ofrece «promovido».
+- **`PromotionSheetQuery`** es la hoja de prosecución de una sección.
+  Depende de `Subjects` (Catalogs, capa Application) para los nombres de las
+  materias del pensum.
+- **El lote:**
+  - **Fecha:** la del día del lote, porque una inscripción no puede ser
+    posterior a hoy (MAT-R01.6). Se hace antes de que empiece el año
+    siguiente.
+  - **Bitácora:** una sola entrada `enrollment.batch.enrolled` por lote, con
+    cuántos estudiantes y en qué secciones (MAT-R12.1), en lugar de una por
+    estudiante.
+  - **Todo o nada sin depender de la base:** valida todas las inscripciones
+    antes de guardar ninguna.
+  - **Rendimiento:** quién ya está inscrito en el año siguiente se lee con
+    una sola consulta. 600 estudiantes tardan unos 7 s, preparación incluida
+    (MAT-NF04).

@@ -10,9 +10,12 @@ use AulaX\Enrollment\Domain\AnnulmentReason;
 use AulaX\Enrollment\Domain\EndReason;
 use AulaX\Enrollment\Domain\Enrollment;
 use AulaX\Enrollment\Domain\EnrollmentId;
+use AulaX\Enrollment\Domain\Outcome;
 use AulaX\Enrollment\Domain\Period;
 use AulaX\Enrollment\Domain\Placement;
+use AulaX\Enrollment\Domain\PromotionResult;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Maps an enrollment to its row of `enrollments` and back. The level of the
@@ -20,7 +23,10 @@ use DateTimeImmutable;
  */
 final class EnrollmentRows
 {
-    public static function toDomain(object $row): Enrollment
+    /**
+     * @param  list<int>  $pendingSubjects  Of its result, from `enrollment_pending_subjects`.
+     */
+    public static function toDomain(object $row, array $pendingSubjects = []): Enrollment
     {
         return Enrollment::reconstitute(
             EnrollmentId::fromInt((int) $row->id),
@@ -44,7 +50,44 @@ final class EnrollmentRows
                 new DateTimeImmutable($row->annulled_at),
             ),
             $row->previous_id === null ? null : (int) $row->previous_id,
+            $row->outcome === null ? null : PromotionResult::of(Outcome::from($row->outcome), $pendingSubjects),
+            $row->outcome_recorded_at === null ? null : new DateTimeImmutable($row->outcome_recorded_at),
+            $row->outcome_recorded_by === null ? null : (int) $row->outcome_recorded_by,
         );
+    }
+
+    /**
+     * Rows of `enrollments` as enrollments, with their pending subjects read
+     * in one query.
+     *
+     * @param  iterable<object>  $rows
+     * @return list<Enrollment>
+     */
+    public static function manyToDomain(iterable $rows): array
+    {
+        $rows = is_array($rows) ? $rows : iterator_to_array($rows, false);
+        $pending = self::pendingSubjectsOf(array_map(fn (object $row) => (int) $row->id, $rows));
+
+        return array_map(fn (object $row) => self::toDomain($row, $pending[(int) $row->id] ?? []), $rows);
+    }
+
+    /**
+     * @param  list<int>  $enrollmentIds
+     * @return array<int, list<int>> Enrollment id => subject ids.
+     */
+    public static function pendingSubjectsOf(array $enrollmentIds): array
+    {
+        if ($enrollmentIds === []) {
+            return [];
+        }
+
+        $pending = [];
+
+        foreach (DB::table('enrollment_pending_subjects')->whereIn('enrollment_id', $enrollmentIds)->orderBy('subject_id')->get(['enrollment_id', 'subject_id']) as $row) {
+            $pending[(int) $row->enrollment_id][] = (int) $row->subject_id;
+        }
+
+        return $pending;
     }
 
     /**
@@ -74,6 +117,9 @@ final class EnrollmentRows
             'annulled_by' => $annulment?->annulledBy,
             'annulled_at' => $annulment?->annulledAt->format('Y-m-d H:i:sP'),
             'previous_id' => $enrollment->previousId(),
+            'outcome' => $enrollment->result()?->outcome->value,
+            'outcome_recorded_at' => $enrollment->resultRecordedAt()?->format('Y-m-d H:i:sP'),
+            'outcome_recorded_by' => $enrollment->resultRecordedBy(),
         ];
     }
 

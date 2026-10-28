@@ -50,7 +50,10 @@ const submitAnnulment = (enrollmentId) => annulment.post(route('enrollments.annu
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <h1 class="text-xl font-semibold leading-tight text-gray-800">{{ roster.section.gradeName }} · Sección {{ roster.section.letter }}</h1>
-                <Link :href="route('enrollments.index', { anio: roster.schoolYearId })" class="text-sm text-indigo-700 hover:underline">Volver a inscripciones</Link>
+                <span class="flex flex-wrap gap-4 text-sm">
+                    <Link v-if="canManage" :href="route('promotion.section', { year: roster.schoolYearId, section: roster.section.id })" class="text-indigo-700 hover:underline">Prosecución</Link>
+                    <Link :href="route('enrollments.index', { anio: roster.schoolYearId })" class="text-indigo-700 hover:underline">Volver a inscripciones</Link>
+                </span>
             </div>
         </template>
 

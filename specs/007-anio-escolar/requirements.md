@@ -122,7 +122,9 @@ cuando termine, para que todo el plantel trabaje en el año correcto.
   deberá marcarlo como activo y abrir su lapso 1.
 - **CAL-R02.3** — Si se intenta activar un año mientras otro está activo,
   entonces el sistema deberá rechazarlo.
-- **CAL-R02.4** — Cuando un gestor cierra el año activo, confirmando la
+- **CAL-R02.4** — *(SPEC-010, MAT-R16.2: el año tampoco se cierra mientras
+  haya estudiantes con inscripción vigente sin resultado de prosecución.)*
+  Cuando un gestor cierra el año activo, confirmando la
   acción, el sistema deberá marcarlo como cerrado.
 - **CAL-R02.5** — Si alguno de los tres lapsos del año no está cerrado,
   entonces el sistema deberá rechazar el cierre del año.

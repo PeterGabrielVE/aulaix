@@ -326,3 +326,20 @@ Ajustes hechos al implementar, sin cambiar ningún criterio:
 - **Sembrado de roles.** `RolePermissionSeeder` lee los permisos de
   `BaseRole` y crea todos los de `Permission`, incluido el que ningún rol
   trae.
+
+### SPEC-010 (inscripción), 2026-10-28
+
+- **Punto de extensión `SchoolYearGuard`** (ADR 0012), lo implementa
+  Enrollment. `CloseSchoolYearHandler` y `DeleteSchoolYearHandler` lo
+  consultan bajo el bloqueo del calendario:
+  - el año no se cierra con estudiantes sin resultado de prosecución
+    (CAL-R02.4, MAT-R16.2);
+  - un año planificado con inscripciones no se borra (antes daba un error
+    de clave foránea).
+
+  `SchoolYearGuards` se enlaza en el contenedor; si no, ganaría el valor
+  por omisión del constructor (ninguna guarda).
+- **`SchoolYearLookup`** gana `startOf`, `nextOf` y `lastTermClosed`.
+- **La pantalla «Año escolar»** recibe `pendingResults` (`PendingResultsQuery`).
+  El diálogo de cierre muestra, por sección, quién no tiene resultado: los
+  nombres solo con `ver-estudiantes`.

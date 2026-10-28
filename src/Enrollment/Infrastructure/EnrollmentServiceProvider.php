@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace AulaX\Enrollment\Infrastructure;
 
+use AulaX\AcademicCalendar\Application\Port\SchoolYearGuard;
 use AulaX\AcademicStructure\Application\Port\RemovalGuard;
 use AulaX\Enrollment\Application\GradedEnrollments;
 use AulaX\Enrollment\Application\Hooks\EndEnrollmentsOnWithdrawal;
 use AulaX\Enrollment\Application\Hooks\EnrollmentRemovalGuard;
+use AulaX\Enrollment\Application\Hooks\UnresolvedResultsGuard;
 use AulaX\Enrollment\Application\Port\AgeRules;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
 use AulaX\Enrollment\Application\Port\EnrollmentList;
@@ -52,6 +54,8 @@ final class EnrollmentServiceProvider extends ServiceProvider
         $this->app->tag([EndEnrollmentsOnWithdrawal::class], WithdrawalHook::TAG);
         // MAT-R10: a section keeps its enrollments, and its capacity its current ones.
         $this->app->tag([EnrollmentRemovalGuard::class], RemovalGuard::TAG);
+        // MAT-R16.2: a year does not close with students lacking their result, nor is deleted with enrollments.
+        $this->app->tag([UnresolvedResultsGuard::class], SchoolYearGuard::TAG);
 
         // Extension point (MAT-R14.3): SPEC-011 tags whether an enrollment has grades.
         $this->app->when(GradedEnrollments::class)

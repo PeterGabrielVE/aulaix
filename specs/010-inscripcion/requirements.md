@@ -553,23 +553,23 @@ error y cambio de grado durante el año.
 | MAT-R05.3 | `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «a reinstated student, or one that arrived by transfer, has no current enrollment until it is enrolled» |
 | MAT-R05.4 | `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «a reinstated student, or one that arrived by transfer, has no current enrollment until it is enrolled» |
 | MAT-R05.5 | `tests/Unit/Students/Application/WithdrawalHookTest.php` › «if a hook fails, the withdrawal fails with it»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «if the enrollment can not end, the withdrawal does not happen either» |
-| MAT-R06.1 | |
-| MAT-R06.2 | |
-| MAT-R06.3 | |
-| MAT-R06.4 | |
-| MAT-R06.5 | |
-| MAT-R06.6 | |
-| MAT-R06.7 | |
-| MAT-R06.8 | |
-| MAT-R06.9 | |
-| MAT-R06.10 | |
-| MAT-R07.1 | |
-| MAT-R07.2 | |
-| MAT-R07.3 | |
-| MAT-R07.4 | |
-| MAT-R07.5 | |
-| MAT-R07.6 | |
-| MAT-R07.7 | |
+| MAT-R06.1 | `tests/Unit/Enrollment/Application/RecordResultTest.php` › «records the result of a student once the third term is closed, under the calendar lock, recorded»; `tests/Feature/Enrollment/PromotionHttpTest.php` › «records the result of a student, and says what the level does not allow» |
+| MAT-R06.2 | `tests/Unit/Enrollment/Application/RecordResultTest.php` › «only with the year active and its third term closed» |
+| MAT-R06.3 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «in Educación Inicial a student is always promoted»; `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «offers the results each level allows» |
+| MAT-R06.4 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «in Primaria a student is promoted, repeats or lost the year by absence, with no pending subjects»; `tests/Feature/Enrollment/PromotionHttpTest.php` › «records the result of a student, and says what the level does not allow» |
+| MAT-R06.5 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «in Media General a promotion with pending subjects needs one or two of them»; `tests/Unit/Enrollment/Application/RecordResultTest.php` › «needs a known result, and checks the pending subjects against the curriculum of the grade»; `tests/Feature/Enrollment/Infrastructure/EloquentEnrollmentRepositoryTest.php` › «saves and reads back the result of the year with its pending subjects, and finds the latest result of a student» |
+| MAT-R06.6 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «in Media General a promotion with pending subjects needs one or two of them» |
+| MAT-R06.7 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «pending subjects are of the curriculum of the grade»; `tests/Unit/Enrollment/Application/RecordResultTest.php` › «needs a known result, and checks the pending subjects against the curriculum of the grade» |
+| MAT-R06.8 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «records the result of the year, checked by the rules of its level, and replaces it when corrected»; `tests/Unit/Enrollment/Application/RecordResultTest.php` › «corrects the result before enrolling in the next year, keeping the old one in the audit log, but not after» |
+| MAT-R06.9 | `tests/Unit/Enrollment/Application/RecordResultTest.php` › «corrects the result before enrolling in the next year, keeping the old one in the audit log, but not after» |
+| MAT-R06.10 | `tests/Unit/Enrollment/Application/PromotionSheetTest.php` › «lists the students of the section with their result, and the subjects of its curriculum»; `tests/Unit/Enrollment/Application/PendingResultsTest.php` › «lists, by section, the students with a current enrollment and no result»; `tests/Feature/Enrollment/PromotionHttpTest.php` › «shows the results of a section, who has one and what the level allows» |
+| MAT-R07.1 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «leads to the next grade when promoted, and to the same one when it repeats or lost the year»; `tests/Unit/Enrollment/Application/NextYearTest.php` › «proposes for each student the grade its result leads to, with the sections of that grade» |
+| MAT-R07.2 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «leaves out, saying why, who has no result, graduated, waits to graduate, has no grade to go to or is out of its age range»; `tests/Unit/Enrollment/Application/NextYearTest.php` › «leaves out who was withdrawn or is already enrolled in the next year» |
+| MAT-R07.3 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «leaves out, saying why, who has no result, graduated, waits to graduate, has no grade to go to or is out of its age range» |
+| MAT-R07.4 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «enrolls the chosen students all together, recorded once with how many and where»; `tests/Unit/Enrollment/Application/NextYearTest.php` › «if one student can not be enrolled, enrolls nobody»; `tests/Feature/Enrollment/NextYearHttpTest.php` › «enrolls the chosen students in the next year» |
+| MAT-R07.5 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «over the capacity of a section, needs one reason for that section» |
+| MAT-R07.6 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «needs a next year that is not closed»; `tests/Feature/Enrollment/NextYearHttpTest.php` › «says when there is no next year» |
+| MAT-R07.7 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «leaves out, saying why, who has no result, graduated, waits to graduate, has no grade to go to or is out of its age range» |
 | MAT-R08.1 | |
 | MAT-R08.2 | |
 | MAT-R08.3 | |
@@ -584,7 +584,7 @@ error y cambio de grado durante el año.
 | MAT-R11.3 | `tests/Feature/IdentityAccess/EnrollmentManagementGrantTest.php` › «an administrador grants and withdraws it to a member, recorded»; `tests/Feature/IdentityAccess/EnrollmentManagementGrantTest.php` › «only an administrador grants it»; `tests/Feature/IdentityAccess/EnrollmentManagementGrantTest.php` › «it only applies in the institution that granted it»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a member granted gestionar-inscripciones enrolls, but a change of grade stays a directive's» |
 | MAT-R11.4 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «refuses whoever may not manage enrollments»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a teacher sees the enrollments but does not enroll, move nor annul» |
 | MAT-R11.5 | `tests/Feature/Enrollment/EnrollmentPermissionsMigrationTest.php` › «existing institutions get gestionar-inscripciones and aprobar-excepciones-inscripcion for Administrador and Director only»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a director enrolls and approves the exceptions» |
-| MAT-R12.1 | `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records an enrollment with its over capacity reason and its age exception»; `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records a change of section or grade with its date, reason and who approved it»; `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records the end of an enrollment by a withdrawal or a transfer, and an annulment with its reason» |
+| MAT-R12.1 | `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records an enrollment with its over capacity reason and its age exception»; `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records a change of section or grade with its date, reason and who approved it»; `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records the end of an enrollment by a withdrawal or a transfer, and an annulment with its reason»; `tests/Unit/Enrollment/Application/RecordResultTest.php` › «records the result of a student once the third term is closed, under the calendar lock, recorded»; `tests/Unit/Enrollment/Application/NextYearTest.php` › «enrolls the chosen students all together, recorded once with how many and where» |
 | MAT-R12.2 | `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «never records health data» |
 | MAT-R13.1 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution sees none of its enrollments» |
 | MAT-R13.2 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution sees none of its enrollments»; `tests/Feature/TenantTableTest.php` |
@@ -593,19 +593,19 @@ error y cambio de grado durante el año.
 | MAT-R14.2 | `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «a manager annuls within 48 hours: kept, ended and free to enroll again, recorded»; `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «lists the active students without a current enrollment in the year» |
 | MAT-R14.3 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «within 48 hours and without grades anyone who manages annuls; after that, or with grades, only a directive»; `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «after 48 hours, only a directive annuls»; `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «with grades, only a directive annuls» |
 | MAT-R14.4 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «another reason to annul needs a note»; `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «needs a reason, and a note for another one» |
-| MAT-R14.5 | |
+| MAT-R14.5 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «with a result it is not annulled» |
 | MAT-R14.6 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «shows the history of a student: where, from, until and why it ended, annulments included»; `tests/Feature/Enrollment/StudentHistoryTest.php` › «shows where the student was enrolled, from, until and why each enrollment ended» |
-| MAT-R15.1 | |
-| MAT-R15.2 | |
-| MAT-R15.3 | |
-| MAT-R15.4 | |
-| MAT-R16.1 | |
-| MAT-R16.2 | |
-| MAT-R16.3 | |
-| MAT-R16.4 | |
+| MAT-R15.1 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «promoted from 5.º año with no pending subjects graduates; with pending ones, waits to graduate» |
+| MAT-R15.2 | `tests/Unit/Enrollment/Domain/PromotionRulesTest.php` › «promoted from 5.º año with no pending subjects graduates; with pending ones, waits to graduate» |
+| MAT-R15.3 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «leaves out, saying why, who has no result, graduated, waits to graduate, has no grade to go to or is out of its age range» |
+| MAT-R15.4 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «a student waiting to graduate is not enrolled in a grade (MAT-R15.4)» |
+| MAT-R16.1 | `tests/Unit/Enrollment/Application/PendingResultsTest.php` › «lists, by section, the students with a current enrollment and no result»; `tests/Unit/Enrollment/Application/PendingResultsTest.php` › «shows only how many to whoever may not see students»; `tests/Feature/AcademicCalendar/CloseYearPendingResultsTest.php` › «the calendar shows, for the active year, who still lacks its result» |
+| MAT-R16.2 | `tests/Unit/AcademicCalendar/Application/SchoolYearGuardTest.php` › «does not close the year while students lack their result, and says how many»; `tests/Unit/Enrollment/Application/PendingResultsTest.php` › «tells the calendar how many lack their result; a withdrawn student no longer counts»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «the year does not close with students lacking their result, and a planned year with enrollments is not deleted»; `tests/Feature/AcademicCalendar/CloseYearPendingResultsTest.php` › «the calendar shows, for the active year, who still lacks its result» |
+| MAT-R16.3 | `tests/Unit/Enrollment/Application/RecordResultTest.php` › «records the result of a student once the third term is closed, under the calendar lock, recorded» |
+| MAT-R16.4 | `tests/Unit/Enrollment/Application/PendingResultsTest.php` › «tells the calendar how many lack their result; a withdrawn student no longer counts» |
 | MAT-NF01 | `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a teacher sees the enrollments but does not enroll, move nor annul»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «whoever does not see students does not see the enrollments» |
 | MAT-NF02 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution sees none of its enrollments»; `tests/Feature/TenantTableTest.php`; `tests/Architecture/LayersTest.php` › «the modules enrollments build on never depend on them» |
 | MAT-NF03 | `tests/Feature/Enrollment/Infrastructure/EnrollmentSchemaTest.php` › «keeps one current enrollment per student and year»; `tests/Isolation/EnrollmentConcurrencyTest.php` › «while one enrollment holds the last place, the other waits; then it finds the section full» |
-| MAT-NF04 | |
+| MAT-NF04 | `tests/Feature/Enrollment/NextYearPerformanceTest.php` › «enrolls 600 students in the next year in under 10 seconds» |
 | MAT-NF05 | |
 | MAT-NF06 | |

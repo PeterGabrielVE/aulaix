@@ -81,6 +81,10 @@ final readonly class EnrollStudentHandler
                 throw NotEnrollable::withdrawn();
             }
 
+            if ($this->enrollments->lastResultOf($student->id)?->waitsToGraduate() === true) {
+                throw NotEnrollable::waitingToGraduate();
+            }
+
             $current = $this->enrollments->currentOf($student->id, $command->schoolYearId);
 
             if ($current !== null) {

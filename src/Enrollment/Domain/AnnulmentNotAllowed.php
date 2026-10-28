@@ -17,6 +17,11 @@ final class AnnulmentNotAllowed extends BusinessRuleViolation
         return self::onField('reason', 'Pasaron más de 48 horas: la anula un directivo.');
     }
 
+    public static function withResult(): self
+    {
+        return self::onField('reason', 'Tiene resultado de prosecución: no se puede anular.');
+    }
+
     public static function graded(): self
     {
         return self::onField('reason', 'Ya tiene notas: la anula un directivo.');

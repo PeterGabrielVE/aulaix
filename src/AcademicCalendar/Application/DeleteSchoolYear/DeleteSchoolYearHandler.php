@@ -6,6 +6,7 @@ namespace AulaX\AcademicCalendar\Application\DeleteSchoolYear;
 
 use AulaX\AcademicCalendar\Application\CalendarAudit;
 use AulaX\AcademicCalendar\Application\CalendarLock;
+use AulaX\AcademicCalendar\Application\SchoolYearGuards;
 use AulaX\AcademicCalendar\Application\SchoolYearNotFound;
 use AulaX\AcademicCalendar\Domain\CalendarRuleViolation;
 use AulaX\AcademicCalendar\Domain\SchoolYearId;
@@ -24,6 +25,7 @@ final readonly class DeleteSchoolYearHandler
         private CalendarLock $lock,
         private AuditTrail $audit,
         private TransactionManager $transactions,
+        private SchoolYearGuards $guards = new SchoolYearGuards([]),
     ) {}
 
     public function __invoke(int $schoolYearId, bool $confirmed): void
@@ -40,6 +42,10 @@ final readonly class DeleteSchoolYearHandler
 
             if (! $year->canBeDeleted()) {
                 throw CalendarRuleViolation::onField('status', 'Solo se puede eliminar un año planificado.');
+            }
+
+            if ($this->guards->hasEnrollments($id->value)) {
+                throw CalendarRuleViolation::onField('status', 'El año tiene inscripciones: no se puede eliminar.');
             }
 
             $this->audit->record(CalendarAudit::statusChanged('deleted', $year, $year->status()->value, 'deleted'));

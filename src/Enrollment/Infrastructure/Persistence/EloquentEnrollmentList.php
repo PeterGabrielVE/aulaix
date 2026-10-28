@@ -33,8 +33,7 @@ final class EloquentEnrollmentList implements EnrollmentList
             ->whereNull('ends_on')
             ->orderBy('id')
             ->get()
-            ->map(fn (object $row) => EnrollmentRows::toDomain($row))
-            ->all();
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
     }
 
     public function currentStudentsOf(int $schoolYearId): array
@@ -48,6 +47,33 @@ final class EloquentEnrollmentList implements EnrollmentList
             ->all();
     }
 
+    public function currentInYear(int $schoolYearId): array
+    {
+        return DB::table('enrollments')
+            ->where('school_year_id', $schoolYearId)
+            ->whereNull('ends_on')
+            ->orderBy('id')
+            ->get()
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
+    }
+
+    public function currentWithoutResult(int $schoolYearId): array
+    {
+        return DB::table('enrollments')
+            ->where('school_year_id', $schoolYearId)
+            ->whereNull('ends_on')
+            ->whereNull('outcome')
+            ->orderBy('section_id')
+            ->orderBy('id')
+            ->get()
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
+    }
+
+    public function hasAnyInYear(int $schoolYearId): bool
+    {
+        return DB::table('enrollments')->where('school_year_id', $schoolYearId)->exists();
+    }
+
     public function historyOf(int $studentId): array
     {
         return DB::table('enrollments')
@@ -55,7 +81,6 @@ final class EloquentEnrollmentList implements EnrollmentList
             ->orderBy('starts_on')
             ->orderBy('id')
             ->get()
-            ->map(fn (object $row) => EnrollmentRows::toDomain($row))
-            ->all();
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
     }
 }

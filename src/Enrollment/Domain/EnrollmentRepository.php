@@ -24,6 +24,12 @@ interface EnrollmentRepository
     public function currentOfStudent(int $studentId): array;
 
     /**
+     * The latest enrollment of a student with a result of its year
+     * (MAT-R15.4).
+     */
+    public function lastResultOf(int $studentId): ?Enrollment;
+
+    /**
      * How many current enrollments a section has.
      */
     public function currentCountIn(int $sectionId): int;

@@ -6,7 +6,10 @@ use AulaX\Enrollment\Domain\AnnulmentReason;
 use AulaX\Enrollment\Domain\EndReason;
 use AulaX\Enrollment\Domain\Enrollment;
 use AulaX\Enrollment\Domain\EnrollmentId;
+use AulaX\Enrollment\Domain\Outcome;
 use AulaX\Enrollment\Domain\Placement;
+use AulaX\Enrollment\Domain\PromotionResult;
+use AulaX\Enrollment\Domain\ResultNotAllowed;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 
 /**
@@ -182,4 +185,32 @@ it('another reason to annul needs a note', function () {
     $enrollment->annul(AnnulmentReason::Other, ' Estudiante equivocado ', 3, onDay('2026-09-16 09:00'), false, false);
 
     expect($enrollment->annulment()?->note)->toBe('Estudiante equivocado');
+});
+
+it('records the result of the year, checked by the rules of its level, and replaces it when corrected', function () {
+    $enrollment = enrolled();
+    $enrollment->recordResult(PromotionResult::of(Outcome::Repeats, []), [], onDay('2027-07-10 10:00'), 3);
+    $enrollment->recordResult(PromotionResult::of(Outcome::Promoted, []), [], onDay('2027-07-11 10:00'), 9);
+
+    expect($enrollment->result()?->outcome)->toBe(Outcome::Promoted)
+        ->and($enrollment->resultRecordedBy())->toBe(9)
+        ->and($enrollment->resultRecordedAt()?->format('Y-m-d H:i'))->toBe('2027-07-11 10:00')
+        ->and(fn () => $enrollment->recordResult(PromotionResult::of(Outcome::PromotedWithPending, [4]), [4], onDay('2027-07-11'), 3))
+        ->toThrow(ResultNotAllowed::class, 'En Primaria no hay materias pendientes: el estudiante es promovido o repite.');
+});
+
+it('with a result it is not annulled', function () {
+    $enrollment = enrolled();
+    $enrollment->recordResult(PromotionResult::of(Outcome::Promoted, []), [], onDay('2026-09-16 09:00'), 3);
+
+    expect(fn () => $enrollment->annul(AnnulmentReason::Duplicate, null, 3, onDay('2026-09-16 10:00'), true, false))
+        ->toThrow(AnnulmentNotAllowed::class, 'Tiene resultado de prosecución: no se puede anular.');
+});
+
+it('an ended enrollment takes no result', function () {
+    $enrollment = enrolled();
+    $enrollment->end(onDay('2026-10-05'), EndReason::Withdrawal);
+
+    expect(fn () => $enrollment->recordResult(PromotionResult::of(Outcome::Promoted, []), [], onDay('2027-07-10'), 3))
+        ->toThrow(BusinessRuleViolation::class, 'La inscripción ya terminó.');
 });

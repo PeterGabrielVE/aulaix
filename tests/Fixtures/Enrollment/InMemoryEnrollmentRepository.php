@@ -43,6 +43,20 @@ final class InMemoryEnrollmentRepository implements EnrollmentList, EnrollmentRe
         )));
     }
 
+    public function lastResultOf(int $studentId): ?Enrollment
+    {
+        $last = null;
+
+        foreach ($this->enrollments as $enrollment) {
+            if ($enrollment->studentId() === $studentId && $enrollment->result() !== null
+                && ($last === null || $enrollment->period()->startsOn >= $last->period()->startsOn)) {
+                $last = $enrollment;
+            }
+        }
+
+        return $last === null ? null : clone $last;
+    }
+
     public function currentCountIn(int $sectionId): int
     {
         return count(array_filter(
@@ -110,6 +124,30 @@ final class InMemoryEnrollmentRepository implements EnrollmentList, EnrollmentRe
             fn (Enrollment $enrollment) => $enrollment->studentId(),
             array_filter($this->current(), fn (Enrollment $enrollment) => $enrollment->schoolYearId() === $schoolYearId),
         ));
+    }
+
+    public function currentInYear(int $schoolYearId): array
+    {
+        return array_values(array_filter($this->current(), fn (Enrollment $enrollment) => $enrollment->schoolYearId() === $schoolYearId));
+    }
+
+    public function currentWithoutResult(int $schoolYearId): array
+    {
+        return array_values(array_filter(
+            $this->current(),
+            fn (Enrollment $enrollment) => $enrollment->schoolYearId() === $schoolYearId && $enrollment->result() === null,
+        ));
+    }
+
+    public function hasAnyInYear(int $schoolYearId): bool
+    {
+        foreach ($this->enrollments as $enrollment) {
+            if ($enrollment->schoolYearId() === $schoolYearId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function historyOf(int $studentId): array

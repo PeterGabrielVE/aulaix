@@ -9,6 +9,7 @@ use AulaX\Audit\Application\AuditSubject;
 use AulaX\Audit\Application\ChangeSet;
 use AulaX\Enrollment\Domain\EndReason;
 use AulaX\Enrollment\Domain\Enrollment;
+use AulaX\Enrollment\Domain\PromotionResult;
 
 /**
  * The audit log entries of enrollments (MAT-R12.1): what was enrolled and
@@ -72,6 +73,32 @@ final class EnrollmentAudit
         return AuditEvent::of('enrollment.enrollment.annulled', self::subject($enrollment), ChangeSet::diff([], [
             'reason' => $enrollment->annulment()?->reason->value,
             'note' => $enrollment->annulment()?->note,
+        ]));
+    }
+
+    /**
+     * The result of the year, and the one it replaced (MAT-R06.8).
+     */
+    public static function resultRecorded(?PromotionResult $before, Enrollment $enrollment): AuditEvent
+    {
+        return AuditEvent::of('enrollment.enrollment.result_recorded', self::subject($enrollment), ChangeSet::diff(
+            ['outcome' => $before?->outcome->value, 'pending_subjects' => $before === null || $before->pendingSubjects === [] ? null : $before->pendingSubjects],
+            ['outcome' => $enrollment->result()?->outcome->value, 'pending_subjects' => $enrollment->result()?->pendingSubjects ?: null],
+        ));
+    }
+
+    /**
+     * The enrollment of a year's students in the next one (MAT-R07, R12.1).
+     *
+     * @param  list<int>  $sectionIds
+     */
+    public static function enrolledInBatch(int $schoolYearId, int $students, array $sectionIds): AuditEvent
+    {
+        sort($sectionIds);
+
+        return AuditEvent::of('enrollment.batch.enrolled', AuditSubject::of('school_year', $schoolYearId), ChangeSet::diff([], [
+            'students' => $students,
+            'sections' => $sectionIds,
         ]));
     }
 

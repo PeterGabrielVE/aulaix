@@ -207,7 +207,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 6 — Dominio
 
-- [ ] **T-18** — `Outcome`, `PromotionResult` y `PromotionRules`.
+- [x] **T-18** — `Outcome`, `PromotionResult` y `PromotionRules`.
   `Enrollment::recordResult()`; `annul()` rechaza con resultado.
   - Criterios: MAT-R06.3 – R06.7, R07.1, R14.5, R15.1, R15.2
   - Test: `tests/Unit/Enrollment/Domain/PromotionRulesTest.php`:
@@ -220,7 +220,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 7 — Aplicación
 
-- [ ] **T-19** — `RecordResultHandler`. `EnrollStudentHandler` rechaza al
+- [x] **T-19** — `RecordResultHandler`. `EnrollStudentHandler` rechaza al
   pendiente de egresar.
   - Criterios: MAT-R06.1, R06.2, R06.8, R06.9, R15.4, R16.3, R12.1
   - Test: `tests/Unit/Enrollment/Application/RecordResultTest.php`:
@@ -230,7 +230,7 @@ Tres PRs, cada uno usable por sí mismo:
 
     `EnrollStudentTest` › «el pendiente de egresar no se inscribe en un
     grado».
-- [ ] **T-20** — Punto de extensión `YearClosingGuard` en AcademicCalendar
+- [x] **T-20** — Punto de extensión `YearClosingGuard` en AcademicCalendar
   (`CloseSchoolYearHandler`, tras el bloqueo), `UnresolvedResultsGuard` y
   `PendingResultsQuery`.
   - Criterios: MAT-R06.10, R16.1, R16.2, R16.4
@@ -241,7 +241,7 @@ Tres PRs, cada uno usable por sí mismo:
     - `tests/Unit/Enrollment/Application/PendingResultsTest.php`:
       - «por sección»;
       - «el retirado ya no cuenta».
-- [ ] **T-21** — `ProposeNextYearQuery` y `EnrollNextYearHandler`: todo o
+- [x] **T-21** — `ProposeNextYearQuery` y `EnrollNextYearHandler`: todo o
   nada, y revalida dentro de la transacción.
   - Criterios: MAT-R07.1 – R07.7, R15.3, R12.1
   - Test: `tests/Unit/Enrollment/Application/NextYearTest.php`:
@@ -253,7 +253,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 8 — Infraestructura y HTTP
 
-- [ ] **T-22** — Persistencia del resultado y de las materias pendientes;
+- [x] **T-22** — Persistencia del resultado y de las materias pendientes;
   enlace del `YearClosingGuard`.
   - Criterios: MAT-R06.5, R16.2
   - Test:
@@ -261,7 +261,7 @@ Tres PRs, cada uno usable por sí mismo:
       sus materias»;
     - `EnrollmentHooksIntegrationTest` › «el año no se cierra con
       estudiantes sin resultado».
-- [ ] **T-23** — Pantallas y rutas:
+- [x] **T-23** — Pantallas y rutas:
   - «Prosecución» por sección;
   - lote, con propuesta y confirmación;
   - el diálogo de cierre del año con `pendingResults` (nombres solo con

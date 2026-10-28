@@ -1,6 +1,6 @@
 ---
 spec: 010-inscripcion
-estado: aprobada
+estado: implementada
 fecha: 2026-10-27
 aprobada: 2026-10-27
 requisitos: requirements.md
@@ -427,3 +427,25 @@ entradas (MAT-R03.7, Q6).
   - **Rendimiento:** quién ya está inscrito en el año siguiente se lee con
     una sola consulta. 600 estudiantes tardan unos 7 s, preparación incluida
     (MAT-NF04).
+
+### PR C
+
+- **Visibilidad:**
+  - `StudentVisibilityRule` (Students) la implementa
+    `SectionScopedVisibility`.
+  - Sin nadie en sesión (consola, cola), la regla no restringe: lo que
+    protege es el permiso del caso de uso, y no hay secciones con las que
+    acotar.
+  - `SectionRosterQuery` y `YearOverviewQuery` aplican la misma visibilidad.
+  - `StudentVisibility` calcula una vez por instancia, que vive lo que la
+    consulta que la usa.
+- **MAT-NF05:**
+  - el primer cálculo en caliente tarda unos 10 ms y, después, preguntar
+    no cuesta nada;
+  - la prueba exige menos de 50 ms (p95) para calcular, menos de 10 ms
+    (p95) para preguntar y menos de 300 ms (p95) para la lista de un
+    docente con 10 secciones;
+  - descarta una llamada de calentamiento, porque la primera del proceso
+    de tests carga clases.
+- **«Inscritos» en el inicio:** está en las cifras de la estructura (ver
+  SPEC-013).

@@ -52,11 +52,11 @@ it('gives the Administrador pending tasks with their count and destination, with
             'sections_without_guide' => 'structure', 'pending_transfers' => 'transfers', 'expired_invitations' => 'users', 'missing_dea_code' => 'institution',
         ])
         ->and(array_column($home->indicators, 'value', 'key'))->toBe([
-            'school_year' => '2026-2027', 'open_term' => 1, 'sections' => 3, 'capacity' => 90, 'active_students' => 120,
+            'school_year' => '2026-2027', 'open_term' => 1, 'sections' => 3, 'capacity' => 90, 'enrolled' => 84, 'active_students' => 120,
             'staff' => ['Administrador' => 1, 'Director' => 1, 'Coordinador' => 2, 'Docente' => 12, 'Representante' => 80, 'Estudiante' => 0],
         ])
         ->and($home->recentActivity)->toHaveCount(1)
-        ->and($home->shortcuts)->toBe(['calendar', 'structure', 'students', 'transfers', 'corrections', 'institution', 'users', 'audit']);
+        ->and($home->shortcuts)->toBe(['calendar', 'structure', 'students', 'enrollments', 'transfers', 'corrections', 'institution', 'users', 'audit']);
 });
 
 it('asks the Director nothing operational', function () {
@@ -68,7 +68,7 @@ it('asks the Director nothing operational', function () {
 });
 
 it('says there are no pending tasks rather than showing an empty block', function () {
-    $this->sources->overview = ['sections' => 3, 'capacity' => 90, 'gradesWithoutSections' => 0, 'sectionsWithoutGuide' => 0, 'subjectsWithoutTeacher' => 0, 'assignmentsOfInactivePeople' => 0];
+    $this->sources->overview = ['sections' => 3, 'capacity' => 90, 'gradesWithoutSections' => 0, 'sectionsWithoutGuide' => 0, 'subjectsWithoutTeacher' => 0, 'assignmentsOfInactivePeople' => 0, 'enrolled' => 0];
     $this->sources->requests = ['transfers' => 0, 'corrections' => 0];
 
     expect(homeOf(HomeKind::Director, new Capabilities(MANAGEMENT, ['Director'], 'Director'))->pending)->toBe([]);

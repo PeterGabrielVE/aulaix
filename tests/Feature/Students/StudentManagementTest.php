@@ -67,15 +67,22 @@ test('the form errors come back by field, guardians included', function () {
 });
 
 test('teachers and coordinators see the students, without their health data', function (string $role) {
-    $institution = tenant();
+    $institution = tenant(['education_levels' => ['primaria']]);
     asStudentsMember($institution, 'Administrador', 'post', '/estudiantes', studentPayload());
     $id = registeredStudentId();
+    // SPEC-010 MAT-R08: they see the students of their sections or grades, so this one is in theirs.
+    $member = userWithRole($institution, $role);
+    useTenant($institution);
+    $year = DB::table('school_years')->insertGetId(['starts_on' => '2026-09-16', 'ends_on' => '2027-07-15', 'status' => 'active']);
+    $section = DB::table('sections')->insertGetId(['school_year_id' => $year, 'grade' => 'primaria_1', 'letter' => 'A', 'capacity' => 30, 'guide_account_id' => $role === 'Docente' ? $member->id : null]);
+    DB::table('coordinator_assignments')->insert(['school_year_id' => $year, 'account_id' => $member->id, 'level' => 'primaria', 'grade' => 'primaria_1']);
+    DB::table('enrollments')->insert(['student_id' => $id, 'school_year_id' => $year, 'section_id' => $section, 'grade' => 'primaria_1', 'starts_on' => '2026-09-16', 'registered_at' => now(), 'registered_by' => $member->id]);
 
-    asStudentsMember($institution, $role, 'get', '/estudiantes')
+    test()->actingAs($member)->get(tenantUrl($institution, '/estudiantes'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page->component('Students/Index')->where('students.0.fullName', 'Pérez Mora, Ana Sofía')->where('canManage', false));
 
-    asStudentsMember($institution, $role, 'get', "/estudiantes/{$id}")
+    test()->actingAs($member)->get(tenantUrl($institution, "/estudiantes/{$id}"))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Students/Show')

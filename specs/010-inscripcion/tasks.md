@@ -1,6 +1,6 @@
 ---
 spec: 010-inscripcion
-estado: implementando
+estado: implementada
 fecha: 2026-10-27
 aprobada: 2026-10-27
 diseño: design.md
@@ -278,12 +278,12 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 9 — Visibilidad
 
-- [ ] **T-24** — Punto de extensión `StudentVisibilityRule` en Students
+- [x] **T-24** — Punto de extensión `StudentVisibilityRule` en Students
   (`ListStudentsQuery` y `ShowStudentQuery`, intersección de las reglas;
   ajeno → `StudentNotFound`). Sin reglas registradas, todo sigue igual.
   - Criterios: MAT-R08.2, R08.4
   - Test: `tests/Unit/Students/Application/StudentVisibilityRuleTest.php`.
-- [ ] **T-25** — `SectionScopedVisibility` y su registro, también en
+- [x] **T-25** — `SectionScopedVisibility` y su registro, también en
   `SectionRosterQuery`.
   - Los tests de SPEC-009 que esperan que el docente vea a todos cambian
     su preparación, y su aserción donde haga falta. Es una excepción
@@ -302,17 +302,17 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 10 — Navegación, accesibilidad y documentación
 
-- [ ] **T-26** — Entrada «Inscripciones» en el menú (`ver-estudiantes`) y
+- [x] **T-26** — Entrada «Inscripciones» en el menú (`ver-estudiantes`) y
   paridad menú–rutas; bloque de inscritos por sección del inicio con
   `EnrolledCountsQuery`.
   - Criterios: MAT-R09.3
   - Test: `tests/Feature/Workspace/MenuParityTest.php` (existente, gana la
     entrada); `tests/Feature/Workspace/HomeEnrollmentBlockTest.php`.
-- [ ] **T-27** — Tests de navegador: axe y 360 px en «Inscripciones»,
+- [x] **T-27** — Tests de navegador: axe y 360 px en «Inscripciones»,
   «Sección», «Prosecución» y el lote; terminología «plantel».
   - Criterios: MAT-NF06
   - Test: `tests/Browser/EnrollmentTest.php`.
-- [ ] **T-28** — Cambios en otras specs:
+- [x] **T-28** — Cambios en otras specs:
   - SPEC-002: IAM-R11.1;
   - SPEC-007: CAL-R02.4, con la condición de MAT-R16.2;
   - SPEC-008: EAC-R02.6, R07.3 y `RemovalGuard`;
@@ -327,15 +327,15 @@ Tres PRs, cada uno usable por sí mismo:
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls`,
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls`,
   `--group=perf` y `tests/Isolation`), y tests de navegador en verde.
-- [ ] Tests de arquitectura en verde (capas, sin dependencias hacia
+- [x] Tests de arquitectura en verde (capas, sin dependencias hacia
   Enrollment, etiquetas solo desde su provider).
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
-- [ ] `migrate:fresh --seed` y rollback de las dos migraciones nuevas.
-- [ ] Matriz de trazabilidad completa.
-- [ ] `/security-review` de cada PR (permisos y tenancy; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
+- [x] `migrate:fresh --seed` y rollback de las dos migraciones nuevas.
+- [x] Matriz de trazabilidad completa.
+- [x] `/security-review` de cada PR (permisos y tenancy; S-12).
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

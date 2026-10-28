@@ -10,10 +10,11 @@ namespace AulaX\Workspace\Application\Port;
 interface StructureSource
 {
     /**
-     * The active year's figures, or null when there is no active year.
+     * The active year's figures, or null when there is no active year; with
+     * the current enrollments of its sections (SPEC-010).
      *
      * @param  ?list<string>  $grades  Null: the whole institution.
-     * @return ?array{sections: int, capacity: int, gradesWithoutSections: int, sectionsWithoutGuide: int, subjectsWithoutTeacher: int, assignmentsOfInactivePeople: int}
+     * @return ?array{sections: int, capacity: int, gradesWithoutSections: int, sectionsWithoutGuide: int, subjectsWithoutTeacher: int, assignmentsOfInactivePeople: int, enrolled: int}
      */
     public function overview(?array $grades): ?array;
 

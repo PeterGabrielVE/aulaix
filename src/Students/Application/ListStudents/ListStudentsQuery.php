@@ -7,10 +7,12 @@ namespace AulaX\Students\Application\ListStudents;
 use AulaX\Students\Application\Port\StudentPermissions;
 use AulaX\Students\Application\StudentAccess;
 use AulaX\Students\Application\StudentDirectory;
+use AulaX\Students\Application\StudentVisibility;
 
 /**
  * The students of the open institution for whoever may see them (EST-R05.1 –
- * R05.3): the active ones unless asked for the withdrawn too, paginated.
+ * R05.3): the active ones unless asked for the withdrawn too, paginated;
+ * only those the visibility rules let through (SPEC-010 MAT-R08).
  */
 final readonly class ListStudentsQuery
 {
@@ -19,12 +21,13 @@ final readonly class ListStudentsQuery
     public function __construct(
         private StudentDirectory $directory,
         private StudentPermissions $permissions,
+        private StudentVisibility $visibility = new StudentVisibility([]),
     ) {}
 
     public function __invoke(string $search, bool $includeWithdrawn, int $page): StudentPage
     {
         StudentAccess::ensureCanView($this->permissions);
 
-        return $this->directory->page(trim($search), $includeWithdrawn, max(1, $page), self::PER_PAGE);
+        return $this->directory->page(trim($search), $includeWithdrawn, max(1, $page), self::PER_PAGE, $this->visibility->visibleStudents());
     }
 }

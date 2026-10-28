@@ -528,3 +528,14 @@ Ajustes del PR C (cuenta del representante), sin cambiar ningún criterio:
   nacimiento, nombre e identificación, nunca la salud.
 - **La visibilidad de Docente y Coordinador** (MAT-R08) llega en el PR C de
   SPEC-010.
+
+- **Punto de extensión `StudentVisibilityRule`** (SPEC-010, MAT-R08).
+  - **Dónde se aplica:** `ListStudentsQuery` y `ShowStudentQuery`, con la
+    intersección de las reglas registradas. Si una regla oculta un
+    estudiante, su ficha responde `StudentNotFound`.
+  - **Coste:** `StudentVisibility` se calcula una vez por instancia; está
+    enlazada en el contenedor.
+  - **Test que cambió** (excepción expresa a Q-03): en `StudentManagementTest`,
+    «teachers and coordinators see the students, without their health
+    data» cambia solo su preparación. El docente es guía de la sección del
+    estudiante y el coordinador coordina su grado; sus aserciones no cambian.

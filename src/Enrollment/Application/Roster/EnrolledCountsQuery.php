@@ -22,4 +22,16 @@ final readonly class EnrolledCountsQuery
     {
         return $this->enrollments->currentCountsOf($schoolYearId);
     }
+
+    /**
+     * The current enrollments of the year, in these grades or all of them.
+     *
+     * @param  ?list<string>  $grades  Null: every grade.
+     */
+    public function total(int $schoolYearId, ?array $grades): int
+    {
+        $byGrade = $this->enrollments->currentCountsByGrade($schoolYearId);
+
+        return array_sum($grades === null ? $byGrade : array_intersect_key($byGrade, array_flip($grades)));
+    }
 }

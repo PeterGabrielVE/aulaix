@@ -113,6 +113,17 @@ final class InMemoryEnrollmentRepository implements EnrollmentList, EnrollmentRe
         return $counts;
     }
 
+    public function currentCountsByGrade(int $schoolYearId): array
+    {
+        $counts = [];
+
+        foreach ($this->currentInYear($schoolYearId) as $enrollment) {
+            $counts[$enrollment->placement()->grade] = ($counts[$enrollment->placement()->grade] ?? 0) + 1;
+        }
+
+        return $counts;
+    }
+
     public function currentIn(int $sectionId): array
     {
         return array_values(array_filter($this->current(), fn (Enrollment $enrollment) => $enrollment->placement()->sectionId === $sectionId));
@@ -124,6 +135,14 @@ final class InMemoryEnrollmentRepository implements EnrollmentList, EnrollmentRe
             fn (Enrollment $enrollment) => $enrollment->studentId(),
             array_filter($this->current(), fn (Enrollment $enrollment) => $enrollment->schoolYearId() === $schoolYearId),
         ));
+    }
+
+    public function currentStudentsIn(int $schoolYearId, array $sectionIds, array $grades): array
+    {
+        return array_values(array_map(fn (Enrollment $enrollment) => $enrollment->studentId(), array_filter(
+            $this->currentInYear($schoolYearId),
+            fn (Enrollment $enrollment) => in_array($enrollment->placement()->sectionId, $sectionIds, true) || in_array($enrollment->placement()->grade, $grades, true),
+        )));
     }
 
     public function currentInYear(int $schoolYearId): array

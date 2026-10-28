@@ -17,6 +17,11 @@ interface EnrollmentList
     public function currentCountsOf(int $schoolYearId): array;
 
     /**
+     * @return array<string, int> Grade => current enrollments, for the grades that have any.
+     */
+    public function currentCountsByGrade(int $schoolYearId): array;
+
+    /**
      * @return list<Enrollment> The current enrollments of a section.
      */
     public function currentIn(int $sectionId): array;
@@ -25,6 +30,16 @@ interface EnrollmentList
      * @return list<int> Students with a current enrollment in the year.
      */
     public function currentStudentsOf(int $schoolYearId): array;
+
+    /**
+     * Students with a current enrollment of the year in one of the sections
+     * or grades (MAT-R08.1).
+     *
+     * @param  list<int>  $sectionIds
+     * @param  list<string>  $grades
+     * @return list<int>
+     */
+    public function currentStudentsIn(int $schoolYearId, array $sectionIds, array $grades): array;
 
     /**
      * @return list<Enrollment> The current enrollments of the year.

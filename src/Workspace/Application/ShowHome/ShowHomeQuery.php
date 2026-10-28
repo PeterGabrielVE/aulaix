@@ -151,6 +151,8 @@ final readonly class ShowHomeQuery
         if ($structure !== null) {
             $indicators[] = ['key' => 'sections', 'value' => $structure['sections'], 'target' => $target(MenuEntry::Structure)];
             $indicators[] = ['key' => 'capacity', 'value' => $structure['capacity'], 'target' => $target(MenuEntry::Structure)];
+            // SPEC-010 MAT-R09.3: the current enrollments of those sections.
+            $indicators[] = ['key' => 'enrolled', 'value' => $structure['enrolled'], 'target' => $target(MenuEntry::Enrollments)];
         }
 
         if ($has(HomeBlock::StudentIndicators)) {

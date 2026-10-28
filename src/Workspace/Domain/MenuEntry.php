@@ -16,6 +16,7 @@ enum MenuEntry: string
     case Structure = 'structure';
     case MyAssignments = 'my_assignments';
     case Students = 'students';
+    case Enrollments = 'enrollments';
     case Transfers = 'transfers';
     case Corrections = 'corrections';
     case MyStudents = 'my_students';
@@ -30,7 +31,7 @@ enum MenuEntry: string
         return match ($this) {
             self::Home => null,
             self::Calendar, self::Structure, self::MyAssignments => MenuGroup::Academic,
-            self::Students, self::Transfers, self::Corrections, self::MyStudents => MenuGroup::Students,
+            self::Students, self::Enrollments, self::Transfers, self::Corrections, self::MyStudents => MenuGroup::Students,
             self::Institution, self::Users, self::Audit => MenuGroup::Institution,
         };
     }
@@ -42,7 +43,7 @@ enum MenuEntry: string
             self::Calendar => $capabilities->has('gestionar-calendario'),
             self::Structure => $capabilities->has('ver-estructura'),
             self::MyAssignments => $capabilities->hasRole(self::TEACHER),
-            self::Students => $capabilities->has('ver-estudiantes'),
+            self::Students, self::Enrollments => $capabilities->has('ver-estudiantes'),
             self::Transfers, self::Corrections => $capabilities->has('gestionar-estudiantes'),
             self::MyStudents => $capabilities->isGuardian,
             self::Institution => $capabilities->has('ver-plantel'),

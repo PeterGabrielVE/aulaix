@@ -204,7 +204,10 @@ encontrar rápido a un estudiante y ver su ficha.
 
 - **EST-R05.1** — El sistema deberá mostrar a quien tenga `ver-estudiantes`
   la lista de estudiantes del plantel abierto, con su nombre, su
-  identificación y su estado (activo o retirado).
+  identificación y su estado (activo o retirado). *(SPEC-010, MAT-R08:
+  Docente y Coordinador, sin `gestionar-estudiantes` ni
+  `gestionar-inscripciones`, solo ven a los estudiantes de sus secciones o
+  grados del año activo; la ficha de otro no existe para ellos.)*
 - **EST-R05.2** — El sistema deberá mostrar por defecto solo a los
   estudiantes activos, y permitir ver también a los retirados.
 - **EST-R05.3** — Cuando se busca por nombre, apellido o identificación, el

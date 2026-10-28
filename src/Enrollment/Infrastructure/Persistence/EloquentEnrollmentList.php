@@ -26,6 +26,19 @@ final class EloquentEnrollmentList implements EnrollmentList
             ->all();
     }
 
+    public function currentCountsByGrade(int $schoolYearId): array
+    {
+        return DB::table('enrollments')
+            ->where('school_year_id', $schoolYearId)
+            ->whereNull('ends_on')
+            ->groupBy('grade')
+            ->orderBy('grade')
+            ->selectRaw('grade, count(*) as enrolled')
+            ->pluck('enrolled', 'grade')
+            ->map(fn (mixed $count) => (int) $count)
+            ->all();
+    }
+
     public function currentIn(int $sectionId): array
     {
         return DB::table('enrollments')
@@ -41,6 +54,22 @@ final class EloquentEnrollmentList implements EnrollmentList
         return DB::table('enrollments')
             ->where('school_year_id', $schoolYearId)
             ->whereNull('ends_on')
+            ->orderBy('student_id')
+            ->pluck('student_id')
+            ->map(fn (mixed $id) => (int) $id)
+            ->all();
+    }
+
+    public function currentStudentsIn(int $schoolYearId, array $sectionIds, array $grades): array
+    {
+        if ($sectionIds === [] && $grades === []) {
+            return [];
+        }
+
+        return DB::table('enrollments')
+            ->where('school_year_id', $schoolYearId)
+            ->whereNull('ends_on')
+            ->where(fn ($query) => $query->whereIn('section_id', $sectionIds)->orWhereIn('grade', $grades))
             ->orderBy('student_id')
             ->pluck('student_id')
             ->map(fn (mixed $id) => (int) $id)

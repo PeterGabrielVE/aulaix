@@ -24,9 +24,10 @@ use Illuminate\Support\Facades\DB;
  */
 final class EloquentStudentDirectory implements StudentDirectory
 {
-    public function page(string $search, bool $includeWithdrawn, int $page, int $perPage): StudentPage
+    public function page(string $search, bool $includeWithdrawn, int $page, int $perPage, ?array $onlyIds = null): StudentPage
     {
         $query = DB::table('students')
+            ->when($onlyIds !== null, fn (Builder $query) => $query->whereIn('id', $onlyIds))
             ->when(! $includeWithdrawn, fn (Builder $query) => $query->where('status', 'active'))
             ->when($search !== '', fn (Builder $query) => $this->matching($query, $search));
 

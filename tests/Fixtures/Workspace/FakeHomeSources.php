@@ -20,7 +20,7 @@ final class FakeHomeSources implements ActivitySource, InstitutionSource, StaffS
     /** @var ?array<string, int> */
     public ?array $overview = [
         'sections' => 3, 'capacity' => 90, 'gradesWithoutSections' => 2, 'sectionsWithoutGuide' => 1,
-        'subjectsWithoutTeacher' => 0, 'assignmentsOfInactivePeople' => 1,
+        'subjectsWithoutTeacher' => 0, 'assignmentsOfInactivePeople' => 1, 'enrolled' => 84,
     ];
 
     /** @var ?list<string> */

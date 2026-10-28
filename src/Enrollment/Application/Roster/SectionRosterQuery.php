@@ -13,11 +13,12 @@ use AulaX\Enrollment\Application\Port\StructureFacts;
 use AulaX\Enrollment\Application\Port\StudentFacts;
 use AulaX\Enrollment\Domain\Enrollment;
 use AulaX\Shared\Domain\AuthorizationDenied;
+use AulaX\Students\Application\StudentVisibility;
 
 /**
  * The students currently enrolled in a section, by name, with the figures
  * of the section (MAT-R02.3, R09.1). Also the public API for SPEC-011 and
- * SPEC-012 (MAT-R09.3).
+ * SPEC-012 (MAT-R09.3). A teacher sees only the students it may (MAT-R08.1).
  */
 final readonly class SectionRosterQuery
 {
@@ -26,6 +27,7 @@ final readonly class SectionRosterQuery
         private StudentFacts $students,
         private StructureFacts $structure,
         private EnrollmentPermissions $permissions,
+        private StudentVisibility $visibility = new StudentVisibility([]),
     ) {}
 
     /**
@@ -38,7 +40,11 @@ final readonly class SectionRosterQuery
         EnrollmentAccess::ensureCanView($this->permissions);
         $matches = array_values(array_filter($this->structure->sectionsOf($schoolYearId), fn (SectionFact $section) => $section->id === $sectionId));
         $section = $matches[0] ?? throw SectionNotFound::create();
-        $enrollments = $this->enrollments->currentIn($sectionId);
+        $visible = $this->visibility->visibleStudents();
+        $enrollments = array_values(array_filter(
+            $this->enrollments->currentIn($sectionId),
+            fn (Enrollment $enrollment) => $visible === null || in_array($enrollment->studentId(), $visible, true),
+        ));
         $students = $this->students->byIds(array_map(fn (Enrollment $enrollment) => $enrollment->studentId(), $enrollments));
         $roster = [];
 
@@ -59,7 +65,7 @@ final readonly class SectionRosterQuery
 
         return new SectionRoster(
             $schoolYearId,
-            Overviews::section($section, count($enrollments)),
+            Overviews::section($section, $this->enrollments->currentCountsOf($schoolYearId)[$sectionId] ?? 0),
             Overviews::byName($roster, fn (RosterStudent $student) => $student->fullName),
         );
     }

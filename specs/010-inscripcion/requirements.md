@@ -1,7 +1,7 @@
 ---
 spec: 010-inscripcion
 prefijo: MAT
-estado: aprobada
+estado: implementada
 fecha: 2026-10-27
 aprobada: 2026-10-27
 backlog: F1-25 – F1-27
@@ -570,13 +570,13 @@ error y cambio de grado durante el año.
 | MAT-R07.5 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «over the capacity of a section, needs one reason for that section» |
 | MAT-R07.6 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «needs a next year that is not closed»; `tests/Feature/Enrollment/NextYearHttpTest.php` › «says when there is no next year» |
 | MAT-R07.7 | `tests/Unit/Enrollment/Application/NextYearTest.php` › «leaves out, saying why, who has no result, graduated, waits to graduate, has no grade to go to or is out of its age range» |
-| MAT-R08.1 | |
-| MAT-R08.2 | |
-| MAT-R08.3 | |
-| MAT-R08.4 | |
+| MAT-R08.1 | `tests/Feature/Enrollment/StudentVisibilityTest.php` › «a teacher sees the students of the sections it teaches in»; `tests/Feature/Enrollment/StudentVisibilityTest.php` › «the guide sees the students of its section»; `tests/Feature/Enrollment/StudentVisibilityTest.php` › «the coordinator sees the students of the grades it coordinates»; `tests/Feature/Enrollment/StudentVisibilityTest.php` › «the list of a section shows a teacher only the students it sees»; `tests/Unit/Enrollment/Application/SectionScopedVisibilityTest.php` › «a teacher sees the students of the sections it teaches in or guides»; `tests/Unit/Enrollment/Application/SectionScopedVisibilityTest.php` › «a coordinator sees the students of the grades it coordinates» |
+| MAT-R08.2 | `tests/Feature/Enrollment/StudentVisibilityTest.php` › «the record of a student of another section does not exist for it»; `tests/Unit/Students/Application/StudentVisibilityRuleTest.php` › «the record of a student not seen does not exist» |
+| MAT-R08.3 | `tests/Feature/Enrollment/StudentVisibilityTest.php` › «leaving the section, it no longer sees them» |
+| MAT-R08.4 | `tests/Feature/Enrollment/StudentVisibilityTest.php` › «whoever manages students or enrollments sees everyone»; `tests/Unit/Enrollment/Application/SectionScopedVisibilityTest.php` › «whoever manages sees everyone, and with no one signed in nothing is narrowed»; `tests/Unit/Students/Application/StudentVisibilityRuleTest.php` › «with no rule, everyone is seen» |
 | MAT-R09.1 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «lists the students of a section by name, with their identification and over capacity reason»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «lists the students of a section» |
 | MAT-R09.2 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «lists the active students without a current enrollment in the year»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «shows the sections of the active year with their figures, and the students left to enroll» |
-| MAT-R09.3 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «gives other modules the current enrollments per section» |
+| MAT-R09.3 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «gives other modules the current enrollments per section»; `tests/Feature/Workspace/HomeEnrollmentBlockTest.php` › «the director sees how many students the sections of the active year have»; `tests/Feature/Workspace/HomeEnrollmentBlockTest.php` › «the coordinator counts only those of the grades it coordinates»; `tests/Feature/Workspace/NavigationRouteParityTest.php` › «an entry shows exactly when its screen opens» |
 | MAT-R10.1 | `tests/Unit/AcademicStructure/Domain/SchoolYearStructureTest.php` › «never removes a section with enrollments, in any state of the year (SPEC-010 MAT-R10.1)»; `tests/Unit/AcademicStructure/Application/SectionsTest.php` › «does not remove a section with enrollments, even if none is current any more (SPEC-010 MAT-R10.1)»; `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «tells the structure the current enrollments of a section, and whether it ever had any»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «a section with enrollments is not removed, not even once they ended» |
 | MAT-R10.2 | `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «tells the structure the current enrollments of a section, and whether it ever had any»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «the capacity of a section does not drop below its current enrollments» |
 | MAT-R11.1 | `tests/Unit/Enrollment/Application/EnrollmentAccessTest.php` › «lets manage, approve exceptions and view only with each permission»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a teacher sees the enrollments but does not enroll, move nor annul» |
@@ -607,5 +607,5 @@ error y cambio de grado durante el año.
 | MAT-NF02 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution sees none of its enrollments»; `tests/Feature/TenantTableTest.php`; `tests/Architecture/LayersTest.php` › «the modules enrollments build on never depend on them» |
 | MAT-NF03 | `tests/Feature/Enrollment/Infrastructure/EnrollmentSchemaTest.php` › «keeps one current enrollment per student and year»; `tests/Isolation/EnrollmentConcurrencyTest.php` › «while one enrollment holds the last place, the other waits; then it finds the section full» |
 | MAT-NF04 | `tests/Feature/Enrollment/NextYearPerformanceTest.php` › «enrolls 600 students in the next year in under 10 seconds» |
-| MAT-NF05 | |
-| MAT-NF06 | |
+| MAT-NF05 | `tests/Feature/Enrollment/VisibilityPerformanceTest.php` › «answers who a teacher sees in under 10 ms, and lists its students in under 300 ms» |
+| MAT-NF06 | `tests/Browser/EnrollmentTest.php` › «each screen of enrollments is accessible»; `tests/Browser/EnrollmentTest.php` › «the enrollment form of a student is accessible while open» |

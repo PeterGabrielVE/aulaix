@@ -13,6 +13,7 @@ const labels = {
     open_term: 'Lapso abierto',
     sections: 'Secciones',
     capacity: 'Cupos',
+    enrolled: 'Inscritos',
     active_students: 'Estudiantes activos',
     staff: 'Personal activo',
 };

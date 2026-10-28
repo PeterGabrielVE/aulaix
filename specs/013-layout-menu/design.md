@@ -453,3 +453,14 @@ que ya existen:
   estructura los encabezados internos suben un nivel.
 - **axe en su nivel más estricto** (todas las severidades, buenas prácticas
   incluidas), por encima del AA que pide NAV-NF04.
+
+### SPEC-010 (inscripción), 2026-10-28
+
+- **Menú:** entrada «Inscripciones» (`MenuEntry::Enrollments`, grupo
+  Estudiantes, con `ver-estudiantes`). La paridad menú–rutas la cubre sin
+  cambios. Los tests que enumeran las entradas ganan la nueva.
+- **Inicio:** el indicador «Inscritos» va junto a «Cupos». Son las
+  inscripciones vigentes de las secciones del año activo, o de los grados
+  del coordinador, por `EnrolledCountsQuery::total()` (Enrollment). Llega en
+  las cifras de la estructura (`StructureSource::overview()`), así que
+  `ShowHomeQuery` no cambia de dependencias.

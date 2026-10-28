@@ -20,8 +20,11 @@ interface StudentDirectory
     /**
      * By family and given names; the search matches names, family names,
      * the identification and former cédulas escolares (EST-R05.3, R02.8).
+     * Only the students of $onlyIds, when given (SPEC-010 MAT-R08).
+     *
+     * @param  ?list<int>  $onlyIds
      */
-    public function page(string $search, bool $includeWithdrawn, int $page, int $perPage): StudentPage;
+    public function page(string $search, bool $includeWithdrawn, int $page, int $perPage, ?array $onlyIds = null): StudentPage;
 
     /**
      * The record, with its health data only when $includeHealth.

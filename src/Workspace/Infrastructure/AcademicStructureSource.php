@@ -7,11 +7,13 @@ namespace AulaX\Workspace\Infrastructure;
 use AulaX\AcademicStructure\Application\MyAssignments\MyAssignmentsQuery;
 use AulaX\AcademicStructure\Application\Overview\CoordinatedGradesQuery;
 use AulaX\AcademicStructure\Application\Overview\StructureOverviewQuery;
+use AulaX\Enrollment\Application\Roster\EnrolledCountsQuery;
 use AulaX\Workspace\Application\Port\StructureSource;
 
 /**
  * Through AcademicStructure's public queries (A-06), which check
- * ver-estructura again (S-04).
+ * ver-estructura again (S-04); and Enrollment's, for the enrolled students
+ * of those sections (SPEC-010).
  */
 final readonly class AcademicStructureSource implements StructureSource
 {
@@ -19,6 +21,7 @@ final readonly class AcademicStructureSource implements StructureSource
         private StructureOverviewQuery $overview,
         private CoordinatedGradesQuery $coordinatedGrades,
         private MyAssignmentsQuery $myAssignments,
+        private EnrolledCountsQuery $enrolled,
     ) {}
 
     public function overview(?array $grades): ?array
@@ -32,6 +35,7 @@ final readonly class AcademicStructureSource implements StructureSource
             'sectionsWithoutGuide' => $overview->sectionsWithoutGuide,
             'subjectsWithoutTeacher' => $overview->subjectsWithoutTeacher,
             'assignmentsOfInactivePeople' => $overview->assignmentsOfInactivePeople,
+            'enrolled' => $this->enrolled->total($overview->schoolYearId, $grades),
         ];
     }
 

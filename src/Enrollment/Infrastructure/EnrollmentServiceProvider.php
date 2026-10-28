@@ -9,6 +9,7 @@ use AulaX\AcademicStructure\Application\Port\RemovalGuard;
 use AulaX\Enrollment\Application\GradedEnrollments;
 use AulaX\Enrollment\Application\Hooks\EndEnrollmentsOnWithdrawal;
 use AulaX\Enrollment\Application\Hooks\EnrollmentRemovalGuard;
+use AulaX\Enrollment\Application\Hooks\SectionScopedVisibility;
 use AulaX\Enrollment\Application\Hooks\UnresolvedResultsGuard;
 use AulaX\Enrollment\Application\Port\AgeRules;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
@@ -20,6 +21,7 @@ use AulaX\Enrollment\Application\Port\StudentFacts;
 use AulaX\Enrollment\Domain\EnrollmentRepository;
 use AulaX\Enrollment\Infrastructure\Persistence\EloquentEnrollmentList;
 use AulaX\Enrollment\Infrastructure\Persistence\EloquentEnrollmentRepository;
+use AulaX\Students\Application\Port\StudentVisibilityRule;
 use AulaX\Students\Application\Port\WithdrawalHook;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Support\ServiceProvider;
@@ -56,6 +58,8 @@ final class EnrollmentServiceProvider extends ServiceProvider
         $this->app->tag([EnrollmentRemovalGuard::class], RemovalGuard::TAG);
         // MAT-R16.2: a year does not close with students lacking their result, nor is deleted with enrollments.
         $this->app->tag([UnresolvedResultsGuard::class], SchoolYearGuard::TAG);
+        // MAT-R08: Docente and Coordinador see the students of their sections or grades.
+        $this->app->tag([SectionScopedVisibility::class], StudentVisibilityRule::TAG);
 
         // Extension point (MAT-R14.3): SPEC-011 tags whether an enrollment has grades.
         $this->app->when(GradedEnrollments::class)

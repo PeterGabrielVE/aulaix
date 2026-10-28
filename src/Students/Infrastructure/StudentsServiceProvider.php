@@ -11,9 +11,11 @@ use AulaX\Students\Application\GuardianAccount\LinkGuardianAccountHandler;
 use AulaX\Students\Application\GuardianAccount\SoleLegalGuardianBlocker;
 use AulaX\Students\Application\Port\GuardianInvitations;
 use AulaX\Students\Application\Port\StudentPermissions;
+use AulaX\Students\Application\Port\StudentVisibilityRule;
 use AulaX\Students\Application\Port\TransferCopier;
 use AulaX\Students\Application\Port\WithdrawalHook;
 use AulaX\Students\Application\StudentDirectory;
+use AulaX\Students\Application\StudentVisibility;
 use AulaX\Students\Application\Transfer\TransferList;
 use AulaX\Students\Application\WithdrawalHooks;
 use AulaX\Students\Domain\Correction\CorrectionRequestRepository;
@@ -59,6 +61,8 @@ final class StudentsServiceProvider extends ServiceProvider
         // Extension point (ADR 0012): SPEC-010 ends the enrollments of a withdrawn student.
         // Bound, not only contextual: the handlers' default (no hooks) would win otherwise.
         $this->app->bind(WithdrawalHooks::class, fn ($app) => new WithdrawalHooks($app->tagged(WithdrawalHook::TAG)));
+        // Extension point (ADR 0012): SPEC-010 narrows the students a teacher sees.
+        $this->app->bind(StudentVisibility::class, fn ($app) => new StudentVisibility($app->tagged(StudentVisibilityRule::TAG)));
     }
 
     public function boot(): void

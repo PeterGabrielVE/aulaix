@@ -21,7 +21,7 @@ it('groups the entries of a Director, without the ones of other roles', function
     expect(menuOf(new Capabilities(DIRECTOR_PERMISSIONS, ['Director'], 'Director')))->toBe([
         ['' => ['home']],
         ['academic' => ['calendar', 'structure']],
-        ['students' => ['students', 'transfers', 'corrections']],
+        ['students' => ['students', 'enrollments', 'transfers', 'corrections']],
         ['institution' => ['institution', 'users', 'audit']],
     ]);
 });
@@ -32,7 +32,7 @@ it('adds the entries of every role and link a person has', function () {
     expect(menuOf($directorWhoTeachesAndIsAGuardian))->toBe([
         ['' => ['home']],
         ['academic' => ['calendar', 'structure', 'my_assignments']],
-        ['students' => ['students', 'transfers', 'corrections', 'my_students']],
+        ['students' => ['students', 'enrollments', 'transfers', 'corrections', 'my_students']],
         ['institution' => ['institution', 'users', 'audit']],
     ]);
 });
@@ -41,7 +41,7 @@ it('shows a teacher its classes and what it may consult', function () {
     expect(menuOf(new Capabilities(['ver-estudiantes', 'ver-estructura'], ['Docente'], 'Docente')))->toBe([
         ['' => ['home']],
         ['academic' => ['structure', 'my_assignments']],
-        ['students' => ['students']],
+        ['students' => ['students', 'enrollments']],
     ]);
 });
 

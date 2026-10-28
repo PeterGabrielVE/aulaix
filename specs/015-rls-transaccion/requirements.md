@@ -1,7 +1,7 @@
 ---
 spec: 015-rls-transaccion
 prefijo: RLT
-estado: aprobada
+estado: implementada
 fecha: 2026-10-26
 ---
 
@@ -271,7 +271,7 @@ Resueltas al aprobar los requisitos (2026-10-26):
 | RLT-R01.1 | `tests/Isolation/TenantPerTransactionTest.php` › «a request of an institution sees its own rows, even outside any transaction of its code»; `tests/Feature/Tenancy/RequestTransactionTest.php` › «the request transaction opens before authentication or route bindings read the database»; `tests/Feature/Tenancy/RequestTransactionTest.php` › «a request of an institution can not answer with a stream» |
 | RLT-R01.2 | `tests/Isolation/TenantPerTransactionTest.php` › «after a request the connection is left with no institution, and sees nothing of it»; `tests/Isolation/TenantPerTransactionTest.php` › «a request that fails with a server error leaves no institution behind»; `tests/Isolation/TenantActivationTest.php` › «the setting disappears when its transaction ends»; `tests/Architecture/LayersTest.php` › «no code sets the institution for a whole connection» |
 | RLT-R01.3 | `tests/Isolation/TenantPerTransactionTest.php` › «after a request the connection is left with no institution, and sees nothing of it»; `tests/Isolation/TenantPerTransactionTest.php` › «a request of another institution on the same connection sees nothing of the first» |
-| RLT-R01.4 | |
+| RLT-R01.4 | `tests/Isolation/PgBouncerLeakTest.php` › «what one client sets inside its transaction is never seen by the next client of the pool»; `tests/Isolation/PgBouncerLeakTest.php` › «a setting for the whole connection, the old way, does reach the next client: why the pool needs ADR 0011» |
 | RLT-R01.5 | `tests/Isolation/TenantPerTransactionTest.php` › «a savepoint rolled back inside a request keeps the institution of the request» |
 | RLT-R01.6 | `tests/Isolation/TenantPerTransactionTest.php` › «the central domain, right after a request of an institution, sees nothing» |
 | RLT-R02.1 | `tests/Feature/Tenancy/Infrastructure/TenantWithinTest.php` › «within() acts in the other institution, then gives back the previous one»; `tests/Feature/Tenancy/Infrastructure/TenantWithinTest.php` › «within() gives back the previous institution, or none, also when it fails»; `tests/Isolation/TenantActivationTest.php` › «within() outside any transaction opens its own and leaves no institution after it»; `tests/Architecture/LayersTest.php` › «no code activates an institution by hand; requests use forRequest() and switches within()» |
@@ -293,8 +293,8 @@ Resueltas al aprobar los requisitos (2026-10-26):
 | RLT-R06.3 | `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «the invitation keeps waiting, and is accepted once the email is consolidated (RLT-R06.3, R06.4)» |
 | RLT-R06.4 | `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «joins institutions only once its email is no longer waiting for consolidation (RLT-R06)»; `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «the invitation keeps waiting, and is accepted once the email is consolidated (RLT-R06.3, R06.4)» |
 | RLT-R06.5 | `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «refuses to join an institution while its email waits for consolidation, saying what to do (RLT-R06.1, R06.2, R06.5)»; `tests/Feature/IdentityAccess/InvitationConsolidationTest.php` › «kept separate: asks for an invitation to another email (RLT-R06.5)» |
-| RLT-NF01 | |
+| RLT-NF01 | `--group=rls` con `phpunit.pgbouncer.xml` (job `rls-pgbouncer` de `.github/workflows/ci.yml`); `tests/Isolation/PgBouncerLeakTest.php` › «what one client sets inside its transaction is never seen by the next client of the pool» |
 | RLT-NF02 | `tests/Architecture/LayersTest.php` › «no code sets the institution for a whole connection»; `tests/Architecture/LayersTest.php` › «only the activator writes the institution Row Level Security applies» |
 | RLT-NF03 | `tests/Isolation/RlsOverheadTest.php` › «holding the institution in the request transaction costs under 5 ms (p95)» |
-| RLT-NF04 | |
+| RLT-NF04 | Suite completa, `rls`, `perf` y navegador sin cambios de lógica; única excepción expresa: cuatro aserciones de `tests/Feature/IdentityAccess/HandoffTest.php` (URL del login central con `?plantel=`, RLT-R04.2) |
 | RLT-NF05 | `tests/Feature/IdentityAccess/HandoffBindingTest.php` › «the refusal says nothing about why (RLT-R04.3, NF05)»; `tests/Unit/IdentityAccess/Domain/Account/AccountTest.php` › «says on which field and in which state the join was refused» |

@@ -1,6 +1,6 @@
 ---
 spec: 015-rls-transaccion
-estado: aprobada
+estado: implementada
 fecha: 2026-10-26
 requisitos: requirements.md
 ---
@@ -293,7 +293,7 @@ el test lo comprueba.
 | Cookie del dominio padre para ligar el traspaso | Compartir la sesión entre subdominios (`SESSION_DOMAIN=.APP_DOMAIN`) | Compartir la sesión rompería el aislamiento de la sesión de cada plantel (TEN, IDG-R03.9). La cookie solo lleva un secreto aleatorio, inútil sin un token emitido para él. |
 | Quemar el token solo tras validar el navegador | Quemarlo siempre al primer uso | Si no, un tercero que abre el enlace deja al titular sin traspaso. Sigue siendo de un solo uso para el navegador correcto. |
 | *Trigger* de transición sin privilegios | `WITH CHECK` más estricto, solo | `WITH CHECK` no ve el valor anterior: no distingue «responder» de «cambiar el origen». |
-| PgBouncer 1.21+ con `max_prepared_statements` | Preparaciones emuladas en PDO | Mantiene las consultas preparadas del servidor y no cambia el comportamiento de PDO entre entornos. |
+| Preparaciones emuladas en PDO detrás de un pool (`DB_EMULATE_PREPARES=true`, `max_prepared_statements = 0`) | PgBouncer 1.21+ con `max_prepared_statements` | El pool reutiliza una consulta preparada antes de un cambio de esquema y PostgreSQL responde «cached plan must not change result type»: en los tests, porque las migraciones pasan por el pool; en producción, tras cada despliegue con migraciones. Con las emuladas, los valores se siguen escapando y el servidor no guarda planes entre clientes. *Cambiada en el PR B (P-04, aprobada el 2026-10-27); antes era la alternativa descartada.* |
 
 ## Cambios en otras specs y módulos
 
@@ -381,6 +381,24 @@ el test lo comprueba.
 - **Coste:** `RlsOverheadTest` mide `forRequest()` frente a la misma
   consulta sin él, sobre confirmaciones reales (`tests/Isolation`, grupos
   `rls` y `perf`).
+
+### PR B
+
+- **Preparaciones emuladas detrás del pool** (cambio de la decisión de
+  diseño sobre PgBouncer, aprobado el 2026-10-27, P-04). Con
+  `max_prepared_statements`, PgBouncer reutilizaba entre clientes una
+  consulta preparada antes de las migraciones de los tests, y PostgreSQL
+  respondía «cached plan must not change result type». `config/database.php`
+  activa `PDO::ATTR_EMULATE_PREPARES` con `DB_EMULATE_PREPARES=true`, que solo
+  se pone detrás de un pool (`phpunit.pgbouncer.xml`); `pgbouncer.ini` lleva
+  `max_prepared_statements = 0`. Sin la variable, nada cambia.
+- **PgBouncer 1.22 de Alpine 3.20**, con `USER nobody`, en el perfil
+  `pgbouncer` de `docker-compose.yml`. En CI se instala con `apt` en el job
+  `rls-pgbouncer`, que corre `--group=rls`; `tests/Isolation` forma parte de
+  ese grupo.
+- **`PgBouncerLeakTest` se salta** salvo por el puerto 6432. Su segundo test
+  deja en verde la prueba en rojo que pedía T-09: con el ajuste por
+  conexión antiguo, el plantel sí llega al siguiente cliente del pool.
 
 ### PR C
 

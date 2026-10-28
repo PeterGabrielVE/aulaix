@@ -122,8 +122,12 @@ Ese ajuste falla en tres casos que SPEC-015 exige cubrir (RLT-R01 – R03):
     dentro de un *savepoint*. Los repositorios que capturan errores de
     unicidad ya lo hacen dentro de `TransactionManager::run`, y los tests
     lo confirman porque ya corren dentro de una transacción.
-  - **Los PDO *prepared statements* nombrados** necesitan PgBouncer 1.21 o
-    posterior, con `max_prepared_statements`, o preparaciones emuladas.
+  - **Detrás de un pool, PDO emula las consultas preparadas**
+    (`DB_EMULATE_PREPARES=true`) y PgBouncer no las guarda
+    (`max_prepared_statements = 0`). Con `max_prepared_statements`, el pool
+    reutiliza una consulta preparada antes de una migración y PostgreSQL
+    responde «cached plan must not change result type» hasta que el pool
+    renueve sus conexiones (SPEC-015, PR B).
   - **Un coste fijo por petición de plantel** (`BEGIN`, `set_config`,
     `COMMIT`). SPEC-015 lo limita a 5 ms en el p95 (RLT-NF03).
   - **Las respuestas en streaming** que lean la base de datos después de

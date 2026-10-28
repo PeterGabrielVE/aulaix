@@ -1,6 +1,6 @@
 ---
 spec: 015-rls-transaccion
-estado: implementando
+estado: implementada
 fecha: 2026-10-26
 diseño: design.md
 ---
@@ -139,9 +139,10 @@ de los dos.
 
 ### Fase 4 — Infraestructura de pruebas
 
-- [ ] **T-09** — PgBouncer en desarrollo y en CI:
+- [x] **T-09** — PgBouncer en desarrollo y en CI:
   - servicio `pgbouncer` (1.21 o posterior, `pool_mode=transaction`,
-    `max_prepared_statements`) en `docker-compose.yml`;
+    `max_prepared_statements = 0`) en `docker-compose.yml`, con PDO en
+    preparaciones emuladas (`DB_EMULATE_PREPARES`; ver design.md);
   - `phpunit.pgbouncer.xml`, con `DB_HOST=pgbouncer`;
   - job `rls-pgbouncer` en `.github/workflows/ci.yml`, que corre
     `--group=rls` y `tests/Isolation`.
@@ -238,19 +239,19 @@ de los dos.
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls`,
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls`,
   `--group=perf` y `tests/Isolation`), y tests de navegador en verde.
-- [ ] `--group=rls` y `tests/Isolation` en verde contra PgBouncer
+- [x] `--group=rls` y `tests/Isolation` en verde contra PgBouncer
   (`phpunit.pgbouncer.xml`) y en el job de CI.
-- [ ] Tests de arquitectura en verde:
+- [x] Tests de arquitectura en verde:
   - sin `set_config(..., false)` sobre el plantel;
   - `activate()` solo desde `ResolveTenant`;
   - orden de middleware.
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
-- [ ] `migrate:fresh --seed` y rollback de la migración nueva.
-- [ ] Matriz de trazabilidad completa.
-- [ ] `/security-review` de cada PR (tenancy y autenticación; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
+- [x] `migrate:fresh --seed` y rollback de la migración nueva.
+- [x] Matriz de trazabilidad completa.
+- [x] `/security-review` de cada PR (tenancy y autenticación; S-12).
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

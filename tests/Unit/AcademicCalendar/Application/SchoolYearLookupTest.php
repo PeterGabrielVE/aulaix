@@ -5,6 +5,9 @@ use AulaX\AcademicCalendar\Domain\DateRange;
 use AulaX\AcademicCalendar\Domain\SchoolYear;
 use AulaX\AcademicCalendar\Domain\SchoolYearId;
 use AulaX\AcademicCalendar\Domain\SchoolYearStatus;
+use AulaX\AcademicCalendar\Domain\Term;
+use AulaX\AcademicCalendar\Domain\TermNumber;
+use AulaX\AcademicCalendar\Domain\TermStatus;
 use Tests\Fixtures\AcademicCalendar\InMemorySchoolYearRepository;
 
 /**
@@ -46,4 +49,35 @@ it('finds the year just before another one', function () {
 
     expect($lookup->previousOf(3))->toBe(2)
         ->and($lookup->previousOf(1))->toBeNull();
+});
+
+it('finds the year just after another one (SPEC-010)', function () {
+    $lookup = lookupOver([1 => [2024, SchoolYearStatus::Closed], 2 => [2025, SchoolYearStatus::Active], 4 => [2027, SchoolYearStatus::Planned], 3 => [2026, SchoolYearStatus::Planned]]);
+
+    expect($lookup->nextOf(2))->toBe(3)
+        ->and($lookup->nextOf(4))->toBeNull()
+        ->and($lookup->nextOf(9))->toBeNull();
+});
+
+it('tells when a year starts, for the age at its cutoff (SPEC-010)', function () {
+    $lookup = lookupOver([2 => [2026, SchoolYearStatus::Active]]);
+
+    expect($lookup->startOf(2)?->format('Y-m-d'))->toBe('2026-09-16')
+        ->and($lookup->startOf(9))->toBeNull();
+});
+
+it('tells whether the last term of a year is closed (SPEC-010)', function () {
+    $repository = new InMemorySchoolYearRepository;
+    $terms = fn (TermStatus $third) => [
+        new Term(TermNumber::of(1), DateRange::fromStrings('2026-09-16', '2026-12-15'), TermStatus::Closed),
+        new Term(TermNumber::of(2), DateRange::fromStrings('2027-01-07', '2027-03-31'), TermStatus::Closed),
+        new Term(TermNumber::of(3), DateRange::fromStrings('2027-04-12', '2027-07-15'), $third),
+    ];
+    $repository->years[2] = SchoolYear::reconstitute(SchoolYearId::fromInt(2), DateRange::fromStrings('2026-09-16', '2027-07-15'), SchoolYearStatus::Active, $terms(TermStatus::Closed));
+    $repository->years[3] = SchoolYear::reconstitute(SchoolYearId::fromInt(3), DateRange::fromStrings('2027-09-16', '2028-07-15'), SchoolYearStatus::Active, $terms(TermStatus::Open));
+    $lookup = new SchoolYearLookup($repository);
+
+    expect($lookup->lastTermClosed(2))->toBeTrue()
+        ->and($lookup->lastTermClosed(3))->toBeFalse()
+        ->and($lookup->lastTermClosed(9))->toBeFalse();
 });

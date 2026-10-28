@@ -11,6 +11,7 @@ use AulaX\IdentityAccess\Application\Members\ListMembersHandler;
 use AulaX\IdentityAccess\Application\Members\MemberDirectory;
 use AulaX\IdentityAccess\Application\Members\MemberView;
 use AulaX\IdentityAccess\Application\Members\SetClosedTermGradeEditingHandler;
+use AulaX\IdentityAccess\Application\Members\SetEnrollmentManagementHandler;
 use AulaX\IdentityAccess\Application\Members\UpdateMemberCommand;
 use AulaX\IdentityAccess\Application\Members\UpdateMemberHandler;
 use AulaX\IdentityAccess\Domain\Account\AccountId;
@@ -80,6 +81,8 @@ class UserController extends Controller
             'roles' => $roles->available()->inPriorityOrder(),
             // CAL-R05.4: only an Administrador sees and changes the special permission.
             'canGrantClosedTermEditing' => $policy->closedTermGradeEditing($roles->rolesOf(AccountId::fromInt((int) $request->user()->getAuthIdentifier()))) === null,
+            // SPEC-010 MAT-R11.3: the same, for managing enrollments.
+            'canGrantEnrollmentManagement' => $policy->enrollmentManagementGranting($roles->rolesOf(AccountId::fromInt((int) $request->user()->getAuthIdentifier()))) === null,
         ]);
     }
 
@@ -91,6 +94,18 @@ class UserController extends Controller
         $request->validate(['allowed' => ['required', 'boolean']]);
 
         $setClosedTermGradeEditing((int) $request->user()->getAuthIdentifier(), $user, $request->boolean('allowed'));
+
+        return back()->with('success', 'Se guardó el permiso.');
+    }
+
+    /**
+     * SPEC-010 MAT-R11.3.
+     */
+    public function setEnrollmentManagement(Request $request, int $user, SetEnrollmentManagementHandler $setEnrollmentManagement): RedirectResponse
+    {
+        $request->validate(['allowed' => ['required', 'boolean']]);
+
+        $setEnrollmentManagement((int) $request->user()->getAuthIdentifier(), $user, $request->boolean('allowed'));
 
         return back()->with('success', 'Se guardó el permiso.');
     }
@@ -119,6 +134,7 @@ class UserController extends Controller
             'roles' => $member->roles,
             'status' => $member->active ? 'active' : 'inactive',
             'canEditClosedTermGrades' => $member->canEditClosedTermGrades,
+            'canManageEnrollments' => $member->canManageEnrollments,
         ];
     }
 

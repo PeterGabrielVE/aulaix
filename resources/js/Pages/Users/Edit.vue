@@ -20,6 +20,11 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    // SPEC-010 MAT-R11.3: so is managing enrollments, person by person.
+    canGrantEnrollmentManagement: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const form = useForm({
@@ -33,6 +38,12 @@ const closedTermForm = useForm({ allowed: props.user.canEditClosedTermGrades });
 
 const saveClosedTermPermission = () => {
     closedTermForm.put(route('users.closed-term-grades', props.user.id), { preserveScroll: true });
+};
+
+const enrollmentForm = useForm({ allowed: props.user.canManageEnrollments });
+
+const saveEnrollmentPermission = () => {
+    enrollmentForm.put(route('users.enrollment-management', props.user.id), { preserveScroll: true });
 };
 
 const submit = () => {
@@ -93,6 +104,22 @@ const submit = () => {
                         </p>
                         <InputError :message="closedTermForm.errors.closed_term_grades" />
                         <PrimaryButton :disabled="closedTermForm.processing">Guardar permiso</PrimaryButton>
+                    </form>
+                </div>
+
+                <div v-if="canGrantEnrollmentManagement" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-8">
+                    <form class="max-w-xl space-y-3" @submit.prevent="saveEnrollmentPermission">
+                        <h3 class="text-lg font-medium text-gray-900">Inscripciones</h3>
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <input v-model="enrollmentForm.allowed" type="checkbox" class="rounded-sm border-gray-300" />
+                            Puede inscribir estudiantes en este plantel
+                        </label>
+                        <p class="text-sm text-gray-600">
+                            Además de Administrador y Director. Las excepciones (edad fuera
+                            de rango, cambio de grado) siguen siendo de un directivo.
+                        </p>
+                        <InputError :message="enrollmentForm.errors.enrollment_management" />
+                        <PrimaryButton :disabled="enrollmentForm.processing">Guardar permiso</PrimaryButton>
                     </form>
                 </div>
             </div>

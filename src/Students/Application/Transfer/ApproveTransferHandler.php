@@ -13,6 +13,7 @@ use AulaX\Students\Application\Port\StudentPermissions;
 use AulaX\Students\Application\Port\TransferCopier;
 use AulaX\Students\Application\StudentAccess;
 use AulaX\Students\Application\StudentAudit;
+use AulaX\Students\Application\WithdrawalHooks;
 use AulaX\Students\Domain\Guardian\GuardianRepository;
 use AulaX\Students\Domain\Student\Guardianship;
 use AulaX\Students\Domain\Student\Student;
@@ -43,6 +44,7 @@ final readonly class ApproveTransferHandler
         private Clock $clock,
         private AuditTrail $audit,
         private TransactionManager $transactions,
+        private WithdrawalHooks $hooks = new WithdrawalHooks([]),
     ) {}
 
     /**
@@ -71,6 +73,7 @@ final readonly class ApproveTransferHandler
             $student->withdraw($withdrawal);
             $this->students->save($student);
             $this->audit->record(StudentAudit::withdrawn($student, $withdrawal));
+            $this->hooks->studentWithdrawn($student->id()?->value ?? throw new LogicException('A saved student has an id.'), $withdrawal->withdrawnOn, true);
 
             try {
                 $this->copier->copyTo($request->destinationId(), $this->dataOf($student, $origin->name));

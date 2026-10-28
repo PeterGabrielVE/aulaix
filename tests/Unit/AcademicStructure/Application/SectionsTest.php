@@ -120,6 +120,14 @@ it('removes a section, unless it has students in the active year', function () {
         ->and($this->scene->audit->types())->toContain('structure.section.removed');
 });
 
+it('does not remove a section with enrollments, even if none is current any more (SPEC-010 MAT-R10.1)', function () {
+    $this->scene->year(3, 2027, SchoolYearStatus::Planned);
+    $id = createSection(year: 3);
+    $this->scene->withEnrollments[] = $id;
+
+    expect(fn () => removeSection($id))->toThrow(StructureInUse::class, 'La sección tiene estudiantes inscritos.');
+});
+
 it('answers not found for a section it does not have', function () {
     expect(fn () => removeSection(99))->toThrow(SectionNotFound::class);
 });

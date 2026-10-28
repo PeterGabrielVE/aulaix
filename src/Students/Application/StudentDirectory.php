@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AulaX\Students\Application;
 
+use AulaX\Students\Application\Enrollable\EnrollableStudent;
 use AulaX\Students\Application\FindGuardian\GuardianView;
 use AulaX\Students\Application\ListStudents\StudentListItem;
 use AulaX\Students\Application\ListStudents\StudentPage;
@@ -44,4 +45,13 @@ interface StudentDirectory
      * @return list<string>
      */
     public function soleLegalGuardianOf(int $guardianId): array;
+
+    /**
+     * The students with these ids, or every active one when null, by family
+     * and given names (SPEC-010).
+     *
+     * @param  ?list<int>  $ids
+     * @return list<EnrollableStudent>
+     */
+    public function enrollable(?array $ids): array;
 }

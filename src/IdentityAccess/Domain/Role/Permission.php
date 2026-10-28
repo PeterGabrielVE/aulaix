@@ -31,6 +31,12 @@ enum Permission: string
     /** SPEC-008 EAC-R08.1: seeing that structure. */
     case ViewStructure = 'ver-estructura';
 
+    /** SPEC-010 MAT-R11: enrolling, moving and annulling enrollments; granted to other members person by person (MAT-R11.3). */
+    case ManageEnrollments = 'gestionar-inscripciones';
+
+    /** SPEC-010 MAT-R11.5: the directive who approves an age exception, a change of grade or a late annulment. */
+    case ApproveEnrollmentExceptions = 'aprobar-excepciones-inscripcion';
+
     /** SPEC-007 CAL-R05.2: grades of a closed term. Granted person by person, never by a base role (CAL-R05.4). */
     case EditClosedTermGrades = 'editar-notas-lapso-cerrado';
 }

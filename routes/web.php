@@ -13,6 +13,8 @@ use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
 use App\Http\Controllers\CorrectionController;
+use App\Http\Controllers\EnrollmentChangeController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GeographyController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\GuardianPortalController;
@@ -290,6 +292,21 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
                 Route::delete('/estructura/{year}/coordinadores/{account}/{level}', [AssignmentController::class, 'removeCoordinator'])
                     ->whereNumber('account')->where('level', '[a-z_]+')->name('structure.coordinators.destroy');
             });
+        // SPEC-010: the enrollments of each school year.
+        Route::whereNumber(['year', 'section', 'enrollment'])->group(function () {
+            Route::middleware('permission:ver-estudiantes')->group(function () {
+                Route::get('/inscripciones', [EnrollmentController::class, 'index'])->name('enrollments.index');
+                Route::get('/inscripciones/{year}/secciones/{section}', [EnrollmentController::class, 'section'])->name('enrollments.section');
+            });
+            Route::middleware(['permission:gestionar-inscripciones', 'throttle:60,1'])->group(function () {
+                Route::post('/inscripciones', [EnrollmentController::class, 'store'])->name('enrollments.store');
+                Route::post('/inscripciones/{enrollment}/seccion', [EnrollmentChangeController::class, 'section'])->name('enrollments.change-section');
+                Route::post('/inscripciones/{enrollment}/anular', [EnrollmentChangeController::class, 'annul'])->name('enrollments.annul');
+            });
+            Route::post('/inscripciones/{enrollment}/grado', [EnrollmentChangeController::class, 'grade'])
+                ->middleware(['permission:aprobar-excepciones-inscripcion', 'throttle:60,1'])->name('enrollments.change-grade');
+        });
+
         // SPEC-008 EAC-R08.2, for the teachers; SPEC-013 NAV-R03.3: as its menu entry.
         Route::get('/mis-asignaciones', MyAssignmentsController::class)->middleware('role:Docente')->name('my-assignments');
 
@@ -344,6 +361,9 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
             Route::put('/users/{user}/permiso-lapsos-cerrados', [UserController::class, 'setClosedTermGrades'])
                 ->whereNumber('user')
                 ->name('users.closed-term-grades');
+            Route::put('/users/{user}/permiso-inscripciones', [UserController::class, 'setEnrollmentManagement'])
+                ->whereNumber('user')
+                ->name('users.enrollment-management');
 
             Route::get('/invitations/{invitation}/edit', [InvitationController::class, 'edit'])
                 ->whereNumber('invitation')->name('invitations.edit');

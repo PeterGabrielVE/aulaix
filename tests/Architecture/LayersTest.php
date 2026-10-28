@@ -13,6 +13,8 @@ use App\Http\Controllers\Central\ConsolidationController;
 use App\Http\Controllers\Central\InstitutionsController;
 use App\Http\Controllers\Central\LoginController as CentralLoginController;
 use App\Http\Controllers\CorrectionController;
+use App\Http\Controllers\EnrollmentChangeController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GeographyController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\GuardianPortalController;
@@ -102,6 +104,9 @@ const MIGRATED_CONTROLLERS = [
     SectionController::class,
     AssignmentController::class,
     MyAssignmentsController::class,
+    // SPEC-010
+    EnrollmentController::class,
+    EnrollmentChangeController::class,
     // SPEC-014
     PlatformLoginController::class,
     PlatformInvitationController::class,
@@ -324,6 +329,18 @@ arch('Workspace has no tables nor writes of its own', function () {
     // ADR 0009, SPEC-013 NAV-NF01: a composed view reads through the
     // Application layer of the modules that own the data.
     expect('AulaX\Workspace')->not->toUse(['Illuminate\Database', 'Illuminate\Support\Facades\DB', 'Illuminate\Support\Facades\Schema']);
+});
+
+arch('the modules enrollments build on never depend on them', function () {
+    // ADR 0012, SPEC-010: Enrollment reacts inside their writes through
+    // their extension points; the dependency goes one way only.
+    expect(['AulaX\Students', 'AulaX\AcademicStructure', 'AulaX\AcademicCalendar'])->not->toUse('AulaX\Enrollment');
+});
+
+arch('only the provider of Enrollment puts its reactions under the extension points', function () {
+    // ADR 0012: the provider of the module that implements an extension
+    // point is the only place that tags it.
+    expect('AulaX\Enrollment\Application\Hooks')->toOnlyBeUsedIn('AulaX\Enrollment\Infrastructure\EnrollmentServiceProvider');
 });
 
 arch('every file in src declares strict types')

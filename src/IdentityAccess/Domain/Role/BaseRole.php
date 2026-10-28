@@ -26,7 +26,7 @@ enum BaseRole: string
         return match ($this) {
             // Every permission but the one granted person by person (CAL-R05.4).
             self::Administrador => array_values(array_filter(Permission::cases(), fn (Permission $permission) => $permission !== Permission::EditClosedTermGrades)),
-            self::Director => [Permission::ManageUsers, Permission::ViewStudents, Permission::ViewGrades, Permission::ViewAuditLog, Permission::ManageCalendar, Permission::ViewInstitution, Permission::ManageStudents, Permission::ManageStructure, Permission::ViewStructure],
+            self::Director => [Permission::ManageUsers, Permission::ViewStudents, Permission::ViewGrades, Permission::ViewAuditLog, Permission::ManageCalendar, Permission::ViewInstitution, Permission::ManageStudents, Permission::ManageStructure, Permission::ViewStructure, Permission::ManageEnrollments, Permission::ApproveEnrollmentExceptions],
             self::Coordinador, self::Docente => [Permission::ViewStudents, Permission::ManageGrades, Permission::ViewGrades, Permission::ViewStructure],
             self::Representante, self::Estudiante => [Permission::ViewGrades],
         };

@@ -515,3 +515,16 @@ Ajustes del PR C (cuenta del representante), sin cambiar ningún criterio:
 - **Correcciones sin bitácora.** Son mensajes, no cambios de datos; el
   cambio real se hace en la ficha y queda en la bitácora por su caso de
   uso.
+
+### SPEC-010 (inscripción), 2026-10-28
+
+- **Punto de extensión `WithdrawalHook`** (ADR 0012).
+  `WithdrawStudentHandler` y `ApproveTransferHandler` lo llaman dentro de su
+  transacción: Enrollment termina la inscripción del estudiante, y si falla,
+  el retiro o el traslado no ocurren (MAT-R05.5). `WithdrawalHooks` se
+  enlaza en el contenedor, no solo de forma contextual: si no, el valor por
+  omisión del constructor (ningún aviso) ganaría.
+- **Consulta pública `EnrollableStudentsQuery`:** estado, fecha de
+  nacimiento, nombre e identificación, nunca la salud.
+- **La visibilidad de Docente y Coordinador** (MAT-R08) llega en el PR C de
+  SPEC-010.

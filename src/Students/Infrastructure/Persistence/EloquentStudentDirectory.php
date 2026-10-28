@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AulaX\Students\Infrastructure\Persistence;
 
+use AulaX\Students\Application\Enrollable\EnrollableStudent;
 use AulaX\Students\Application\FindGuardian\GuardianView;
 use AulaX\Students\Application\ListStudents\StudentListItem;
 use AulaX\Students\Application\ListStudents\StudentPage;
@@ -48,6 +49,27 @@ final class EloquentStudentDirectory implements StudentDirectory
             $page,
             $perPage,
         );
+    }
+
+    public function enrollable(?array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return DB::table('students')
+            ->when($ids === null, fn (Builder $query) => $query->where('status', 'active'))
+            ->when($ids !== null, fn (Builder $query) => $query->whereIn('id', $ids))
+            ->orderByRaw('family_names collate "es-x-icu", given_names collate "es-x-icu", id')
+            ->get(['id', 'given_names', 'family_names', 'identification', 'birth_date', 'status'])
+            ->map(fn (object $row) => new EnrollableStudent(
+                (int) $row->id,
+                "{$row->family_names}, {$row->given_names}",
+                $row->identification,
+                (string) $row->birth_date,
+                $row->status === 'active',
+            ))
+            ->all();
     }
 
     public function student(int $id, bool $includeHealth): ?StudentView

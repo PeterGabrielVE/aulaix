@@ -61,7 +61,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [007 Año escolar y lapsos](007-anio-escolar/) | `AcademicCalendar` | implementada | implementada | implementada |
 | [008 Estructura académica](008-estructura-academica/) | `AcademicStructure` | implementada | implementada | implementada |
 | [009 Estudiantes y representantes](009-estudiantes/) | `Students` | implementada | implementada | implementada |
-| [010 Inscripción y prosecución](010-inscripcion/) | `Enrollment` (nuevo) | aprobada | aprobada | borrador |
+| [010 Inscripción y prosecución](010-inscripcion/) | `Enrollment` (nuevo) | aprobada | aprobada | implementando (PR A) |
 | [013 Layout, menú e inicio por rol](013-layout-menu/) | `Workspace` (nuevo), `app/` | implementada | implementada | implementada |
 | [014 Superadministración de plataforma](014-superadministracion/) | `Platform` (nuevo) | implementada | implementada | implementada |
 | [015 RLS por transacción y cierre de la revisión de seguridad](015-rls-transaccion/) | `Tenancy` (transversal), `IdentityAccess`, `Students` | implementada | implementada | implementada |

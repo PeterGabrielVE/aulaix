@@ -154,18 +154,19 @@ final class SchoolYearStructure
 
     /**
      * With its teacher assignments (EAC-R02.7); not from an active year while
-     * it has students (EAC-R07.3).
+     * it has students (EAC-R07.3), and never once it has enrollments, current
+     * or not (SPEC-010 MAT-R10.1).
      *
      * @return Section The removed section.
      *
      * @throws StructureInUse
      */
-    public function removeSection(int $sectionId, bool $inUse): Section
+    public function removeSection(int $sectionId, bool $inUse, bool $hasEnrollments = false): Section
     {
         $this->assertWritable();
         $section = $this->section($sectionId);
 
-        if ($inUse && $this->status === YearStatus::Active) {
+        if ($hasEnrollments || ($inUse && $this->status === YearStatus::Active)) {
             throw StructureInUse::section();
         }
 

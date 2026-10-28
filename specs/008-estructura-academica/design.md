@@ -357,3 +357,16 @@ Ajustes hechos al implementar el PR B, también sin cambiar criterios:
 - **Entrada «Mis asignaciones» del menú.** Se muestra a quien tiene el rol
   Docente en el plantel (`auth.isTeacher`, compartido por Inertia). La
   página está abierta a cualquier miembro, y cada uno ve solo lo suyo.
+
+### SPEC-010 (inscripción), 2026-10-28
+
+- **EAC-R02.6 y EAC-R07.3 se activan.** Enrollment registra
+  `EnrollmentRemovalGuard` bajo `RemovalGuard::TAG` (ADR 0012).
+- **`RemovalGuard` gana `hasEnrollments()`.** Una sección con cualquier
+  inscripción, vigente, terminada o anulada, no se quita en ningún estado
+  del año (MAT-R10.1); la clave foránea es `RESTRICT`.
+  `SchoolYearStructure::removeSection()` recibe ese dato aparte de
+  `inUse`, así que la regla de SPEC-008 (en un año planificado se puede
+  quitar lo que está en uso) no cambia y sus tests tampoco.
+- **Consultas públicas nuevas:** `GradesQuery` (los 17 grados con su nivel y
+  nombre) y `CurriculumQuery` (el pensum de un grado y año).

@@ -50,6 +50,9 @@ final class StructureScene
     /** Students enrolled per section id, as SPEC-010 would tell. */
     public array $enrolled = [];
 
+    /** Section ids with enrollments, current or not, as SPEC-010 would tell. */
+    public array $withEnrollments = [];
+
     /** Subject ids with grades, as SPEC-011 would tell. */
     public array $graded = [];
 
@@ -107,6 +110,11 @@ final class StructureScene
             public function enrolledIn(int $sectionId): int
             {
                 return $this->scene->enrolled[$sectionId] ?? 0;
+            }
+
+            public function hasEnrollments(int $sectionId): bool
+            {
+                return in_array($sectionId, $this->scene->withEnrollments, true);
             }
 
             public function subjectsInUse(int $schoolYearId, string $grade, array $subjectIds): array

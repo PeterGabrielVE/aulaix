@@ -13,6 +13,8 @@ import { day, identificationLabels, relationshipLabels, sexLabels, statusLabels,
 const props = defineProps({
     student: { type: Object, required: true },
     canManage: { type: Boolean, required: true },
+    // SPEC-010 MAT-R04.6, R14.6: where it was enrolled, oldest first.
+    enrollments: { type: Array, default: () => [] },
 });
 
 const healthForm = useForm({
@@ -138,6 +140,17 @@ const selectClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focu
                         <div><InputLabel for="disability" value="Discapacidad" /><textarea id="disability" v-model="healthForm.disability" rows="2" maxlength="1000" :class="selectClass" /><InputError :message="healthForm.errors.disability" /></div>
                         <PrimaryButton :disabled="healthForm.processing">Guardar datos de salud</PrimaryButton>
                     </form>
+                </section>
+
+                <section v-if="enrollments.length" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">
+                    <h3 class="mb-4 text-lg font-medium text-gray-900">Inscripciones</h3>
+                    <ul class="space-y-1 text-sm text-gray-700">
+                        <li v-for="enrollment in enrollments" :key="enrollment.enrollmentId">
+                            {{ enrollment.gradeName }} · Sección {{ enrollment.letter }}: desde el {{ day(enrollment.startsOn) }}<span v-if="enrollment.endsOn"> hasta el {{ day(enrollment.endsOn) }}</span>
+                            <span v-if="enrollment.current" class="ml-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Vigente</span>
+                            <span v-else-if="enrollment.endReason"> · {{ enrollment.endReason }}<span v-if="enrollment.endNote">: {{ enrollment.endNote }}</span><span v-if="enrollment.annulmentReason">: {{ enrollment.annulmentReason }}<span v-if="enrollment.annulmentNote"> ({{ enrollment.annulmentNote }})</span></span></span>
+                        </li>
+                    </ul>
                 </section>
 
                 <section v-if="canManage || student.withdrawals.length" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">

@@ -73,7 +73,7 @@ prosecución con las decisiones de abajo.
 | Pregunta | Decisión |
 |----------|----------|
 | Alcance | Inscripción y prosecución manual: el gestor indica el resultado; SPEC-011 lo propondrá a partir de las notas. |
-| Quién inscribe | Permiso nuevo `gestionar-inscripciones`, para Administrador y Director; el Administrador puede concederlo a otros roles (p. ej. la secretaría). |
+| Quién inscribe | Permiso nuevo `gestionar-inscripciones`, para Administrador y Director; el Administrador puede concederlo a otros miembros, persona por persona (p. ej. la secretaria). |
 | Sección llena | Se permite inscribir por encima del cupo indicando un motivo, que queda en la bitácora. |
 | Prosecución en Educación Inicial | Maternal y Preescolar no se repiten: el estudiante siempre es promovido. |
 | Prosecución en Primaria | Promovido o repite. Con SPEC-011, repite quien tenga literal E; con A – D es promovido. |
@@ -364,8 +364,11 @@ inexistentes.
   `gestionar-inscripciones`.
 - **MAT-R11.2** — El sistema deberá incluir `gestionar-inscripciones` en los
   roles Administrador y Director, también en los planteles existentes.
-- **MAT-R11.3** — El sistema deberá permitir al Administrador conceder
-  `gestionar-inscripciones` a otros roles del plantel.
+- **MAT-R11.3** — El sistema deberá permitir al Administrador conceder y
+  retirar `gestionar-inscripciones` a otros miembros del plantel, persona
+  por persona, como `editar-notas-lapso-cerrado` (CAL-R05.4). *Cambiado en
+  la implementación (P-04, 2026-10-28): no existe una gestión de permisos
+  por rol.*
 - **MAT-R11.4** — Si alguien sin el permiso intenta una de esas acciones,
   entonces el sistema deberá rechazarla sin cambiar nada.
 - **MAT-R11.5** — El sistema deberá incluir `aprobar-excepciones-inscripcion`
@@ -519,37 +522,37 @@ error y cambio de grado durante el año.
 
 | Criterio | Test(s) |
 |----------|---------|
-| MAT-R01.1 | |
-| MAT-R01.2 | |
-| MAT-R01.3 | |
-| MAT-R01.4 | |
-| MAT-R01.5 | |
-| MAT-R01.6 | |
-| MAT-R02.1 | |
-| MAT-R02.2 | |
-| MAT-R02.3 | |
-| MAT-R02.4 | |
-| MAT-R03.1 | |
-| MAT-R03.2 | |
-| MAT-R03.3 | |
-| MAT-R03.4 | |
-| MAT-R03.5 | |
-| MAT-R03.6 | |
-| MAT-R03.7 | |
-| MAT-R04.1 | |
-| MAT-R04.2 | |
-| MAT-R04.3 | |
-| MAT-R04.4 | |
-| MAT-R04.5 | |
-| MAT-R04.6 | |
-| MAT-R04.7 | |
-| MAT-R04.8 | |
-| MAT-R04.9 | |
-| MAT-R05.1 | |
-| MAT-R05.2 | |
-| MAT-R05.3 | |
-| MAT-R05.4 | |
-| MAT-R05.5 | |
+| MAT-R01.1 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «enrolls a student in a section of a school year, from a date»; `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «enrolls a student in a section of the year, under the calendar lock, recorded inside the transaction»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «enrolls a student, and says when the age is not the regular one» |
+| MAT-R01.2 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «refuses a second current enrollment of the student in the year, saying where it is»; `tests/Feature/Enrollment/Infrastructure/EnrollmentSchemaTest.php` › «keeps one current enrollment per student and year»; `tests/Feature/Enrollment/Infrastructure/EloquentEnrollmentRepositoryTest.php` › «turns a second current enrollment in the year into a conflict» |
+| MAT-R01.3 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «refuses a withdrawn student, a closed year, a section of another year and a date after today»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «says what each rule asks for» |
+| MAT-R01.4 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «refuses a withdrawn student, a closed year, a section of another year and a date after today» |
+| MAT-R01.5 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «refuses a withdrawn student, a closed year, a section of another year and a date after today» |
+| MAT-R01.6 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «is not enrolled from a date after today»; `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «refuses a withdrawn student, a closed year, a section of another year and a date after today» |
+| MAT-R02.1 | `tests/Unit/Enrollment/Domain/OccupancyTest.php` › «over the capacity asks for a reason, and keeps it»; `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «over the capacity, enrolls only with a reason, and keeps it»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «says what each rule asks for» |
+| MAT-R02.2 | `tests/Unit/Enrollment/Domain/OccupancyTest.php` › «over the capacity asks for a reason, and keeps it»; `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «over the capacity, enrolls only with a reason, and keeps it» |
+| MAT-R02.3 | `tests/Unit/Enrollment/Domain/OccupancyTest.php` › «knows whether the section is over its capacity»; `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «shows each section of the year with its capacity, its current enrollments and whether it is over capacity»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «shows the sections of the active year with their figures, and the students left to enroll» |
+| MAT-R02.4 | `tests/Isolation/EnrollmentConcurrencyTest.php` › «while one enrollment holds the last place, the other waits; then it finds the section full» |
+| MAT-R03.1 | `tests/Unit/Enrollment/Domain/AgeCheckTest.php` › «takes the age on December 31 of the year the school year starts»; `tests/Unit/Enrollment/Domain/AgeCheckTest.php` › «counts a birthday on February 29» |
+| MAT-R03.2 | `tests/Unit/Enrollment/Domain/AgeCheckTest.php` › «is regular at the regular age, a warning inside the range, and out of range beyond it»; `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «warns when the age is not the regular one of the grade, inside the range»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «enrolls a student, and says when the age is not the regular one» |
+| MAT-R03.3 | `tests/Unit/Enrollment/Domain/AgeCheckTest.php` › «admits inside the range with no exception, and out of it only with one»; `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «out of the age range, enrolls only with the exception of a directive, who is the person signed in» |
+| MAT-R03.4 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «out of the age range, enrolls only with the exception of a directive, who is the person signed in»; `tests/Feature/Enrollment/Infrastructure/EloquentEnrollmentRepositoryTest.php` › «saves an enrollment and reads it back whole» |
+| MAT-R03.5 | `tests/Unit/Enrollment/Domain/AgeCheckTest.php` › «takes an exception only from a directive, with a justification»; `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «out of the age range, enrolls only with the exception of a directive, who is the person signed in» |
+| MAT-R03.6 | `tests/Unit/Enrollment/Infrastructure/ConfigAgeRulesTest.php` › «reads the ages of each grade and the cutoff»; `tests/Unit/Enrollment/Infrastructure/ConfigAgeRulesTest.php` › «refuses a wrong cutoff, an unknown grade or ages out of order»; `tests/Unit/Enrollment/Infrastructure/ConfigAgeRulesTest.php` › «the configuration of the platform has the ages decided for Primaria and Media General» |
+| MAT-R03.7 | `tests/Unit/Enrollment/Domain/AgeCheckTest.php` › «does not check a grade with no ages»; `tests/Unit/Enrollment/Infrastructure/ConfigAgeRulesTest.php` › «reads the ages of each grade and the cutoff» |
+| MAT-R04.1 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «a change of section ends this enrollment and opens the next one on the same date»; `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «moves a student to another section of its grade, ending the enrollment and opening the next one on that date»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «moves a student to another section, or by a directive to another grade, and annuls an enrollment» |
+| MAT-R04.2 | `tests/Unit/Enrollment/Domain/PeriodTest.php` › «does not end before it starts»; `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «refuses a change without a reason, out of dates or to the same section»; `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «refuses a change without a reason, out of its dates, to another year or in a closed year» |
+| MAT-R04.3 | `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «refuses a change without a reason, out of its dates, to another year or in a closed year» |
+| MAT-R04.4 | `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «applies the capacity to the section it moves to» |
+| MAT-R04.5 | `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «refuses a change without a reason, out of its dates, to another year or in a closed year» |
+| MAT-R04.6 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «shows the history of a student: where, from, until and why it ended, annulments included»; `tests/Feature/Enrollment/StudentHistoryTest.php` › «shows where the student was enrolled, from, until and why each enrollment ended» |
+| MAT-R04.7 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «a change of grade needs a directive, and ends as a change of grade»; `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «a directive changes the grade, recorded with who approved it» |
+| MAT-R04.8 | `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «only a directive changes the grade»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a member granted gestionar-inscripciones enrolls, but a change of grade stays a directive's» |
+| MAT-R04.9 | `tests/Unit/Enrollment/Application/ChangePlacementTest.php` › «a change of grade goes to another grade, and checks the age there» |
+| MAT-R05.1 | `tests/Unit/Students/Application/WithdrawalHookTest.php` › «a withdrawal tells the hooks its date, inside the transaction»; `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «a withdrawal ends the current enrollments on its date; one of a year not started yet, on its start»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «withdrawing a student ends its enrollment on that date, recorded» |
+| MAT-R05.2 | `tests/Unit/Students/Application/WithdrawalHookTest.php` › «a transfer tells the hooks as a transfer, inside the transaction»; `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «a transfer ends them as a transfer» |
+| MAT-R05.3 | `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «a reinstated student, or one that arrived by transfer, has no current enrollment until it is enrolled» |
+| MAT-R05.4 | `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «a reinstated student, or one that arrived by transfer, has no current enrollment until it is enrolled» |
+| MAT-R05.5 | `tests/Unit/Students/Application/WithdrawalHookTest.php` › «if a hook fails, the withdrawal fails with it»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «if the enrollment can not end, the withdrawal does not happen either» |
 | MAT-R06.1 | |
 | MAT-R06.2 | |
 | MAT-R06.3 | |
@@ -571,27 +574,27 @@ error y cambio de grado durante el año.
 | MAT-R08.2 | |
 | MAT-R08.3 | |
 | MAT-R08.4 | |
-| MAT-R09.1 | |
-| MAT-R09.2 | |
-| MAT-R09.3 | |
-| MAT-R10.1 | |
-| MAT-R10.2 | |
-| MAT-R11.1 | |
-| MAT-R11.2 | |
-| MAT-R11.3 | |
-| MAT-R11.4 | |
-| MAT-R11.5 | |
-| MAT-R12.1 | |
-| MAT-R12.2 | |
-| MAT-R13.1 | |
-| MAT-R13.2 | |
-| MAT-R13.3 | |
-| MAT-R14.1 | |
-| MAT-R14.2 | |
-| MAT-R14.3 | |
-| MAT-R14.4 | |
+| MAT-R09.1 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «lists the students of a section by name, with their identification and over capacity reason»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «lists the students of a section» |
+| MAT-R09.2 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «lists the active students without a current enrollment in the year»; `tests/Feature/Enrollment/EnrollmentHttpTest.php` › «shows the sections of the active year with their figures, and the students left to enroll» |
+| MAT-R09.3 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «gives other modules the current enrollments per section» |
+| MAT-R10.1 | `tests/Unit/AcademicStructure/Domain/SchoolYearStructureTest.php` › «never removes a section with enrollments, in any state of the year (SPEC-010 MAT-R10.1)»; `tests/Unit/AcademicStructure/Application/SectionsTest.php` › «does not remove a section with enrollments, even if none is current any more (SPEC-010 MAT-R10.1)»; `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «tells the structure the current enrollments of a section, and whether it ever had any»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «a section with enrollments is not removed, not even once they ended» |
+| MAT-R10.2 | `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php` › «tells the structure the current enrollments of a section, and whether it ever had any»; `tests/Feature/Enrollment/Infrastructure/EnrollmentHooksIntegrationTest.php` › «the capacity of a section does not drop below its current enrollments» |
+| MAT-R11.1 | `tests/Unit/Enrollment/Application/EnrollmentAccessTest.php` › «lets manage, approve exceptions and view only with each permission»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a teacher sees the enrollments but does not enroll, move nor annul» |
+| MAT-R11.2 | `tests/Feature/Enrollment/EnrollmentPermissionsMigrationTest.php` › «existing institutions get gestionar-inscripciones and aprobar-excepciones-inscripcion for Administrador and Director only»; `tests/Feature/Enrollment/EnrollmentPermissionsMigrationTest.php` › «new institutions get them too» |
+| MAT-R11.3 | `tests/Feature/IdentityAccess/EnrollmentManagementGrantTest.php` › «an administrador grants and withdraws it to a member, recorded»; `tests/Feature/IdentityAccess/EnrollmentManagementGrantTest.php` › «only an administrador grants it»; `tests/Feature/IdentityAccess/EnrollmentManagementGrantTest.php` › «it only applies in the institution that granted it»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a member granted gestionar-inscripciones enrolls, but a change of grade stays a directive's» |
+| MAT-R11.4 | `tests/Unit/Enrollment/Application/EnrollStudentTest.php` › «refuses whoever may not manage enrollments»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a teacher sees the enrollments but does not enroll, move nor annul» |
+| MAT-R11.5 | `tests/Feature/Enrollment/EnrollmentPermissionsMigrationTest.php` › «existing institutions get gestionar-inscripciones and aprobar-excepciones-inscripcion for Administrador and Director only»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a director enrolls and approves the exceptions» |
+| MAT-R12.1 | `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records an enrollment with its over capacity reason and its age exception»; `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records a change of section or grade with its date, reason and who approved it»; `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «records the end of an enrollment by a withdrawal or a transfer, and an annulment with its reason» |
+| MAT-R12.2 | `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «never records health data» |
+| MAT-R13.1 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution sees none of its enrollments» |
+| MAT-R13.2 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution sees none of its enrollments»; `tests/Feature/TenantTableTest.php` |
+| MAT-R13.3 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution can not enroll its student nor use its section»; `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «an enrollment of another institution is not found» |
+| MAT-R14.1 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «is annulled with a reason, kept and ended on its start»; `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «a manager annuls within 48 hours: kept, ended and free to enroll again, recorded» |
+| MAT-R14.2 | `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «a manager annuls within 48 hours: kept, ended and free to enroll again, recorded»; `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «lists the active students without a current enrollment in the year» |
+| MAT-R14.3 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «within 48 hours and without grades anyone who manages annuls; after that, or with grades, only a directive»; `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «after 48 hours, only a directive annuls»; `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «with grades, only a directive annuls» |
+| MAT-R14.4 | `tests/Unit/Enrollment/Domain/EnrollmentTest.php` › «another reason to annul needs a note»; `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php` › «needs a reason, and a note for another one» |
 | MAT-R14.5 | |
-| MAT-R14.6 | |
+| MAT-R14.6 | `tests/Unit/Enrollment/Application/RosterQueriesTest.php` › «shows the history of a student: where, from, until and why it ended, annulments included»; `tests/Feature/Enrollment/StudentHistoryTest.php` › «shows where the student was enrolled, from, until and why each enrollment ended» |
 | MAT-R15.1 | |
 | MAT-R15.2 | |
 | MAT-R15.3 | |
@@ -600,9 +603,9 @@ error y cambio de grado durante el año.
 | MAT-R16.2 | |
 | MAT-R16.3 | |
 | MAT-R16.4 | |
-| MAT-NF01 | |
-| MAT-NF02 | |
-| MAT-NF03 | |
+| MAT-NF01 | `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «a teacher sees the enrollments but does not enroll, move nor annul»; `tests/Feature/Enrollment/EnrollmentPermissionsTest.php` › «whoever does not see students does not see the enrollments» |
+| MAT-NF02 | `tests/Feature/Enrollment/EnrollmentIsolationTest.php` › «another institution sees none of its enrollments»; `tests/Feature/TenantTableTest.php`; `tests/Architecture/LayersTest.php` › «the modules enrollments build on never depend on them» |
+| MAT-NF03 | `tests/Feature/Enrollment/Infrastructure/EnrollmentSchemaTest.php` › «keeps one current enrollment per student and year»; `tests/Isolation/EnrollmentConcurrencyTest.php` › «while one enrollment holds the last place, the other waits; then it finds the section full» |
 | MAT-NF04 | |
 | MAT-NF05 | |
 | MAT-NF06 | |

@@ -29,8 +29,8 @@ it('lists its roles in priority order, unknown names last', function () {
 test('each base role carries the permissions its specs give it', function (BaseRole $role, array $permissions) {
     expect(array_map(fn (Permission $permission) => $permission->value, $role->permissions()))->toEqualCanonicalizing($permissions);
 })->with([
-    'Administrador' => [BaseRole::Administrador, ['gestionar-usuarios', 'gestionar-roles', 'ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'gestionar-plantel', 'ver-plantel', 'gestionar-estudiantes', 'gestionar-estructura', 'ver-estructura']],
-    'Director' => [BaseRole::Director, ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'ver-plantel', 'gestionar-estudiantes', 'gestionar-estructura', 'ver-estructura']],
+    'Administrador' => [BaseRole::Administrador, ['gestionar-usuarios', 'gestionar-roles', 'ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'gestionar-plantel', 'ver-plantel', 'gestionar-estudiantes', 'gestionar-estructura', 'ver-estructura', 'gestionar-inscripciones', 'aprobar-excepciones-inscripcion']],
+    'Director' => [BaseRole::Director, ['gestionar-usuarios', 'ver-estudiantes', 'ver-calificaciones', 'ver-bitacora', 'gestionar-calendario', 'ver-plantel', 'gestionar-estudiantes', 'gestionar-estructura', 'ver-estructura', 'gestionar-inscripciones', 'aprobar-excepciones-inscripcion']],
     'Coordinador' => [BaseRole::Coordinador, ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-estructura']],
     'Docente' => [BaseRole::Docente, ['ver-estudiantes', 'gestionar-calificaciones', 'ver-calificaciones', 'ver-estructura']],
     'Representante' => [BaseRole::Representante, ['ver-calificaciones']],

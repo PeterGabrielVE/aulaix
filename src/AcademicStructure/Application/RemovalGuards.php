@@ -33,6 +33,17 @@ final readonly class RemovalGuards
         return $this->enrolledIn($sectionId) > 0;
     }
 
+    public function hasEnrollments(int $sectionId): bool
+    {
+        foreach ($this->guards as $guard) {
+            if ($guard->hasEnrollments($sectionId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param  list<int>  $subjectIds
      * @return list<int>

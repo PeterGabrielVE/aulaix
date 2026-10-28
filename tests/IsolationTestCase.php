@@ -19,7 +19,7 @@ abstract class IsolationTestCase extends TestCase
      *
      * @var list<string>
      */
-    private const TENANT_TABLES = ['terms', 'school_years', 'institution_memberships'];
+    private const TENANT_TABLES = ['enrollments', 'sections', 'students', 'terms', 'school_years', 'institution_memberships'];
 
     private int $lastInstitutionBefore = 0;
 

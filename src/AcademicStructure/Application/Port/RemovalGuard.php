@@ -24,6 +24,12 @@ interface RemovalGuard
     public function enrolledIn(int $sectionId): int;
 
     /**
+     * Whether the section has any enrollment, current, ended or annulled:
+     * its history keeps it (SPEC-010 MAT-R10.1).
+     */
+    public function hasEnrollments(int $sectionId): bool;
+
+    /**
      * Which of these subjects of the grade have grades this year.
      *
      * @param  list<int>  $subjectIds

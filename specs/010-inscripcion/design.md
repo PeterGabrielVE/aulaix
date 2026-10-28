@@ -212,8 +212,11 @@ SPEC-008:
   Administrador y Director;
 - también en los planteles nuevos, por el sembrado de roles (MAT-R11.2,
   R11.5);
-- el Administrador puede concederlos a otros roles desde la gestión de
-  roles existente (SPEC-004; MAT-R11.3);
+- el Administrador concede y retira `gestionar-inscripciones` a otros
+  miembros, persona por persona, con `SetEnrollmentManagementHandler`
+  (IdentityAccess). Sigue el modelo de `SetClosedTermGradeEditingHandler`
+  y lo comparten con `DirectPermissionGrant` (MAT-R11.3). *Cambiado en la
+  implementación (P-04): no existe una gestión de permisos por rol;*
 - `Permission` (IdentityAccess) gana los dos casos.
 
 **Edades.** `config/enrollment.php` lleva `cutoff` (`12-31`) y la tabla de
@@ -362,3 +365,36 @@ entradas (MAT-R03.7, Q6).
     módulos como hoy;
   - revertir el PR deja a SPEC-007, 008 y 009 con el comportamiento
     anterior. Lo único que se pierde son los datos de inscripción.
+
+## Notas de implementación
+
+### PR A
+
+- **MAT-R11.3, concesión persona por persona** (P-04, aprobado el
+  2026-10-28). No existe una gestión de permisos por rol, así que el
+  Administrador concede `gestionar-inscripciones` a un miembro concreto,
+  como `editar-notas-lapso-cerrado`.
+  - Los dos casos de uso comparten `DirectPermissionGrant`, y
+    `SetClosedTermGradeEditingHandler` lo usa sin cambiar su
+    comportamiento.
+  - En la ficha del miembro hay una casilla nueva. Sus tests no cambian.
+- **`end_note`.** Columna nueva de `enrollments`: el motivo de un cambio de
+  sección o de grado queda en la inscripción que termina (MAT-R04.6).
+- **Ids de cuenta sin clave foránea.** `registered_by`, `age_exception_by`,
+  `annulled_by` y `outcome_recorded_by` son historia, como en la bitácora.
+- **La ruta de una sección lleva el año:**
+  `/inscripciones/{year}/secciones/{section}`. Las secciones se piden por
+  año (`SectionsOfYearQuery`).
+- **`YearOverviewQuery` sin año** abre el activo o, si no hay, el más
+  reciente, con la lista de años para elegir (`CalendarFacts::years()`,
+  sobre `ListSchoolYearsHandler`).
+- **El aviso de edad** (MAT-R03.2) va en el mensaje de éxito: «Se inscribió
+  al estudiante. Tiene 7 años; la edad regular de 3.er grado es 8.».
+- **`EnrollmentConcurrencyTest`** (`tests/Isolation`) usa dos conexiones
+  reales. Mientras una inscripción tiene el bloqueo del calendario, la otra
+  no lo obtiene. Tras el commit lo obtiene y encuentra la sección llena.
+  Usa una bitácora en memoria, porque la real es inmutable y estos tests
+  confirman de verdad.
+- **Riesgo pendiente:** borrar un año planificado que ya tenga inscripciones
+  (p. ej. del lote del PR B) choca con la clave foránea `RESTRICT`. El PR B
+  lo resuelve con el mismo punto de extensión que el cierre del año.

@@ -159,6 +159,7 @@ final readonly class EloquentMemberDirectory implements MemberDirectory
             $this->roles->rolesOf(AccountId::fromInt((int) $row->id))->inPriorityOrder(),
             $row->status === MembershipStatus::Active->value,
             $this->roles->hasDirectPermission(AccountId::fromInt((int) $row->id), Permission::EditClosedTermGrades),
+            $this->roles->hasDirectPermission(AccountId::fromInt((int) $row->id), Permission::ManageEnrollments),
         );
     }
 

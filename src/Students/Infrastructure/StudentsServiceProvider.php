@@ -12,8 +12,10 @@ use AulaX\Students\Application\GuardianAccount\SoleLegalGuardianBlocker;
 use AulaX\Students\Application\Port\GuardianInvitations;
 use AulaX\Students\Application\Port\StudentPermissions;
 use AulaX\Students\Application\Port\TransferCopier;
+use AulaX\Students\Application\Port\WithdrawalHook;
 use AulaX\Students\Application\StudentDirectory;
 use AulaX\Students\Application\Transfer\TransferList;
+use AulaX\Students\Application\WithdrawalHooks;
 use AulaX\Students\Domain\Correction\CorrectionRequestRepository;
 use AulaX\Students\Domain\Guardian\GuardianRepository;
 use AulaX\Students\Domain\Student\StudentRepository;
@@ -53,6 +55,10 @@ final class StudentsServiceProvider extends ServiceProvider
     {
         // EST-R08.6: IdentityAccess's extension point for account deletion (IDG-R08.3).
         $this->app->tag([SoleLegalGuardianBlocker::class], DeletionBlocker::TAG);
+
+        // Extension point (ADR 0012): SPEC-010 ends the enrollments of a withdrawn student.
+        // Bound, not only contextual: the handlers' default (no hooks) would win otherwise.
+        $this->app->bind(WithdrawalHooks::class, fn ($app) => new WithdrawalHooks($app->tagged(WithdrawalHook::TAG)));
     }
 
     public function boot(): void

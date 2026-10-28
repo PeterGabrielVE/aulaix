@@ -1,7 +1,8 @@
 ---
 spec: 010-inscripcion
-estado: borrador
+estado: implementando
 fecha: 2026-10-27
+aprobada: 2026-10-27
 diseño: design.md
 depende-de: 005-auditoria, 007-anio-escolar, 008-estructura-academica, 009-estudiantes (implementadas); ADR 0012
 ---
@@ -28,7 +29,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 1 — Dominio (PHP puro)
 
-- [ ] **T-01** — `Level`, `Placement`, `Period`, `EndReason` y `Occupancy`.
+- [x] **T-01** — `Level`, `Placement`, `Period`, `EndReason` y `Occupancy`.
   - Criterios: MAT-R02.1, R02.2, R02.3, R04.2
   - Test: `tests/Unit/Enrollment/Domain/OccupancyTest.php`:
     - «admite hasta el cupo»;
@@ -38,7 +39,7 @@ Tres PRs, cada uno usable por sí mismo:
     `tests/Unit/Enrollment/Domain/PeriodTest.php`:
     - «el fin no es anterior al inicio»;
     - «hay motivo de fin si y solo si hay fin».
-- [ ] **T-02** — `AgeRule`, `AgeCheck` y `AgeException`.
+- [x] **T-02** — `AgeRule`, `AgeCheck` y `AgeException`.
   - Criterios: MAT-R03.1 – R03.5, R03.7
   - Test: `tests/Unit/Enrollment/Domain/AgeCheckTest.php`:
     - «la edad al 31 de diciembre del año en que empieza el año escolar»;
@@ -47,7 +48,7 @@ Tres PRs, cada uno usable por sí mismo:
     - «regular, aviso o fuera de rango»;
     - «sin regla para el grado, sin comprobación»;
     - «la excepción exige justificación y quién la aprueba».
-- [ ] **T-03** — Agregado `Enrollment`: `enroll()`, `moveTo()` (sección y
+- [x] **T-03** — Agregado `Enrollment`: `enroll()`, `moveTo()` (sección y
   grado), `end()` y `annul()` con `Annulment`.
   - Criterios: MAT-R01.1, R01.6, R04.1 – R04.3, R04.7, R05.1, R05.2,
     R14.1, R14.3, R14.4
@@ -61,7 +62,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 2 — Consultas públicas y puntos de extensión en otros módulos
 
-- [ ] **T-04** — AcademicStructure:
+- [x] **T-04** — AcademicStructure:
   - `GradesQuery`, con el orden y el nivel de los 17 grados;
   - `CurriculumQuery`, con las materias del pensum de un grado y año;
   - `RemovalGuard::hasEnrollments`: `RemovalGuards::sectionInUse` lo usa y
@@ -74,11 +75,11 @@ Tres PRs, cada uno usable por sí mismo:
       quita una sección con inscripciones terminadas».
 
     Los tests existentes de SPEC-008 no cambian su lógica.
-- [ ] **T-05** — AcademicCalendar: `SchoolYearLookup::startOf`, `nextOf` y
+- [x] **T-05** — AcademicCalendar: `SchoolYearLookup::startOf`, `nextOf` y
   `lastTermClosed`.
   - Criterios: apoyo a MAT-R03.1, R06.1, R07.1
   - Test: `tests/Unit/AcademicCalendar/Application/SchoolYearLookupTest.php`.
-- [ ] **T-06** — Students:
+- [x] **T-06** — Students:
   - `EnrollableStudentsQuery`, con estado, fecha de nacimiento, nombre e
     identificación por ids, y los estudiantes activos;
   - punto de extensión `WithdrawalHook` (ADR 0012), que llaman
@@ -94,13 +95,13 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 3 — Aplicación
 
-- [ ] **T-07** — Puertos de Enrollment, `EnrollmentAccess`,
+- [x] **T-07** — Puertos de Enrollment, `EnrollmentAccess`,
   `EnrollmentAudit` y los adaptadores en memoria de los tests.
   - Criterios: MAT-R11.1, R11.4, R12.2
   - Test: `tests/Unit/Enrollment/Application/EnrollmentAccessTest.php`;
     `tests/Unit/Enrollment/Application/EnrollmentAuditTest.php` › «sin datos
     de salud».
-- [ ] **T-08** — `EnrollStudentHandler`, bajo el `CalendarLock`.
+- [x] **T-08** — `EnrollStudentHandler`, bajo el `CalendarLock`.
   - Criterios: MAT-R01.1 – R01.6, R02.1, R02.2, R03.1 – R03.5, R12.1,
     R13.3
   - Test: `tests/Unit/Enrollment/Application/EnrollStudentTest.php`:
@@ -110,31 +111,31 @@ Tres PRs, cada uno usable por sí mismo:
     - «aviso de edad»;
     - «la excepción la aprueba quien está en la sesión»;
     - «toma el bloqueo del calendario».
-- [ ] **T-09** — `ChangeSectionHandler` y `ChangeGradeHandler`.
+- [x] **T-09** — `ChangeSectionHandler` y `ChangeGradeHandler`.
   - Criterios: MAT-R04.1 – R04.5, R04.7 – R04.9, R12.1
   - Test: `tests/Unit/Enrollment/Application/ChangePlacementTest.php`.
-- [ ] **T-10** — `AnnulEnrollmentHandler` y la etiqueta `GradedEnrollments`.
+- [x] **T-10** — `AnnulEnrollmentHandler` y la etiqueta `GradedEnrollments`.
   - Criterios: MAT-R14.1 – R14.4, R12.1
   - Test: `tests/Unit/Enrollment/Application/AnnulEnrollmentTest.php`:
     - «el gestor anula en 48 horas»;
     - «después, solo un directivo»;
     - «con notas, solo un directivo», con una inscripción calificada
       falsa.
-- [ ] **T-11** — `EndEnrollmentsOnWithdrawal` y `EnrollmentRemovalGuard`.
+- [x] **T-11** — `EndEnrollmentsOnWithdrawal` y `EnrollmentRemovalGuard`.
   - Criterios: MAT-R05.1 – R05.4, R10.1, R10.2, R12.1
   - Test: `tests/Unit/Enrollment/Application/EnrollmentHooksTest.php`:
     - «el retiro termina las vigentes en su fecha»;
     - «la de un año que aún no empieza termina en su inicio»;
     - «tras la reincorporación no hay inscripción vigente»;
     - «el estudiante trasladado llega sin inscripción».
-- [ ] **T-12** — `YearOverviewQuery`, `SectionRosterQuery`,
+- [x] **T-12** — `YearOverviewQuery`, `SectionRosterQuery`,
   `EnrolledCountsQuery` y `StudentHistoryQuery`.
   - Criterios: MAT-R02.3, R04.6, R09.1 – R09.3, R14.2, R14.6
   - Test: `tests/Unit/Enrollment/Application/RosterQueriesTest.php`.
 
 ### Fase 4 — Infraestructura
 
-- [ ] **T-13** — Migración `…_create_enrollments_tables`, en su propia
+- [x] **T-13** — Migración `…_create_enrollments_tables`, en su propia
   tarea:
   - `enrollments` y `enrollment_pending_subjects`, con RLS;
   - los `CHECK`;
@@ -145,18 +146,24 @@ Tres PRs, cada uno usable por sí mismo:
       cada `CHECK` y el índice único;
     - `TenantTableTest`;
     - `migrate:rollback` de la migración y vuelta a `migrate`.
-- [ ] **T-14** — Migración
+- [x] **T-14** — Migración
   `…_add_enrollment_permissions_to_existing_institutions` y los dos casos de
-  `Permission`, también en el sembrado de roles.
+  `Permission`, también en el sembrado de roles. El Administrador concede
+  `gestionar-inscripciones` persona por persona (P-04, 2026-10-28):
+  - `SetEnrollmentManagementHandler`, que comparte `DirectPermissionGrant`
+    con el de los lapsos cerrados;
+  - una casilla en la ficha del miembro.
   - Criterios: MAT-R11.2, R11.3, R11.5
   - Test:
-    `tests/Feature/Enrollment/EnrollmentPermissionsMigrationTest.php`:
-    - «Administrador y Director los tienen en planteles existentes y
-      nuevos»;
-    - «el Administrador puede concederlos».
+    - `tests/Feature/Enrollment/EnrollmentPermissionsMigrationTest.php` ›
+      «Administrador y Director los tienen en planteles existentes y
+      nuevos», más `up`, `down` y `up`;
+    - `tests/Feature/IdentityAccess/EnrollmentManagementGrantTest.php` ›
+      «el Administrador lo concede y lo retira a un miembro, registrado»,
+      «solo un Administrador».
 
-    Más `up`, `down` y `up`.
-- [ ] **T-15** — Adaptadores y enlaces:
+    Los tests del permiso de lapsos cerrados no cambian su lógica.
+- [x] **T-15** — Adaptadores y enlaces:
   - `EloquentEnrollmentRepository`, que convierte el índice en
     `AlreadyEnrolled`, y `EloquentEnrollmentList`;
   - `GateEnrollmentPermissions`;
@@ -183,7 +190,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 5 — HTTP y pantallas
 
-- [ ] **T-16** — Rutas, controladores y FormRequests de inscribir, cambiar
+- [x] **T-16** — Rutas, controladores y FormRequests de inscribir, cambiar
   de sección o de grado, y anular:
   - las páginas «Inscripciones» (año) y «Sección»;
   - los errores en `bootstrap/app.php`.
@@ -191,7 +198,7 @@ Tres PRs, cada uno usable por sí mismo:
   - Test: `tests/Feature/Enrollment/EnrollmentHttpTest.php` (cada ruta y
     cada mensaje de error) y `tests/Feature/Enrollment/EnrollmentPermissionsTest.php`
     (con y sin cada permiso).
-- [ ] **T-17** — Historial de inscripciones en la ficha del estudiante (prop
+- [x] **T-17** — Historial de inscripciones en la ficha del estudiante (prop
   `enrollments` en `StudentController@show`).
   - Criterios: MAT-R04.6, R14.6
   - Test: `tests/Feature/Enrollment/StudentHistoryTest.php`.

@@ -146,6 +146,13 @@ it('allows creating, adding and changing while the year is active, but not remov
         ->and(fn () => $structure->setCurriculum(Grade::Primaria1, [2], subjectLevels(), inUse: [1]))->toThrow(StructureInUse::class, 'La materia ya tiene notas.');
 });
 
+it('never removes a section with enrollments, in any state of the year (SPEC-010 MAT-R10.1)', function (YearStatus $status) {
+    $structure = structure($status);
+    $id = sectionOf($structure);
+
+    expect(fn () => $structure->removeSection($id, inUse: false, hasEnrollments: true))->toThrow(StructureInUse::class, 'La sección tiene estudiantes inscritos.');
+})->with([YearStatus::Planned, YearStatus::Active]);
+
 it('changes nothing of a closed year', function () {
     $structure = SchoolYearStructure::reconstitute(7, YearStatus::Closed, ['primaria'], [], [], []);
 

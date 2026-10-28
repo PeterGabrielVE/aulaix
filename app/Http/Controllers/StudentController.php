@@ -6,6 +6,8 @@ use App\Http\Requests\StudentRequest;
 use App\Http\Requests\WithdrawalRequest;
 use AulaX\Catalogs\Application\Countries;
 use AulaX\Catalogs\Application\Geography\GeographyDirectory;
+use AulaX\Enrollment\Application\Roster\HistoryEntry;
+use AulaX\Enrollment\Application\Roster\StudentHistoryQuery;
 use AulaX\Students\Application\ChangeHealth\ChangeHealthCommand;
 use AulaX\Students\Application\ChangeHealth\ChangeHealthHandler;
 use AulaX\Students\Application\ListStudents\ListStudentsQuery;
@@ -54,11 +56,25 @@ class StudentController extends Controller
         ]);
     }
 
-    public function show(Request $request, int $student, ShowStudentQuery $showStudent): Response
+    public function show(Request $request, int $student, ShowStudentQuery $showStudent, StudentHistoryQuery $history): Response
     {
         return Inertia::render('Students/Show', [
             'student' => self::present($showStudent($student, includeHealth: true)),
             'canManage' => $this->canManage($request),
+            // SPEC-010 MAT-R04.6, R14.6.
+            'enrollments' => array_map(fn (HistoryEntry $entry) => [
+                'enrollmentId' => $entry->enrollmentId,
+                'gradeName' => $entry->gradeName,
+                'letter' => $entry->letter,
+                'startsOn' => $entry->startsOn,
+                'endsOn' => $entry->endsOn,
+                'endReason' => $entry->endReason,
+                'endNote' => $entry->endNote,
+                'annulmentReason' => $entry->annulmentReason,
+                'annulmentNote' => $entry->annulmentNote,
+                'annulledAt' => $entry->annulledAt,
+                'current' => $entry->current,
+            ], $history($student)),
         ]);
     }
 

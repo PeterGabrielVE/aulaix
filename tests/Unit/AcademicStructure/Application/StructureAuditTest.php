@@ -60,6 +60,11 @@ it('asks every registered guard', function () {
             return 18;
         }
 
+        public function hasEnrollments(int $sectionId): bool
+        {
+            return true;
+        }
+
         public function subjectsInUse(int $schoolYearId, string $grade, array $subjectIds): array
         {
             return [];
@@ -70,6 +75,11 @@ it('asks every registered guard', function () {
         public function enrolledIn(int $sectionId): int
         {
             return 0;
+        }
+
+        public function hasEnrollments(int $sectionId): bool
+        {
+            return false;
         }
 
         public function subjectsInUse(int $schoolYearId, string $grade, array $subjectIds): array

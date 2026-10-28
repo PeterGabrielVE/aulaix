@@ -12,6 +12,7 @@ use AulaX\Students\Application\Port\StudentPermissions;
 use AulaX\Students\Application\StudentAccess;
 use AulaX\Students\Application\StudentAudit;
 use AulaX\Students\Application\StudentNotFound;
+use AulaX\Students\Application\WithdrawalHooks;
 use AulaX\Students\Domain\Student\StudentId;
 use AulaX\Students\Domain\Student\StudentRepository;
 use AulaX\Students\Domain\Student\Withdrawal;
@@ -29,6 +30,7 @@ final readonly class WithdrawStudentHandler
         private Clock $clock,
         private AuditTrail $audit,
         private TransactionManager $transactions,
+        private WithdrawalHooks $hooks = new WithdrawalHooks([]),
     ) {}
 
     /**
@@ -48,6 +50,7 @@ final readonly class WithdrawStudentHandler
             $student->withdraw($withdrawal);
             $this->students->save($student);
             $this->audit->record(StudentAudit::withdrawn($student, $withdrawal));
+            $this->hooks->studentWithdrawn($id->value, $withdrawal->withdrawnOn, false);
         });
     }
 }

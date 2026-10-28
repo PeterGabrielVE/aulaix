@@ -57,4 +57,15 @@ final class RoleAssignmentPolicy
             ? null
             : BusinessRuleViolation::onField('closed_term_grades', 'Solo un Administrador puede conceder o retirar el permiso de editar notas de lapsos cerrados.');
     }
+
+    /**
+     * SPEC-010 MAT-R11.3: managing enrollments is granted to other members
+     * person by person, only by an Administrador.
+     */
+    public function enrollmentManagementGranting(RoleSet $actorRoles): ?BusinessRuleViolation
+    {
+        return $actorRoles->has(BaseRole::Administrador)
+            ? null
+            : BusinessRuleViolation::onField('enrollment_management', 'Solo un Administrador puede conceder o retirar el permiso de gestionar inscripciones.');
+    }
 }

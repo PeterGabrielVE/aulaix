@@ -38,7 +38,7 @@ final readonly class RemoveSectionHandler
             $this->lock->lockInstitutionCalendar();
             $structure = $this->loader->forSection($sectionId);
 
-            $removed = $structure->removeSection($sectionId, $this->guards->sectionInUse($sectionId));
+            $removed = $structure->removeSection($sectionId, $this->guards->sectionInUse($sectionId), $this->guards->hasEnrollments($sectionId));
             $this->structures->save($structure);
             $this->audit->record(StructureAudit::sectionRemoved($removed));
         });

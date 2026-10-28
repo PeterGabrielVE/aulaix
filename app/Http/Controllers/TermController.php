@@ -15,7 +15,10 @@ class TermController extends Controller
 {
     public function close(Request $request, int $year, CloseTermHandler $closeTerm): RedirectResponse
     {
-        $closeTerm($year, $request->boolean('confirmation'));
+        $request->validate(['exception_justification' => ['nullable', 'string', 'max:1000']]);
+
+        // SPEC-011 EVA-R12.3: closing with grades pending, by exception.
+        $closeTerm($year, $request->boolean('confirmation'), $request->boolean('exception') ? (string) $request->input('exception_justification', '') : null);
 
         return back()->with('success', 'Se cerró el lapso.');
     }

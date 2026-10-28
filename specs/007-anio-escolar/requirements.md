@@ -156,8 +156,11 @@ que nadie cambie las notas después sin autorización.
 
 - **CAL-R04.1** — Mientras el año esté activo, el sistema deberá tener
   exactamente un lapso abierto, salvo cuando sus tres lapsos estén cerrados.
-- **CAL-R04.2** — Cuando un gestor cierra el lapso abierto, confirmando la
-  acción, el sistema deberá cerrarlo y abrir el siguiente, si lo hay.
+- **CAL-R04.2** — *(SPEC-011, EVA-R12.2 – R12.4: el lapso tampoco se cierra
+  con notas pendientes, salvo por excepción con una justificación, que las
+  rellena con NP o «incompleto».)* Cuando un gestor cierra el lapso abierto,
+  confirmando la acción, el sistema deberá cerrarlo y abrir el siguiente, si
+  lo hay.
 - **CAL-R04.3** — El sistema no deberá abrir ni cerrar ningún lapso por el
   solo paso de sus fechas.
 - **CAL-R04.4** — Cuando un gestor reabre el último lapso cerrado del año
@@ -296,7 +299,7 @@ variable de lapsos y avisos a docentes (F2-05).
 | CAL-R03.3 | `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «keeps the dates of a closed term»; `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «never comes back once closed» |
 | CAL-R03.4 | `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «changes its dates, and its name follows them» |
 | CAL-R04.1 | `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «keeps exactly one term open while active, until all three are closed»; `tests/Feature/AcademicCalendar/Infrastructure/CalendarConstraintsTest.php` › «a year has terms 1 to 3, each once, and one open at most» |
-| CAL-R04.2 | `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «closes the open term and opens the next one, once confirmed»; `tests/Unit/AcademicCalendar/Application/SchoolYearLifecycleTest.php` › «closes the open term once confirmed, recording which one» |
+| CAL-R04.2 | `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «closes the open term and opens the next one, once confirmed»; `tests/Unit/AcademicCalendar/Application/SchoolYearLifecycleTest.php` › «closes the open term once confirmed, recording which one»; `tests/Unit/AcademicCalendar/Application/TermClosingGuardTest.php` › «does not close a term with pending grades, and says how many»; `tests/Unit/AcademicCalendar/Application/TermClosingGuardTest.php` › «closes by exception only with a justification, filling what is pending first»; `tests/Feature/AcademicCalendar/CloseTermPendingGradesTest.php` › «closes with something pending only by exception, with a justification» |
 | CAL-R04.3 | `tests/Feature/AcademicCalendar/SchoolYearManagementTest.php` › «terms do not open or close as their dates pass» |
 | CAL-R04.4 | `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «reopens the last closed term with a reason, leaving the open one not yet open»; `tests/Unit/AcademicCalendar/Application/SchoolYearLifecycleTest.php` › «reopens the last closed term, recording the reason» |
 | CAL-R04.5 | `tests/Unit/AcademicCalendar/Domain/SchoolYearTest.php` › «needs a reason to reopen a term» |

@@ -15,6 +15,7 @@ enum MenuEntry: string
     case Calendar = 'calendar';
     case Structure = 'structure';
     case MyAssignments = 'my_assignments';
+    case Grades = 'grades';
     case Students = 'students';
     case Enrollments = 'enrollments';
     case Transfers = 'transfers';
@@ -30,7 +31,7 @@ enum MenuEntry: string
     {
         return match ($this) {
             self::Home => null,
-            self::Calendar, self::Structure, self::MyAssignments => MenuGroup::Academic,
+            self::Calendar, self::Structure, self::MyAssignments, self::Grades => MenuGroup::Academic,
             self::Students, self::Enrollments, self::Transfers, self::Corrections, self::MyStudents => MenuGroup::Students,
             self::Institution, self::Users, self::Audit => MenuGroup::Institution,
         };
@@ -43,6 +44,8 @@ enum MenuEntry: string
             self::Calendar => $capabilities->has('gestionar-calendario'),
             self::Structure => $capabilities->has('ver-estructura'),
             self::MyAssignments => $capabilities->hasRole(self::TEACHER),
+            // SPEC-011: whoever grades or manages students; a Representante sees grades in its portal.
+            self::Grades => $capabilities->has('gestionar-calificaciones') || $capabilities->has('gestionar-estudiantes'),
             self::Students, self::Enrollments => $capabilities->has('ver-estudiantes'),
             self::Transfers, self::Corrections => $capabilities->has('gestionar-estudiantes'),
             self::MyStudents => $capabilities->isGuardian,

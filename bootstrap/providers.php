@@ -7,6 +7,7 @@ use AulaX\Ai\Infrastructure\AiServiceProvider;
 use AulaX\Audit\Infrastructure\AuditServiceProvider;
 use AulaX\Catalogs\Infrastructure\CatalogsServiceProvider;
 use AulaX\Enrollment\Infrastructure\EnrollmentServiceProvider;
+use AulaX\Evaluation\Infrastructure\EvaluationServiceProvider;
 use AulaX\IdentityAccess\Infrastructure\IdentityAccessServiceProvider;
 use AulaX\Platform\Infrastructure\PlatformServiceProvider;
 use AulaX\Shared\Infrastructure\SharedServiceProvider;
@@ -26,6 +27,7 @@ return [
     StudentsServiceProvider::class,
     AcademicStructureServiceProvider::class,
     EnrollmentServiceProvider::class,
+    EvaluationServiceProvider::class,
     WorkspaceServiceProvider::class,
     PlatformServiceProvider::class,
 ];

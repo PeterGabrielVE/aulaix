@@ -60,8 +60,8 @@ it('lists a teacher assignments of the active year', function () {
     $mine = app(MyAssignmentsQuery::class)($this->teacher->id);
 
     expect($mine->schoolYearId)->toBe($this->active)
-        ->and($mine->teaching)->toBe([['sectionId' => $this->section, 'section' => '1.er grado A', 'subjectId' => $this->math, 'subject' => 'Matemática']])
-        ->and($mine->guiding)->toBe([['sectionId' => $this->section, 'section' => '1.er grado A']]);
+        ->and($mine->teaching)->toBe([['sectionId' => $this->section, 'section' => '1.er grado A', 'level' => 'primaria', 'subjectId' => $this->math, 'subject' => 'Matemática']])
+        ->and($mine->guiding)->toBe([['sectionId' => $this->section, 'section' => '1.er grado A', 'level' => 'primaria']]);
 });
 
 it('tells other modules whether a person teaches a subject in a section of the active year, and their sections', function () {
@@ -86,3 +86,11 @@ test('asking whether a person teaches answers within 10 ms (p95)', function () {
 
     expect($timings[(int) floor(count($timings) * 0.95)])->toBeLessThan(10.0);
 })->group('perf');
+
+it('tells other modules whether a person guides a section of the active year (SPEC-011)', function () {
+    $teaching = app(TeachingQuery::class);
+
+    expect($teaching->guides($this->teacher->id, $this->section))->toBeTrue()
+        ->and($teaching->guides($this->gone->id, $this->section))->toBeFalse()
+        ->and($teaching->guides($this->teacher->id, $this->oldSection))->toBeFalse();
+});

@@ -56,7 +56,7 @@ it('gives the Administrador pending tasks with their count and destination, with
             'staff' => ['Administrador' => 1, 'Director' => 1, 'Coordinador' => 2, 'Docente' => 12, 'Representante' => 80, 'Estudiante' => 0],
         ])
         ->and($home->recentActivity)->toHaveCount(1)
-        ->and($home->shortcuts)->toBe(['calendar', 'structure', 'students', 'enrollments', 'transfers', 'corrections', 'institution', 'users', 'audit']);
+        ->and($home->shortcuts)->toBe(['calendar', 'structure', 'grades', 'students', 'enrollments', 'transfers', 'corrections', 'institution', 'users', 'audit']);
 });
 
 it('asks the Director nothing operational', function () {

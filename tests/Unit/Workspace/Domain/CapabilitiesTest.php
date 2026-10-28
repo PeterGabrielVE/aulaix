@@ -19,9 +19,9 @@ it('tells the permissions, roles and guardian link of a person', function () {
         ->and($capabilities->isGuardian)->toBeTrue();
 });
 
-it('knows the twelve entries of the menu, in order and by group', function () {
+it('knows the thirteen entries of the menu, in order and by group', function () {
     expect(array_map(fn (MenuEntry $entry) => $entry->value, MenuEntry::cases()))->toBe([
-        'home', 'calendar', 'structure', 'my_assignments', 'students', 'enrollments', 'transfers', 'corrections', 'my_students',
+        'home', 'calendar', 'structure', 'my_assignments', 'grades', 'students', 'enrollments', 'transfers', 'corrections', 'my_students',
         'institution', 'users', 'audit',
     ])
         ->and(MenuEntry::Home->group())->toBeNull()
@@ -38,6 +38,8 @@ it('shows each entry to whoever meets its condition', function (MenuEntry $entry
     'calendar' => [MenuEntry::Calendar, new Capabilities(['gestionar-calendario'], [], null), new Capabilities([], [], null)],
     'structure' => [MenuEntry::Structure, new Capabilities(['ver-estructura'], [], null), new Capabilities([], [], null)],
     'my assignments' => [MenuEntry::MyAssignments, new Capabilities([], ['Docente'], 'Docente'), new Capabilities(['ver-estructura'], ['Coordinador'], 'Coordinador')],
+    'grades' => [MenuEntry::Grades, new Capabilities(['gestionar-calificaciones'], [], null), new Capabilities(['ver-estudiantes'], ['Representante'], 'Representante')],
+    'grades for a manager' => [MenuEntry::Grades, new Capabilities(['gestionar-estudiantes'], [], null), new Capabilities([], [], null)],
     'students' => [MenuEntry::Students, new Capabilities(['ver-estudiantes'], [], null), new Capabilities([], [], null)],
     'enrollments' => [MenuEntry::Enrollments, new Capabilities(['ver-estudiantes'], [], null), new Capabilities([], [], null)],
     'transfers' => [MenuEntry::Transfers, new Capabilities(['gestionar-estudiantes'], [], null), new Capabilities(['ver-estudiantes'], [], null)],

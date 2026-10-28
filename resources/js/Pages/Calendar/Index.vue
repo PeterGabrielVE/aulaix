@@ -21,6 +21,11 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    // SPEC-011 EVA-R12.1: what the open term still lacks; null without it.
+    pendingGrades: {
+        type: Object,
+        default: null,
+    },
 });
 
 const statusLabels = { planned: 'Planificado', active: 'Activo', closed: 'Cerrado' };
@@ -46,7 +51,7 @@ const saveDates = (year) => editForm.put(route('calendar.years.update', year.id)
 
 // One modal for every action that needs a confirmation or a reason (CAL-R06.2).
 const pending = ref(null);
-const actionForm = useForm({ confirmation: true, reason: '' });
+const actionForm = useForm({ confirmation: true, reason: '', exception: false, exception_justification: '' });
 
 const ask = (action, year, term = null) => {
     pending.value = { action, year, term };
@@ -150,6 +155,34 @@ const day = (date) => date.split('-').reverse().join('/');
                             {{ section.gradeName }} · Sección {{ section.letter }}: {{ section.count }}<span v-if="section.students.length"> ({{ section.students.join(', ') }})</span>
                         </li>
                     </ul>
+                </div>
+
+                <div v-if="pending.action === 'closeTerm' && pendingGrades?.total" class="space-y-3">
+                    <div class="rounded-md bg-amber-50 p-3 text-sm text-amber-900">
+                        <p class="font-medium">Faltan {{ pendingGrades.total }} notas del lapso {{ pendingGrades.term }}:</p>
+                        <ul class="mt-1 max-h-48 list-disc space-y-1 overflow-y-auto pl-5">
+                            <li v-for="(row, index) in pendingGrades.rows" :key="index">
+                                {{ row.section }}<template v-if="row.subject"> · {{ row.subject }}</template> · {{ row.item }}: {{ row.students }}
+                                <span class="text-amber-800">({{ row.teacher ?? 'sin docente asignado' }})</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <label class="flex items-start gap-2 text-sm text-gray-800">
+                        <input v-model="actionForm.exception" type="checkbox" class="mt-0.5 rounded border-gray-300" />
+                        <span>Cerrar por excepción: las notas vacías quedan como NP y los literales e informes como incompletos.</span>
+                    </label>
+                    <div v-if="actionForm.exception">
+                        <InputLabel for="exception-justification" value="Justificación" />
+                        <textarea
+                            id="exception-justification"
+                            v-model="actionForm.exception_justification"
+                            rows="3"
+                            maxlength="1000"
+                            required
+                            class="mt-1 block w-full rounded-md border-gray-300 text-sm"
+                        />
+                        <InputError class="mt-1" :message="actionForm.errors.exception_justification" />
+                    </div>
                 </div>
 
                 <div v-if="pending.action === 'reopen'">

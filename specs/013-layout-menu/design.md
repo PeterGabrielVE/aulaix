@@ -464,3 +464,19 @@ que ya existen:
   del coordinador, por `EnrolledCountsQuery::total()` (Enrollment). Llega en
   las cifras de la estructura (`StructureSource::overview()`), así que
   `ShowHomeQuery` no cambia de dependencias.
+
+### SPEC-011 (evaluación), 2026-10-28
+
+- **Menú:** entrada «Notas» (`MenuEntry::Grades`, grupo Académico, tras «Mis
+  asignaciones»), con `gestionar-calificaciones` o `gestionar-estudiantes`.
+  - El Representante tiene `ver-calificaciones`, pero no tiene la entrada:
+    verá sus notas en el portal (F2-07).
+  - La ruta `GET /notas` pide los mismos permisos, para conservar la
+    paridad menú–rutas.
+  - `GateViewerCapabilities` pregunta además por `gestionar-calificaciones`.
+  - Los tests que enumeran las entradas ganan la nueva.
+- **«Mis asignaciones»:**
+  - cada clase de Media General enlaza a su planilla, en el lapso abierto;
+  - cada sección guiada de Primaria o Inicial enlaza a sus literales o
+    informes;
+  - `MyAssignmentsQuery` (SPEC-008) da el nivel de cada clase y sección.

@@ -11,11 +11,13 @@ use AulaX\Enrollment\Application\Hooks\EndEnrollmentsOnWithdrawal;
 use AulaX\Enrollment\Application\Hooks\EnrollmentRemovalGuard;
 use AulaX\Enrollment\Application\Hooks\SectionScopedVisibility;
 use AulaX\Enrollment\Application\Hooks\UnresolvedResultsGuard;
+use AulaX\Enrollment\Application\OutcomeProposers;
 use AulaX\Enrollment\Application\Port\AgeRules;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
 use AulaX\Enrollment\Application\Port\EnrollmentList;
 use AulaX\Enrollment\Application\Port\EnrollmentPermissions;
 use AulaX\Enrollment\Application\Port\GradedEnrollment;
+use AulaX\Enrollment\Application\Port\OutcomeProposer;
 use AulaX\Enrollment\Application\Port\StructureFacts;
 use AulaX\Enrollment\Application\Port\StudentFacts;
 use AulaX\Enrollment\Domain\EnrollmentRepository;
@@ -60,6 +62,10 @@ final class EnrollmentServiceProvider extends ServiceProvider
         $this->app->tag([UnresolvedResultsGuard::class], SchoolYearGuard::TAG);
         // MAT-R08: Docente and Coordinador see the students of their sections or grades.
         $this->app->tag([SectionScopedVisibility::class], StudentVisibilityRule::TAG);
+
+        // Extension point (EVA-R08): SPEC-011 proposes the result of the year from the grades.
+        // Bound, not only contextual: the query's default (no proposers) would win otherwise.
+        $this->app->bind(OutcomeProposers::class, fn ($app) => new OutcomeProposers($app->tagged(OutcomeProposer::TAG)));
 
         // Extension point (MAT-R14.3): SPEC-011 tags whether an enrollment has grades.
         $this->app->when(GradedEnrollments::class)

@@ -53,7 +53,7 @@ test('groups the menu, with links and the current screen marked', function () {
     expect(array_map(fn (array $group) => [$group['group'], $group['label']], $navigation))->toBe([
         [null, null], ['academic', 'Académico'], ['students', 'Estudiantes'], ['institution', 'Plantel'],
     ])
-        ->and(array_column($navigation[1]['entries'], 'key'))->toBe(['calendar', 'structure', 'my_assignments'])
+        ->and(array_column($navigation[1]['entries'], 'key'))->toBe(['calendar', 'structure', 'my_assignments', 'grades'])
         ->and($navigation[1]['entries'][1])->toBe([
             'key' => 'structure', 'label' => 'Estructura', 'href' => tenantUrl(test()->institution, '/estructura'), 'active' => true,
         ])

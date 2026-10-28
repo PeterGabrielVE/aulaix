@@ -24,6 +24,15 @@ final class EloquentAssignmentDirectory implements AssignmentDirectory
             ->exists();
     }
 
+    public function guides(int $accountId, int $sectionId, int $schoolYearId): bool
+    {
+        return DB::table('sections')
+            ->where('id', $sectionId)
+            ->where('guide_account_id', $accountId)
+            ->where('school_year_id', $schoolYearId)
+            ->exists();
+    }
+
     public function sectionIdsOf(int $accountId, int $schoolYearId): array
     {
         return DB::table('sections')

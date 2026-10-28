@@ -28,6 +28,7 @@ final class GateViewerCapabilities implements ViewerCapabilities
         'ver-estructura',
         'ver-estudiantes',
         'gestionar-estudiantes',
+        'gestionar-calificaciones',
         'ver-plantel',
         'gestionar-plantel',
         'gestionar-usuarios',

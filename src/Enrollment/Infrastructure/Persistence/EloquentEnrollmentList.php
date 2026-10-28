@@ -103,6 +103,21 @@ final class EloquentEnrollmentList implements EnrollmentList
         return DB::table('enrollments')->where('school_year_id', $schoolYearId)->exists();
     }
 
+    public function ofStudentsInYear(int $schoolYearId, array $studentIds): array
+    {
+        if ($studentIds === []) {
+            return [];
+        }
+
+        return DB::table('enrollments')
+            ->where('school_year_id', $schoolYearId)
+            ->whereIn('student_id', $studentIds)
+            ->orderBy('starts_on')
+            ->orderBy('id')
+            ->get()
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
+    }
+
     public function historyOf(int $studentId): array
     {
         return DB::table('enrollments')

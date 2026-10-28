@@ -28,6 +28,17 @@ final readonly class TeachingQuery
     }
 
     /**
+     * Whether the person guides the section of the active year (SPEC-011:
+     * the guide grades Primaria and Educación Inicial).
+     */
+    public function guides(int $accountId, int $sectionId): bool
+    {
+        $year = $this->years->activeYear();
+
+        return $year !== null && $this->assignments->guides($accountId, $sectionId, $year);
+    }
+
+    /**
      * @return list<int>
      */
     public function sectionsOf(int $accountId): array

@@ -26,6 +26,18 @@ const save = () => form.put(route('promotion.update', editing.value), {
     onSuccess: () => { editing.value = null; },
 });
 
+// SPEC-011 EVA-R08.4: the result proposed from the grades, confirmed as is.
+const confirmProposal = (student) => {
+    editing.value = student.enrollmentId;
+    form.clearErrors();
+    form.outcome = student.proposal.outcome;
+    form.pending_subjects = [...student.proposal.pendingSubjects];
+    save();
+};
+const isProposal = (student) => student.proposal?.outcome
+    && student.proposal.outcome === student.outcome
+    && [...student.proposal.pendingSubjects].sort().join() === [...student.pendingSubjects].sort().join();
+
 const subjectName = (id) => props.sheet.subjects.find((subject) => subject.id === id)?.name ?? id;
 const missing = computed(() => props.sheet.students.filter((student) => !student.outcome).length);
 </script>
@@ -65,6 +77,25 @@ const missing = computed(() => props.sheet.students.filter((student) => !student
                                     {{ student.outcome ? 'Corregir' : 'Registrar' }}
                                 </button>
                             </span>
+                        </div>
+
+                        <div v-if="student.proposal" class="mt-2 flex flex-wrap items-center gap-3 text-sm">
+                            <template v-if="student.proposal.outcome">
+                                <span class="text-gray-700">
+                                    Propuesta según las notas:
+                                    <span class="font-medium text-gray-900">{{ outcomeLabels[student.proposal.outcome] }}</span><template v-if="student.proposal.pendingSubjects.length">: {{ student.proposal.pendingSubjects.map(subjectName).join(', ') }}</template>
+                                </span>
+                                <button
+                                    v-if="sheet.ready && !isProposal(student)"
+                                    type="button"
+                                    class="font-medium text-indigo-700 hover:underline"
+                                    :disabled="form.processing"
+                                    @click="confirmProposal(student)"
+                                >
+                                    Confirmar propuesta
+                                </button>
+                            </template>
+                            <span v-else class="text-amber-800">Sin propuesta: {{ student.proposal.missing.join(' ') }}</span>
                         </div>
 
                         <form v-if="editing === student.enrollmentId" class="mt-3 space-y-3" @submit.prevent="save">

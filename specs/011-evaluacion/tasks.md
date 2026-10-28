@@ -1,7 +1,8 @@
 ---
 spec: 011-evaluacion
-estado: borrador
+estado: implementando
 fecha: 2026-10-28
+aprobada: 2026-10-28
 diseño: design.md
 depende-de: 005, 007, 008, 010 (implementadas); ADR 0012
 ---
@@ -28,7 +29,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 1 — Dominio
 
-- [ ] **T-01** — `Rounding`, `Score`, `Weight` y `GradeMark` (enteros en
+- [x] **T-01** — `Rounding`, `Score`, `Weight` y `GradeMark` (enteros en
   centésimas).
   - Criterios: EVA-R02.2, R02.3, R03.1, NF03
   - Test: `tests/Unit/Evaluation/Domain/RoundingTest.php`:
@@ -39,14 +40,14 @@ Tres PRs, cada uno usable por sí mismo:
     - de 1 a 20 con hasta dos decimales;
     - rechaza 0, 20,01, 9,999 y textos;
     - NP vale 1.
-- [ ] **T-02** — Agregado `EvaluationPlan`.
+- [x] **T-02** — Agregado `EvaluationPlan`.
   - Criterios: EVA-R01.1 – R01.3, R01.5, R01.7
   - Test: `tests/Unit/Evaluation/Domain/EvaluationPlanTest.php`:
     - suma exacta de 100,00 %;
     - nombre y fecha dentro del lapso;
     - una sola actividad del 100 %;
     - quitar actividades con notas pide confirmación.
-- [ ] **T-03** — Aplicabilidad por periodos, `TermScore` y `FinalScore`.
+- [x] **T-03** — Aplicabilidad por periodos, `TermScore` y `FinalScore`.
   - Criterios: EVA-R02.7, R02.8, R03.1 – R03.7, R09.3
   - Test: `tests/Unit/Evaluation/Domain/TermScoreTest.php`:
     - suma ponderada con NP;
@@ -61,7 +62,7 @@ Tres PRs, cada uno usable por sí mismo:
     - incompleta;
     - con un lapso «no aplica»;
     - reprobada por debajo de 10.
-- [ ] **T-04** — Agregado `ActivityGrades`.
+- [x] **T-04** — Agregado `ActivityGrades`.
   - Criterios: EVA-R02.1 – R02.5, R02.8
   - Test: `tests/Unit/Evaluation/Domain/ActivityGradesTest.php`:
     - solo estudiantes a los que la actividad aplica;
@@ -70,7 +71,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 2 — Consultas públicas de otros módulos y aplicación
 
-- [ ] **T-05** — En otros módulos:
+- [x] **T-05** — En otros módulos:
   - `TeachingQuery::guides()` (AcademicStructure);
   - `EnrollmentPeriodsQuery` (Enrollment): sección, grado, desde y hasta
     de los estudiantes de un año.
@@ -79,21 +80,21 @@ Tres PRs, cada uno usable por sí mismo:
     - `tests/Unit/AcademicStructure/Application/TeachingQueryTest.php`
       › «sabe quién guía una sección»;
     - `tests/Unit/Enrollment/Application/EnrollmentPeriodsTest.php`.
-- [ ] **T-06** — Puertos de Evaluation, `EvaluationAccess`,
+- [x] **T-06** — Puertos de Evaluation, `EvaluationAccess`,
   `EvaluationAudit` y los adaptadores en memoria de los tests.
   - Criterios: EVA-R07.1, R07.6, R10.1, NF01
   - Test:
     - `tests/Unit/Evaluation/Application/EvaluationAccessTest.php`;
     - `tests/Unit/Evaluation/Application/EvaluationAuditTest.php` › «el
       plan antes y después, las notas que cambiaron».
-- [ ] **T-07** — `SavePlanHandler`.
+- [x] **T-07** — `SavePlanHandler`.
   - Criterios: EVA-R01.1 – R01.8, R06.1, R06.4, R07.1, R10.1
   - Test: `tests/Unit/Evaluation/Application/SavePlanTest.php`:
     - solo quien dicta;
     - materia del pensum;
     - lapso editable;
     - quitar con confirmación queda en la bitácora.
-- [ ] **T-08** — `SaveActivityGradesHandler`.
+- [x] **T-08** — `SaveActivityGradesHandler`.
   - Criterios: EVA-R02.1 – R02.8, R06.1 – R06.4, R07.1, R10.1, R01.8
   - Test: `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php`:
     - guarda una sección entera;
@@ -103,7 +104,7 @@ Tres PRs, cada uno usable por sí mismo:
     - año cerrado;
     - lapso sin abrir;
     - bitácora con antes y después.
-- [ ] **T-09** — `GradebookQuery`, la planilla.
+- [x] **T-09** — `GradebookQuery`, la planilla.
   - Criterios: EVA-R03.1 – R03.7, R07.3 – R07.6
   - Test: `tests/Unit/Evaluation/Application/GradebookTest.php`:
     - docente propio y ajeno;
@@ -113,7 +114,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 3 — Infraestructura
 
-- [ ] **T-10** — Migración `…_create_evaluation_tables`, en su propia tarea:
+- [x] **T-10** — Migración `…_create_evaluation_tables`, en su propia tarea:
   - `evaluation_activities`, `activity_grades` y `student_marks`, con RLS;
   - los `CHECK` y los índices.
   - Criterios: EVA-NF02, R11.1
@@ -121,7 +122,7 @@ Tres PRs, cada uno usable por sí mismo:
     - `tests/Feature/Evaluation/Infrastructure/EvaluationSchemaTest.php`;
     - `TenantTableTest`;
     - `up`, `down` y `up`.
-- [ ] **T-11** — Adaptadores, repositorios, `EloquentGradebook`, permisos
+- [x] **T-11** — Adaptadores, repositorios, `EloquentGradebook`, permisos
   por Gate, `…Facts` y `EvaluationServiceProvider`.
   - Criterios: EVA-R11.1 – R11.3, NF02
   - Test:
@@ -132,7 +133,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 4 — HTTP y pantallas
 
-- [ ] **T-12** — «Notas» y la planilla:
+- [x] **T-12** — «Notas» y la planilla:
   - rutas, controladores y FormRequests (hasta 60 estudiantes por
     guardado);
   - errores;
@@ -144,7 +145,7 @@ Tres PRs, cada uno usable por sí mismo:
     - `tests/Feature/Evaluation/GradesPermissionsTest.php` (docente ajeno,
       coordinador, Representante con `ver-calificaciones`);
     - `MenuParityTest`.
-- [ ] **T-13** — Rendimiento y accesibilidad de la planilla.
+- [x] **T-13** — Rendimiento y accesibilidad de la planilla.
   - Criterios: EVA-NF04, NF05
   - Test:
     - `tests/Feature/Evaluation/GradebookPerformanceTest.php` (`perf`):
@@ -156,17 +157,17 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 5 — Literales e informes
 
-- [ ] **T-14** — `Literal` y el agregado `StudentMarks`.
+- [x] **T-14** — `Literal` y el agregado `StudentMarks`.
   - Criterios: EVA-R04.1 – R04.4, R05.1, R05.2
   - Test: `tests/Unit/Evaluation/Domain/StudentMarksTest.php`.
-- [ ] **T-15** — `SaveLiteralHandler`, `SaveFinalLiteralHandler`,
+- [x] **T-15** — `SaveLiteralHandler`, `SaveFinalLiteralHandler`,
   `SaveReportHandler` y `MarksSheetQuery`.
   - Criterios: EVA-R04.1 – R04.5, R05.1 – R05.3, R06.1, R07.2, R10.1, R10.2
   - Test: `tests/Unit/Evaluation/Application/MarksTest.php`:
     - solo el guía;
     - el final, con el tercer lapso cerrado;
     - el informe sin su texto en la bitácora.
-- [ ] **T-16** — Pantallas de literales e informes de una sección.
+- [x] **T-16** — Pantallas de literales e informes de una sección.
   - Criterios: EVA-R04, R05, NF05
   - Test:
     - `tests/Feature/Evaluation/MarksHttpTest.php`;
@@ -174,18 +175,18 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 6 — Cierre del lapso
 
-- [ ] **T-17** — Punto de extensión `TermClosingGuard` en AcademicCalendar.
+- [x] **T-17** — Punto de extensión `TermClosingGuard` en AcademicCalendar.
   `CloseTermHandler` acepta una justificación de excepción.
   - Criterios: EVA-R12.2, R12.4
   - Test: `tests/Unit/AcademicCalendar/Application/TermClosingGuardTest.php`.
     Los tests de cierre existentes no cambian su lógica.
-- [ ] **T-18** — `PendingGradesQuery` y `PendingGradesGuard`: cuenta, y
+- [x] **T-18** — `PendingGradesQuery` y `PendingGradesGuard`: cuenta, y
   rellena NP e «incompleto» por excepción.
   - Criterios: EVA-R12.1 – R12.5
   - Test:
     - `tests/Unit/Evaluation/Application/PendingGradesTest.php`;
     - `tests/Feature/Evaluation/Infrastructure/TermClosingIntegrationTest.php`.
-- [ ] **T-19** — El diálogo de cierre del lapso muestra los pendientes y
+- [x] **T-19** — El diálogo de cierre del lapso muestra los pendientes y
   pide la justificación para la excepción.
   - Criterios: EVA-R12.1, R12.3
   - Test: `tests/Feature/AcademicCalendar/CloseTermPendingGradesTest.php`.

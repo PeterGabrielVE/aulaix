@@ -7,6 +7,7 @@ namespace AulaX\Enrollment\Application\Roster;
 use AulaX\AcademicCalendar\Application\SchoolYearNotFound;
 use AulaX\Catalogs\Application\Subjects;
 use AulaX\Enrollment\Application\EnrollmentAccess;
+use AulaX\Enrollment\Application\OutcomeProposers;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
 use AulaX\Enrollment\Application\Port\EnrollmentList;
 use AulaX\Enrollment\Application\Port\EnrollmentPermissions;
@@ -33,6 +34,7 @@ final readonly class PromotionSheetQuery
         private CalendarFacts $calendar,
         private Subjects $subjects,
         private EnrollmentPermissions $permissions,
+        private OutcomeProposers $proposers = new OutcomeProposers([]),
     ) {}
 
     /**
@@ -47,6 +49,10 @@ final readonly class PromotionSheetQuery
         $section = $matches[0] ?? throw SectionNotFound::create();
         $enrollments = $this->enrollments->currentIn($sectionId);
         $students = $this->students->byIds(array_map(fn (Enrollment $enrollment) => $enrollment->studentId(), $enrollments));
+        $proposals = $this->proposers->propose($schoolYearId, $sectionId, array_combine(
+            array_map(fn (Enrollment $enrollment) => (int) $enrollment->id()?->value, $enrollments),
+            array_map(fn (Enrollment $enrollment) => $enrollment->studentId(), $enrollments),
+        ));
         $rows = [];
 
         foreach ($enrollments as $enrollment) {
@@ -59,6 +65,7 @@ final readonly class PromotionSheetQuery
                     $student->identification,
                     $enrollment->result()?->outcome->value,
                     $enrollment->result()?->pendingSubjects ?? [],
+                    $proposals[(int) $enrollment->id()?->value] ?? null,
                 );
             }
         }

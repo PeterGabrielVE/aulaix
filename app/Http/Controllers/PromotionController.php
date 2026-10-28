@@ -37,6 +37,12 @@ class PromotionController extends Controller
                     'identification' => $row->identification,
                     'outcome' => $row->outcome,
                     'pendingSubjects' => $row->pendingSubjects,
+                    // SPEC-011 EVA-R08.4: the result proposed from the grades, to confirm.
+                    'proposal' => $row->proposal === null ? null : [
+                        'outcome' => $row->proposal->outcome,
+                        'pendingSubjects' => $row->proposal->pendingSubjects,
+                        'missing' => $row->proposal->missing,
+                    ],
                 ], $view->students),
                 'outcomes' => $view->outcomes,
                 'subjects' => $view->subjects,

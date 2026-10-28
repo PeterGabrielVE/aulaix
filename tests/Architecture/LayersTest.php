@@ -16,6 +16,7 @@ use App\Http\Controllers\CorrectionController;
 use App\Http\Controllers\EnrollmentChangeController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GeographyController;
+use App\Http\Controllers\GradesController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\GuardianPortalController;
 use App\Http\Controllers\HomeController;
@@ -108,6 +109,7 @@ const MIGRATED_CONTROLLERS = [
     MyAssignmentsController::class,
     // SPEC-010
     EnrollmentController::class,
+    GradesController::class,
     EnrollmentChangeController::class,
     PromotionController::class,
     NextYearController::class,
@@ -339,6 +341,24 @@ arch('the modules enrollments build on never depend on them', function () {
     // ADR 0012, SPEC-010: Enrollment reacts inside their writes through
     // their extension points; the dependency goes one way only.
     expect(['AulaX\Students', 'AulaX\AcademicStructure', 'AulaX\AcademicCalendar'])->not->toUse('AulaX\Enrollment');
+});
+
+arch('no module depends on Evaluation', function () {
+    // SPEC-011, ADR 0012: Evaluation builds on Enrollment, AcademicStructure
+    // and AcademicCalendar through their public queries and extension
+    // points; nothing in src uses it back.
+    $others = collect(modules())
+        ->reject(fn (string $module) => $module === 'Evaluation')
+        ->map(fn (string $module) => "AulaX\\{$module}")
+        ->all();
+
+    expect($others)->not->toUse('AulaX\Evaluation');
+});
+
+arch('only the provider of Evaluation puts its reactions under the extension points', function () {
+    // ADR 0012, SPEC-011: the provider of the module that implements an
+    // extension point is the only place that tags it.
+    expect('AulaX\Evaluation\Application\Hooks')->toOnlyBeUsedIn('AulaX\Evaluation\Infrastructure\EvaluationServiceProvider');
 });
 
 arch('only the provider of Enrollment puts its reactions under the extension points', function () {

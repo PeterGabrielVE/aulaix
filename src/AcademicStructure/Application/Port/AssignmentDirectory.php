@@ -14,6 +14,11 @@ interface AssignmentDirectory
     public function teaches(int $accountId, int $sectionId, int $subjectId, int $schoolYearId): bool;
 
     /**
+     * Whether the person is the guide of the section of that year.
+     */
+    public function guides(int $accountId, int $sectionId, int $schoolYearId): bool;
+
+    /**
      * The sections of the year the person teaches in or guides, by id.
      *
      * @return list<int>

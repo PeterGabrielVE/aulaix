@@ -169,6 +169,14 @@ final class InMemoryEnrollmentRepository implements EnrollmentList, EnrollmentRe
         return false;
     }
 
+    public function ofStudentsInYear(int $schoolYearId, array $studentIds): array
+    {
+        return array_values(array_filter(
+            $this->enrollments,
+            fn (Enrollment $enrollment) => $enrollment->schoolYearId() === $schoolYearId && in_array($enrollment->studentId(), $studentIds, true),
+        ));
+    }
+
     public function historyOf(int $studentId): array
     {
         return array_values(array_filter($this->enrollments, fn (Enrollment $enrollment) => $enrollment->studentId() === $studentId));

@@ -343,3 +343,21 @@ Ajustes hechos al implementar, sin cambiar ningún criterio:
 - **La pantalla «Año escolar»** recibe `pendingResults` (`PendingResultsQuery`).
   El diálogo de cierre muestra, por sección, quién no tiene resultado: los
   nombres solo con `ver-estudiantes`.
+
+### SPEC-011 (evaluación), 2026-10-28
+
+- **Punto de extensión `TermClosingGuard`** (ADR 0012), lo implementa
+  Evaluation (`PendingGradesGuard`). `CloseTermHandler` lo consulta bajo el
+  bloqueo del calendario, con el lapso abierto (CAL-R04.2, EVA-R12):
+  - con notas pendientes, rechaza el cierre e indica cuántas (campo `term`);
+  - por excepción (`exception` y `exception_justification` en la petición),
+    exige la justificación (campo `exception_justification`) y le pide al
+    módulo rellenar lo pendiente antes de cerrar, en la misma transacción.
+
+  `TermClosingGuards` se enlaza en el contenedor, como `SchoolYearGuards`.
+  El constructor conserva su valor por omisión (ninguna guarda), así que los
+  tests de cierre existentes no cambian.
+- **La pantalla «Año escolar»** recibe `pendingGrades` (`PendingGradesQuery`
+  de Evaluation) del lapso abierto. El diálogo de cierre los muestra por
+  docente, sección, materia y actividad, con la casilla de excepción y la
+  justificación. Sin `gestionar-estudiantes` recibe `null`.

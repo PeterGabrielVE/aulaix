@@ -42,12 +42,12 @@ final readonly class MyAssignmentsQuery
 
             foreach ($section->teachers() as $subjectId => $teacher) {
                 if ($teacher === $accountId) {
-                    $teaching[] = ['sectionId' => (int) $section->id(), 'section' => $label, 'subjectId' => $subjectId, 'subject' => $names[$subjectId] ?? ''];
+                    $teaching[] = ['sectionId' => (int) $section->id(), 'section' => $label, 'level' => $section->grade()->level(), 'subjectId' => $subjectId, 'subject' => $names[$subjectId] ?? ''];
                 }
             }
 
             if ($section->guideAccountId() === $accountId) {
-                $guiding[] = ['sectionId' => (int) $section->id(), 'section' => $label];
+                $guiding[] = ['sectionId' => (int) $section->id(), 'section' => $label, 'level' => $section->grade()->level()];
             }
         }
 

@@ -57,6 +57,12 @@ interface EnrollmentList
     public function hasAnyInYear(int $schoolYearId): bool;
 
     /**
+     * @param  list<int>  $studentIds
+     * @return list<Enrollment> Every enrollment of these students in the year, oldest first.
+     */
+    public function ofStudentsInYear(int $schoolYearId, array $studentIds): array;
+
+    /**
      * @return list<Enrollment> Every enrollment of a student, oldest first.
      */
     public function historyOf(int $studentId): array;

@@ -16,6 +16,7 @@ use App\Http\Controllers\CorrectionController;
 use App\Http\Controllers\EnrollmentChangeController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GeographyController;
+use App\Http\Controllers\GradesController;
 use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\GuardianPortalController;
 use App\Http\Controllers\HomeController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\InstitutionAssetController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\MarksController;
 use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\NextYearController;
 use App\Http\Controllers\Platform\ActivityController as PlatformActivityController;
@@ -312,6 +314,22 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
             });
             Route::post('/inscripciones/{enrollment}/grado', [EnrollmentChangeController::class, 'grade'])
                 ->middleware(['permission:aprobar-excepciones-inscripcion', 'throttle:60,1'])->name('enrollments.change-grade');
+        });
+
+        // SPEC-011: the plans and grades of Media General, the literals of Primaria and the reports of Inicial.
+        Route::whereNumber(['year', 'section', 'subject', 'term', 'activity', 'student'])->group(function () {
+            // As its menu entry (NAV-R03.3): whoever grades or manages students.
+            Route::get('/notas', [GradesController::class, 'index'])
+                ->middleware('permission:gestionar-calificaciones|gestionar-estudiantes')->name('grades.index');
+            Route::get('/notas/{year}/secciones/{section}/materias/{subject}/lapsos/{term}', [GradesController::class, 'sheet'])
+                ->middleware('permission:ver-calificaciones')->name('grades.sheet');
+            Route::get('/notas/{year}/secciones/{section}/literales', [MarksController::class, 'show'])
+                ->middleware('permission:ver-calificaciones')->name('grades.marks');
+            Route::middleware(['permission:gestionar-calificaciones', 'throttle:60,1'])->group(function () {
+                Route::put('/notas/{year}/secciones/{section}/materias/{subject}/lapsos/{term}/plan', [GradesController::class, 'plan'])->name('grades.plan');
+                Route::put('/notas/actividades/{activity}', [GradesController::class, 'grades'])->name('grades.activity');
+                Route::put('/notas/{year}/secciones/{section}/estudiantes/{student}', [MarksController::class, 'update'])->name('grades.marks.update');
+            });
         });
 
         // SPEC-008 EAC-R08.2, for the teachers; SPEC-013 NAV-R03.3: as its menu entry.

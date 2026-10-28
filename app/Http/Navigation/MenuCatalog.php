@@ -20,6 +20,7 @@ final class MenuCatalog
         'calendar' => ['route' => 'calendar.index', 'label' => 'Año escolar', 'description' => 'Planifica el año, sus lapsos y su cierre.', 'current' => ['calendar.*']],
         'structure' => ['route' => 'structure.show', 'label' => 'Estructura', 'description' => 'Secciones, pensum, docentes y coordinadores del año.', 'current' => ['structure.*']],
         'my_assignments' => ['route' => 'my-assignments', 'label' => 'Mis asignaciones', 'description' => 'Las materias que dictas y las secciones que guías.', 'current' => ['my-assignments']],
+        'grades' => ['route' => 'grades.index', 'label' => 'Notas', 'description' => 'Planes de evaluación y notas de cada lapso.', 'current' => ['grades.*']],
         'students' => ['route' => 'students.index', 'label' => 'Estudiantes', 'description' => 'Fichas de los estudiantes y sus representantes.', 'current' => ['students.*', 'guardians.*']],
         'enrollments' => ['route' => 'enrollments.index', 'label' => 'Inscripciones', 'description' => 'Secciones, inscritos, prosecución y el año siguiente.', 'current' => ['enrollments.*', 'promotion.*', 'next-year.*']],
         'transfers' => ['route' => 'transfers.index', 'label' => 'Traslados', 'description' => 'Solicitudes de traslado entre planteles.', 'current' => ['transfers.*']],

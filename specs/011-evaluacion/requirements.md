@@ -381,47 +381,47 @@ nota.
 
 | Criterio | Test(s) |
 |----------|---------|
-| EVA-R01.1 | |
-| EVA-R01.2 | |
-| EVA-R01.3 | |
-| EVA-R01.4 | |
-| EVA-R01.5 | |
-| EVA-R01.6 | |
-| EVA-R01.7 | |
-| EVA-R01.8 | |
-| EVA-R02.1 | |
-| EVA-R02.2 | |
-| EVA-R02.3 | |
-| EVA-R02.4 | |
-| EVA-R02.5 | |
-| EVA-R02.6 | |
-| EVA-R02.7 | |
-| EVA-R02.8 | |
-| EVA-R03.1 | |
-| EVA-R03.2 | |
-| EVA-R03.3 | |
-| EVA-R03.4 | |
-| EVA-R03.5 | |
-| EVA-R03.6 | |
-| EVA-R03.7 | |
-| EVA-R04.1 | |
-| EVA-R04.2 | |
-| EVA-R04.3 | |
-| EVA-R04.4 | |
-| EVA-R04.5 | |
-| EVA-R05.1 | |
-| EVA-R05.2 | |
-| EVA-R05.3 | |
-| EVA-R06.1 | |
-| EVA-R06.2 | |
-| EVA-R06.3 | |
-| EVA-R06.4 | |
-| EVA-R07.1 | |
-| EVA-R07.2 | |
-| EVA-R07.3 | |
-| EVA-R07.4 | |
-| EVA-R07.5 | |
-| EVA-R07.6 | |
+| EVA-R01.1 | `tests/Unit/Evaluation/Domain/EvaluationPlanTest.php` › «keeps the activities of a subject in a section and a term, with their weight»; `tests/Unit/Evaluation/Application/SavePlanTest.php` › «saves the plan of whoever teaches the subject, recorded inside the transaction»; `tests/Feature/Evaluation/GradesHttpTest.php` › «saves a plan and shows it in the sheet, with the students of the section» |
+| EVA-R01.2 | `tests/Unit/Evaluation/Domain/EvaluationPlanTest.php` › «refuses weights that do not add up to 100 %, saying how much they do»; `tests/Feature/Evaluation/GradesHttpTest.php` › «says what is wrong with a plan» |
+| EVA-R01.3 | `tests/Unit/Evaluation/Domain/EvaluationPlanTest.php` › «refuses an activity with no name, a wrong weight or a date out of the term, saying which»; `tests/Feature/Evaluation/GradesHttpTest.php` › «says what is wrong with a plan» |
+| EVA-R01.4 | `tests/Unit/Evaluation/Application/SavePlanTest.php` › «refuses a term that is not open, unless closed and with the special permission» |
+| EVA-R01.5 | `tests/Unit/Evaluation/Domain/EvaluationPlanTest.php` › «removing activities with grades asks to confirm, and then removes them»; `tests/Unit/Evaluation/Application/SavePlanTest.php` › «removing an activity with grades asks to confirm, and then removes its grades too»; `tests/Feature/Evaluation/Infrastructure/EvaluationRepositoriesTest.php` › «keeps the activities sent with their id, adds the new ones and removes the rest with their grades» |
+| EVA-R01.6 | `tests/Unit/Evaluation/Application/SavePlanTest.php` › «refuses whoever does not teach it, a subject out of the curriculum, and a section of another level»; `tests/Feature/Evaluation/GradesHttpTest.php` › «does not find a sheet of a subject out of the curriculum or a term that does not exist» |
+| EVA-R01.7 | `tests/Unit/Evaluation/Domain/EvaluationPlanTest.php` › «takes a single activity with the whole 100 %» |
+| EVA-R01.8 | `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «refuses whoever does not teach the subject, and an activity it does not have» |
+| EVA-R02.1 | `tests/Unit/Evaluation/Domain/ActivityGradesTest.php` › «records the grades of the students of the section, NP and none included, and tells what changed»; `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «saves the grades of an activity for the section, NP and none included, recorded with what changed»; `tests/Feature/Evaluation/GradesHttpTest.php` › «saves the grades of an activity, with NP, and the grade of the term» |
+| EVA-R02.2 | `tests/Unit/Evaluation/Domain/ScoreTest.php` › «refuses a grade out of range, with more decimals or not a number»; `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «refuses a grade out of the scale, saying of whom»; `tests/Feature/Evaluation/GradesHttpTest.php` › «says what is wrong with a grade, and takes at most 60 at a time»; `tests/Feature/Evaluation/Infrastructure/EvaluationSchemaTest.php` › «keeps a grade between 1 and 20, or NP with no grade» |
+| EVA-R02.3 | `tests/Unit/Evaluation/Domain/ScoreTest.php` › «marks a grade, an NP worth 1 in the arithmetic, or an incomplete one»; `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «weighs the grades by the share of each activity, NP as 1, rounded half up» |
+| EVA-R02.4 | `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «saves the grades of an activity for the section, NP and none included, recorded with what changed»; `tests/Feature/Evaluation/Infrastructure/EvaluationRepositoriesTest.php` › «saves the grades of an activity, with NP, and removes the ones cleared» |
+| EVA-R02.5 | `tests/Unit/Evaluation/Domain/ActivityGradesTest.php` › «refuses a grade for whoever is not in the section, or for an activity before it arrived»; `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «refuses whoever is no longer in the section, and a grade for an activity before the student arrived» |
+| EVA-R02.6 | `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «a closed term takes grades only with the special permission, flagged in the audit log; a closed year never»; `tests/Feature/Evaluation/GradesHttpTest.php` › «keeps the grades of a closed term» |
+| EVA-R02.7 | `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «an activity applies to whoever was enrolled in its section on its date»; `tests/Unit/Evaluation/Application/GradebookTest.php` › «the grade of the term of a student who changed section counts the activities of both»; `tests/Feature/Evaluation/Infrastructure/EvaluationRepositoriesTest.php` › «reads the plans of a subject in a term, of every section» |
+| EVA-R02.8 | `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «a student who arrived late has NA in the activities before, never NP»; `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «shares the 100 % among the activities that apply» |
+| EVA-R03.1 | `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «weighs the grades by the share of each activity, NP as 1, rounded half up»; `tests/Unit/Evaluation/Application/GradebookTest.php` › «shows the activities and the grades of the students of the section, NA included, with the grade of the term» |
+| EVA-R03.2 | `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «is incomplete while an activity that applies has no grade»; `tests/Unit/Evaluation/Application/GradebookTest.php` › «is incomplete while an activity lacks its grade, and the final waits for the three terms» |
+| EVA-R03.3 | `tests/Unit/Evaluation/Domain/FinalScoreTest.php` › «averages the three terms, rounded half up»; `tests/Unit/Evaluation/Application/GradebookTest.php` › «is incomplete while an activity lacks its grade, and the final waits for the three terms» |
+| EVA-R03.4 | `tests/Unit/Evaluation/Domain/FinalScoreTest.php` › «is incomplete while a term is» |
+| EVA-R03.5 | `tests/Unit/Evaluation/Domain/FinalScoreTest.php` › «fails below 10» |
+| EVA-R03.6 | `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «shares the 100 % among the activities that apply»; `tests/Unit/Evaluation/Application/GradebookTest.php` › «shows the activities and the grades of the students of the section, NA included, with the grade of the term» |
+| EVA-R03.7 | `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «does not apply when no activity applies»; `tests/Unit/Evaluation/Domain/FinalScoreTest.php` › «leaves out a term that does not apply» |
+| EVA-R04.1 | `tests/Unit/Evaluation/Domain/StudentMarksTest.php` › «records the literal of a term with its description, and tells what changed»; `tests/Unit/Evaluation/Application/MarksTest.php` › «the guide records the literal of a term with its description, recorded with what changed»; `tests/Feature/Evaluation/MarksHttpTest.php` › «records the literal of a term and shows it in the sheet of the section»; `tests/Feature/Evaluation/Infrastructure/EvaluationRepositoriesTest.php` › «saves the literals and reports of a student, incomplete ones included, and reads them by student» |
+| EVA-R04.2 | `tests/Unit/Evaluation/Domain/StudentMarksTest.php` › «takes a literal from A to E, in either case»; `tests/Unit/Evaluation/Application/MarksTest.php` › «refuses a literal out of A – E, a student no longer in the section, and a section that is not of Primaria»; `tests/Feature/Evaluation/MarksHttpTest.php` › «says what is wrong with a literal or a report» |
+| EVA-R04.3 | `tests/Unit/Evaluation/Application/MarksTest.php` › «records the final literal once the third term is closed, never in a closed year»; `tests/Feature/Evaluation/MarksHttpTest.php` › «records the final literal once the third term is closed» |
+| EVA-R04.4 | `tests/Unit/Evaluation/Domain/StudentMarksTest.php` › «records the final literal only once the third term is closed»; `tests/Unit/Evaluation/Application/MarksTest.php` › «records the final literal once the third term is closed, never in a closed year»; `tests/Feature/Evaluation/MarksHttpTest.php` › «says what is wrong with a literal or a report» |
+| EVA-R04.5 | `tests/Unit/Evaluation/Application/MarksTest.php` › «takes the literal of a term only while the term takes changes»; `tests/Feature/Evaluation/MarksHttpTest.php` › «says what is wrong with a literal or a report» |
+| EVA-R05.1 | `tests/Unit/Evaluation/Application/MarksTest.php` › «records the report of a student of Inicial, never its text in the audit log»; `tests/Feature/Evaluation/MarksHttpTest.php` › «records the report of a student of Inicial» |
+| EVA-R05.2 | `tests/Unit/Evaluation/Domain/StudentMarksTest.php` › «records a report of 1 to 5000 characters, never its text in what changed»; `tests/Feature/Evaluation/MarksHttpTest.php` › «says what is wrong with a literal or a report» |
+| EVA-R05.3 | `tests/Unit/Evaluation/Application/MarksTest.php` › «takes the literal of a term only while the term takes changes» |
+| EVA-R06.1 | `tests/Unit/Evaluation/Application/EvaluationAccessTest.php` › «takes grades in an open term; a closed one only with the special permission, never in a closed year, never one not opened yet»; `tests/Feature/Evaluation/GradesHttpTest.php` › «keeps the grades of a closed term»; `tests/Unit/Evaluation/Application/MarksTest.php` › «takes the literal of a term only while the term takes changes» |
+| EVA-R06.2 | `tests/Unit/Evaluation/Application/EvaluationAccessTest.php` › «takes grades in an open term; a closed one only with the special permission, never in a closed year, never one not opened yet»; `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «a closed term takes grades only with the special permission, flagged in the audit log; a closed year never» |
+| EVA-R06.3 | `tests/Unit/Evaluation/Application/EvaluationAccessTest.php` › «tells whether a change happens in a closed term»; `tests/Unit/Evaluation/Application/EvaluationAuditTest.php` › «records the grades that changed, and whether the term was closed» |
+| EVA-R06.4 | `tests/Unit/Evaluation/Application/EvaluationAccessTest.php` › «takes grades in an open term; a closed one only with the special permission, never in a closed year, never one not opened yet»; `tests/Unit/Evaluation/Application/SavePlanTest.php` › «refuses a term that is not open, unless closed and with the special permission» |
+| EVA-R07.1 | `tests/Unit/Evaluation/Application/EvaluationAccessTest.php` › «grades a subject only whoever teaches it in that section, with gestionar-calificaciones»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «another teacher does not see the sheet, and can not grade nor plan it» |
+| EVA-R07.2 | `tests/Unit/Evaluation/Application/MarksTest.php` › «only the guide records literals and reports»; `tests/Feature/Evaluation/MarksHttpTest.php` › «only the guide records them; a manager sees them; another teacher does not find them»; `tests/Unit/Evaluation/Application/SheetsTest.php` › «lists the sections of Primaria and Inicial a guide guides, a coordinator coordinates, or every one for a manager» |
+| EVA-R07.3 | `tests/Unit/Evaluation/Application/SheetsTest.php` › «lists the subjects a teacher teaches, with the open term»; `tests/Unit/Evaluation/Application/GradebookTest.php` › «a teacher sees only its subjects, a coordinator its grades, a manager everything»; `tests/Feature/Evaluation/GradesHttpTest.php` › «lists the sheets of a teacher, opening on the open term» |
+| EVA-R07.4 | `tests/Unit/Evaluation/Application/SheetsTest.php` › «lists every sheet of the year for whoever manages students»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «a manager sees every sheet and grades none» |
+| EVA-R07.5 | `tests/Unit/Evaluation/Application/SheetsTest.php` › «adds the sheets of the grades a coordinator coordinates»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «a coordinator of the grade sees the sheet but does not grade it» |
+| EVA-R07.6 | `tests/Unit/Evaluation/Application/GradebookTest.php` › «a teacher sees only its subjects, a coordinator its grades, a manager everything»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «another teacher does not see the sheet, and can not grade nor plan it»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «a Representante, with ver-calificaciones, has no Notas entry and finds no sheet»; `tests/Unit/Evaluation/Application/MarksTest.php` › «shows the sheet to a coordinator of the grade and to a manager, and to nobody else» |
 | EVA-R08.1 | |
 | EVA-R08.2 | |
 | EVA-R08.3 | |
@@ -430,18 +430,18 @@ nota.
 | EVA-R09.1 | |
 | EVA-R09.2 | |
 | EVA-R09.3 | |
-| EVA-R10.1 | |
-| EVA-R10.2 | |
-| EVA-R11.1 | |
-| EVA-R11.2 | |
-| EVA-R11.3 | |
-| EVA-R12.1 | |
-| EVA-R12.2 | |
-| EVA-R12.3 | |
-| EVA-R12.4 | |
-| EVA-R12.5 | |
-| EVA-NF01 | |
-| EVA-NF02 | |
-| EVA-NF03 | |
-| EVA-NF04 | |
-| EVA-NF05 | |
+| EVA-R10.1 | `tests/Unit/Evaluation/Application/EvaluationAuditTest.php` › «records a plan with its activities before and after»; `tests/Unit/Evaluation/Application/EvaluationAuditTest.php` › «records the grades that changed, and whether the term was closed»; `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «records nothing when nothing changed»; `tests/Unit/Evaluation/Application/MarksTest.php` › «the guide records the literal of a term with its description, recorded with what changed» |
+| EVA-R10.2 | `tests/Unit/Evaluation/Domain/StudentMarksTest.php` › «records a report of 1 to 5000 characters, never its text in what changed»; `tests/Unit/Evaluation/Application/MarksTest.php` › «records the report of a student of Inicial, never its text in the audit log» |
+| EVA-R11.1 | `tests/Feature/Evaluation/EvaluationIsolationTest.php` › «another institution sees none of its plans, activities, grades or literals» |
+| EVA-R11.2 | `tests/Feature/Evaluation/EvaluationIsolationTest.php` › «another institution sees none of its plans, activities, grades or literals» |
+| EVA-R11.3 | `tests/Feature/Evaluation/EvaluationIsolationTest.php` › «another institution can not open its sheet nor grade its activity» |
+| EVA-R12.1 | `tests/Unit/Evaluation/Application/PendingGradesTest.php` › «lists what is missing by teacher, section, subject and activity, leaving out NA and whoever left»; `tests/Feature/Evaluation/Infrastructure/TermClosingIntegrationTest.php` › «lists what is pending with who teaches it»; `tests/Feature/AcademicCalendar/CloseTermPendingGradesTest.php` › «shows what is pending in the open term» |
+| EVA-R12.2 | `tests/Unit/AcademicCalendar/Application/TermClosingGuardTest.php` › «does not close a term with pending grades, and says how many»; `tests/Feature/Evaluation/Infrastructure/TermClosingIntegrationTest.php` › «does not close the term with grades pending»; `tests/Feature/AcademicCalendar/CloseTermPendingGradesTest.php` › «closes with something pending only by exception, with a justification» |
+| EVA-R12.3 | `tests/Unit/Evaluation/Application/PendingGradesTest.php` › «fills NP and incomplete closing by exception, recording the justification»; `tests/Feature/Evaluation/Infrastructure/TermClosingIntegrationTest.php` › «closes by exception, with NP in the missing grades and the justification in the audit log»; `tests/Feature/AcademicCalendar/CloseTermPendingGradesTest.php` › «closes with something pending only by exception, with a justification» |
+| EVA-R12.4 | `tests/Unit/AcademicCalendar/Application/TermClosingGuardTest.php` › «closes by exception only with a justification, filling what is pending first»; `tests/Feature/AcademicCalendar/CloseTermPendingGradesTest.php` › «closes with something pending only by exception, with a justification» |
+| EVA-R12.5 | `tests/Unit/Evaluation/Application/PendingGradesTest.php` › «lists what is missing by teacher, section, subject and activity, leaving out NA and whoever left»; `tests/Unit/Evaluation/Application/PendingGradesTest.php` › «counts every missing grade, literal and report for the closing of the term» |
+| EVA-NF01 | `tests/Unit/Evaluation/Application/EvaluationAccessTest.php` › «grades a subject only whoever teaches it in that section, with gestionar-calificaciones»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «a manager sees every sheet and grades none» |
+| EVA-NF02 | `tests/Feature/Evaluation/Infrastructure/EvaluationSchemaTest.php` › «keeps a grade between 1 and 20, or NP with no grade»; `tests/Feature/Evaluation/EvaluationIsolationTest.php` › «another institution sees none of its plans, activities, grades or literals» |
+| EVA-NF03 | `tests/Unit/Evaluation/Domain/RoundingTest.php` › «rounds a fraction to the nearest whole number, half up»; `tests/Unit/Evaluation/Domain/TermScoreTest.php` › «weighs the grades by the share of each activity, NP as 1, rounded half up» |
+| EVA-NF04 | `tests/Feature/Evaluation/GradebookPerformanceTest.php` › «saves the 40 grades of an activity in under 500 ms»; `tests/Feature/Evaluation/GradebookPerformanceTest.php` › «shows the sheet of 40 students and 10 activities in under 300 ms» |
+| EVA-NF05 | `tests/Browser/GradebookTest.php` › «each screen of grades is accessible»; `tests/Browser/GradebookTest.php` › «the arrows move between the cells of the grid»; `tests/Browser/MarksTest.php` › «the literals and the reports of a section are accessible» |

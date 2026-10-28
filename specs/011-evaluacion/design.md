@@ -176,6 +176,29 @@ Migración `create_evaluation_tables`, con RLS en todas las tablas (S-01):
 - **Permisos:** `gestionar-calificaciones` y `ver-calificaciones` ya existen.
   No hace falta migración de permisos.
 
+> **Cambio en la implementación (P-04), aprobado el 2026-10-28:** tabla
+> `evaluation_plans`.
+>
+> - **Columnas:** `id`, `belongsToInstitution()`, `school_year_id`,
+>   `section_id` y `subject_id` (`RESTRICT`), `term`, `timestamps`.
+> - **Restricción:** único `(school_year_id, section_id, subject_id, term)`.
+> - **Cambio en `evaluation_activities`:** gana `plan_id` (`CASCADE`) en
+>   lugar de repetir año, sección, materia y lapso.
+>
+> Motivos:
+>
+> 1. **Concurrencia.** Sin una fila por plan, dos primeros guardados
+>    simultáneos del mismo plan no ven ninguno, y ambos insertan sus
+>    actividades: el plan sumaría 200 %. Con el índice único, el segundo
+>    choca y responde 409, como las inscripciones (MAT-NF03). Al editar, el
+>    repositorio bloquea la fila del plan (`FOR UPDATE`).
+> 2. **Identidad del plan.** La bitácora (`evaluation_plan`, EVA-R11.2)
+>    necesita un id estable, y hoy no hay ninguno: el de una actividad
+>    cambia cuando se quita.
+>
+> Fuera de esto, el dominio, los casos de uso y los tests no cambian:
+> `EvaluationPlan` ya tiene `id`.
+
 **Por qué no se guarda NA:** se deriva de los periodos de inscripción. Si
 una inscripción cambia (anulación, cambio de sección), NA se recalcula sin
 sincronizar nada.
@@ -295,3 +318,88 @@ sincronizar nada.
   - migración nueva, sin datos previos: `down` borra las tablas;
   - sin Evaluation registrado, los puntos de extensión dejan 007, 008 y 010
     como hoy.
+
+## Notas de implementación
+
+### PR A
+
+- **`evaluation_plans`** (P-04, aprobado el 2026-10-28): una fila por
+  planilla, con índice único. Ver «Datos». Un segundo primer guardado, o la
+  edición de un plan que cambió entretanto, responde 409 (`PlanChanged`).
+- **CHECK de `activity_grades`** con `score IS NOT NULL`: `NULL BETWEEN …` da
+  NULL, y un CHECK deja pasar NULL. Así, una fila sin nota y sin NP no entra.
+- **Sin puerto `Gradebook` ni `EloquentGradebook`.** `GradebookQuery` lee con
+  los repositorios y con `StudentScores`, que la propuesta de prosecución
+  (PR C) reutilizará. La planilla de 40 × 10 cumple EVA-NF04 sin un lado de
+  lectura aparte (`GradebookPerformanceTest`).
+- **`ActivityGradesRepository::saveGrades`**, y no `save`, porque la clase en
+  memoria de los tests implementa los dos repositorios.
+- **`GradeMark` no tiene «incompleto».** En Media General el cierre por
+  excepción pone NP (EVA-R12.3). «Incompleto» es solo de los literales e
+  informes, y lo guarda `StudentMarks` (PR B).
+- **«Vigente en la sección»** se comprueba en la fecha de hoy
+  (`EnrollmentPeriod::currentIn`), con el fin excluido, como `covers`.
+- **`GET /notas` con `SheetsQuery`**, que el diseño no nombraba:
+  - las planillas de Media General del año activo: las que dicta, las de los
+    grados que coordina, o todas con `gestionar-estudiantes`;
+  - se abre en el lapso abierto o, si no hay, en el último cerrado;
+  - para listar, `TeachingFacts` gana `taughtClasses`, `classesOf` y
+    `subjectNames`, y `CalendarFacts` gana `activeYear`.
+- **Permiso de `GET /notas`:** `gestionar-calificaciones` o
+  `gestionar-estudiantes`, como la entrada del menú (decisión 7 y paridad
+  NAV-R03.3), y no `ver-calificaciones`. El Representante recibe 403 en la
+  lista; en las planillas, 404 (R07.6).
+- **La planilla responde 404** para una materia fuera del pensum o una
+  sección que no es de Media General.
+- **Límites de los formularios:** hasta 30 actividades por plan y 60 notas
+  por guardado (S-12).
+- **«Mis asignaciones»:** cada clase lleva su nivel (`MyAssignmentsQuery`), y
+  las de Media General enlazan a su planilla en el lapso abierto.
+- **Menú:** la entrada `grades` («Notas») va en «Académico», tras «Mis
+  asignaciones». Workspace pregunta además por `gestionar-calificaciones`.
+  Los tests que enumeran las entradas del menú se amplían con ella.
+
+### PR B
+
+- **Un `GuideMarks` común** para los tres casos de uso de literales e
+  informes. Comprueba:
+  - el nivel de la sección (literal en Primaria, informe en Inicial);
+  - el guía;
+  - la inscripción vigente;
+  - el lapso editable.
+
+  El literal final no pide el permiso especial con el tercer lapso cerrado,
+  pero nunca entra con el año cerrado.
+- **La descripción del literal es opcional**, de hasta 5000 caracteres. En
+  la bitácora queda solo «escrita», nunca su texto, como el informe
+  (EVA-R10.2).
+- **`StudentMarksRepository::saveMarks`**, por la misma razón que
+  `saveGrades`. Una marca nunca se borra: se reemplaza.
+- **Una sola ruta para guardar,**
+  `PUT /notas/{year}/secciones/{section}/estudiantes/{student}`, con `kind`
+  (`literal` o `report`) y `period` (`1` – `3` o `final`). La planilla está
+  en `GET /notas/{year}/secciones/{section}/literales`, para literales e
+  informes.
+- **«Notas»** lista también las secciones de Primaria e Inicial: las que
+  guía, las de los grados que coordina, o todas con
+  `gestionar-estudiantes`. «Mis asignaciones» enlaza cada sección guiada a
+  sus literales o informes. `TeachingFacts` gana `sectionsOf` y
+  `staffNames`.
+- **Pendientes del lapso** (`PendingGrades`, sin permisos):
+  - los usan `PendingGradesQuery` (con `ver-calificaciones` y
+    `gestionar-estudiantes`) y `PendingGradesGuard`;
+  - una materia de Media sin plan cuenta como pendiente, con todos sus
+    estudiantes (EVA-R01.8);
+  - la excepción no tiene nada que rellenar en ella: su lapso queda «no
+    aplica».
+- **`TermClosingGuard`:**
+  - `pendingGrades` y `fillPending`, bajo el bloqueo y dentro de la
+    transacción del cierre;
+  - sin la excepción, el error va en `term`; sin justificación, en
+    `exception_justification`;
+  - la bitácora del plantel recibe `evaluation.term.closed_by_exception`
+    (lapso, justificación y cuántas rellenó), además de cada NP e
+    «incompleto».
+- **«Año escolar»** recibe `pendingGrades` del lapso abierto. Si la persona
+  no tiene `gestionar-estudiantes`, recibe `null`: el cierre igual se
+  rechaza, pero sin la lista.

@@ -1,7 +1,7 @@
 ---
 spec: 011-evaluacion
 prefijo: EVA
-estado: aprobada
+estado: implementada
 fecha: 2026-10-28
 aprobada: 2026-10-28
 backlog: F1-28 – F1-31
@@ -422,14 +422,14 @@ nota.
 | EVA-R07.4 | `tests/Unit/Evaluation/Application/SheetsTest.php` › «lists every sheet of the year for whoever manages students»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «a manager sees every sheet and grades none» |
 | EVA-R07.5 | `tests/Unit/Evaluation/Application/SheetsTest.php` › «adds the sheets of the grades a coordinator coordinates»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «a coordinator of the grade sees the sheet but does not grade it» |
 | EVA-R07.6 | `tests/Unit/Evaluation/Application/GradebookTest.php` › «a teacher sees only its subjects, a coordinator its grades, a manager everything»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «another teacher does not see the sheet, and can not grade nor plan it»; `tests/Feature/Evaluation/GradesPermissionsTest.php` › «a Representante, with ver-calificaciones, has no Notas entry and finds no sheet»; `tests/Unit/Evaluation/Application/MarksTest.php` › «shows the sheet to a coordinator of the grade and to a manager, and to nobody else» |
-| EVA-R08.1 | |
-| EVA-R08.2 | |
-| EVA-R08.3 | |
-| EVA-R08.4 | |
-| EVA-R08.5 | |
-| EVA-R09.1 | |
-| EVA-R09.2 | |
-| EVA-R09.3 | |
+| EVA-R08.1 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «proposes in Media General by the failed final grades»; `tests/Feature/Enrollment/PromotionProposalTest.php` › «shows the result proposed from the final grades, and what is missing to propose it» |
+| EVA-R08.2 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «proposes in Primaria by the final literal, and always promotes in Inicial» |
+| EVA-R08.3 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «proposes in Primaria by the final literal, and always promotes in Inicial» |
+| EVA-R08.4 | `tests/Feature/Enrollment/PromotionProposalTest.php` › «shows the result proposed from the final grades, and what is missing to propose it»; `tests/Feature/Enrollment/PromotionProposalTest.php` › «confirms the proposal as the result of the year» |
+| EVA-R08.5 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «proposes nothing in Media General while a final grade is missing, saying which»; `tests/Feature/Enrollment/PromotionProposalTest.php` › «shows the result proposed from the final grades, and what is missing to propose it» |
+| EVA-R09.1 | `tests/Feature/Evaluation/Infrastructure/EvaluationHooksIntegrationTest.php` › «an enrollment with grades is annulled only by a manager» |
+| EVA-R09.2 | `tests/Feature/Evaluation/Infrastructure/EvaluationHooksIntegrationTest.php` › «a subject with grades does not leave the curriculum of the active year» |
+| EVA-R09.3 | `tests/Feature/Evaluation/Infrastructure/EvaluationHooksIntegrationTest.php` › «after a change of grade, the former grades are for reference only and the new grade takes its own» |
 | EVA-R10.1 | `tests/Unit/Evaluation/Application/EvaluationAuditTest.php` › «records a plan with its activities before and after»; `tests/Unit/Evaluation/Application/EvaluationAuditTest.php` › «records the grades that changed, and whether the term was closed»; `tests/Unit/Evaluation/Application/SaveActivityGradesTest.php` › «records nothing when nothing changed»; `tests/Unit/Evaluation/Application/MarksTest.php` › «the guide records the literal of a term with its description, recorded with what changed» |
 | EVA-R10.2 | `tests/Unit/Evaluation/Domain/StudentMarksTest.php` › «records a report of 1 to 5000 characters, never its text in what changed»; `tests/Unit/Evaluation/Application/MarksTest.php` › «records the report of a student of Inicial, never its text in the audit log» |
 | EVA-R11.1 | `tests/Feature/Evaluation/EvaluationIsolationTest.php` › «another institution sees none of its plans, activities, grades or literals» |

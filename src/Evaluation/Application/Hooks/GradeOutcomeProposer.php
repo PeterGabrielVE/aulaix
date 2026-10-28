@@ -59,7 +59,7 @@ final readonly class GradeOutcomeProposer implements OutcomeProposer
         $scores = [];
 
         foreach ($this->teaching->curriculum($schoolYearId, $grade) as $subjectId) {
-            $scores[$subjectId] = new StudentScores($this->plans, $this->grades, $schoolYearId, $subjectId);
+            $scores[$subjectId] = new StudentScores($this->plans, $this->grades, $schoolYearId, $subjectId, $grade);
         }
 
         return array_map(fn (int $studentId) => OutcomeProposal::forSecondary(

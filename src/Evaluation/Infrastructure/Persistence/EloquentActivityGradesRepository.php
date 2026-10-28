@@ -9,6 +9,7 @@ use AulaX\Evaluation\Domain\ActivityGrades;
 use AulaX\Evaluation\Domain\ActivityGradesRepository;
 use AulaX\Evaluation\Domain\GradeMark;
 use AulaX\Evaluation\Domain\Score;
+use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 use LogicException;
 
@@ -56,6 +57,37 @@ final class EloquentActivityGradesRepository implements ActivityGradesRepository
                 ['score', 'not_presented', 'updated_at'],
             );
         });
+    }
+
+    public function gradedWithin(int $studentId, int $sectionId, DateTimeImmutable $from, ?DateTimeImmutable $until): bool
+    {
+        return DB::table('activity_grades')
+            ->join('evaluation_activities', 'evaluation_activities.id', '=', 'activity_grades.activity_id')
+            ->join('evaluation_plans', 'evaluation_plans.id', '=', 'evaluation_activities.plan_id')
+            ->where('activity_grades.student_id', $studentId)
+            ->where('evaluation_plans.section_id', $sectionId)
+            ->where('evaluation_activities.date', '>=', $from->format('Y-m-d'))
+            ->when($until !== null, fn ($query) => $query->where('evaluation_activities.date', '<', $until?->format('Y-m-d')))
+            ->exists();
+    }
+
+    public function subjectsWithGrades(int $schoolYearId, array $sectionIds, array $subjectIds): array
+    {
+        if ($sectionIds === [] || $subjectIds === []) {
+            return [];
+        }
+
+        return DB::table('activity_grades')
+            ->join('evaluation_activities', 'evaluation_activities.id', '=', 'activity_grades.activity_id')
+            ->join('evaluation_plans', 'evaluation_plans.id', '=', 'evaluation_activities.plan_id')
+            ->where('evaluation_plans.school_year_id', $schoolYearId)
+            ->whereIn('evaluation_plans.section_id', $sectionIds)
+            ->whereIn('evaluation_plans.subject_id', $subjectIds)
+            ->distinct()
+            ->orderBy('evaluation_plans.subject_id')
+            ->pluck('evaluation_plans.subject_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
     }
 
     public function withGrades(array $activityIds): array

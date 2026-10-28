@@ -93,6 +93,43 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
         return array_values(array_filter($activityIds, fn (int $id) => ($this->grades[$id] ?? null)?->marks() !== null && $this->grades[$id]->marks() !== []));
     }
 
+    public function gradedWithin(int $studentId, int $sectionId, \DateTimeImmutable $from, ?\DateTimeImmutable $until): bool
+    {
+        foreach ($this->plans as $plan) {
+            foreach ($plan->sectionId() === $sectionId ? $plan->activities() : [] as $activity) {
+                $within = $activity->date >= $from && ($until === null || $activity->date < $until);
+
+                if ($within && ($this->grades[(int) $activity->id?->value] ?? null)?->markOf($studentId) !== null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function subjectsWithGrades(int $schoolYearId, array $sectionIds, array $subjectIds): array
+    {
+        $subjects = [];
+
+        foreach ($this->plans as $plan) {
+            if ($plan->schoolYearId() !== $schoolYearId || ! in_array($plan->sectionId(), $sectionIds, true) || ! in_array($plan->subjectId(), $subjectIds, true)) {
+                continue;
+            }
+
+            foreach ($plan->activities() as $activity) {
+                if (($this->grades[(int) $activity->id?->value] ?? null)?->marks()) {
+                    $subjects[] = $plan->subjectId();
+                }
+            }
+        }
+
+        $subjects = array_values(array_unique($subjects));
+        sort($subjects);
+
+        return $subjects;
+    }
+
     public function forStudents(int $schoolYearId, array $studentIds): array
     {
         $marks = [];

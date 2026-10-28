@@ -1,6 +1,6 @@
 ---
 spec: 011-evaluacion
-estado: implementando
+estado: implementada
 fecha: 2026-10-28
 aprobada: 2026-10-28
 diseño: design.md
@@ -195,14 +195,14 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 7 — Lo que otros módulos preguntan
 
-- [ ] **T-20** — `OutcomeProposal` (dominio), punto de extensión
+- [x] **T-20** — `OutcomeProposal` (dominio), punto de extensión
   `OutcomeProposer` en Enrollment y `GradeOutcomeProposer`. La propuesta
   aparece en «Prosecución» con «Confirmar propuesta».
   - Criterios: EVA-R08.1 – R08.5
   - Test:
     - `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php`;
     - `tests/Feature/Enrollment/PromotionProposalTest.php`.
-- [ ] **T-21** — `GradedEnrollmentCheck`, `SubjectsWithGrades` y la regla del
+- [x] **T-21** — `GradedEnrollmentCheck`, `SubjectsWithGrades` y la regla del
   cambio de grado.
   - Criterios: EVA-R09.1 – R09.3
   - Test: `tests/Feature/Evaluation/Infrastructure/EvaluationHooksIntegrationTest.php`:
@@ -212,7 +212,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 8 — Cierre
 
-- [ ] **T-22** — Cambios en otras specs:
+- [x] **T-22** — Cambios en otras specs:
   - SPEC-007: CAL-R04 y el punto de extensión;
   - SPEC-008: `guides()` y EAC-R07.3;
   - SPEC-010: `EnrollmentPeriodsQuery`, `OutcomeProposer` y MAT-R14.3;
@@ -226,14 +226,14 @@ Tres PRs, cada uno usable por sí mismo:
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls`,
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls`,
   `--group=perf` y `tests/Isolation`), y tests de navegador en verde.
-- [ ] Tests de arquitectura en verde.
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
-- [ ] Migración: `up`, `down` y `up`.
-- [ ] Matriz de trazabilidad completa.
+- [x] Tests de arquitectura en verde.
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
+- [x] Migración: `up`, `down` y `up`.
+- [x] Matriz de trazabilidad completa.
 - [ ] `/security-review` de cada PR (permisos y tenancy; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

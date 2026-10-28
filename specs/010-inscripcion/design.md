@@ -449,3 +449,26 @@ entradas (MAT-R03.7, Q6).
     de tests carga clases.
 - **«Inscritos» en el inicio:** está en las cifras de la estructura (ver
   SPEC-013).
+
+### SPEC-011 (evaluación), 2026-10-28
+
+- **Consulta pública `EnrollmentPeriodsQuery`:**
+  - los periodos (sección, grado, desde y hasta) de los estudiantes de un
+    año, sin las anuladas;
+  - `ofEnrollment()`, de quién es una inscripción, en qué año y cuándo;
+  - Evaluation decide con ellos a qué actividades aplica cada estudiante.
+- **Punto de extensión `OutcomeProposer`** (ADR 0012), lo implementa
+  Evaluation:
+  - `PromotionSheetQuery` da la propuesta de cada estudiante, o lo que falta
+    para proponerla;
+  - «Prosecución» la muestra con «Confirmar propuesta», que guarda con
+    `RecordResultHandler` sin cambios (EVA-R08.4).
+
+  `OutcomeProposers` se enlaza en el contenedor, como las demás colecciones
+  de puntos de extensión.
+- **MAT-R14.3 se activa con las notas.** Evaluation registra
+  `GradedEnrollmentCheck` bajo `GradedEnrollment::TAG`:
+  - en Media cuenta una nota o NP en actividades de la sección mientras
+    duró la inscripción;
+  - en Primaria e Inicial, un literal o informe del año que no sea el
+    «incompleto» del cierre.

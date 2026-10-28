@@ -45,4 +45,14 @@ final class FakeEnrollmentFacts implements EnrollmentFacts
     {
         return array_intersect_key($this->periods, array_flip($studentIds));
     }
+
+    /**
+     * The enrollments are numbered student × 100 + the position of the period.
+     */
+    public function enrollment(int $enrollmentId): ?array
+    {
+        $period = $this->periods[intdiv($enrollmentId, 100)][$enrollmentId % 100] ?? null;
+
+        return $period === null ? null : ['studentId' => intdiv($enrollmentId, 100), 'schoolYearId' => 2, 'period' => $period];
+    }
 }

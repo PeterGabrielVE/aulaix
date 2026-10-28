@@ -7,6 +7,8 @@ namespace AulaX\Enrollment\Application\Roster;
 use AulaX\Enrollment\Application\Port\EnrollmentList;
 use AulaX\Enrollment\Domain\EndReason;
 use AulaX\Enrollment\Domain\Enrollment;
+use AulaX\Enrollment\Domain\EnrollmentId;
+use AulaX\Enrollment\Domain\EnrollmentRepository;
 
 /**
  * The public API for SPEC-011: when each student was in each section of a
@@ -16,7 +18,10 @@ use AulaX\Enrollment\Domain\Enrollment;
  */
 final readonly class EnrollmentPeriodsQuery
 {
-    public function __construct(private EnrollmentList $enrollments) {}
+    public function __construct(
+        private EnrollmentList $enrollments,
+        private EnrollmentRepository $repository,
+    ) {}
 
     /**
      * @param  list<int>  $studentIds
@@ -35,6 +40,17 @@ final readonly class EnrollmentPeriodsQuery
         }
 
         return $periods;
+    }
+
+    /**
+     * Whose enrollment it is, in which year and when (SPEC-011 EVA-R09.1:
+     * whether it has grades). Null for one the institution does not have.
+     */
+    public function ofEnrollment(int $enrollmentId): ?EnrolledPeriod
+    {
+        $enrollment = $enrollmentId > 0 ? $this->repository->byId(EnrollmentId::fromInt($enrollmentId)) : null;
+
+        return $enrollment === null ? null : new EnrolledPeriod($enrollment->studentId(), $enrollment->schoolYearId(), self::view($enrollment));
     }
 
     private static function view(Enrollment $enrollment): PeriodView

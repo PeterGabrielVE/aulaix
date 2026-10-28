@@ -21,4 +21,12 @@ interface EnrollmentFacts
      * @return array<int, list<EnrollmentPeriod>> Student id => its periods of the year.
      */
     public function periods(int $schoolYearId, array $studentIds): array;
+
+    /**
+     * Whose enrollment it is, in which year and when; null for one the
+     * institution does not have.
+     *
+     * @return ?array{studentId: int, schoolYearId: int, period: EnrollmentPeriod}
+     */
+    public function enrollment(int $enrollmentId): ?array;
 }

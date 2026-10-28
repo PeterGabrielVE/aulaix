@@ -34,11 +34,23 @@ final readonly class EnrollmentEnrollmentFacts implements EnrollmentFacts
 
     public function periods(int $schoolYearId, array $studentIds): array
     {
-        return array_map(fn (array $periods) => array_map(fn (PeriodView $period) => new EnrollmentPeriod(
+        return array_map(fn (array $periods) => array_map(self::period(...), $periods), ($this->periods)($schoolYearId, $studentIds));
+    }
+
+    public function enrollment(int $enrollmentId): ?array
+    {
+        $enrolled = $this->periods->ofEnrollment($enrollmentId);
+
+        return $enrolled === null ? null : ['studentId' => $enrolled->studentId, 'schoolYearId' => $enrolled->schoolYearId, 'period' => self::period($enrolled->period)];
+    }
+
+    private static function period(PeriodView $period): EnrollmentPeriod
+    {
+        return new EnrollmentPeriod(
             $period->sectionId,
             $period->grade,
             new DateTimeImmutable($period->startsOn),
             $period->endsOn === null ? null : new DateTimeImmutable($period->endsOn),
-        ), $periods), ($this->periods)($schoolYearId, $studentIds));
+        );
     }
 }

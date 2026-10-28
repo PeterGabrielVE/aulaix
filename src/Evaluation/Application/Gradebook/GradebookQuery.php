@@ -66,7 +66,7 @@ final readonly class GradebookQuery
         $collator = new Collator('es');
         usort($roster, fn (RosterStudentFact $a, RosterStudentFact $b) => $collator->compare($a->fullName, $b->fullName));
         $periods = $this->enrollments->periods($schoolYearId, array_map(fn (RosterStudentFact $student) => $student->studentId, $roster));
-        $scores = new StudentScores($this->plans, $this->grades, $schoolYearId, $subjectId);
+        $scores = new StudentScores($this->plans, $this->grades, $schoolYearId, $subjectId, $section->grade);
         $rows = [];
 
         foreach ($roster as $student) {

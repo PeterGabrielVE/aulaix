@@ -1,6 +1,6 @@
 ---
 spec: 011-evaluacion
-estado: aprobada
+estado: implementada
 fecha: 2026-10-28
 aprobada: 2026-10-28
 requisitos: requirements.md
@@ -403,3 +403,24 @@ sincronizar nada.
 - **«Año escolar»** recibe `pendingGrades` del lapso abierto. Si la persona
   no tiene `gestionar-estudiantes`, recibe `null`: el cierre igual se
   rechaza, pero sin la lista.
+
+### PR C
+
+- **`OutcomeProposal`** (dominio) devuelve el resultado en los valores de
+  SPEC-010, o lo que falta para proponerlo.
+  - En Media, una definitiva «no aplica» (ninguna actividad le aplicó)
+    también falta: sin ella no hay propuesta.
+- **La nota de un estudiante cuenta solo las actividades de su grado**
+  (`StudentScores` filtra los periodos por el grado de la planilla).
+  - Las materias del catálogo son las mismas en todos los grados de un
+    nivel. Sin el filtro, tras un cambio de grado las notas del grado
+    anterior entrarían en la del nuevo.
+  - Esas notas quedan para consulta (EVA-R09.3). Guardar en la sección
+    anterior ya se rechaza, porque el estudiante no está inscrito en ella.
+- **`GradedEnrollment` sin cambiar su firma.** `EnrollmentFacts` gana
+  `enrollment(id)`, sobre la consulta pública
+  `EnrollmentPeriodsQuery::ofEnrollment()`.
+- **`ActivityGradesRepository`** gana `gradedWithin` y `subjectsWithGrades`
+  (una consulta cada uno).
+- **`SubjectsWithGrades`** implementa `RemovalGuard`: responde 0 y «sin
+  inscripciones» a lo que no es suyo.

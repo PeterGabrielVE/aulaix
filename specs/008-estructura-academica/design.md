@@ -370,3 +370,15 @@ Ajustes hechos al implementar el PR B, también sin cambiar criterios:
   quitar lo que está en uso) no cambia y sus tests tampoco.
 - **Consultas públicas nuevas:** `GradesQuery` (los 17 grados con su nivel y
   nombre) y `CurriculumQuery` (el pensum de un grado y año).
+
+### SPEC-011 (evaluación), 2026-10-28
+
+- **EAC-R07.3 se activa con las notas.** Evaluation registra
+  `SubjectsWithGrades` bajo `RemovalGuard::TAG` (ADR 0012): una materia con
+  notas en alguna sección del grado no sale del pensum del año activo
+  (409). Para las secciones responde «sin inscripciones»: eso lo cuida
+  Enrollment.
+- **`TeachingQuery::guides(account, section)`**, público: el guía de una
+  sección del año activo carga sus literales e informes.
+- **`MyAssignmentsQuery`** da el nivel de cada clase y de cada sección
+  guiada, para enlazar a la planilla o a los literales e informes.

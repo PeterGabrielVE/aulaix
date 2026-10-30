@@ -232,7 +232,7 @@ Tres PRs, cada uno usable por sí mismo:
 - [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
 - [x] Migración: `up`, `down` y `up`.
 - [x] Matriz de trazabilidad completa.
-- [ ] `/security-review` de cada PR (permisos y tenancy; S-12).
+- [x] `/security-review` de cada PR (permisos y tenancy; S-12).
 - [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios

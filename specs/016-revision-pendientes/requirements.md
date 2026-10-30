@@ -307,19 +307,19 @@ sus materias pendientes y cómo van.
 
 | Criterio | Test(s) |
 |----------|---------|
-| RVP-R01.1 | |
-| RVP-R01.2 | |
-| RVP-R01.3 | |
-| RVP-R01.4 | |
-| RVP-R01.5 | |
-| RVP-R01.6 | |
-| RVP-R01.7 | |
-| RVP-R01.8 | |
-| RVP-R02.1 | |
-| RVP-R02.2 | |
-| RVP-R02.3 | |
-| RVP-R02.4 | |
-| RVP-R02.5 | |
+| RVP-R01.1 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «the teacher of the subject records the revision of a failed final, recorded with what changed»; `tests/Feature/Evaluation/RevisionHttpTest.php` › «records a revision and shows the final grade that counts»; `tests/Feature/Evaluation/Infrastructure/RevisionRepositoryTest.php` › «saves, changes and clears the revisions of a section, and reads them by student» |
+| RVP-R01.2 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «refuses a revision out of the scale, of a final that passed, or of whoever left the section»; `tests/Feature/Evaluation/RevisionHttpTest.php` › «says what is wrong with a revision» |
+| RVP-R01.3 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «takes NP as a revision»; `tests/Unit/Evaluation/Domain/FinalAfterRevisionTest.php` › «decides the final grade with its revision» |
+| RVP-R01.4 | `tests/Unit/Evaluation/Domain/RevisionTest.php` › «refuses a revision of a final that is not failed»; `tests/Unit/Evaluation/Application/RevisionTest.php` › «refuses a revision out of the scale, of a final that passed, or of whoever left the section»; `tests/Feature/Evaluation/RevisionHttpTest.php` › «says what is wrong with a revision» |
+| RVP-R01.5 | `tests/Unit/Evaluation/Domain/RevisionTest.php` › «refuses a revision before the third term is closed, or once the result of the year is recorded»; `tests/Unit/Evaluation/Application/RevisionTest.php` › «refuses revisions before the third term is closed, in a closed year, and once the result is recorded»; `tests/Feature/Evaluation/RevisionHttpTest.php` › «says what is wrong with a revision» |
+| RVP-R01.6 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «refuses revisions before the third term is closed, in a closed year, and once the result is recorded» |
+| RVP-R01.7 | `tests/Unit/Evaluation/Domain/RevisionTest.php` › «refuses a revision before the third term is closed, or once the result of the year is recorded»; `tests/Unit/Evaluation/Application/RevisionTest.php` › «refuses revisions before the third term is closed, in a closed year, and once the result is recorded»; `tests/Feature/Evaluation/Infrastructure/RevisionRepositoryTest.php` › «tells who already has the result of the year recorded» |
+| RVP-R01.8 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «only whoever teaches the subject in the section records its revisions»; `tests/Feature/Evaluation/RevisionHttpTest.php` › «only the teacher of the subject records its revisions» |
+| RVP-R02.1 | `tests/Unit/Evaluation/Domain/FinalAfterRevisionTest.php` › «decides the final grade with its revision»; `tests/Unit/Evaluation/Domain/FinalAfterRevisionTest.php` › «tells whether the subject passed or failed in the end» |
+| RVP-R02.2 | `tests/Unit/Evaluation/Domain/FinalAfterRevisionTest.php` › «decides the final grade with its revision» |
+| RVP-R02.3 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «counts a subject passed in its revision, and waits for the revisions still missing»; `tests/Feature/Enrollment/PromotionProposalTest.php` › «counts the revisions, and waits for the one still missing» |
+| RVP-R02.4 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «counts a subject passed in its revision, and waits for the revisions still missing»; `tests/Feature/Enrollment/PromotionProposalTest.php` › «counts the revisions, and waits for the one still missing» |
+| RVP-R02.5 | `tests/Feature/Evaluation/RevisionHttpTest.php` › «shows the failed final grades waiting for their revision»; `tests/Feature/Evaluation/RevisionHttpTest.php` › «records a revision and shows the final grade that counts»; `tests/Browser/GradebookTest.php` › «the sheet with the column of revisions is accessible» |
 | RVP-R03.1 | |
 | RVP-R03.2 | |
 | RVP-R03.3 | |
@@ -340,13 +340,13 @@ sus materias pendientes y cómo van.
 | RVP-R05.5 | |
 | RVP-R06.1 | |
 | RVP-R06.2 | |
-| RVP-R07.1 | |
+| RVP-R07.1 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «the teacher of the subject records the revision of a failed final, recorded with what changed» |
 | RVP-R07.2 | |
-| RVP-R08.1 | |
-| RVP-R08.2 | |
-| RVP-R08.3 | |
-| RVP-NF01 | |
-| RVP-NF02 | |
-| RVP-NF03 | |
+| RVP-R08.1 | `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution sees none of its revisions nor groups of pending subjects» |
+| RVP-R08.2 | `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution sees none of its revisions nor groups of pending subjects» |
+| RVP-R08.3 | `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution can not record a revision in its section» |
+| RVP-NF01 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «only whoever teaches the subject in the section records its revisions» |
+| RVP-NF02 | `tests/Feature/Evaluation/Infrastructure/RevisionSchemaTest.php` › «keeps a revision as a grade between 1 and 20 or NP, of a section or a group, once per student»; `tests/Feature/Evaluation/Infrastructure/RevisionSchemaTest.php` › «keeps a plan of a section or of a group, never both nor neither»; `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution sees none of its revisions nor groups of pending subjects» |
+| RVP-NF03 | `tests/Unit/Evaluation/Domain/FinalAfterRevisionTest.php` › «decides the final grade with its revision» |
 | RVP-NF04 | |
-| RVP-NF05 | |
+| RVP-NF05 | `tests/Browser/GradebookTest.php` › «the sheet with the column of revisions is accessible» |

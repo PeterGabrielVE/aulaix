@@ -8,14 +8,20 @@ use AulaX\Evaluation\Domain\ActivityGradesRepository;
 use AulaX\Evaluation\Domain\ActivityId;
 use AulaX\Evaluation\Domain\EvaluationPlan;
 use AulaX\Evaluation\Domain\EvaluationPlanRepository;
+use AulaX\Evaluation\Domain\PlanOwner;
+use AulaX\Evaluation\Domain\Revision;
+use AulaX\Evaluation\Domain\RevisionRepository;
 use AulaX\Evaluation\Domain\StudentMarks;
 use AulaX\Evaluation\Domain\StudentMarksRepository;
 
 /**
  * Plans and grades of one institution, kept in memory.
  */
-final class InMemoryEvaluationStore implements ActivityGradesRepository, EvaluationPlanRepository, StudentMarksRepository
+final class InMemoryEvaluationStore implements ActivityGradesRepository, EvaluationPlanRepository, RevisionRepository, StudentMarksRepository
 {
+    /** @var array<string, Revision> "year:subject:student" of a section, "gGroup:student" of a group. */
+    public array $revisions = [];
+
     /** @var array<int, StudentMarks> Student id => marks of school year 2. */
     public array $marks = [];
 
@@ -40,8 +46,19 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
     {
         return array_values(array_map(fn (EvaluationPlan $plan) => clone $plan, array_filter(
             $this->plans,
-            fn (EvaluationPlan $plan) => $plan->schoolYearId() === $schoolYearId && $plan->subjectId() === $subjectId && $plan->term() === $term,
+            fn (EvaluationPlan $plan) => $plan->owner()->isSection() && $plan->schoolYearId() === $schoolYearId && $plan->subjectId() === $subjectId && $plan->term() === $term,
         )));
+    }
+
+    public function planOfGroup(int $pendingGroupId, int $term): ?EvaluationPlan
+    {
+        foreach ($this->plans as $plan) {
+            if ($plan->owner()->pendingGroupId === $pendingGroupId && $plan->term() === $term) {
+                return clone $plan;
+            }
+        }
+
+        return null;
     }
 
     public function planOfActivity(ActivityId $activityId): ?EvaluationPlan
@@ -72,8 +89,18 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
             }
         }
 
-        $saved = EvaluationPlan::reconstitute($plan->id(), $plan->schoolYearId(), $plan->sectionId(), $plan->subjectId(), $plan->term(), $activities);
-        $this->plans["{$plan->schoolYearId()}:{$plan->sectionId()}:{$plan->subjectId()}:{$plan->term()}"] = $saved;
+        $saved = EvaluationPlan::reconstitute($plan->id(), $plan->schoolYearId(), $plan->owner(), $plan->subjectId(), $plan->term(), $activities);
+        $this->plans[self::keyOf($plan)] = $saved;
+    }
+
+    /**
+     * "year:section:subject:term" for a section, "year:gGroup:subject:term" for a group.
+     */
+    private static function keyOf(EvaluationPlan $plan): string
+    {
+        $owner = $plan->owner()->sectionId ?? "g{$plan->owner()->pendingGroupId}";
+
+        return "{$plan->schoolYearId()}:{$owner}:{$plan->subjectId()}:{$plan->term()}";
     }
 
     public function forActivity(Activity $activity, int $sectionId): ActivityGrades
@@ -130,6 +157,28 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
         return $subjects;
     }
 
+    public function revisionsOf(int $schoolYearId, int $subjectId, PlanOwner $owner, array $studentIds): array
+    {
+        $revisions = [];
+
+        foreach ($studentIds as $studentId) {
+            $key = self::revisionKey($schoolYearId, $subjectId, $owner, $studentId);
+            $revisions[$studentId] = isset($this->revisions[$key]) ? clone $this->revisions[$key] : Revision::of(null, $schoolYearId, $subjectId, $studentId, $owner, null);
+        }
+
+        return $revisions;
+    }
+
+    public function saveRevision(Revision $revision): void
+    {
+        $this->revisions[self::revisionKey($revision->schoolYearId(), $revision->subjectId(), $revision->owner(), $revision->studentId())] = clone $revision;
+    }
+
+    private static function revisionKey(int $schoolYearId, int $subjectId, PlanOwner $owner, int $studentId): string
+    {
+        return $owner->isSection() ? "{$schoolYearId}:{$subjectId}:{$studentId}" : "g{$owner->pendingGroupId}:{$studentId}";
+    }
+
     public function forStudents(int $schoolYearId, array $studentIds): array
     {
         $marks = [];
@@ -158,7 +207,7 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
 
     private function belongsTo(int $activityId, EvaluationPlan $plan): bool
     {
-        $stored = $this->plans["{$plan->schoolYearId()}:{$plan->sectionId()}:{$plan->subjectId()}:{$plan->term()}"] ?? null;
+        $stored = $this->plans[self::keyOf($plan)] ?? null;
 
         foreach ($stored?->activities() ?? [] as $activity) {
             if ($activity->id?->value === $activityId) {

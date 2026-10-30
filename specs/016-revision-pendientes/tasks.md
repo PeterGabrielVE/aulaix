@@ -1,6 +1,6 @@
 ---
 spec: 016-revision-pendientes
-estado: aprobada
+estado: implementando
 fecha: 2026-10-30
 aprobada: 2026-10-30
 diseño: design.md
@@ -31,7 +31,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 1 — El plan con dueño (refactor, ADR 0013)
 
-- [ ] **T-01** — `PlanOwner` (sección o grupo) y `ActivityAudience`
+- [x] **T-01** — `PlanOwner` (sección o grupo) y `ActivityAudience`
   (`SectionAudience`, `GroupAudience`):
   - `EvaluationPlan` guarda su dueño;
   - `ActivityGrades::record()` pregunta a la audiencia.
@@ -42,7 +42,7 @@ Tres PRs, cada uno usable por sí mismo:
     - `tests/Unit/Evaluation/Domain/PlanOwnerTest.php`;
     - `tests/Unit/Evaluation/Domain/ActivityAudienceTest.php`;
     - toda la suite de SPEC-011 en verde, con su lógica intacta.
-- [ ] **T-02** — Migración `…_create_revision_and_pending_tables`, en su
+- [x] **T-02** — Migración `…_create_revision_and_pending_tables`, en su
   propia tarea:
   - `pending_groups` y `grade_revisions`, con RLS;
   - `evaluation_plans`: `section_id` nulo, `pending_group_id`, el `CHECK`
@@ -52,7 +52,7 @@ Tres PRs, cada uno usable por sí mismo:
     - `tests/Feature/Evaluation/Infrastructure/RevisionSchemaTest.php`
       (`CHECK`, índices, `up`, `down` con planes de grupo y `up`);
     - `TenantTableTest`.
-- [ ] **T-03** — `EloquentEvaluationPlanRepository` con dueño: lee y guarda
+- [x] **T-03** — `EloquentEvaluationPlanRepository` con dueño: lee y guarda
   los planes de sección y de grupo.
   - Criterios: RVP-R04.1 (base)
   - Test: `tests/Feature/Evaluation/Infrastructure/EvaluationRepositoriesTest.php`
@@ -61,21 +61,21 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 2 — La revisión
 
-- [ ] **T-04** — `Revision` (agregado) y `FinalAfterRevision`.
+- [x] **T-04** — `Revision` (agregado) y `FinalAfterRevision`.
   - Criterios: RVP-R01.2 – R01.5, R02.1, R02.2, NF03
   - Test:
     - `tests/Unit/Evaluation/Domain/RevisionTest.php`;
     - `tests/Unit/Evaluation/Domain/FinalAfterRevisionTest.php`, con una
       tabla de casos: 10, 9,99, 9,5 que redondea a 10, NP, sin revisión,
       incompleta y aprobada.
-- [ ] **T-05** — `SaveRevisionHandler` (dueño sección):
+- [x] **T-05** — `SaveRevisionHandler` (dueño sección):
   - el docente que dicta la materia en la sección;
   - el tercer lapso cerrado y el año abierto;
   - el resultado aún sin registrar (`EnrollmentFacts::resultsRecorded`);
   - la bitácora.
   - Criterios: RVP-R01.1 – R01.8, R07.1, R07.2, NF01
   - Test: `tests/Unit/Evaluation/Application/RevisionTest.php`.
-- [ ] **T-06** — La propuesta del resultado con las definitivas tras
+- [x] **T-06** — La propuesta del resultado con las definitivas tras
   revisión, que espera las revisiones que faltan (`OutcomeProposal` y
   `GradeOutcomeProposer`).
   - Criterios: RVP-R02.3, R02.4
@@ -86,13 +86,13 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 3 — Infraestructura y pantalla de la revisión
 
-- [ ] **T-07** — `EloquentRevisionRepository` y `resultsRecorded` en
+- [x] **T-07** — `EloquentRevisionRepository` y `resultsRecorded` en
   `EnrollmentEnrollmentFacts`, sobre una consulta pública de Enrollment.
   - Criterios: RVP-R08.1, R08.3, NF02
   - Test:
     - `tests/Feature/Evaluation/Infrastructure/RevisionRepositoryTest.php`;
     - `tests/Feature/Evaluation/RevisionIsolationTest.php` (`rls`).
-- [ ] **T-08** — La planilla de la sección:
+- [x] **T-08** — La planilla de la sección:
   - la columna «Revisión» con el tercer lapso cerrado;
   - `GradebookQuery` con la definitiva, la revisión y la definitiva tras
     revisión;

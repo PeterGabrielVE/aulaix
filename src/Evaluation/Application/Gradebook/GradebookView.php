@@ -13,6 +13,7 @@ final readonly class GradebookView
      * @param  bool  $editable  The term takes grades now (EVA-R06).
      * @param  list<ActivityView>  $activities
      * @param  list<GradebookRow>  $rows  By name.
+     * @param  bool  $revisionsOpen  The person records the revisions now (RVP-R01.5, R01.6).
      */
     public function __construct(
         public int $schoolYearId,
@@ -24,5 +25,6 @@ final readonly class GradebookView
         public bool $editable,
         public array $activities,
         public array $rows,
+        public bool $revisionsOpen = false,
     ) {}
 }

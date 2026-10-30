@@ -8,6 +8,7 @@ use AulaX\Evaluation\Domain\GradeMark;
 use AulaX\Evaluation\Domain\Literal;
 use AulaX\Evaluation\Domain\MarkKind;
 use AulaX\Evaluation\Domain\PlanChanged;
+use AulaX\Evaluation\Domain\PlanOwner;
 use AulaX\Evaluation\Domain\Score;
 use AulaX\Evaluation\Domain\Weight;
 use AulaX\Evaluation\Infrastructure\Persistence\EloquentActivityGradesRepository;
@@ -133,4 +134,20 @@ it('saves the literals and reports of a student, incomplete ones included, and r
         ->and($read[$ana]->markOf('2', MarkKind::Literal)?->incomplete)->toBeTrue()
         ->and($read[$luis]->marks())->toBe([])
         ->and(DB::table('student_marks')->count())->toBe(2);
+});
+
+it('saves and reads the plan of a pending group', function () {
+    $group = DB::table('pending_groups')->insertGetId(['school_year_id' => $this->year, 'subject_id' => $this->subject, 'origin_grade' => 'media_3']);
+    $this->plans->save(EvaluationPlan::reconstitute(null, $this->year, PlanOwner::pendingGroup($group), $this->subject, 1, [newActivity('Prueba', '2026-10-05', '100')]));
+    savedPlan($this, [newActivity('Examen', '2026-10-06', '100')]);
+    $plan = $this->plans->planOfGroup($group, 1);
+
+    expect($plan?->owner()->equals(PlanOwner::pendingGroup($group)))->toBeTrue()
+        ->and($plan->activities()[0]->name)->toBe('Prueba')
+        ->and($this->plans->planOfActivity($plan->activities()[0]->id)?->owner()->pendingGroupId)->toBe($group)
+        ->and($this->plans->planOfGroup($group, 2))->toBeNull()
+        // The plans of a subject are those of its sections.
+        ->and(array_map(fn (EvaluationPlan $plan) => $plan->sectionId(), $this->plans->plansOfSubject($this->year, $this->subject, 1)))->toBe([$this->section])
+        ->and(fn () => $this->plans->save(EvaluationPlan::reconstitute(null, $this->year, PlanOwner::pendingGroup($group), $this->subject, 1, [newActivity('Otra', '2026-10-05', '100')])))
+        ->toThrow(PlanChanged::class);
 });

@@ -43,6 +43,26 @@ final readonly class EnrollmentPeriodsQuery
     }
 
     /**
+     * Which of these students already have the result of the year recorded
+     * (SPEC-016 RVP-R01.7).
+     *
+     * @param  list<int>  $studentIds
+     * @return list<int>
+     */
+    public function withResult(int $schoolYearId, array $studentIds): array
+    {
+        $students = [];
+
+        foreach ($this->enrollments->ofStudentsInYear($schoolYearId, $studentIds) as $enrollment) {
+            if ($enrollment->result() !== null) {
+                $students[] = $enrollment->studentId();
+            }
+        }
+
+        return array_values(array_unique($students));
+    }
+
+    /**
      * Whose enrollment it is, in which year and when (SPEC-011 EVA-R09.1:
      * whether it has grades). Null for one the institution does not have.
      */

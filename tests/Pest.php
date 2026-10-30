@@ -43,6 +43,10 @@ pest()->extend(TestCase::class)
     ->group('browser')
     ->in('Browser');
 
+// The first page of a run starts Chromium cold and takes longer than the
+// 5 s the plugin waits by default.
+pest()->browser()->timeout(15000);
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

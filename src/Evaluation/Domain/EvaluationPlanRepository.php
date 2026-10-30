@@ -14,11 +14,17 @@ interface EvaluationPlanRepository
 
     /**
      * The plans of a subject in a term, of every section: a student who
-     * changed section counts the activities of both (EVA-R02.7).
+     * changed section counts the activities of both (EVA-R02.7). Not those
+     * of the groups of pending subjects.
      *
      * @return list<EvaluationPlan>
      */
     public function plansOfSubject(int $schoolYearId, int $subjectId, int $term): array;
+
+    /**
+     * The plan of a group of pending subjects in a term (SPEC-016).
+     */
+    public function planOfGroup(int $pendingGroupId, int $term): ?EvaluationPlan;
 
     /**
      * The plan an activity belongs to.

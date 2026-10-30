@@ -15,10 +15,12 @@ final class OutcomeProposal
     private const int MOST_PENDING = 2;
 
     /**
-     * Media General: no failed subject, promoted; 1 or 2, promoted with those
-     * subjects pending; 3 or more, repeats.
+     * Media General, with the final grades after their revision (RVP-R02.3):
+     * no failed subject, promoted; 1 or 2, promoted with those subjects
+     * pending; 3 or more, repeats. A failed final waits for its revision
+     * (RVP-R02.4).
      *
-     * @param  array<int, FinalScore>  $finals  Subject id => final grade.
+     * @param  array<int, FinalAfterRevision>  $finals  Subject id => final grade after its revision.
      * @param  array<int, string>  $names  Subject id => name, to say what is missing.
      * @return array{outcome: ?string, pendingSubjects: list<int>, missing: list<string>}
      */
@@ -28,8 +30,12 @@ final class OutcomeProposal
         $failed = [];
 
         foreach ($finals as $subjectId => $final) {
-            if (! $final->isComplete()) {
-                $missing[] = 'Falta la definitiva de '.($names[$subjectId] ?? 'una materia').'.';
+            $name = $names[$subjectId] ?? 'una materia';
+
+            if ($final->state === FinalAfterRevision::NEEDS_REVISION) {
+                $missing[] = "Falta la revisión de {$name}.";
+            } elseif (! $final->isDecided()) {
+                $missing[] = "Falta la definitiva de {$name}.";
             } elseif ($final->failed()) {
                 $failed[] = $subjectId;
             }

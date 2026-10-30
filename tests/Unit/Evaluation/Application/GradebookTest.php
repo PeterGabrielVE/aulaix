@@ -51,7 +51,7 @@ function sheet(int $section = 10, int $term = 1): GradebookView
 {
     $scene = test()->scene;
 
-    return (new GradebookQuery($scene->store, $scene->store, $scene->teaching, $scene->calendar, $scene->enrollments, $scene->permissions))(2, $section, 4, $term);
+    return (new GradebookQuery($scene->store, $scene->store, $scene->teaching, $scene->calendar, $scene->enrollments, $scene->permissions, $scene->store))(2, $section, 4, $term);
 }
 
 it('shows the activities and the grades of the students of the section, NA included, with the grade of the term', function () {
@@ -122,7 +122,7 @@ it('a teacher sees only its subjects, a coordinator its grades, a manager everyt
 it('names its subject, and does not exist for a subject out of the curriculum nor out of Media General', function () {
     $this->scene->permissions->seesAll = true;
     $scene = $this->scene;
-    $query = new GradebookQuery($scene->store, $scene->store, $scene->teaching, $scene->calendar, $scene->enrollments, $scene->permissions);
+    $query = new GradebookQuery($scene->store, $scene->store, $scene->teaching, $scene->calendar, $scene->enrollments, $scene->permissions, $scene->store);
 
     expect(sheet()->subject)->toBe('Matemática')
         ->and(fn () => $query(2, 10, 9, 1))->toThrow(EvaluationNotFound::class)

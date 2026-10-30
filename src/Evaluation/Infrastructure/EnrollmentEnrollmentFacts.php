@@ -44,6 +44,11 @@ final readonly class EnrollmentEnrollmentFacts implements EnrollmentFacts
         return $enrolled === null ? null : ['studentId' => $enrolled->studentId, 'schoolYearId' => $enrolled->schoolYearId, 'period' => self::period($enrolled->period)];
     }
 
+    public function resultsRecorded(int $schoolYearId, array $studentIds): array
+    {
+        return $this->periods->withResult($schoolYearId, $studentIds);
+    }
+
     private static function period(PeriodView $period): EnrollmentPeriod
     {
         return new EnrollmentPeriod(

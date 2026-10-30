@@ -48,11 +48,18 @@ final class StudentScores
         $scored = [];
 
         foreach ($this->plansOf($term) as $plan) {
+            $sectionId = $plan->sectionId();
+
+            // The grades of a group of pending subjects are its own (SPEC-016).
+            if ($sectionId === null) {
+                continue;
+            }
+
             foreach ($plan->activities() as $activity) {
                 $scored[] = new ScoredActivity(
                     $activity->weight,
-                    EnrollmentPeriod::applies($periods, $plan->sectionId(), $activity->date),
-                    $this->gradesOf($activity, $plan->sectionId())->markOf($studentId),
+                    EnrollmentPeriod::applies($periods, $sectionId, $activity->date),
+                    $this->gradesOf($activity, $sectionId)->markOf($studentId),
                 );
             }
         }

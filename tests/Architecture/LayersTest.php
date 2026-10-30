@@ -33,6 +33,7 @@ use App\Http\Controllers\Platform\OperatorController as PlatformOperatorControll
 use App\Http\Controllers\Platform\TotpController as PlatformTotpController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\RevisionController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StructureController;
@@ -110,6 +111,7 @@ const MIGRATED_CONTROLLERS = [
     // SPEC-010
     EnrollmentController::class,
     GradesController::class,
+    RevisionController::class,
     EnrollmentChangeController::class,
     PromotionController::class,
     NextYearController::class,

@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\DB;
 require_once dirname(__DIR__, 2).'/Fixtures/Evaluation/evaluation_helpers.php';
 
 /**
- * SPEC-011 EVA-R08.1, R08.4, R08.5 with the real modules: «Prosecución»
- * shows the result proposed from the final grades, and the manager confirms
- * it as any other result (MAT-R06).
+ * SPEC-011 EVA-R08.1, R08.4, R08.5 and SPEC-016 RVP-R02.3, R02.4 with the
+ * real modules: «Prosecución» shows the result proposed from the final
+ * grades after their revision, and the manager confirms it as any other
+ * result (MAT-R06).
  */
 beforeEach(function () {
     foreach (evaluationSetting() as $name => $value) {
@@ -33,6 +34,11 @@ beforeEach(function () {
     }
 
     DB::table('terms')->update(['status' => 'closed']);
+
+    // Luis did not present the revision of either (SPEC-016).
+    foreach ([$this->math, $this->physics] as $subject) {
+        revisionRow($this->year, $this->section, $subject, $this->luis);
+    }
 });
 
 function promotionUrl(string $path): string
@@ -60,4 +66,16 @@ it('confirms the proposal as the result of the year', function () {
     expect(DB::table('enrollments')->where('id', $enrollment)->value('outcome'))->toBe('promoted_with_pending')
         ->and(DB::table('enrollment_pending_subjects')->where('enrollment_id', $enrollment)->pluck('subject_id')->sort()->values()->all())
         ->toBe(collect([$this->math, $this->physics])->sort()->values()->all());
+});
+
+it('counts the revisions, and waits for the one still missing', function () {
+    DB::table('grade_revisions')->where('subject_id', $this->physics)->update(['score' => 1200, 'not_presented' => false]);
+
+    $this->actingAs($this->director)->get(promotionUrl("/prosecucion/{$this->year}/secciones/{$this->section}"))->assertInertia(fn ($page) => $page
+        ->where('sheet.students.0.proposal', ['outcome' => 'promoted_with_pending', 'pendingSubjects' => [$this->math], 'missing' => []]));
+
+    DB::table('grade_revisions')->where('subject_id', $this->math)->delete();
+
+    $this->actingAs($this->director)->get(promotionUrl("/prosecucion/{$this->year}/secciones/{$this->section}"))->assertInertia(fn ($page) => $page
+        ->where('sheet.students.0.proposal', ['outcome' => null, 'pendingSubjects' => [], 'missing' => ['Falta la revisión de Matemática.']]));
 });

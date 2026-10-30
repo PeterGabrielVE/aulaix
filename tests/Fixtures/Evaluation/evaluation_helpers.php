@@ -119,3 +119,19 @@ function marksSetting(): array
 
     return compact('institution', 'year', 'primary', 'preschool', 'guide', 'ana', 'eva');
 }
+
+/**
+ * @param  array<string, mixed>  $columns
+ */
+function revisionRow(int $schoolYearId, int $sectionId, int $subjectId, int $studentId, array $columns = []): int
+{
+    return DB::table('grade_revisions')->insertGetId([
+        'school_year_id' => $schoolYearId,
+        'section_id' => $sectionId,
+        'subject_id' => $subjectId,
+        'student_id' => $studentId,
+        'score' => null,
+        'not_presented' => true,
+        ...$columns,
+    ]);
+}

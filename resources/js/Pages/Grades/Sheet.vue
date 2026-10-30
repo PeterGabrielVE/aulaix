@@ -65,6 +65,26 @@ const saveGrades = (activity) => {
 };
 const cellError = (activityId, studentId) => (savingActivity.value === activityId ? grades.errors[`grades.${studentId}`] : null);
 
+// SPEC-016: the revisions of the failed final grades, with the third term closed.
+const showRevisions = computed(() => props.sheet.revisionsOpen || props.sheet.rows.some((row) => row.revision !== null));
+const decidedText = { approved: 'Aprobada', failed: 'Reprobada', needs_revision: 'Falta revisión', incomplete: 'Incompleta', not_applicable: 'No aplica' };
+const revisions = reactive({});
+const fillRevisions = () => {
+    for (const row of props.sheet.rows) {
+        revisions[row.studentId] = row.revision ?? '';
+    }
+};
+fillRevisions();
+watch(() => props.sheet, fillRevisions);
+
+const revisionForm = useForm({ revisions: {} });
+const saveRevisions = () => {
+    revisionForm.revisions = Object.fromEntries(
+        props.sheet.rows.filter((row) => row.failed).map((row) => [row.studentId, revisions[row.studentId] === '' ? null : revisions[row.studentId]]),
+    );
+    revisionForm.put(route('grades.revisions', { year: props.sheet.schoolYearId, section: props.sheet.sectionId, subject: props.sheet.subjectId }), { preserveScroll: true });
+};
+
 // Arrow keys move between the cells of the grid (EVA-NF05).
 const move = (event, row, column) => {
     const step = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[event.key];
@@ -163,7 +183,8 @@ const move = (event, row, column) => {
                     <h2 class="px-4 pt-4 text-lg font-medium text-gray-900 sm:px-6">Notas del lapso {{ sheet.term }}</h2>
                     <p class="px-4 pb-2 text-xs text-gray-600 sm:px-6">De 1 a 20 con hasta dos decimales, o NP. NA: la actividad es anterior a la incorporación del estudiante.</p>
 
-                    <div class="overflow-x-auto">
+                    <!-- Focusable, so the keyboard scrolls it at 360 px even without fields. -->
+                    <div class="overflow-x-auto" tabindex="0" role="region" :aria-label="`Notas de ${sheet.subject}`">
                         <table class="min-w-full text-sm">
                             <caption class="sr-only">Notas de {{ sheet.subject }}, {{ sheet.section }}, lapso {{ sheet.term }}</caption>
                             <thead class="bg-gray-50 text-left text-gray-700">
@@ -175,6 +196,8 @@ const move = (event, row, column) => {
                                     </th>
                                     <th scope="col" class="px-2 py-2 font-medium">Lapso</th>
                                     <th scope="col" class="px-2 py-2 font-medium">Definitiva</th>
+                                    <th v-if="showRevisions" scope="col" class="px-2 py-2 font-medium">Revisión</th>
+                                    <th v-if="showRevisions" scope="col" class="px-2 py-2 font-medium">Cuenta</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -205,9 +228,28 @@ const move = (event, row, column) => {
                                         {{ row.finalScore ?? stateText[row.finalState] }}
                                         <span v-if="row.failed" class="sr-only">(reprobada)</span>
                                     </td>
+                                    <td v-if="showRevisions" class="px-2 py-1 align-top">
+                                        <template v-if="row.failed">
+                                            <input
+                                                v-model="revisions[row.studentId]"
+                                                :aria-label="`Revisión, ${row.fullName}`"
+                                                :aria-invalid="revisionForm.errors[`revisions.${row.studentId}`] ? 'true' : undefined"
+                                                :disabled="!sheet.revisionsOpen"
+                                                inputmode="decimal"
+                                                maxlength="5"
+                                                class="w-16 rounded-md border-gray-300 px-2 py-1 text-sm disabled:bg-gray-50"
+                                            />
+                                            <InputError :message="revisionForm.errors[`revisions.${row.studentId}`]" />
+                                        </template>
+                                        <span v-else class="text-gray-500">—</span>
+                                    </td>
+                                    <td v-if="showRevisions" class="px-2 py-2">
+                                        {{ row.decided?.score ?? '' }}
+                                        <span class="text-xs text-gray-600">{{ decidedText[row.decided?.state] }}</span>
+                                    </td>
                                 </tr>
                                 <tr v-if="!sheet.rows.length">
-                                    <td :colspan="sheet.activities.length + 3" class="px-4 py-6 text-gray-600">No hay estudiantes inscritos en esta sección.</td>
+                                    <td :colspan="sheet.activities.length + (showRevisions ? 5 : 3)" class="px-4 py-6 text-gray-600">No hay estudiantes inscritos en esta sección.</td>
                                 </tr>
                             </tbody>
                             <tfoot v-if="canEdit && sheet.activities.length && sheet.rows.length">
@@ -224,10 +266,16 @@ const move = (event, row, column) => {
                                             Guardar
                                         </button>
                                     </td>
-                                    <td colspan="2" />
+                                    <td :colspan="showRevisions ? 4 : 2" />
                                 </tr>
                             </tfoot>
                         </table>
+                    </div>
+
+                    <div v-if="sheet.revisionsOpen && sheet.rows.some((row) => row.failed)" class="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-6">
+                        <PrimaryButton type="button" :disabled="revisionForm.processing" @click="saveRevisions">Guardar revisiones</PrimaryButton>
+                        <span class="text-xs text-gray-600">De 1 a 20 o NP. Con 10 o más, la materia queda aprobada con la nota de la revisión.</span>
+                        <InputError :message="revisionForm.errors.term || revisionForm.errors.revisions" />
                     </div>
                 </section>
             </div>

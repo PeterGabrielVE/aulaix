@@ -285,3 +285,47 @@ nuevas (S-01):
   de notas por grupo; está cubierto por los tests de rendimiento (NF04).
 - **Revisión cambiada tras el resultado.** La bloquea R01.7. Si el gestor
   corrige el resultado, la propuesta vuelve a calcularse.
+
+## Notas de implementación
+
+### PR A
+
+- **El refactor del plan no cambia la firma de SPEC-011:**
+  - `EvaluationPlan::draft()` y `reconstitute()`, y `ActivityGrades::of()`,
+    siguen aceptando el id de la sección, y además un `PlanOwner`;
+  - `ActivityGrades::record()` acepta los periodos, como antes, o un
+    `ActivityAudience`;
+  - `sectionId()` devuelve null para el plan de un grupo.
+
+  Los tests de SPEC-011 no cambiaron (Q-03).
+- **`StudentScores` y `plansOfSubject()` dejan fuera los planes de grupos:**
+  la nota de una pendiente es la de su grupo.
+- **Índices:** el único parcial de las secciones conserva su nombre
+  (`evaluation_plans_one_per_sheet`). El repositorio traduce cualquiera de
+  los dos índices a `PlanChanged` (409).
+- **El cambio de una revisión ya guardada y sin cambios** no falla aunque el
+  resultado esté registrado (R01.7): guardar la planilla de nuevo no es
+  cambiar la revisión.
+- **La propuesta espera las revisiones** (RVP-R02.4). Por eso dos tests de
+  SPEC-011 cambian solo su preparación:
+  - `OutcomeProposalTest`: la definitiva reprobada llega con revisión NP;
+  - `PromotionProposalTest`: Luis tiene revisión NP en las dos materias.
+
+  Sus expectativas no cambian.
+- **`GradebookQuery`** recibe `RevisionRepository`; `GradebookTest` cambia
+  solo cómo la construye.
+- **`EnrollmentPeriodsQuery::withResult()`**, pública en Enrollment, dice
+  quién ya tiene el resultado del año (R01.7).
+- **La revisión la puede guardar el docente** con el tercer lapso cerrado,
+  sin el permiso especial. Lo que la cierra es el año cerrado o el
+  resultado registrado.
+- **Accesibilidad:** la región con desplazamiento horizontal de la planilla
+  es enfocable (`tabindex="0"`, `role="region"`). A 360 px y sin campos
+  editables, axe la marcaba como inaccesible con el teclado.
+- **Memoria de la suite:** `memory_limit` pasa de 512M a 1G en
+  `phpunit.xml` y `phpunit.pgbouncer.xml`. Con los tests nuevos, la suite
+  completa se quedaba sin memoria cerca del final, al dibujar una página de
+  error. Por separado, todas las suites pasaban.
+- **Tests de navegador:** el plugin espera 15 s en vez de 5
+  (`tests/Pest.php`). La primera página de cada corrida arranca Chromium en
+  frío y pasaba de los 5 s.

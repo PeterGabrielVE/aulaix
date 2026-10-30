@@ -18,9 +18,11 @@ use AulaX\Evaluation\Application\Port\EvaluationPermissions;
 use AulaX\Evaluation\Application\Port\TeachingFacts;
 use AulaX\Evaluation\Domain\ActivityGradesRepository;
 use AulaX\Evaluation\Domain\EvaluationPlanRepository;
+use AulaX\Evaluation\Domain\RevisionRepository;
 use AulaX\Evaluation\Domain\StudentMarksRepository;
 use AulaX\Evaluation\Infrastructure\Persistence\EloquentActivityGradesRepository;
 use AulaX\Evaluation\Infrastructure\Persistence\EloquentEvaluationPlanRepository;
+use AulaX\Evaluation\Infrastructure\Persistence\EloquentRevisionRepository;
 use AulaX\Evaluation\Infrastructure\Persistence\EloquentStudentMarksRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -39,6 +41,7 @@ final class EvaluationServiceProvider extends ServiceProvider
         EvaluationPlanRepository::class => EloquentEvaluationPlanRepository::class,
         ActivityGradesRepository::class => EloquentActivityGradesRepository::class,
         StudentMarksRepository::class => EloquentStudentMarksRepository::class,
+        RevisionRepository::class => EloquentRevisionRepository::class,
         EvaluationPermissions::class => GateEvaluationPermissions::class,
         TeachingFacts::class => AcademicStructureTeachingFacts::class,
         EnrollmentFacts::class => EnrollmentEnrollmentFacts::class,

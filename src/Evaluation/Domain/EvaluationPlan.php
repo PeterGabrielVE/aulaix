@@ -8,10 +8,11 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 
 /**
- * The activities of a subject in a section and a term, with weights that
- * add up to exactly 100 % (EVA-R01.1 – R01.3); one activity with all of it
- * is a plan too (EVA-R01.7). Leaving out activities with grades has to be
- * confirmed (EVA-R01.5).
+ * The activities of a subject in a term for a section or a group of pending
+ * subjects (its owner, ADR 0013), with weights that add up to exactly 100 %
+ * (EVA-R01.1 – R01.3); one activity with all of it is a plan too
+ * (EVA-R01.7). Leaving out activities with grades has to be confirmed
+ * (EVA-R01.5).
  */
 final class EvaluationPlan
 {
@@ -21,28 +22,35 @@ final class EvaluationPlan
     private function __construct(
         private ?int $id,
         private readonly int $schoolYearId,
-        private readonly int $sectionId,
+        private readonly PlanOwner $owner,
         private readonly int $subjectId,
         private readonly int $term,
         private array $activities,
     ) {}
 
     /**
+     * @param  int|PlanOwner  $owner  A section by its id, or any owner.
      * @param  list<ActivityInput>  $activities
      *
      * @throws PlanNotValid
      */
-    public static function draft(int $schoolYearId, int $sectionId, int $subjectId, int $term, array $activities, TermDates $dates): self
+    public static function draft(int $schoolYearId, int|PlanOwner $owner, int $subjectId, int $term, array $activities, TermDates $dates): self
     {
-        return new self(null, $schoolYearId, $sectionId, $subjectId, $term, self::checked($activities, $dates, []));
+        return new self(null, $schoolYearId, self::ownerOf($owner), $subjectId, $term, self::checked($activities, $dates, []));
     }
 
     /**
+     * @param  int|PlanOwner  $owner  A section by its id, or any owner.
      * @param  list<Activity>  $activities
      */
-    public static function reconstitute(?int $id, int $schoolYearId, int $sectionId, int $subjectId, int $term, array $activities): self
+    public static function reconstitute(?int $id, int $schoolYearId, int|PlanOwner $owner, int $subjectId, int $term, array $activities): self
     {
-        return new self($id, $schoolYearId, $sectionId, $subjectId, $term, $activities);
+        return new self($id, $schoolYearId, self::ownerOf($owner), $subjectId, $term, $activities);
+    }
+
+    private static function ownerOf(int|PlanOwner $owner): PlanOwner
+    {
+        return $owner instanceof PlanOwner ? $owner : PlanOwner::section($owner);
     }
 
     /**
@@ -139,9 +147,17 @@ final class EvaluationPlan
         return $this->schoolYearId;
     }
 
-    public function sectionId(): int
+    public function owner(): PlanOwner
     {
-        return $this->sectionId;
+        return $this->owner;
+    }
+
+    /**
+     * Null for the plan of a group of pending subjects.
+     */
+    public function sectionId(): ?int
+    {
+        return $this->owner->sectionId;
     }
 
     public function subjectId(): int

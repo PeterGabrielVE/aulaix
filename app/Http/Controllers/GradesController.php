@@ -80,7 +80,11 @@ class GradesController extends Controller
                     'finalState' => $row->finalState,
                     'finalScore' => $row->finalScore,
                     'failed' => $row->failed,
+                    // SPEC-016 RVP-R02.5: the revision and the final grade that counts.
+                    'revision' => $row->revision,
+                    'decided' => $row->decided === null ? null : ['state' => $row->decided->state, 'score' => $row->decided->score],
                 ], $view->rows),
+                'revisionsOpen' => $view->revisionsOpen,
             ],
         ]);
     }

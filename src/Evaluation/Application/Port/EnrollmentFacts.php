@@ -29,4 +29,13 @@ interface EnrollmentFacts
      * @return ?array{studentId: int, schoolYearId: int, period: EnrollmentPeriod}
      */
     public function enrollment(int $enrollmentId): ?array;
+
+    /**
+     * Which of these students already have the result of the year recorded
+     * (SPEC-010): their revisions no longer change (RVP-R01.7).
+     *
+     * @param  list<int>  $studentIds
+     * @return list<int>
+     */
+    public function resultsRecorded(int $schoolYearId, array $studentIds): array;
 }

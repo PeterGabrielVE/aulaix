@@ -15,14 +15,18 @@ use AulaX\Evaluation\Domain\Activity;
 use AulaX\Evaluation\Domain\ActivityGradesRepository;
 use AulaX\Evaluation\Domain\EnrollmentPeriod;
 use AulaX\Evaluation\Domain\EvaluationPlanRepository;
+use AulaX\Evaluation\Domain\FinalAfterRevision;
 use AulaX\Evaluation\Domain\GradeChange;
+use AulaX\Evaluation\Domain\PlanOwner;
+use AulaX\Evaluation\Domain\RevisionRepository;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use Collator;
 
 /**
  * The sheet of a subject in a section and a term (EVA-R03): its activities,
  * the grades of the students of the section (NA where an activity does not
- * apply), the grade of the term and the final one. For whoever teaches it,
+ * apply), the grade of the term and the final one, with its revision and
+ * the final grade that counts (RVP-R02.5). For whoever teaches it,
  * coordinates its grade or manages students (EVA-R07.3 – R07.5); anyone
  * else gets not found (EVA-R07.6).
  */
@@ -37,6 +41,7 @@ final readonly class GradebookQuery
         private CalendarFacts $calendar,
         private EnrollmentFacts $enrollments,
         private EvaluationPermissions $permissions,
+        private RevisionRepository $revisions,
     ) {
         $this->access = new EvaluationAccess($permissions, $teaching, $calendar);
     }
@@ -67,6 +72,8 @@ final readonly class GradebookQuery
         usort($roster, fn (RosterStudentFact $a, RosterStudentFact $b) => $collator->compare($a->fullName, $b->fullName));
         $periods = $this->enrollments->periods($schoolYearId, array_map(fn (RosterStudentFact $student) => $student->studentId, $roster));
         $scores = new StudentScores($this->plans, $this->grades, $schoolYearId, $subjectId, $section->grade);
+        $revisions = $this->revisions->revisionsOf($schoolYearId, $subjectId, PlanOwner::section($sectionId), array_map(fn (RosterStudentFact $student) => $student->studentId, $roster));
+        $thirdTermClosed = $this->calendar->termStatus($schoolYearId, 3) === 'closed';
         $rows = [];
 
         foreach ($roster as $student) {
@@ -91,6 +98,8 @@ final readonly class GradebookQuery
                 $final->state,
                 $final->score,
                 $final->failed(),
+                GradeChange::display($revisions[$student->studentId]->mark()),
+                FinalAfterRevision::of($final, $revisions[$student->studentId]->mark()),
             );
         }
 
@@ -104,6 +113,8 @@ final readonly class GradebookQuery
             $this->calendar->gradesEditable($schoolYearId, $term, $this->permissions->canEditClosedTerms()),
             array_map(fn (Activity $activity) => new ActivityView((int) $activity->id?->value, $activity->name, $activity->date->format('Y-m-d'), $activity->weight->display()), $activities),
             $rows,
+            // RVP-R01.5, R01.6: the revisions go with the third term closed, in an open year.
+            $teaches && $this->permissions->canGrade() && $thirdTermClosed && $this->calendar->gradesEditable($schoolYearId, 3, true),
         );
     }
 }

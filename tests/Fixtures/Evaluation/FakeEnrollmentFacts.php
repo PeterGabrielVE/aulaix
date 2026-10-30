@@ -18,6 +18,9 @@ final class FakeEnrollmentFacts implements EnrollmentFacts
     /** @var array<int, string> Student => name. */
     public array $names = [];
 
+    /** @var list<int> Students whose result of the year is recorded. */
+    public array $results = [];
+
     public function enroll(int $studentId, int $sectionId, string $grade = 'media_3', string $from = '2026-09-16', ?string $until = null, ?string $name = null): void
     {
         $this->periods[$studentId][] = new EnrollmentPeriod($sectionId, $grade, new DateTimeImmutable($from), $until === null ? null : new DateTimeImmutable($until));
@@ -44,6 +47,11 @@ final class FakeEnrollmentFacts implements EnrollmentFacts
     public function periods(int $schoolYearId, array $studentIds): array
     {
         return array_intersect_key($this->periods, array_flip($studentIds));
+    }
+
+    public function resultsRecorded(int $schoolYearId, array $studentIds): array
+    {
+        return array_values(array_intersect($studentIds, $this->results));
     }
 
     /**

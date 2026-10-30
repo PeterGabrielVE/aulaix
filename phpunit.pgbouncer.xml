@@ -36,7 +36,7 @@
     <php>
         <!-- The architecture tests parse every file of src/ and app/ in the
              same process as the rest of the suite; 256M no longer fits. -->
-        <ini name="memory_limit" value="512M"/>
+        <ini name="memory_limit" value="1G"/>
         <!-- force="true" on every entry: docker-compose.yml sets APP_ENV as a
              real container environment variable (visible via getenv() before
              PHPUnit even starts), and PHPUnit's <env> only overrides an

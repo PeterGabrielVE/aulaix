@@ -11,6 +11,7 @@ use AulaX\Evaluation\Domain\Activity;
 use AulaX\Evaluation\Domain\EvaluationPlan;
 use AulaX\Evaluation\Domain\GradeChange;
 use AulaX\Evaluation\Domain\MarkChange;
+use AulaX\Evaluation\Domain\PlanOwner;
 
 /**
  * The audit log entries of evaluation (EVA-R10.1): the plan before and
@@ -41,6 +42,24 @@ final class EvaluationAudit
         }
 
         return AuditEvent::of('evaluation.activity.grades_saved', AuditSubject::of('activity', $activityId), $fields);
+    }
+
+    /**
+     * The revisions that changed in a subject of a section or of a group of
+     * pending subjects, with their old and new value (RVP-R07.1).
+     *
+     * @param  list<GradeChange>  $changes
+     */
+    public static function revisionsSaved(PlanOwner $owner, int $subjectId, array $changes): AuditEvent
+    {
+        $subject = $owner->isSection()
+            ? AuditSubject::of('section', (int) $owner->sectionId)
+            : AuditSubject::of('pending_group', (int) $owner->pendingGroupId);
+
+        return AuditEvent::of('evaluation.revisions.saved', $subject, [
+            FieldChange::of('subject', null, $subjectId),
+            ...array_map(fn (GradeChange $change) => FieldChange::of("student_{$change->studentId}", $change->before, $change->after), $changes),
+        ]);
     }
 
     /**

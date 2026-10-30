@@ -21,6 +21,11 @@ final class GradeNotValid extends BusinessRuleViolation
         return self::onField("grades.{$studentId}", 'El estudiante no tiene inscripción vigente en la sección.');
     }
 
+    public static function notInGroup(int $studentId): self
+    {
+        return self::onField("grades.{$studentId}", 'El estudiante no está en el grupo de pendientes.');
+    }
+
     public static function notApplicable(int $studentId): self
     {
         return self::onField("grades.{$studentId}", 'La actividad es anterior a la incorporación del estudiante: no aplica.');

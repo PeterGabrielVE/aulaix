@@ -37,6 +37,7 @@ use App\Http\Controllers\Platform\OperatorController as PlatformOperatorControll
 use App\Http\Controllers\Platform\TotpController as PlatformTotpController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\RevisionController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\StructureController;
@@ -328,6 +329,8 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
             Route::middleware(['permission:gestionar-calificaciones', 'throttle:60,1'])->group(function () {
                 Route::put('/notas/{year}/secciones/{section}/materias/{subject}/lapsos/{term}/plan', [GradesController::class, 'plan'])->name('grades.plan');
                 Route::put('/notas/actividades/{activity}', [GradesController::class, 'grades'])->name('grades.activity');
+                // SPEC-016: the revisions of the failed final grades.
+                Route::put('/notas/{year}/secciones/{section}/materias/{subject}/revisiones', [RevisionController::class, 'section'])->name('grades.revisions');
                 Route::put('/notas/{year}/secciones/{section}/estudiantes/{student}', [MarksController::class, 'update'])->name('grades.marks.update');
             });
         });

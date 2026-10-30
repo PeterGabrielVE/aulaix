@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+
 require_once dirname(__DIR__).'/Fixtures/Evaluation/evaluation_helpers.php';
 
 /**
@@ -54,3 +56,13 @@ test('the arrows move between the cells of the grid', function () {
         ->keys('[data-cell="1-1"]', ['ArrowUp'])
         ->assertScript('document.activeElement.dataset.cell', '0-1');
 });
+
+test('the sheet with the column of revisions is accessible', function (int $width) {
+    DB::table('terms')->update(['status' => 'closed']);
+    revisionRow($this->year, $this->section, $this->math, $this->luis);
+
+    openGrades('/notas/{year}/secciones/{section}/materias/{subject}/lapsos/3', $width)
+        ->assertSee('Revisión')
+        ->assertNoAccessibilityIssues(3)
+        ->assertScript('document.documentElement.scrollWidth <= window.innerWidth', true);
+})->with(['wide' => [1280], 'phone' => [360]]);

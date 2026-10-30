@@ -424,3 +424,13 @@ sincronizar nada.
   (una consulta cada uno).
 - **`SubjectsWithGrades`** implementa `RemovalGuard`: responde 0 y «sin
   inscripciones» a lo que no es suyo.
+
+### SPEC-016 (revisión), 2026-10-30
+
+- **El plan tiene un dueño, sección o grupo de pendientes** (ADR 0013).
+  Las firmas de SPEC-011 aceptan el id de la sección como antes, y sus
+  tests no cambian su lógica.
+- **La propuesta del resultado (EVA-R08)** usa las definitivas tras
+  revisión, y una definitiva reprobada sin revisión no deja proponer.
+- **La planilla** muestra la revisión y la definitiva que cuenta (columnas
+  «Revisión» y «Cuenta»), editable con el tercer lapso cerrado.

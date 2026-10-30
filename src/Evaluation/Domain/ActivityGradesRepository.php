@@ -12,7 +12,10 @@ use DateTimeImmutable;
  */
 interface ActivityGradesRepository
 {
-    public function forActivity(Activity $activity, int $sectionId): ActivityGrades;
+    /**
+     * @param  int|PlanOwner  $owner  The section of its plan by its id, or any owner.
+     */
+    public function forActivity(Activity $activity, int|PlanOwner $owner): ActivityGrades;
 
     public function saveGrades(ActivityGrades $grades): void;
 

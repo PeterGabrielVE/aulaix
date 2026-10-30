@@ -51,3 +51,21 @@ it('closes by exception, with NP in the missing grades and the justification in 
         ->and(DB::table('audit_entries')->where('event_type', 'evaluation.term.closed_by_exception')->value('changes'))
         ->toContain('Reposo médico del docente.');
 });
+
+it('counts the pending groups', function () {
+    $before = enrollmentYear(2025, 'closed');
+    $owing = (int) DB::table('enrollments')->where('student_id', $this->luis)->value('id');
+    $previous = enrollmentRow($this->luis, $before, enrollmentSection($before, 'media_2'), [
+        'grade' => 'media_2', 'starts_on' => '2025-09-16', 'ends_on' => '2026-07-15', 'end_reason' => 'section_change',
+        'outcome' => 'promoted_with_pending', 'outcome_recorded_at' => now(), 'outcome_recorded_by' => 1,
+    ]);
+    DB::table('enrollment_pending_subjects')->insert(['enrollment_id' => $previous, 'subject_id' => $this->math]);
+
+    $view = app(PendingGradesQuery::class)($this->year, 1);
+
+    // Luis owes Matemática of 2.º año, whose group has no plan yet.
+    expect($owing)->toBeGreaterThan(0)
+        ->and($view->total)->toBe(4)
+        ->and(array_map(fn ($row) => [$row->section, $row->subject, $row->item, $row->students], array_slice($view->rows, -1)))
+        ->toBe([['Pendientes de 2.º año', 'Matemática', 'Sin plan de evaluación', 1]]);
+});

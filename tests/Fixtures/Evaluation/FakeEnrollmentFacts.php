@@ -5,6 +5,7 @@ namespace Tests\Fixtures\Evaluation;
 use AulaX\Evaluation\Application\Port\EnrollmentFacts;
 use AulaX\Evaluation\Application\Port\RosterStudentFact;
 use AulaX\Evaluation\Domain\EnrollmentPeriod;
+use AulaX\Evaluation\Domain\OwedPending;
 use DateTimeImmutable;
 
 /**
@@ -20,6 +21,12 @@ final class FakeEnrollmentFacts implements EnrollmentFacts
 
     /** @var list<int> Students whose result of the year is recorded. */
     public array $results = [];
+
+    /** @var list<OwedPending> The pending subjects of the years before, of school year 2. */
+    public array $owed = [];
+
+    /** @var array<int, RosterStudentFact> Student id => name, beyond the enrolled ones. */
+    public array $students = [];
 
     public function enroll(int $studentId, int $sectionId, string $grade = 'media_3', string $from = '2026-09-16', ?string $until = null, ?string $name = null): void
     {
@@ -49,6 +56,11 @@ final class FakeEnrollmentFacts implements EnrollmentFacts
         return array_intersect_key($this->periods, array_flip($studentIds));
     }
 
+    public function owedPendings(int $schoolYearId): array
+    {
+        return $this->owed;
+    }
+
     public function resultsRecorded(int $schoolYearId, array $studentIds): array
     {
         return array_values(array_intersect($studentIds, $this->results));
@@ -62,5 +74,10 @@ final class FakeEnrollmentFacts implements EnrollmentFacts
         $period = $this->periods[intdiv($enrollmentId, 100)][$enrollmentId % 100] ?? null;
 
         return $period === null ? null : ['studentId' => intdiv($enrollmentId, 100), 'schoolYearId' => 2, 'period' => $period];
+    }
+
+    public function students(array $studentIds): array
+    {
+        return array_intersect_key($this->students, array_flip($studentIds));
     }
 }

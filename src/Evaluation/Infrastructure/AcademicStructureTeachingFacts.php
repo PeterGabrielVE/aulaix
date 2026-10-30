@@ -10,6 +10,7 @@ use AulaX\AcademicStructure\Application\Grades\GradesQuery;
 use AulaX\AcademicStructure\Application\Grades\GradeView;
 use AulaX\AcademicStructure\Application\MyAssignments\MyAssignmentsQuery;
 use AulaX\AcademicStructure\Application\Overview\CoordinatedGradesQuery;
+use AulaX\AcademicStructure\Application\Port\StaffDirectory;
 use AulaX\AcademicStructure\Application\SectionsOfYear\SectionsOfYearQuery;
 use AulaX\AcademicStructure\Application\SectionsOfYear\SectionSummary;
 use AulaX\AcademicStructure\Application\ShowStructure\ShowStructureQuery;
@@ -35,6 +36,7 @@ final readonly class AcademicStructureTeachingFacts implements TeachingFacts
         private MyAssignmentsQuery $assignments,
         private Subjects $subjects,
         private ShowStructureQuery $structure,
+        private StaffDirectory $staff,
     ) {}
 
     public function teaches(int $accountId, int $sectionId, int $subjectId): bool
@@ -173,5 +175,15 @@ final readonly class AcademicStructureTeachingFacts implements TeachingFacts
     private function gradesByCode(): array
     {
         return array_column(array_map(fn (GradeView $grade) => [$grade->code, $grade], ($this->grades)()), 1, 0);
+    }
+
+    public function activeTeachers(): array
+    {
+        return array_column($this->staff->candidates(StaffDirectory::TEACHER), 'name', 'id');
+    }
+
+    public function gradeNames(): array
+    {
+        return array_map(fn (GradeView $grade) => $grade->name, $this->gradesByCode());
     }
 }

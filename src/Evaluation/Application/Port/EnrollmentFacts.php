@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AulaX\Evaluation\Application\Port;
 
 use AulaX\Evaluation\Domain\EnrollmentPeriod;
+use AulaX\Evaluation\Domain\OwedPending;
 
 /**
  * The enrollments of the open institution, as Enrollment tells them (A-06).
@@ -38,4 +39,19 @@ interface EnrollmentFacts
      * @return list<int>
      */
     public function resultsRecorded(int $schoolYearId, array $studentIds): array;
+
+    /**
+     * The pending subjects from the results of the years before, of the
+     * students enrolled in the year or waiting to graduate (RVP-R03.1 –
+     * R03.3); approved ones included, it is Evaluation that knows them.
+     *
+     * @return list<OwedPending>
+     */
+    public function owedPendings(int $schoolYearId): array;
+
+    /**
+     * @param  list<int>  $studentIds
+     * @return array<int, RosterStudentFact> Student id => name and identification; the ones it does not have are left out.
+     */
+    public function students(array $studentIds): array;
 }

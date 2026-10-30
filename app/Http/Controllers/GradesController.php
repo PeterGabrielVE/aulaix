@@ -7,6 +7,7 @@ use App\Http\Requests\EvaluationPlanRequest;
 use AulaX\Evaluation\Application\Gradebook\ActivityView;
 use AulaX\Evaluation\Application\Gradebook\GradebookQuery;
 use AulaX\Evaluation\Application\Gradebook\GradebookRow;
+use AulaX\Evaluation\Application\PendingGroups\AssignedPendingGroupsQuery;
 use AulaX\Evaluation\Application\SaveActivityGrades\SaveActivityGradesHandler;
 use AulaX\Evaluation\Application\SavePlan\SavePlanCommand;
 use AulaX\Evaluation\Application\SavePlan\SavePlanHandler;
@@ -15,6 +16,7 @@ use AulaX\Evaluation\Application\Sheets\SheetEntry;
 use AulaX\Evaluation\Application\Sheets\SheetsQuery;
 use AulaX\Evaluation\Domain\ActivityInput;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,7 +27,7 @@ use Inertia\Response;
  */
 class GradesController extends Controller
 {
-    public function index(SheetsQuery $sheets): Response
+    public function index(Request $request, SheetsQuery $sheets, AssignedPendingGroupsQuery $pendingGroups): Response
     {
         $list = $sheets();
 
@@ -46,6 +48,9 @@ class GradesController extends Controller
                     'kind' => $section->kind,
                     'guides' => $section->guides,
                 ], $list->sections),
+                // SPEC-016: the groups of pending subjects assigned to the person.
+                'pendingGroups' => $pendingGroups(),
+                'managesPendingGroups' => (bool) $request->user()?->can('gestionar-estructura'),
             ],
         ]);
     }

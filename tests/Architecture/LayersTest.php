@@ -26,6 +26,7 @@ use App\Http\Controllers\InstitutionSettingsController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\NextYearController;
+use App\Http\Controllers\PendingGroupController;
 use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
 use App\Http\Controllers\Platform\InvitationController as PlatformInvitationController;
 use App\Http\Controllers\Platform\LoginController as PlatformLoginController;
@@ -111,6 +112,7 @@ const MIGRATED_CONTROLLERS = [
     // SPEC-010
     EnrollmentController::class,
     GradesController::class,
+    PendingGroupController::class,
     RevisionController::class,
     EnrollmentChangeController::class,
     PromotionController::class,

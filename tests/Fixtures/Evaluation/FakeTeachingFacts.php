@@ -33,6 +33,9 @@ final class FakeTeachingFacts implements TeachingFacts
     /** @var array{teachers: array<int, array<int, string>>, guides: array<int, string>} */
     public array $staff = ['teachers' => [], 'guides' => []];
 
+    /** @var array<int, string> Account id => name. */
+    public array $activeTeachers = [];
+
     /** @var list<ClassFact> Of the active year 2, by section. */
     public array $classes = [];
 
@@ -86,5 +89,15 @@ final class FakeTeachingFacts implements TeachingFacts
     public function staffNames(int $schoolYearId): array
     {
         return $this->staff;
+    }
+
+    public function activeTeachers(): array
+    {
+        return $this->activeTeachers;
+    }
+
+    public function gradeNames(): array
+    {
+        return ['media_1' => '1.er año', 'media_2' => '2.º año', 'media_3' => '3.er año', 'media_4' => '4.º año', 'media_5' => '5.º año'];
     }
 }

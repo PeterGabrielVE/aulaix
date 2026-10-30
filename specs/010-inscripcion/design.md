@@ -472,3 +472,14 @@ entradas (MAT-R03.7, Q6).
     duró la inscripción;
   - en Primaria e Inicial, un literal o informe del año que no sea el
     «incompleto» del cierre.
+
+### SPEC-016 (revisión y pendientes), 2026-10-30
+
+- **`EnrollmentPeriodsQuery::withResult()`**, pública: quién ya tiene el
+  resultado del año. Con él registrado, la revisión no cambia (RVP-R01.7).
+- **Consulta pública `PendingSubjectsQuery`:**
+  - las pendientes de los resultados de años anteriores, con el grado donde
+    se reprobó cada una;
+  - de los estudiantes inscritos en el año o pendientes de egresar y
+    activos;
+  - `EnrollmentList` gana `withPendingSubjects()` para ella.

@@ -103,6 +103,16 @@ final class EloquentEnrollmentList implements EnrollmentList
         return DB::table('enrollments')->where('school_year_id', $schoolYearId)->exists();
     }
 
+    public function withPendingSubjects(): array
+    {
+        return DB::table('enrollments')
+            ->where('outcome', 'promoted_with_pending')
+            ->orderBy('student_id')
+            ->orderBy('starts_on')
+            ->get()
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
+    }
+
     public function ofStudentsInYear(int $schoolYearId, array $studentIds): array
     {
         if ($studentIds === []) {

@@ -8,6 +8,7 @@ use AulaX\Evaluation\Domain\Activity;
 use AulaX\Evaluation\Domain\ActivityGrades;
 use AulaX\Evaluation\Domain\ActivityGradesRepository;
 use AulaX\Evaluation\Domain\GradeMark;
+use AulaX\Evaluation\Domain\PlanOwner;
 use AulaX\Evaluation\Domain\Score;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ use LogicException;
  */
 final class EloquentActivityGradesRepository implements ActivityGradesRepository
 {
-    public function forActivity(Activity $activity, int $sectionId): ActivityGrades
+    public function forActivity(Activity $activity, int|PlanOwner $owner): ActivityGrades
     {
         $id = $activity->id ?? throw new LogicException('Only a saved activity has grades.');
         $marks = [];
@@ -29,7 +30,7 @@ final class EloquentActivityGradesRepository implements ActivityGradesRepository
             $marks[(int) $row->student_id] = $row->not_presented ? GradeMark::notPresented() : GradeMark::score(Score::fromHundredths((int) $row->score));
         }
 
-        return ActivityGrades::of($id, $sectionId, $activity->date, $marks);
+        return ActivityGrades::of($id, $owner, $activity->date, $marks);
     }
 
     public function saveGrades(ActivityGrades $grades): void

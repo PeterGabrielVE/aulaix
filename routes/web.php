@@ -27,6 +27,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MarksController;
 use App\Http\Controllers\MyAssignmentsController;
 use App\Http\Controllers\NextYearController;
+use App\Http\Controllers\PendingGroupController;
 use App\Http\Controllers\Platform\ActivityController as PlatformActivityController;
 use App\Http\Controllers\Platform\ConsolidationController as PlatformConsolidationController;
 use App\Http\Controllers\Platform\HomeController as PlatformHomeController;
@@ -318,7 +319,20 @@ Route::domain('{tenant}.'.config('app.domain'))->middleware('tenant')->group(fun
         });
 
         // SPEC-011: the plans and grades of Media General, the literals of Primaria and the reports of Inicial.
-        Route::whereNumber(['year', 'section', 'subject', 'term', 'activity', 'student'])->group(function () {
+        Route::whereNumber(['year', 'section', 'subject', 'term', 'activity', 'student', 'group'])->group(function () {
+            // SPEC-016: the groups of pending subjects.
+            Route::middleware('permission:gestionar-estructura')->group(function () {
+                Route::get('/notas/pendientes', [PendingGroupController::class, 'index'])->name('grades.pending.index');
+                Route::put('/notas/pendientes/docente', [PendingGroupController::class, 'teacher'])->middleware('throttle:60,1')->name('grades.pending.teacher');
+            });
+            Route::get('/notas/pendientes/{group}/lapsos/{term}', [PendingGroupController::class, 'sheet'])
+                ->middleware('permission:ver-calificaciones')->name('grades.pending.sheet');
+            Route::middleware(['permission:gestionar-calificaciones', 'throttle:60,1'])->group(function () {
+                Route::put('/notas/pendientes/{group}/lapsos/{term}/plan', [PendingGroupController::class, 'plan'])->name('grades.pending.plan');
+                Route::put('/notas/pendientes/actividades/{activity}', [PendingGroupController::class, 'grades'])->name('grades.pending.activity');
+                Route::put('/notas/pendientes/{group}/revisiones', [PendingGroupController::class, 'revisions'])->name('grades.pending.revisions');
+            });
+
             // As its menu entry (NAV-R03.3): whoever grades or manages students.
             Route::get('/notas', [GradesController::class, 'index'])
                 ->middleware('permission:gestionar-calificaciones|gestionar-estudiantes')->name('grades.index');

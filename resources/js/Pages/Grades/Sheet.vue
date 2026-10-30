@@ -14,7 +14,10 @@ const props = defineProps({
 
 const flash = computed(() => usePage().props.flash?.success);
 const canEdit = computed(() => props.sheet.canGrade && props.sheet.editable);
-const termLink = (term) => route('grades.sheet', { year: props.sheet.schoolYearId, section: props.sheet.sectionId, subject: props.sheet.subjectId, term });
+// A group of pending subjects (SPEC-016) brings its own URLs; a section, the ones of SPEC-011.
+const urls = props.sheet.urls ?? null;
+const termLink = (term) => urls?.terms[term] ?? route('grades.sheet', { year: props.sheet.schoolYearId, section: props.sheet.sectionId, subject: props.sheet.subjectId, term });
+const stateOfPending = { studying: 'Cursando', approved: 'Aprobada', failed: 'Reprobada' };
 const stateText = { incomplete: 'Incompleta', not_applicable: 'No aplica' };
 
 // The plan of activities (EVA-R01): weights add up to 100 %.
@@ -34,7 +37,7 @@ const startPlan = () => {
 };
 const addActivity = () => plan.activities.push({ id: null, name: '', date: '', weight: '' });
 const removeActivity = (index) => plan.activities.splice(index, 1);
-const savePlan = () => plan.put(route('grades.plan', { year: props.sheet.schoolYearId, section: props.sheet.sectionId, subject: props.sheet.subjectId, term: props.sheet.term }), {
+const savePlan = () => plan.put(urls?.plan ?? route('grades.plan', { year: props.sheet.schoolYearId, section: props.sheet.sectionId, subject: props.sheet.subjectId, term: props.sheet.term }), {
     preserveScroll: true,
     onSuccess: () => { editingPlan.value = false; },
 });
@@ -61,7 +64,7 @@ const saveGrades = (activity) => {
             .filter((row) => row.marks[activity.id] !== 'NA')
             .map((row) => [row.studentId, marks[activity.id][row.studentId] === '' ? null : marks[activity.id][row.studentId]]),
     );
-    grades.put(route('grades.activity', activity.id), { preserveScroll: true });
+    grades.put(urls?.grades.replace('__activity__', activity.id) ?? route('grades.activity', activity.id), { preserveScroll: true });
 };
 const cellError = (activityId, studentId) => (savingActivity.value === activityId ? grades.errors[`grades.${studentId}`] : null);
 
@@ -82,7 +85,7 @@ const saveRevisions = () => {
     revisionForm.revisions = Object.fromEntries(
         props.sheet.rows.filter((row) => row.failed).map((row) => [row.studentId, revisions[row.studentId] === '' ? null : revisions[row.studentId]]),
     );
-    revisionForm.put(route('grades.revisions', { year: props.sheet.schoolYearId, section: props.sheet.sectionId, subject: props.sheet.subjectId }), { preserveScroll: true });
+    revisionForm.put(urls?.revisions ?? route('grades.revisions', { year: props.sheet.schoolYearId, section: props.sheet.sectionId, subject: props.sheet.subjectId }), { preserveScroll: true });
 };
 
 // Arrow keys move between the cells of the grid (EVA-NF05).
@@ -245,7 +248,7 @@ const move = (event, row, column) => {
                                     </td>
                                     <td v-if="showRevisions" class="px-2 py-2">
                                         {{ row.decided?.score ?? '' }}
-                                        <span class="text-xs text-gray-600">{{ decidedText[row.decided?.state] }}</span>
+                                        <span class="text-xs text-gray-600">{{ row.standing ? stateOfPending[row.standing] : decidedText[row.decided?.state] }}</span>
                                     </td>
                                 </tr>
                                 <tr v-if="!sheet.rows.length">

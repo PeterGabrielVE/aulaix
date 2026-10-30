@@ -32,4 +32,10 @@ interface EvaluationPermissions
     public function canEditClosedTerms(): bool;
 
     public function currentAccountId(): ?int;
+
+    /**
+     * gestionar-estructura: assigns the teachers of the groups of pending
+     * subjects (SPEC-016 Q1).
+     */
+    public function canAssignPendingTeachers(): bool;
 }

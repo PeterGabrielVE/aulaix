@@ -26,6 +26,8 @@ final readonly class GateEvaluationPermissions implements EvaluationPermissions
 
     private const string EDIT_CLOSED_TERM_GRADES = 'editar-notas-lapso-cerrado';
 
+    private const string MANAGE_STRUCTURE = 'gestionar-estructura';
+
     public function __construct(
         private Gate $gate,
         private Auth $auth,
@@ -56,5 +58,10 @@ final readonly class GateEvaluationPermissions implements EvaluationPermissions
         $id = $this->auth->guard()->id();
 
         return $id === null ? null : (int) $id;
+    }
+
+    public function canAssignPendingTeachers(): bool
+    {
+        return $this->gate->allows(self::MANAGE_STRUCTURE);
     }
 }

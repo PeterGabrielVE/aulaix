@@ -23,6 +23,8 @@ final readonly class PendingItem
     /**
      * @param  string  $kind  activity, no_plan, literal or report.
      * @param  list<int>  $students  Ids of the students it lacks.
+     * @param  ?int  $pendingGroupId  The group of pending subjects it is of (SPEC-016), when it is; its sectionId is then 0.
+     * @param  ?int  $teacherAccountId  The teacher of that group.
      */
     public function __construct(
         public string $kind,
@@ -32,5 +34,8 @@ final readonly class PendingItem
         public ?string $subject,
         public ?Activity $activity,
         public array $students,
+        public bool $ofPendingGroup = false,
+        public ?int $pendingGroupId = null,
+        public ?int $teacherAccountId = null,
     ) {}
 }

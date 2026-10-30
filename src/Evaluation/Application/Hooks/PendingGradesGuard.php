@@ -15,8 +15,10 @@ use AulaX\Evaluation\Application\Pending\PendingItem;
 use AulaX\Evaluation\Application\Port\EnrollmentFacts;
 use AulaX\Evaluation\Domain\ActivityGradesRepository;
 use AulaX\Evaluation\Domain\GradeMark;
+use AulaX\Evaluation\Domain\GroupAudience;
 use AulaX\Evaluation\Domain\MarkChange;
 use AulaX\Evaluation\Domain\MarkKind;
+use AulaX\Evaluation\Domain\PlanOwner;
 use AulaX\Evaluation\Domain\StudentMarksRepository;
 use AulaX\Shared\Domain\Clock;
 
@@ -72,10 +74,11 @@ final readonly class PendingGradesGuard implements TermClosingGuard
             return 0;
         }
 
-        $grades = $this->grades->forActivity($activity, $item->sectionId);
+        // A group of pending subjects: its members, every activity applying to each (SPEC-016).
+        $grades = $this->grades->forActivity($activity, $item->ofPendingGroup ? PlanOwner::pendingGroup((int) $item->pendingGroupId) : $item->sectionId);
         $changes = $grades->record(
             array_fill_keys($item->students, GradeMark::notPresented()),
-            $this->enrollments->periods($schoolYearId, $item->students),
+            $item->ofPendingGroup ? new GroupAudience($item->students) : $this->enrollments->periods($schoolYearId, $item->students),
             $this->clock->now(),
         );
         $this->grades->saveGrades($grades);

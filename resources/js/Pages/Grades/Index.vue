@@ -41,6 +41,22 @@ defineProps({
                     </ul>
                 </section>
 
+                <section v-if="list.schoolYearId && (list.pendingGroups.length || list.managesPendingGroups)" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">
+                    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                        <h2 class="text-lg font-medium text-gray-900">Materias pendientes</h2>
+                        <Link v-if="list.managesPendingGroups" :href="route('grades.pending.index')" class="text-sm text-indigo-700 hover:underline">Grupos de pendientes</Link>
+                    </div>
+                    <ul class="divide-y divide-gray-100 text-sm">
+                        <li v-for="group in list.pendingGroups" :key="group.groupId">
+                            <Link :href="route('grades.pending.sheet', { group: group.groupId, term: list.term })" class="flex flex-wrap justify-between gap-2 py-2 hover:underline">
+                                <span class="font-medium text-gray-900">{{ group.subject }}</span>
+                                <span class="text-gray-600">Pendientes de {{ group.originGrade }}</span>
+                            </Link>
+                        </li>
+                        <li v-if="!list.pendingGroups.length" class="py-2 text-gray-600">No tienes grupos de pendientes asignados.</li>
+                    </ul>
+                </section>
+
                 <section v-if="list.schoolYearId && list.sections.length" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">
                     <h2 class="mb-3 text-lg font-medium text-gray-900">Literales e informes</h2>
                     <ul class="divide-y divide-gray-100 text-sm">

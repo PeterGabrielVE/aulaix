@@ -8,6 +8,7 @@ use AulaX\Evaluation\Application\Port\CalendarFacts;
 use AulaX\Evaluation\Application\Port\EvaluationPermissions;
 use AulaX\Evaluation\Application\Port\TeachingFacts;
 use AulaX\Evaluation\Domain\NotEditable;
+use AulaX\Evaluation\Domain\PendingGroup;
 use AulaX\Shared\Domain\AuthorizationDenied;
 
 /**
@@ -32,6 +33,23 @@ final readonly class EvaluationAccess
 
         if (! $this->teaching->teaches($account, $sectionId, $subjectId)) {
             throw new AuthorizationDenied('No dictas esa materia en esa sección.');
+        }
+
+        return $account;
+    }
+
+    /**
+     * Only the teacher assigned to a group of pending subjects plans and
+     * grades it (RVP-R04.5).
+     *
+     * @throws AuthorizationDenied
+     */
+    public function ensureAssigned(PendingGroup $group): int
+    {
+        $account = $this->grader();
+
+        if ($group->teacherAccountId() !== $account) {
+            throw new AuthorizationDenied('No tienes asignado ese grupo de pendientes.');
         }
 
         return $account;

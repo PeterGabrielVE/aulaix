@@ -8,6 +8,8 @@ use AulaX\Evaluation\Domain\ActivityGradesRepository;
 use AulaX\Evaluation\Domain\ActivityId;
 use AulaX\Evaluation\Domain\EvaluationPlan;
 use AulaX\Evaluation\Domain\EvaluationPlanRepository;
+use AulaX\Evaluation\Domain\PendingGroup;
+use AulaX\Evaluation\Domain\PendingGroupRepository;
 use AulaX\Evaluation\Domain\PlanOwner;
 use AulaX\Evaluation\Domain\Revision;
 use AulaX\Evaluation\Domain\RevisionRepository;
@@ -17,8 +19,11 @@ use AulaX\Evaluation\Domain\StudentMarksRepository;
 /**
  * Plans and grades of one institution, kept in memory.
  */
-final class InMemoryEvaluationStore implements ActivityGradesRepository, EvaluationPlanRepository, RevisionRepository, StudentMarksRepository
+final class InMemoryEvaluationStore implements ActivityGradesRepository, EvaluationPlanRepository, PendingGroupRepository, RevisionRepository, StudentMarksRepository
 {
+    /** @var array<int, PendingGroup> Id => group. */
+    public array $groups = [];
+
     /** @var array<string, Revision> "year:subject:student" of a section, "gGroup:student" of a group. */
     public array $revisions = [];
 
@@ -103,7 +108,7 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
         return "{$plan->schoolYearId()}:{$owner}:{$plan->subjectId()}:{$plan->term()}";
     }
 
-    public function forActivity(Activity $activity, int $sectionId): ActivityGrades
+    public function forActivity(Activity $activity, int|PlanOwner $sectionId): ActivityGrades
     {
         $id = $activity->id ?? throw new \LogicException('Only a saved activity has grades.');
 
@@ -216,5 +221,43 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
         }
 
         return false;
+    }
+
+    public function groupById(int $id): ?PendingGroup
+    {
+        return isset($this->groups[$id]) ? clone $this->groups[$id] : null;
+    }
+
+    public function groupOf(int $schoolYearId, int $subjectId, string $originGrade): ?PendingGroup
+    {
+        foreach ($this->groups as $group) {
+            if ($group->schoolYearId() === $schoolYearId && $group->subjectId() === $subjectId && $group->originGrade() === $originGrade) {
+                return clone $group;
+            }
+        }
+
+        return null;
+    }
+
+    public function groupsOfSubject(int $subjectId, string $originGrade): array
+    {
+        return array_values(array_map(fn (PendingGroup $group) => clone $group, array_filter(
+            $this->groups,
+            fn (PendingGroup $group) => $group->subjectId() === $subjectId && $group->originGrade() === $originGrade,
+        )));
+    }
+
+    public function groupsOf(int $schoolYearId): array
+    {
+        return array_values(array_map(fn (PendingGroup $group) => clone $group, array_filter($this->groups, fn (PendingGroup $group) => $group->schoolYearId() === $schoolYearId)));
+    }
+
+    public function saveGroup(PendingGroup $group): void
+    {
+        if ($group->id() === null) {
+            $group->identify(count($this->groups) + 1);
+        }
+
+        $this->groups[$group->id()] = clone $group;
     }
 }

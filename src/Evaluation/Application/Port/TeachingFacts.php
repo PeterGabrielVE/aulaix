@@ -64,4 +64,14 @@ interface TeachingFacts
      * @return array{teachers: array<int, array<int, string>>, guides: array<int, string>}
      */
     public function staffNames(int $schoolYearId): array;
+
+    /**
+     * @return array<int, string> The active members with the role Docente, account id => name (RVP-R03.5).
+     */
+    public function activeTeachers(): array;
+
+    /**
+     * @return array<string, string> Grade code => name ("media_2" => "2.º año").
+     */
+    public function gradeNames(): array;
 }

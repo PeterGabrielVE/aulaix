@@ -37,8 +37,13 @@ final readonly class PendingGradesQuery
         }
 
         $staff = $this->teaching->staffNames($schoolYearId);
+        $teachers = $this->teaching->activeTeachers();
         $rows = array_map(fn (PendingItem $item) => new PendingGradesRow(
-            $item->subjectId === null ? ($staff['guides'][$item->sectionId] ?? null) : ($staff['teachers'][$item->sectionId][$item->subjectId] ?? null),
+            match (true) {
+                $item->ofPendingGroup => $item->teacherAccountId === null ? null : ($teachers[$item->teacherAccountId] ?? null),
+                $item->subjectId === null => $staff['guides'][$item->sectionId] ?? null,
+                default => $staff['teachers'][$item->sectionId][$item->subjectId] ?? null,
+            },
             $item->section,
             $item->subject,
             match ($item->kind) {

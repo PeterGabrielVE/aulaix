@@ -23,6 +23,9 @@ final class FakeCalendarFacts implements CalendarFacts
 
     public ?int $activeYear = 2;
 
+    /** @var list<int> Other school years, with their three terms closed. */
+    public array $closedYears = [];
+
     public function activeYear(): ?int
     {
         return $this->activeYear;
@@ -37,6 +40,10 @@ final class FakeCalendarFacts implements CalendarFacts
 
     public function termStatus(int $schoolYearId, int $term): ?string
     {
+        if (in_array($schoolYearId, $this->closedYears, true)) {
+            return 'closed';
+        }
+
         return $schoolYearId === 2 ? ($this->terms[$term]['status'] ?? null) : null;
     }
 

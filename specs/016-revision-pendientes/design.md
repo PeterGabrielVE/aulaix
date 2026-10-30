@@ -329,3 +329,37 @@ nuevas (S-01):
 - **Tests de navegador:** el plugin espera 15 s en vez de 5
   (`tests/Pest.php`). La primera página de cada corrida arranca Chromium en
   frío y pasaba de los 5 s.
+
+### PR B
+
+- **Casos de uso propios para los grupos**, en lugar de ampliar los de
+  SPEC-011: `SaveGroupPlanHandler`, `SaveGroupGradesHandler` y
+  `SaveGroupRevisionHandler`.
+  - Los de la sección comprueban «dicta en la sección»; los del grupo,
+    «docente asignado» (`EvaluationAccess::ensureAssigned`) y los miembros
+    (`GroupAudience`).
+  - `SaveActivityGradesHandler` responde «no encontrado» a una actividad de
+    un grupo, en vez de fallar con un tipo nulo (lo marcó la revisión de
+    seguridad del PR A).
+  - Las rutas de los grupos son las suyas: `/notas/pendientes/...`.
+- **`GroupScores`** calcula la nota de un grupo, la definitiva tras revisión
+  y la situación de cada miembro. `PendingMembers` deriva quién debe cada
+  pendiente:
+  - de `EnrollmentFacts::owedPendings` (consulta pública nueva
+    `PendingSubjectsQuery` de Enrollment);
+  - sin quien la aprobó en el grupo de otro año, ni en el año de origen.
+- **`PendingGrades` recibe `PendingMembers`**, opcional para que sus tests de
+  SPEC-011 no cambien. El provider la enlaza explícitamente: con un valor
+  por omisión nulo, el contenedor no la inyecta.
+- **Un grupo sin docente no existe aún en `pending_groups`:** se abre al
+  asignarle el primero. En la lista y en el cierre del lapso, sus miembros
+  cuentan igual («Sin plan de evaluación»).
+- **La planilla del grupo es la misma pantalla `Grades/Sheet`.** El
+  controlador le pasa sus URL (`sheet.urls`), y la columna «Cuenta» muestra
+  la situación de la pendiente (cursando, aprobada o reprobada).
+- **«Notas»** lista los grupos asignados al docente
+  (`AssignedPendingGroupsQuery`) y enlaza «Grupos de pendientes» para quien
+  tiene `gestionar-estructura`. No hay entrada nueva en el menú.
+- **Nombres de los grados:** `TeachingFacts::gradeNames()`, sobre
+  `GradesQuery`. Los docentes asignables: `activeTeachers()`, sobre
+  `StaffDirectory::candidates('Docente')`.

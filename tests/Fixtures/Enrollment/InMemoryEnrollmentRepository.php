@@ -181,4 +181,9 @@ final class InMemoryEnrollmentRepository implements EnrollmentList, EnrollmentRe
     {
         return array_values(array_filter($this->enrollments, fn (Enrollment $enrollment) => $enrollment->studentId() === $studentId));
     }
+
+    public function withPendingSubjects(): array
+    {
+        return array_values(array_filter($this->enrollments, fn (Enrollment $enrollment) => $enrollment->result()?->outcome->value === 'promoted_with_pending'));
+    }
 }

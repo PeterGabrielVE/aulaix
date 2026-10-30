@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AulaX\Evaluation\Application\Pending;
 
+use AulaX\Evaluation\Application\PendingGroups\PendingMembers;
 use AulaX\Evaluation\Application\Port\EnrollmentFacts;
 use AulaX\Evaluation\Application\Port\RosterStudentFact;
 use AulaX\Evaluation\Application\Port\SectionInfo;
@@ -30,6 +31,7 @@ final readonly class PendingGrades
         private StudentMarksRepository $marks,
         private TeachingFacts $teaching,
         private EnrollmentFacts $enrollments,
+        private ?PendingMembers $pendingMembers = null,
     ) {}
 
     /**
@@ -54,6 +56,50 @@ final readonly class PendingGrades
                 default => [],
             };
             array_push($items, ...$found);
+        }
+
+        array_push($items, ...$this->ofPendingGroups($schoolYearId, $term));
+
+        return $items;
+    }
+
+    /**
+     * What the groups of pending subjects lack (RVP-R04.7): the grades of
+     * their members in each activity, or the plan of the term.
+     *
+     * @return list<PendingItem>
+     */
+    private function ofPendingGroups(int $schoolYearId, int $term): array
+    {
+        if ($this->pendingMembers === null) {
+            return [];
+        }
+
+        $names = $this->teaching->subjectNames('media_general');
+        $gradeNames = $this->teaching->gradeNames();
+        $items = [];
+
+        foreach ($this->pendingMembers->of($schoolYearId) as $key => $students) {
+            [$subjectId, $originGrade] = explode(':', $key);
+            $group = $this->pendingMembers->group($schoolYearId, (int) $subjectId, $originGrade);
+            $label = 'Pendientes de '.($gradeNames[$originGrade] ?? $originGrade);
+            $subject = $names[(int) $subjectId] ?? '';
+            $plan = $group === null ? null : $this->plans->planOfGroup((int) $group->id(), $term);
+
+            if ($plan === null) {
+                $items[] = new PendingItem(PendingItem::NO_PLAN, 0, $label, (int) $subjectId, $subject, null, $students, true, $group?->id(), $group?->teacherAccountId());
+
+                continue;
+            }
+
+            foreach ($plan->activities() as $activity) {
+                $activityGrades = $this->grades->forActivity($activity, $plan->owner());
+                $missing = array_values(array_filter($students, fn (int $student) => $activityGrades->markOf($student) === null));
+
+                if ($missing !== []) {
+                    $items[] = new PendingItem(PendingItem::ACTIVITY, 0, $label, (int) $subjectId, $subject, $activity, $missing, true, $group?->id(), $group?->teacherAccountId());
+                }
+            }
         }
 
         return $items;

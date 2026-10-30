@@ -480,3 +480,9 @@ que ya existen:
   - cada sección guiada de Primaria o Inicial enlaza a sus literales o
     informes;
   - `MyAssignmentsQuery` (SPEC-008) da el nivel de cada clase y sección.
+
+### SPEC-016 (revisión y pendientes), 2026-10-30
+
+- **«Notas»** muestra los grupos de pendientes asignados al docente y, a
+  quien tiene `gestionar-estructura`, el enlace «Grupos de pendientes». No
+  hay entrada nueva en el menú: la paridad menú–rutas no cambia.

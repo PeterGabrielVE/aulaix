@@ -63,6 +63,16 @@ final class EvaluationAudit
     }
 
     /**
+     * The teacher of a group of pending subjects, before and after (RVP-R07.1).
+     */
+    public static function pendingTeacherAssigned(int $groupId, ?int $before, ?int $after): AuditEvent
+    {
+        return AuditEvent::of('evaluation.pending_group.teacher_assigned', AuditSubject::of('pending_group', $groupId), [
+            FieldChange::of('teacher', $before, $after),
+        ]);
+    }
+
+    /**
      * A literal, final literal or report recorded or changed; of a report,
      * only that it was written (EVA-R10.2).
      *

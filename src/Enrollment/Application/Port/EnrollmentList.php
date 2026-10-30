@@ -66,4 +66,9 @@ interface EnrollmentList
      * @return list<Enrollment> Every enrollment of a student, oldest first.
      */
     public function historyOf(int $studentId): array;
+
+    /**
+     * @return list<Enrollment> Every enrollment whose result is promoted with pending subjects, of any year (SPEC-016).
+     */
+    public function withPendingSubjects(): array;
 }

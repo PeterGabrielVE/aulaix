@@ -6,11 +6,20 @@ use AulaX\Evaluation\Application\Marks\SaveLiteralHandler;
 use AulaX\Evaluation\Application\Pending\PendingGrades;
 use AulaX\Evaluation\Application\Pending\PendingGradesQuery;
 use AulaX\Evaluation\Application\Pending\PendingGradesRow;
+use AulaX\Evaluation\Application\PendingGroups\PendingMembers;
 use AulaX\Evaluation\Application\SaveActivityGrades\SaveActivityGradesHandler;
 use AulaX\Evaluation\Application\SavePlan\SavePlanCommand;
 use AulaX\Evaluation\Application\SavePlan\SavePlanHandler;
+use AulaX\Evaluation\Domain\Activity;
+use AulaX\Evaluation\Domain\ActivityGrades;
 use AulaX\Evaluation\Domain\ActivityInput;
+use AulaX\Evaluation\Domain\EvaluationPlan;
+use AulaX\Evaluation\Domain\GradeMark;
 use AulaX\Evaluation\Domain\MarkKind;
+use AulaX\Evaluation\Domain\OwedPending;
+use AulaX\Evaluation\Domain\PendingGroup;
+use AulaX\Evaluation\Domain\PlanOwner;
+use AulaX\Evaluation\Domain\Weight;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use Tests\Fixtures\Evaluation\EvaluationScene;
 
@@ -102,4 +111,53 @@ it('shows what is pending only to whoever manages students', function () {
     $scene = $this->scene;
 
     expect(fn () => (new PendingGradesQuery(pendingGrades(), $scene->teaching, $scene->permissions))(2, 1))->toThrow(AuthorizationDenied::class);
+});
+
+function pendingGradesWithGroups(): PendingGrades
+{
+    $scene = test()->scene;
+    $members = new PendingMembers($scene->store, $scene->store, $scene->store, $scene->store, $scene->enrollments, $scene->calendar);
+
+    return new PendingGrades($scene->store, $scene->store, $scene->store, $scene->teaching, $scene->enrollments, $members);
+}
+
+/**
+ * SPEC-016 RVP-R04.7: the groups of pending subjects count with the rest,
+ * and closing by exception fills them with NP.
+ */
+function withPendingGroup(object $test): int
+{
+    $test->scene->teaching->activeTeachers = [9 => 'Ana Rivas'];
+    // Ana (1) and Luis (2) owe Matemática of 2.º año, in its group; Eva (3) owes Física, still without one.
+    $test->scene->enrollments->owed = [new OwedPending(1, 4, 'media_2', 7), new OwedPending(2, 4, 'media_2', 7), new OwedPending(3, 5, 'media_2', 7)];
+    $group = PendingGroup::open(2, 4, 'media_2');
+    $group->assignTeacher(9);
+    $test->scene->store->saveGroup($group);
+    $test->scene->store->save(EvaluationPlan::reconstitute(null, 2, PlanOwner::pendingGroup((int) $group->id()), 4, 1, [new Activity(null, 'Prueba de pendiente', new DateTimeImmutable('2026-10-05'), Weight::of('100'))]));
+    $activity = $test->scene->store->planOfGroup((int) $group->id(), 1)->activities()[0];
+    $test->scene->store->saveGrades(ActivityGrades::of($activity->id, PlanOwner::pendingGroup((int) $group->id()), $activity->date, [1 => GradeMark::fromInput('15')]));
+
+    return (int) $activity->id->value;
+}
+
+it('counts what the groups of pending subjects lack, with their teacher', function () {
+    withPendingGroup($this);
+    $this->scene->permissions->seesAll = true;
+    $view = (new PendingGradesQuery(pendingGradesWithGroups(), $this->scene->teaching, $this->scene->permissions))(2, 1);
+
+    expect($view->total)->toBe(11)
+        ->and(array_map(fn (PendingGradesRow $row) => [$row->teacher, $row->section, $row->subject, $row->item, $row->students], array_slice($view->rows, -2)))->toBe([
+            ['Ana Rivas', 'Pendientes de 2.º año', 'Matemática', 'Prueba de pendiente', 1],
+            [null, 'Pendientes de 2.º año', 'Física', 'Sin plan de evaluación', 1],
+        ]);
+});
+
+it('fills with NP the grades a group lacks, closing by exception', function () {
+    $activity = withPendingGroup($this);
+    $scene = $this->scene;
+
+    (new PendingGradesGuard(pendingGradesWithGroups(), $scene->store, $scene->store, $scene->enrollments, $scene->clock, $scene->audit))->fillPending(2, 1, 'Cierre del lapso.');
+
+    expect($this->scene->store->grades[$activity]->markOf(2)?->isNotPresented())->toBeTrue()
+        ->and($this->scene->store->grades[$activity]->markOf(1)?->value())->toBe(1500);
 });

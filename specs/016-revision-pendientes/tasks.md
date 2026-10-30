@@ -107,13 +107,13 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 4 — Dominio y miembros
 
-- [ ] **T-09** — `PendingGroup` (agregado), `OwedPending` y
+- [x] **T-09** — `PendingGroup` (agregado), `OwedPending` y
   `PendingStanding` (cursando, aprobada o reprobada).
   - Criterios: RVP-R03.4, R05.2
   - Test:
     - `tests/Unit/Evaluation/Domain/PendingGroupTest.php`;
     - `tests/Unit/Evaluation/Domain/PendingStandingTest.php`.
-- [ ] **T-10** — Consulta pública `PendingSubjectsQuery` de Enrollment (las
+- [x] **T-10** — Consulta pública `PendingSubjectsQuery` de Enrollment (las
   pendientes de los resultados, de estudiantes con inscripción vigente o
   pendientes de egresar) y `EnrollmentFacts::owedPendings`.
   - Criterios: RVP-R03.1 – R03.3
@@ -121,7 +121,7 @@ Tres PRs, cada uno usable por sí mismo:
     - retirado o trasladado, fuera;
     - pendiente de egresar, dentro;
     - inscripción anulada, fuera.
-- [ ] **T-11** — `PendingMembers`, `PendingGroupsQuery` y
+- [x] **T-11** — `PendingMembers`, `PendingGroupsQuery` y
   `AssignPendingTeacherHandler`:
   - `gestionar-estructura` (Q1);
   - `TeachingFacts::isActiveTeacher`;
@@ -132,7 +132,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 5 — Plan, notas y revisión del grupo
 
-- [ ] **T-12** — `SavePlanHandler`, `SaveActivityGradesHandler` y
+- [x] **T-12** — `SavePlanHandler`, `SaveActivityGradesHandler` y
   `SaveRevisionHandler` con dueño grupo:
   - solo el docente asignado;
   - los miembros con `GroupAudience`, sin NA (decisión 3);
@@ -140,13 +140,13 @@ Tres PRs, cada uno usable por sí mismo:
   - la bitácora.
   - Criterios: RVP-R04.1, R04.2, R04.4, R04.5, R05.1, R07.1, R07.2
   - Test: `tests/Unit/Evaluation/Application/PendingGroupGradesTest.php`.
-- [ ] **T-13** — `PendingGroupSheetQuery`:
+- [x] **T-13** — `PendingGroupSheetQuery`:
   - actividades y notas, nota del lapso, definitiva, revisión y estado;
   - visible para el asignado, el coordinador del grado de origen y los
     gestores; para cualquier otro, no encontrado.
   - Criterios: RVP-R04.3, R04.6, R05.2
   - Test: `tests/Unit/Evaluation/Application/PendingGroupSheetTest.php`.
-- [ ] **T-14** — `PendingGrades` cuenta los grupos, y la excepción del
+- [x] **T-14** — `PendingGrades` cuenta los grupos, y la excepción del
   cierre del lapso los rellena con NP.
   - Criterios: RVP-R04.7
   - Test:
@@ -157,14 +157,14 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 6 — Infraestructura y pantallas de los grupos
 
-- [ ] **T-15** — `EloquentPendingGroupRepository`, `isActiveTeacher` en el
+- [x] **T-15** — `EloquentPendingGroupRepository`, `isActiveTeacher` en el
   adaptador, `canAssignPendingTeachers` en `GateEvaluationPermissions` y el
   aislamiento.
   - Criterios: RVP-R08.1 – R08.3, NF02
   - Test:
     - `tests/Feature/Evaluation/Infrastructure/PendingGroupRepositoryTest.php`;
     - `tests/Feature/Evaluation/PendingGroupIsolationTest.php` (`rls`).
-- [ ] **T-16** — «Grupos de pendientes» y su planilla:
+- [x] **T-16** — «Grupos de pendientes» y su planilla:
   - `PendingGroupController` (lista, asignación, planilla, plan y
     revisión);
   - FormRequests;

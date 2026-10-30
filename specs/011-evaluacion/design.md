@@ -434,3 +434,10 @@ sincronizar nada.
   revisión, y una definitiva reprobada sin revisión no deja proponer.
 - **La planilla** muestra la revisión y la definitiva que cuenta (columnas
   «Revisión» y «Cuenta»), editable con el tercer lapso cerrado.
+
+- **SPEC-016 PR B (grupos de pendientes):**
+  - el cierre del lapso (EVA-R12) cuenta las notas que faltan en los grupos
+    de pendientes, y la excepción las rellena con NP;
+  - `SaveActivityGradesHandler` responde «no encontrado» a una actividad de
+    un grupo;
+  - la planilla `Grades/Sheet` acepta las URL de un grupo (`sheet.urls`).

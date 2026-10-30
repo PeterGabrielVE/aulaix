@@ -15,7 +15,13 @@ final class FakeEvaluationPermissions implements EvaluationPermissions
         public bool $seesAll = false,
         public bool $editClosedTerms = false,
         public ?int $accountId = 9,
+        public bool $assignPendingTeachers = false,
     ) {}
+
+    public function canAssignPendingTeachers(): bool
+    {
+        return $this->assignPendingTeachers;
+    }
 
     public function canGrade(): bool
     {

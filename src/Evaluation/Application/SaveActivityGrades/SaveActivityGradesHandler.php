@@ -59,11 +59,14 @@ final readonly class SaveActivityGradesHandler
         $plan = $activityId > 0 ? $this->plans->planOfActivity(ActivityId::fromInt($activityId)) : null;
         $activity = $plan === null ? null : array_values(array_filter($plan->activities(), fn (Activity $activity) => $activity->id?->value === $activityId))[0] ?? null;
 
-        if ($plan === null || $activity === null) {
+        // The activities of a group of pending subjects are graded by SaveGroupGradesHandler (SPEC-016).
+        $sectionId = $plan?->sectionId();
+
+        if ($plan === null || $activity === null || $sectionId === null) {
             throw EvaluationNotFound::create();
         }
 
-        $this->access->ensureTeaches($plan->sectionId(), $plan->subjectId());
+        $this->access->ensureTeaches($sectionId, $plan->subjectId());
         $closedTerm = $this->access->ensureEditable($plan->schoolYearId(), $plan->term());
 
         $marks = [];
@@ -74,8 +77,8 @@ final readonly class SaveActivityGradesHandler
 
         $periods = $this->enrollments->periods($plan->schoolYearId(), array_keys($marks));
 
-        $this->transactions->run(function () use ($activity, $plan, $marks, $periods, $closedTerm, $activityId) {
-            $activityGrades = $this->grades->forActivity($activity, $plan->sectionId());
+        $this->transactions->run(function () use ($activity, $sectionId, $marks, $periods, $closedTerm, $activityId) {
+            $activityGrades = $this->grades->forActivity($activity, $sectionId);
             $changes = $activityGrades->record($marks, $periods, $this->clock->now());
 
             if ($changes === []) {

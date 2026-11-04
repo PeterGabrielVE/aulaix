@@ -83,7 +83,7 @@ const missing = computed(() => props.sheet.students.filter((student) => !student
                             <template v-if="student.proposal.outcome">
                                 <span class="text-gray-700">
                                     Propuesta según las notas:
-                                    <span class="font-medium text-gray-900">{{ outcomeLabels[student.proposal.outcome] }}</span><template v-if="student.proposal.pendingSubjects.length">: {{ student.proposal.pendingSubjects.map(subjectName).join(', ') }}</template>
+                                    <span class="font-medium text-gray-900">{{ outcomeLabels[student.proposal.outcome] }}</span><template v-if="student.proposal.pendingSubjects.length">: {{ student.proposal.pendingSubjects.map(subjectName).join(', ') }}</template><template v-if="student.proposal.reasons?.length"> ({{ student.proposal.reasons.join(' ') }})</template>
                                 </span>
                                 <button
                                     v-if="sheet.ready && !isProposal(student)"

@@ -483,3 +483,24 @@ entradas (MAT-R03.7, Q6).
   - de los estudiantes inscritos en el año o pendientes de egresar y
     activos;
   - `EnrollmentList` gana `withPendingSubjects()` para ella.
+- **SPEC-016 PR C — punto de extensión `PendingSubjectsCheck`** (ADR 0012,
+  RVP-R05.5):
+  - `Graduation` (Application) decide `graduates()` y `waitsToGraduate()`
+    de una inscripción con lo que responden los checks registrados: quien
+    estaba pendiente de egresar y ya no debe ninguna pendiente aparece como
+    egresado (MAT-R15);
+  - lo usan `NextYearPlanner` (inscripción en lote, MAT-R15.3) y
+    `EnrollStudentHandler` (MAT-R15.4);
+  - el check recibe el resultado (estudiante, año y grado de origen,
+    materias), no el año activo: así no depende de en qué año se pregunta;
+  - `PendingSubjectsQuery` sigue con `Enrollment::waitsToGraduate()` del
+    dominio: preguntar al check desde ahí sería circular, y Evaluation ya
+    quita las pendientes aprobadas;
+  - sin checks registrados, toda pendiente se debe, como antes;
+  - `Graduation` se enlaza en el contenedor; los handlers la reciben con un
+    valor por omisión, así que sus tests no cambian;
+  - `PendingSubjectsQuery::ofStudent()`: las pendientes de un estudiante,
+    de cualquier año, para su ficha (RVP-R06.1).
+- **SPEC-016 PR C — la propuesta dice por qué:** `OutcomeSuggestion` gana
+  `reasons` (p. ej. «Reprobó la pendiente Física de 2.º año.»), que
+  «Prosecución» muestra junto a la propuesta (RVP-R05.3).

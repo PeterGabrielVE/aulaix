@@ -64,6 +64,14 @@ final readonly class EnrollmentEnrollmentFacts implements EnrollmentFacts
         );
     }
 
+    public function pendingsOf(int $studentId): array
+    {
+        return array_map(
+            fn (PendingSubjectView $view) => new OwedPending($view->studentId, $view->subjectId, $view->originGrade, $view->originSchoolYearId),
+            $this->pendings->ofStudent($studentId),
+        );
+    }
+
     private static function period(PeriodView $period): EnrollmentPeriod
     {
         return new EnrollmentPeriod(

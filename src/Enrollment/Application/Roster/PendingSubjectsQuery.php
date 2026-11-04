@@ -14,7 +14,8 @@ use AulaX\Enrollment\Domain\Enrollment;
  * each was failed, of the students enrolled in that year or waiting to
  * graduate (MAT-R15.2). Whoever left the institution is not there. Which of
  * them were approved since is Evaluation's to say; who may see them, the
- * caller's.
+ * caller's. ofStudent() gives every pending subject of one student, for its
+ * record (RVP-R06.1).
  */
 final readonly class PendingSubjectsQuery
 {
@@ -46,6 +47,28 @@ final readonly class PendingSubjectsQuery
             $takesThem = isset($current[$studentId]) || ($enrollment->waitsToGraduate() && ($students[$studentId]->active ?? false));
 
             if (! $takesThem) {
+                continue;
+            }
+
+            foreach ($enrollment->result()?->pendingSubjects ?? [] as $subjectId) {
+                $views[] = new PendingSubjectView($studentId, $subjectId, $enrollment->placement()->grade, $enrollment->schoolYearId());
+            }
+        }
+
+        return $views;
+    }
+
+    /**
+     * Every pending subject from the results of a student, any year.
+     *
+     * @return list<PendingSubjectView>
+     */
+    public function ofStudent(int $studentId): array
+    {
+        $views = [];
+
+        foreach ($this->enrollments->withPendingSubjects() as $enrollment) {
+            if ($enrollment->studentId() !== $studentId) {
                 continue;
             }
 

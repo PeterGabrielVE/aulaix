@@ -15,7 +15,12 @@ const props = defineProps({
     canManage: { type: Boolean, required: true },
     // SPEC-010 MAT-R04.6, R14.6: where it was enrolled, oldest first.
     enrollments: { type: Array, default: () => [] },
+    pendings: { type: Array, default: () => [] },
 });
+
+// SPEC-016 RVP-R06.1: how each pending subject stands.
+const standingLabels = { studying: 'Cursando', approved: 'Aprobada', failed: 'Reprobada' };
+const standingClasses = { studying: 'bg-amber-100 text-amber-800', approved: 'bg-green-100 text-green-800', failed: 'bg-red-100 text-red-800' };
 
 const healthForm = useForm({
     allergies: props.student.health?.allergies ?? '',
@@ -149,6 +154,17 @@ const selectClass = 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focu
                             {{ enrollment.gradeName }} · Sección {{ enrollment.letter }}: desde el {{ day(enrollment.startsOn) }}<span v-if="enrollment.endsOn"> hasta el {{ day(enrollment.endsOn) }}</span>
                             <span v-if="enrollment.current" class="ml-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Vigente</span>
                             <span v-else-if="enrollment.endReason"> · {{ enrollment.endReason }}<span v-if="enrollment.endNote">: {{ enrollment.endNote }}</span><span v-if="enrollment.annulmentReason">: {{ enrollment.annulmentReason }}<span v-if="enrollment.annulmentNote"> ({{ enrollment.annulmentNote }})</span></span></span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section v-if="pendings.length" class="bg-white p-4 shadow-sm sm:rounded-lg sm:p-6">
+                    <h3 class="mb-4 text-lg font-medium text-gray-900">Materias pendientes</h3>
+                    <ul class="space-y-1 text-sm text-gray-700">
+                        <li v-for="pending in pendings" :key="`${pending.originSchoolYear}-${pending.subjectId}`">
+                            {{ pending.subject }} de {{ pending.originGrade }} ({{ pending.originSchoolYear }}):
+                            <span :class="['ml-1 rounded-full px-2 py-0.5 text-xs font-medium', standingClasses[pending.standing]]">{{ standingLabels[pending.standing] }}</span>
+                            <span v-if="pending.score !== null"> · definitiva {{ pending.score }}<span v-if="pending.decidedIn"> en {{ pending.decidedIn }}</span></span>
                         </li>
                     </ul>
                 </section>

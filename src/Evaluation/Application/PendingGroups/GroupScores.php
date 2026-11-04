@@ -25,7 +25,8 @@ use AulaX\Evaluation\Domain\TermScore;
  * The grades of a group of pending subjects (RVP-R04.3, R05.2): every
  * activity of the group applies to each member (no NA, decision 3), and the
  * final grade after its revision decides how the pending subject stands.
- * Plans, grades and revisions are read once and kept for the instance.
+ * Plans, grades and revisions are read once and kept for the instance;
+ * load() reads the revisions of many students at once.
  */
 final class GroupScores
 {
@@ -34,6 +35,9 @@ final class GroupScores
 
     /** @var array<int, ActivityGrades> */
     private array $grades = [];
+
+    /** @var array<int, ?GradeMark> By student id. */
+    private array $revisionMarks = [];
 
     private ?bool $thirdTermClosed = null;
 
@@ -74,9 +78,35 @@ final class GroupScores
         return FinalScore::of(array_map(fn (int $term) => $this->term($term, $studentId), [1, 2, 3]));
     }
 
+    /**
+     * Reads at once the revisions of the students not read yet.
+     *
+     * @param  list<int>  $studentIds
+     */
+    public function load(array $studentIds): void
+    {
+        $missing = array_values(array_diff($studentIds, array_keys($this->revisionMarks)));
+
+        if ($missing === []) {
+            return;
+        }
+
+        if ($this->group->id() === null) {
+            $this->revisionMarks += array_fill_keys($missing, null);
+
+            return;
+        }
+
+        foreach ($this->revisions->revisionsOf($this->group->schoolYearId(), $this->group->subjectId(), $this->owner(), $missing) as $studentId => $revision) {
+            $this->revisionMarks[$studentId] = $revision->mark();
+        }
+    }
+
     public function revisionOf(int $studentId): ?GradeMark
     {
-        return $this->revisions->revisionsOf($this->group->schoolYearId(), $this->group->subjectId(), $this->owner(), [$studentId])[$studentId]->mark();
+        $this->load([$studentId]);
+
+        return $this->revisionMarks[$studentId] ?? null;
     }
 
     public function result(int $studentId): FinalAfterRevision
@@ -105,6 +135,8 @@ final class GroupScores
     {
         if (! array_key_exists($term, $this->plans)) {
             $this->plans[$term] = $this->group->id() === null ? null : $this->planRepository->planOfGroup($this->group->id(), $term);
+            // The grades of the whole term at once.
+            $this->grades += $this->gradeRepository->forActivities($this->plans[$term]?->activities() ?? [], $this->owner());
         }
 
         return $this->plans[$term];

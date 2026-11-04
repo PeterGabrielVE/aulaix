@@ -17,6 +17,14 @@ interface ActivityGradesRepository
      */
     public function forActivity(Activity $activity, int|PlanOwner $owner): ActivityGrades;
 
+    /**
+     * The grades of several activities of one owner, read at once.
+     *
+     * @param  list<Activity>  $activities  Saved ones.
+     * @return array<int, ActivityGrades> Activity id => its grades.
+     */
+    public function forActivities(array $activities, PlanOwner $owner): array;
+
     public function saveGrades(ActivityGrades $grades): void;
 
     /**

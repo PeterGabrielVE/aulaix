@@ -1,6 +1,6 @@
 ---
 spec: 016-revision-pendientes
-estado: implementando
+estado: implementada
 fecha: 2026-10-30
 aprobada: 2026-10-30
 diseño: design.md
@@ -181,7 +181,7 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 7 — Lo que deciden las pendientes
 
-- [ ] **T-17** — La propuesta con las pendientes:
+- [x] **T-17** — La propuesta con las pendientes:
   - una pendiente cursando o sin revisión no deja proponer;
   - una reprobada propone «repite» y dice cuál;
   - las nuevas reprobadas siguen la regla de siempre (Q4).
@@ -191,14 +191,14 @@ Tres PRs, cada uno usable por sí mismo:
       nuevos);
     - `tests/Feature/Enrollment/PromotionProposalTest.php` › «proposes to
       repeat for a failed pending subject» (nuevo).
-- [ ] **T-18** — Punto de extensión `PendingSubjectsCheck` en Enrollment y
+- [x] **T-18** — Punto de extensión `PendingSubjectsCheck` en Enrollment y
   `OwedPendingsCheck` en Evaluation: quien estaba pendiente de egresar y ya
   no debe nada aparece como egresado.
   - Criterios: RVP-R05.5
   - Test: `tests/Feature/Evaluation/Infrastructure/GraduationIntegrationTest.php`;
     regla de arquitectura: solo el provider de Evaluation registra sus
     hooks.
-- [ ] **T-19** — `StudentPendingsQuery` y las pendientes en la ficha del
+- [x] **T-19** — `StudentPendingsQuery` y las pendientes en la ficha del
   estudiante, compuestas en `app/` para quien puede verla.
   - Criterios: RVP-R05.2, R06.1, R06.2
   - Test:
@@ -207,14 +207,14 @@ Tres PRs, cada uno usable por sí mismo:
 
 ### Fase 8 — Rendimiento y cierre
 
-- [ ] **T-20** — Rendimiento:
+- [x] **T-20** — Rendimiento:
   - la planilla de un grupo de 40 estudiantes con 10 actividades por
     debajo de 300 ms (p95);
   - la propuesta de una sección de 40, con revisiones y pendientes, por
     debajo de 500 ms (p95).
   - Criterios: RVP-NF04
   - Test: `tests/Feature/Evaluation/PendingGroupPerformanceTest.php` (`perf`).
-- [ ] **T-21** — Cambios en otras specs. Se aplica en el PR que cambia cada
+- [x] **T-21** — Cambios en otras specs. Se aplica en el PR que cambia cada
   comportamiento (P-04):
   - SPEC-011: plan con dueño, revisión y propuesta (A); cierre del lapso
     (B);
@@ -230,12 +230,12 @@ Tres PRs, cada uno usable por sí mismo:
 
 - [ ] `php artisan test --compact` en verde (incluidos `--group=rls`,
   `--group=perf` y `tests/Isolation`), y tests de navegador en verde.
-- [ ] Tests de arquitectura en verde.
-- [ ] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
-- [ ] Migración: `up`, `down` y `up`.
-- [ ] Matriz de trazabilidad completa.
-- [ ] `/security-review` de cada PR (permisos y tenancy; S-12).
-- [ ] `estado` de requirements/design/tasks actualizado.
+- [x] Tests de arquitectura en verde.
+- [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
+- [x] Migración: `up`, `down` y `up`.
+- [x] Matriz de trazabilidad completa.
+- [x] `/security-review` de cada PR (permisos y tenancy; S-12).
+- [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios
 

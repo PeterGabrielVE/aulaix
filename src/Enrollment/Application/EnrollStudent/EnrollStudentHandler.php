@@ -10,6 +10,7 @@ use AulaX\Enrollment\Application\AgeAdmission;
 use AulaX\Enrollment\Application\EnrollmentAccess;
 use AulaX\Enrollment\Application\EnrollmentAudit;
 use AulaX\Enrollment\Application\EnrollmentDate;
+use AulaX\Enrollment\Application\Graduation;
 use AulaX\Enrollment\Application\Placements;
 use AulaX\Enrollment\Application\Port\AgeRules;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
@@ -50,6 +51,7 @@ final readonly class EnrollStudentHandler
         private Clock $clock,
         private AuditTrail $audit,
         private TransactionManager $transactions,
+        private Graduation $graduation = new Graduation,
     ) {
         $this->placements = new Placements($structure, $calendar);
         $this->ages = new AgeAdmission($ageRules, $calendar, $permissions);
@@ -81,7 +83,9 @@ final readonly class EnrollStudentHandler
                 throw NotEnrollable::withdrawn();
             }
 
-            if ($this->enrollments->lastResultOf($student->id)?->waitsToGraduate() === true) {
+            $lastResult = $this->enrollments->lastResultOf($student->id);
+
+            if ($lastResult !== null && $this->graduation->waitsToGraduate($lastResult)) {
                 throw NotEnrollable::waitingToGraduate();
             }
 

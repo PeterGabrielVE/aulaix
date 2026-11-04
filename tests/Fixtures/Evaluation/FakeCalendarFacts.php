@@ -31,6 +31,11 @@ final class FakeCalendarFacts implements CalendarFacts
         return $this->activeYear;
     }
 
+    public function yearNames(): array
+    {
+        return [1 => '2025-2026', 2 => '2026-2027', 3 => '2027-2028'];
+    }
+
     public function termDates(int $schoolYearId, int $term): ?TermDates
     {
         $dates = $schoolYearId === 2 ? ($this->terms[$term] ?? null) : null;

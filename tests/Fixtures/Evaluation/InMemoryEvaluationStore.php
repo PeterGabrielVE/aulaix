@@ -115,6 +115,17 @@ final class InMemoryEvaluationStore implements ActivityGradesRepository, Evaluat
         return isset($this->grades[$id->value]) ? clone $this->grades[$id->value] : ActivityGrades::of($id, $sectionId, $activity->date, []);
     }
 
+    public function forActivities(array $activities, PlanOwner $owner): array
+    {
+        $grades = [];
+
+        foreach ($activities as $activity) {
+            $grades[(int) $activity->id?->value] = $this->forActivity($activity, $owner);
+        }
+
+        return $grades;
+    }
+
     public function saveGrades(ActivityGrades $grades): void
     {
         $this->grades[$grades->activityId()->value] = clone $grades;

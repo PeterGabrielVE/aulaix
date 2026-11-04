@@ -28,4 +28,9 @@ interface CalendarFacts
     public function gradesEditable(int $schoolYearId, int $term, bool $canEditClosedTerms): bool;
 
     public function activeYear(): ?int;
+
+    /**
+     * @return array<int, string> School year id => its name («2026-2027»).
+     */
+    public function yearNames(): array;
 }

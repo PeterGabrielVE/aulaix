@@ -7,6 +7,7 @@ namespace AulaX\Enrollment\Infrastructure;
 use AulaX\AcademicCalendar\Application\Port\SchoolYearGuard;
 use AulaX\AcademicStructure\Application\Port\RemovalGuard;
 use AulaX\Enrollment\Application\GradedEnrollments;
+use AulaX\Enrollment\Application\Graduation;
 use AulaX\Enrollment\Application\Hooks\EndEnrollmentsOnWithdrawal;
 use AulaX\Enrollment\Application\Hooks\EnrollmentRemovalGuard;
 use AulaX\Enrollment\Application\Hooks\SectionScopedVisibility;
@@ -18,6 +19,7 @@ use AulaX\Enrollment\Application\Port\EnrollmentList;
 use AulaX\Enrollment\Application\Port\EnrollmentPermissions;
 use AulaX\Enrollment\Application\Port\GradedEnrollment;
 use AulaX\Enrollment\Application\Port\OutcomeProposer;
+use AulaX\Enrollment\Application\Port\PendingSubjectsCheck;
 use AulaX\Enrollment\Application\Port\StructureFacts;
 use AulaX\Enrollment\Application\Port\StudentFacts;
 use AulaX\Enrollment\Domain\EnrollmentRepository;
@@ -71,6 +73,10 @@ final class EnrollmentServiceProvider extends ServiceProvider
         $this->app->when(GradedEnrollments::class)
             ->needs('$checks')
             ->giveTagged(GradedEnrollment::TAG);
+
+        // Extension point (RVP-R05.5): SPEC-016 says whether a student still owes its pending subjects.
+        // Bound, not only contextual: the handlers' default (every pending subject owed) would win otherwise.
+        $this->app->bind(Graduation::class, fn ($app) => new Graduation($app->tagged(PendingSubjectsCheck::TAG)));
     }
 
     public function boot(): void

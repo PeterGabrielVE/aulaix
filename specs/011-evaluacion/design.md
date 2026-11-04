@@ -441,3 +441,10 @@ sincronizar nada.
   - `SaveActivityGradesHandler` responde «no encontrado» a una actividad de
     un grupo;
   - la planilla `Grades/Sheet` acepta las URL de un grupo (`sheet.urls`).
+- **SPEC-016 PR C (prosecución y egreso):**
+  - la propuesta (EVA-R08) cuenta las pendientes que el estudiante debe en
+    el año: una cursando o sin revisión no deja proponer; una reprobada
+    propone «repite» y dice cuál (`reasons`); las aprobadas no cuentan;
+  - `OutcomeProposal::forSecondary()` devuelve además `reasons`; sus tests
+    y los de `PromotionProposalTest` solo añaden `'reasons' => []` a lo que
+    esperan.

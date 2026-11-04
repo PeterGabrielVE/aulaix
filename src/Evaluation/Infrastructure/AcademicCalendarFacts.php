@@ -30,6 +30,11 @@ final readonly class AcademicCalendarFacts implements CalendarFacts
         return $this->lookup->activeYear();
     }
 
+    public function yearNames(): array
+    {
+        return array_column(array_map(fn (SchoolYearView $year) => [$year->id, $year->name], ($this->years)()), 1, 0);
+    }
+
     public function termDates(int $schoolYearId, int $term): ?TermDates
     {
         $found = $this->term($schoolYearId, $term);

@@ -33,6 +33,29 @@ final class EloquentActivityGradesRepository implements ActivityGradesRepository
         return ActivityGrades::of($id, $owner, $activity->date, $marks);
     }
 
+    public function forActivities(array $activities, PlanOwner $owner): array
+    {
+        if ($activities === []) {
+            return [];
+        }
+
+        $marks = [];
+        $ids = array_map(fn (Activity $activity) => ($activity->id ?? throw new LogicException('Only a saved activity has grades.'))->value, $activities);
+
+        foreach (DB::table('activity_grades')->whereIn('activity_id', $ids)->get() as $row) {
+            $marks[(int) $row->activity_id][(int) $row->student_id] = $row->not_presented ? GradeMark::notPresented() : GradeMark::score(Score::fromHundredths((int) $row->score));
+        }
+
+        $grades = [];
+
+        foreach ($activities as $activity) {
+            $id = (int) $activity->id?->value;
+            $grades[$id] = ActivityGrades::of($activity->id, $owner, $activity->date, $marks[$id] ?? []);
+        }
+
+        return $grades;
+    }
+
     public function saveGrades(ActivityGrades $grades): void
     {
         $activityId = $grades->activityId()->value;

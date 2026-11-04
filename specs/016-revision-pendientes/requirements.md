@@ -1,7 +1,7 @@
 ---
 spec: 016-revision-pendientes
 prefijo: RVP
-estado: aprobada
+estado: implementada
 fecha: 2026-10-30
 aprobada: 2026-10-30
 backlog: F2-01, F2-02
@@ -335,18 +335,18 @@ sus materias pendientes y cómo van.
 | RVP-R04.7 | `tests/Unit/Evaluation/Application/PendingGradesTest.php` › «counts what the groups of pending subjects lack, with their teacher»; `tests/Unit/Evaluation/Application/PendingGradesTest.php` › «fills with NP the grades a group lacks, closing by exception»; `tests/Feature/Evaluation/Infrastructure/TermClosingIntegrationTest.php` › «counts the pending groups» |
 | RVP-R05.1 | `tests/Unit/Evaluation/Application/PendingGroupGradesTest.php` › «the assigned teacher records the revision of a member who failed the pending subject»; `tests/Feature/Evaluation/PendingGroupHttpTest.php` › «records the revision of a member who failed the pending subject» |
 | RVP-R05.2 | `tests/Unit/Evaluation/Domain/PendingStandingTest.php` › «stands by the final grade after revision once the third term is closed»; `tests/Unit/Evaluation/Application/PendingGroupSheetTest.php` › «shows the members with their grades, final grade, revision and how they stand» |
-| RVP-R05.3 | |
-| RVP-R05.4 | |
-| RVP-R05.5 | |
-| RVP-R06.1 | |
-| RVP-R06.2 | |
+| RVP-R05.3 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «proposes to repeat for a failed pending subject, saying which, and does not count the approved ones»; `tests/Feature/Enrollment/PromotionProposalTest.php` › «proposes to repeat for a failed pending subject, and waits for its revision» |
+| RVP-R05.4 | `tests/Unit/Evaluation/Domain/OutcomeProposalTest.php` › «waits for a pending subject still studied or without its revision, saying which»; `tests/Feature/Enrollment/PromotionProposalTest.php` › «proposes to repeat for a failed pending subject, and waits for its revision» |
+| RVP-R05.5 | `tests/Feature/Evaluation/Infrastructure/GraduationIntegrationTest.php` › «graduates whoever approved its last pending subject, and not before»; `tests/Feature/Evaluation/Infrastructure/GraduationIntegrationTest.php` › «keeps waiting to graduate while the third term is not closed» |
+| RVP-R06.1 | `tests/Unit/Evaluation/Application/StudentPendingsTest.php` › «shows each pending subject of the student with how it stands and its final grade after revision»; `tests/Unit/Evaluation/Application/StudentPendingsTest.php` › «keeps a pending subject studied until the third term is closed and its revision is in»; `tests/Unit/Evaluation/Application/StudentPendingsTest.php` › «shows a subject approved in a year before, with that year»; `tests/Feature/Students/StudentPendingsHttpTest.php` › «shows the pending subjects of the student with how they stand» |
+| RVP-R06.2 | `tests/Feature/Students/StudentPendingsHttpTest.php` › «shows them to whoever sees the record, and to nobody else» |
 | RVP-R07.1 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «the teacher of the subject records the revision of a failed final, recorded with what changed»; `tests/Unit/Evaluation/Application/PendingGroupsTest.php` › «a manager assigns a teacher to a group, recorded with who was before»; `tests/Unit/Evaluation/Application/PendingGroupGradesTest.php` › «the assigned teacher plans the group with the rules of a plan, recorded» |
-| RVP-R07.2 | |
+| RVP-R07.2 | `tests/Unit/Evaluation/Application/PendingGroupGradesTest.php` › «a closed term of the group takes grades only with the special permission, flagged in the audit log» |
 | RVP-R08.1 | `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution sees none of its revisions nor groups of pending subjects»; `tests/Feature/Evaluation/PendingGroupIsolationTest.php` › «another institution does not find its group of pending subjects» |
 | RVP-R08.2 | `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution sees none of its revisions nor groups of pending subjects» |
 | RVP-R08.3 | `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution can not record a revision in its section»; `tests/Feature/Evaluation/PendingGroupIsolationTest.php` › «another institution can not plan its group of pending subjects» |
 | RVP-NF01 | `tests/Unit/Evaluation/Application/RevisionTest.php` › «only whoever teaches the subject in the section records its revisions»; `tests/Feature/Evaluation/PendingGroupPermissionsTest.php` › «a teacher does not assign itself a group, nor sees the groups» |
 | RVP-NF02 | `tests/Feature/Evaluation/Infrastructure/RevisionSchemaTest.php` › «keeps a revision as a grade between 1 and 20 or NP, of a section or a group, once per student»; `tests/Feature/Evaluation/Infrastructure/RevisionSchemaTest.php` › «keeps a plan of a section or of a group, never both nor neither»; `tests/Feature/Evaluation/RevisionIsolationTest.php` › «another institution sees none of its revisions nor groups of pending subjects»; `tests/Feature/Evaluation/PendingGroupIsolationTest.php` › «another institution does not find its group of pending subjects» |
 | RVP-NF03 | `tests/Unit/Evaluation/Domain/FinalAfterRevisionTest.php` › «decides the final grade with its revision» |
-| RVP-NF04 | |
+| RVP-NF04 | `tests/Feature/Evaluation/PendingGroupPerformanceTest.php` › «shows the sheet of a group of 40 students and 10 activities in under 300 ms»; `tests/Feature/Evaluation/PendingGroupPerformanceTest.php` › «proposes the result of a section of 40, with revisions and pending subjects, in under 500 ms» |
 | RVP-NF05 | `tests/Browser/GradebookTest.php` › «the sheet with the column of revisions is accessible»; `tests/Browser/PendingGroupTest.php` › «the groups of pending subjects and the sheet of a group are accessible» |

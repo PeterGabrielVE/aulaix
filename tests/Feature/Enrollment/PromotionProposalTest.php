@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\DB;
 require_once dirname(__DIR__, 2).'/Fixtures/Evaluation/evaluation_helpers.php';
 
 /**
- * SPEC-011 EVA-R08.1, R08.4, R08.5 and SPEC-016 RVP-R02.3, R02.4 with the
+ * SPEC-011 EVA-R08.1, R08.4, R08.5 and SPEC-016 RVP-R02.3, R02.4, R05.3,
+ * R05.4 with the
  * real modules: «Prosecución» shows the result proposed from the final
  * grades after their revision, and the manager confirms it as any other
  * result (MAT-R06).
@@ -50,9 +51,9 @@ it('shows the result proposed from the final grades, and what is missing to prop
     $this->actingAs($this->director)->get(promotionUrl("/prosecucion/{$this->year}/secciones/{$this->section}"))->assertOk()->assertInertia(fn ($page) => $page
         ->component('Enrollment/Promotion')
         ->where('sheet.students.0.fullName', 'Álvarez, Luis')
-        ->where('sheet.students.0.proposal', ['outcome' => 'promoted_with_pending', 'pendingSubjects' => [$this->math, $this->physics], 'missing' => []])
+        ->where('sheet.students.0.proposal', ['outcome' => 'promoted_with_pending', 'pendingSubjects' => [$this->math, $this->physics], 'missing' => [], 'reasons' => []])
         ->where('sheet.students.1.fullName', 'Mora, Eva')
-        ->where('sheet.students.1.proposal', ['outcome' => null, 'pendingSubjects' => [], 'missing' => ['Falta la definitiva de Física.']])
+        ->where('sheet.students.1.proposal', ['outcome' => null, 'pendingSubjects' => [], 'missing' => ['Falta la definitiva de Física.'], 'reasons' => []])
         ->where('sheet.students.2.proposal.outcome', 'promoted'));
 });
 
@@ -72,10 +73,36 @@ it('counts the revisions, and waits for the one still missing', function () {
     DB::table('grade_revisions')->where('subject_id', $this->physics)->update(['score' => 1200, 'not_presented' => false]);
 
     $this->actingAs($this->director)->get(promotionUrl("/prosecucion/{$this->year}/secciones/{$this->section}"))->assertInertia(fn ($page) => $page
-        ->where('sheet.students.0.proposal', ['outcome' => 'promoted_with_pending', 'pendingSubjects' => [$this->math], 'missing' => []]));
+        ->where('sheet.students.0.proposal', ['outcome' => 'promoted_with_pending', 'pendingSubjects' => [$this->math], 'missing' => [], 'reasons' => []]));
 
     DB::table('grade_revisions')->where('subject_id', $this->math)->delete();
 
     $this->actingAs($this->director)->get(promotionUrl("/prosecucion/{$this->year}/secciones/{$this->section}"))->assertInertia(fn ($page) => $page
-        ->where('sheet.students.0.proposal', ['outcome' => null, 'pendingSubjects' => [], 'missing' => ['Falta la revisión de Matemática.']]));
+        ->where('sheet.students.0.proposal', ['outcome' => null, 'pendingSubjects' => [], 'missing' => ['Falta la revisión de Matemática.'], 'reasons' => []]));
+});
+
+it('proposes to repeat for a failed pending subject, and waits for its revision', function () {
+    // Ana owes Física of 2.º año, from the year before, and fails it again.
+    $before = enrollmentYear(2025, 'closed');
+    $previous = enrollmentRow($this->ana, $before, enrollmentSection($before, 'media_2'), [
+        'grade' => 'media_2', 'starts_on' => '2025-09-16', 'ends_on' => '2026-07-15', 'end_reason' => 'section_change',
+        'outcome' => 'promoted_with_pending', 'outcome_recorded_at' => now(), 'outcome_recorded_by' => 1,
+    ]);
+    DB::table('enrollment_pending_subjects')->insert(['enrollment_id' => $previous, 'subject_id' => $this->physics]);
+    $group = DB::table('pending_groups')->insertGetId(['school_year_id' => $this->year, 'subject_id' => $this->physics, 'origin_grade' => 'media_2']);
+
+    foreach ([1 => '2026-10-05', 2 => '2027-02-01', 3 => '2027-05-03'] as $term => $date) {
+        $plan = DB::table('evaluation_plans')->insertGetId(['school_year_id' => $this->year, 'subject_id' => $this->physics, 'term' => $term, 'pending_group_id' => $group]);
+        activityGradeRow(evaluationActivityRow($plan, ['date' => $date]), $this->ana, ['score' => 800]);
+    }
+
+    $this->actingAs($this->director)->get(promotionUrl("/prosecucion/{$this->year}/secciones/{$this->section}"))->assertInertia(fn ($page) => $page
+        ->where('sheet.students.2.fullName', 'Pérez, Ana')
+        ->where('sheet.students.2.proposal', ['outcome' => null, 'pendingSubjects' => [], 'missing' => ['Falta la revisión de la pendiente Física de 2.º año.'], 'reasons' => []]));
+
+    DB::table('grade_revisions')->insert(['school_year_id' => $this->year, 'pending_group_id' => $group, 'subject_id' => $this->physics, 'student_id' => $this->ana, 'not_presented' => true]);
+
+    $this->actingAs($this->director)->get(promotionUrl("/prosecucion/{$this->year}/secciones/{$this->section}"))->assertInertia(fn ($page) => $page
+        ->where('sheet.students.2.proposal', ['outcome' => 'repeats', 'pendingSubjects' => [], 'missing' => [], 'reasons' => ['Reprobó la pendiente Física de 2.º año.']])
+        ->where('sheet.students.0.proposal.outcome', 'promoted_with_pending'));
 });

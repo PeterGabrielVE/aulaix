@@ -7,6 +7,7 @@ namespace AulaX\Enrollment\Application\NextYear;
 use AulaX\Audit\Application\AuditTrail;
 use AulaX\Enrollment\Application\EnrollmentAccess;
 use AulaX\Enrollment\Application\EnrollmentAudit;
+use AulaX\Enrollment\Application\Graduation;
 use AulaX\Enrollment\Application\Placements;
 use AulaX\Enrollment\Application\Port\AgeRules;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
@@ -45,8 +46,9 @@ final readonly class EnrollNextYearHandler
         private Clock $clock,
         private AuditTrail $audit,
         private TransactionManager $transactions,
+        Graduation $graduation = new Graduation,
     ) {
-        $this->planner = new NextYearPlanner($list, $students, $structure, $calendar, $ageRules, $permissions);
+        $this->planner = new NextYearPlanner($list, $students, $structure, $calendar, $ageRules, $permissions, $graduation);
     }
 
     /**

@@ -42,6 +42,7 @@ class PromotionController extends Controller
                         'outcome' => $row->proposal->outcome,
                         'pendingSubjects' => $row->proposal->pendingSubjects,
                         'missing' => $row->proposal->missing,
+                        'reasons' => $row->proposal->reasons,
                     ],
                 ], $view->students),
                 'outcomes' => $view->outcomes,

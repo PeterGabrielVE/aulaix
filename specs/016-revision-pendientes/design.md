@@ -1,6 +1,6 @@
 ---
 spec: 016-revision-pendientes
-estado: aprobada
+estado: implementada
 fecha: 2026-10-30
 aprobada: 2026-10-30
 requisitos: requirements.md
@@ -363,3 +363,29 @@ nuevas (S-01):
 - **Nombres de los grados:** `TeachingFacts::gradeNames()`, sobre
   `GradesQuery`. Los docentes asignables: `activeTeachers()`, sobre
   `StaffDirectory::candidates('Docente')`.
+
+### PR C
+
+- **La propuesta dice por qué** (RVP-R05.3): `OutcomeProposal` y
+  `OutcomeSuggestion` ganan `reasons`, y «Prosecución» lo muestra junto a la
+  propuesta. Los tests que comparaban la propuesta completa solo añaden
+  `'reasons' => []`.
+- **Las pendientes en la propuesta:** `GradeOutcomeProposer` toma de
+  `PendingMembers` las que cada estudiante de la sección debe en el año, con
+  la definitiva tras revisión de su grupo. Un grupo sin docente aún no
+  existe: su pendiente sigue cursando («Falta la definitiva de la pendiente
+  …»).
+- **El check del egreso recibe el resultado**, no el año: `owesAny(estudiante,
+  año de origen, grado de origen, materias)`. `OwedPendingsCheck` responde
+  con `PendingMembers::isApproved()`: aprobada en el grupo de cualquier año
+  posterior, el actual incluido. Enrollment lo usa a través de `Graduation`
+  en la inscripción en lote y en la inscripción uno a uno;
+  `PendingSubjectsQuery` sigue con el dominio para no ser circular.
+- **La ficha:** `EnrollmentFacts::pendingsOf(estudiante)`, sobre
+  `PendingSubjectsQuery::ofStudent()`, y `CalendarFacts::yearNames()` para
+  nombrar los años. Aprobada en cualquier año, con ese año; reprobada en el
+  grupo del año activo; si no, cursando.
+- **Rendimiento:** `GroupScores::load()` lee de una vez las revisiones de
+  todos los miembros, y `PendingMembers::of()` lee los grupos una vez por
+  materia y grado de origen. La planilla de un grupo de 40 pasó de 120
+  consultas de revisiones a una.

@@ -8,6 +8,8 @@ use AulaX\Catalogs\Application\Countries;
 use AulaX\Catalogs\Application\Geography\GeographyDirectory;
 use AulaX\Enrollment\Application\Roster\HistoryEntry;
 use AulaX\Enrollment\Application\Roster\StudentHistoryQuery;
+use AulaX\Evaluation\Application\StudentPendings\StudentPendingsQuery;
+use AulaX\Evaluation\Application\StudentPendings\StudentPendingView;
 use AulaX\Students\Application\ChangeHealth\ChangeHealthCommand;
 use AulaX\Students\Application\ChangeHealth\ChangeHealthHandler;
 use AulaX\Students\Application\ListStudents\ListStudentsQuery;
@@ -56,10 +58,13 @@ class StudentController extends Controller
         ]);
     }
 
-    public function show(Request $request, int $student, ShowStudentQuery $showStudent, StudentHistoryQuery $history): Response
+    public function show(Request $request, int $student, ShowStudentQuery $showStudent, StudentHistoryQuery $history, StudentPendingsQuery $pendings): Response
     {
+        // Seeing the record is checked here first: the pending subjects come after it (RVP-R06.2).
+        $record = self::present($showStudent($student, includeHealth: true));
+
         return Inertia::render('Students/Show', [
-            'student' => self::present($showStudent($student, includeHealth: true)),
+            'student' => $record,
             'canManage' => $this->canManage($request),
             // SPEC-010 MAT-R04.6, R14.6.
             'enrollments' => array_map(fn (HistoryEntry $entry) => [
@@ -75,6 +80,16 @@ class StudentController extends Controller
                 'annulledAt' => $entry->annulledAt,
                 'current' => $entry->current,
             ], $history($student)),
+            // SPEC-016 RVP-R06.1.
+            'pendings' => array_map(fn (StudentPendingView $pending) => [
+                'subjectId' => $pending->subjectId,
+                'subject' => $pending->subject,
+                'originGrade' => $pending->originGrade,
+                'originSchoolYear' => $pending->originSchoolYear,
+                'standing' => $pending->standing,
+                'score' => $pending->score,
+                'decidedIn' => $pending->decidedIn,
+            ], $pendings($student)),
         ]);
     }
 

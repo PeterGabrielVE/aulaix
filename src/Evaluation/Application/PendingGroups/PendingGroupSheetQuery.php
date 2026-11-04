@@ -60,7 +60,9 @@ final readonly class PendingGroupSheetQuery
 
         $scores = $this->members->scoresOf($group);
         $activities = $scores->activitiesOf($term);
-        $students = $this->members->students($this->members->ofGroup($group));
+        $memberIds = $this->members->ofGroup($group);
+        $scores->load($memberIds);
+        $students = $this->members->students($memberIds);
         $collator = new Collator('es');
         usort($students, fn (RosterStudentFact $a, RosterStudentFact $b) => $collator->compare($a->fullName, $b->fullName));
         $canGrade = $assigned && $this->permissions->canGrade();

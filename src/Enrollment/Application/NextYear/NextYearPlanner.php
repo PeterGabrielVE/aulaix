@@ -6,6 +6,7 @@ namespace AulaX\Enrollment\Application\NextYear;
 
 use AulaX\AcademicStructure\Application\Grades\GradeView;
 use AulaX\Enrollment\Application\AgeAdmission;
+use AulaX\Enrollment\Application\Graduation;
 use AulaX\Enrollment\Application\Port\AgeRules;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
 use AulaX\Enrollment\Application\Port\EnrollmentList;
@@ -37,6 +38,7 @@ final readonly class NextYearPlanner
         private CalendarFacts $calendar,
         AgeRules $ageRules,
         EnrollmentPermissions $permissions,
+        private Graduation $graduation = new Graduation,
     ) {
         $this->ages = new AgeAdmission($ageRules, $calendar, $permissions);
     }
@@ -75,8 +77,8 @@ final readonly class NextYearPlanner
             $reason = match (true) {
                 ! $student->active => 'Está retirado.',
                 $enrollment->result() === null => 'No tiene resultado de prosecución.',
-                $enrollment->graduates() => 'Egresó.',
-                $enrollment->waitsToGraduate() => 'Está pendiente de egresar.',
+                $this->graduation->graduates($enrollment) => 'Egresó.',
+                $this->graduation->waitsToGraduate($enrollment) => 'Está pendiente de egresar.',
                 isset($alreadyThere[$student->id]) => 'Ya está inscrito en el año siguiente.',
                 $toGrade === null || $options === [] => 'El plantel no tiene secciones de '.($gradeNames[$toGrade] ?? 'ese grado').' el año siguiente.',
                 default => $this->outOfAgeRange($student, $options[0]),

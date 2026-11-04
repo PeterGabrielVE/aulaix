@@ -539,3 +539,11 @@ Ajustes del PR C (cuenta del representante), sin cambiar ningún criterio:
     «teachers and coordinators see the students, without their health
     data» cambia solo su preparación. El docente es guía de la sección del
     estudiante y el coordinador coordina su grado; sus aserciones no cambian.
+
+### SPEC-016 (revisión y pendientes), 2026-11-03
+
+- **La ficha muestra las materias pendientes** (RVP-R06.1): `pendings`, de
+  `StudentPendingsQuery` de Evaluation, compuesta en `StudentController`
+  después de `ShowStudentQuery`, que ya comprobó que la persona puede ver la
+  ficha (RVP-R06.2). Cada pendiente con su grado y año de origen, su estado
+  (cursando, aprobada o reprobada) y su definitiva tras revisión.

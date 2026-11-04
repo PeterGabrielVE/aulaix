@@ -50,6 +50,14 @@ interface EnrollmentFacts
     public function owedPendings(int $schoolYearId): array;
 
     /**
+     * Every pending subject from the results of a student, any year, for
+     * its record (RVP-R06.1).
+     *
+     * @return list<OwedPending>
+     */
+    public function pendingsOf(int $studentId): array;
+
+    /**
      * @param  list<int>  $studentIds
      * @return array<int, RosterStudentFact> Student id => name and identification; the ones it does not have are left out.
      */

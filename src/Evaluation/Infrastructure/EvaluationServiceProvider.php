@@ -8,8 +8,10 @@ use AulaX\AcademicCalendar\Application\Port\TermClosingGuard;
 use AulaX\AcademicStructure\Application\Port\RemovalGuard;
 use AulaX\Enrollment\Application\Port\GradedEnrollment;
 use AulaX\Enrollment\Application\Port\OutcomeProposer;
+use AulaX\Enrollment\Application\Port\PendingSubjectsCheck;
 use AulaX\Evaluation\Application\Hooks\GradedEnrollmentCheck;
 use AulaX\Evaluation\Application\Hooks\GradeOutcomeProposer;
+use AulaX\Evaluation\Application\Hooks\OwedPendingsCheck;
 use AulaX\Evaluation\Application\Hooks\PendingGradesGuard;
 use AulaX\Evaluation\Application\Hooks\SubjectsWithGrades;
 use AulaX\Evaluation\Application\Pending\PendingGrades;
@@ -70,6 +72,8 @@ final class EvaluationServiceProvider extends ServiceProvider
         $this->app->tag([PendingGradesGuard::class], TermClosingGuard::TAG);
         // EVA-R08: «Prosecución» proposes the result of the year from the grades.
         $this->app->tag([GradeOutcomeProposer::class], OutcomeProposer::TAG);
+        // RVP-R05.5: whoever waited to graduate graduates once it approved its last pending subject.
+        $this->app->tag([OwedPendingsCheck::class], PendingSubjectsCheck::TAG);
         // EVA-R09.1: an enrollment with grades is annulled only by a manager.
         $this->app->tag([GradedEnrollmentCheck::class], GradedEnrollment::TAG);
         // EVA-R09.2: a subject with grades does not leave the curriculum.

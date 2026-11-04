@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AulaX\Enrollment\Application\NextYear;
 
 use AulaX\Enrollment\Application\EnrollmentAccess;
+use AulaX\Enrollment\Application\Graduation;
 use AulaX\Enrollment\Application\Port\AgeRules;
 use AulaX\Enrollment\Application\Port\CalendarFacts;
 use AulaX\Enrollment\Application\Port\EnrollmentList;
@@ -30,8 +31,9 @@ final readonly class ProposeNextYearQuery
         CalendarFacts $calendar,
         AgeRules $ageRules,
         private EnrollmentPermissions $permissions,
+        Graduation $graduation = new Graduation,
     ) {
-        $this->planner = new NextYearPlanner($list, $students, $structure, $calendar, $ageRules, $permissions);
+        $this->planner = new NextYearPlanner($list, $students, $structure, $calendar, $ageRules, $permissions, $graduation);
     }
 
     /**

@@ -260,8 +260,9 @@ de calcularlo.
 
 **Criterios de aceptación (EARS):**
 
-- **EVA-R08.1** — *(SPEC-016, RVP-R02.3, R02.4: con las definitivas tras
-  revisión; una reprobada sin revisión no deja proponer.)* Cuando todas las
+- **EVA-R08.1** — *(SPEC-016, RVP-R02.3, R02.4, R05.3, R05.4: con las
+  definitivas tras revisión; una reprobada sin revisión no deja proponer;
+  una pendiente reprobada propone «repite».)* Cuando todas las
   definitivas de un estudiante de Media General están completas, el sistema
   deberá proponer:
   - promovido, sin materias reprobadas;

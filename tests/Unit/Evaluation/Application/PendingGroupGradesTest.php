@@ -19,7 +19,7 @@ use AulaX\Shared\Domain\AuthorizationDenied;
 use Tests\Fixtures\Evaluation\EvaluationScene;
 
 /**
- * SPEC-016 RVP-R04.1, R04.2, R04.4, R04.5, R05.1, R07.1: only the teacher
+ * SPEC-016 RVP-R04.1, R04.2, R04.4, R04.5, R05.1, R07.1, R07.2: only the teacher
  * assigned to a group of pending subjects plans it and grades its members,
  * with the rules of SPEC-011; every activity applies to every member.
  */
@@ -93,6 +93,20 @@ it('keeps the rules of the closed term, the closed year and the term not opened'
     $this->scene->calendar->terms[1]['status'] = 'closed';
 
     expect(fn () => saveGroupPlan([['Prueba', '2026-10-05', '100']]))->toThrow(NotEditable::class, 'El lapso está cerrado: sus notas no cambian.');
+});
+
+it('a closed term of the group takes grades only with the special permission, flagged in the audit log', function () {
+    saveGroupPlan([['Prueba', '2026-09-20', '100']]);
+    $activity = (int) $this->scene->store->planOfGroup($this->group, 1)->activities()[0]->id->value;
+    $this->scene->calendar->terms[1]['status'] = 'closed';
+    $this->scene->audit->recorded = [];
+
+    expect(fn () => saveGroupGrades($activity, [1 => '10']))->toThrow(NotEditable::class, 'El lapso está cerrado: sus notas no cambian.');
+
+    $this->scene->permissions->editClosedTerms = true;
+    saveGroupGrades($activity, [1 => '10']);
+
+    expect($this->scene->audit->changesOf(0)['closed_term'])->toBe(['from' => null, 'to' => true]);
 });
 
 it('the assigned teacher records the revision of a member who failed the pending subject', function () {

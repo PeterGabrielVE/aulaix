@@ -61,6 +61,11 @@ final class FakeEnrollmentFacts implements EnrollmentFacts
         return $this->owed;
     }
 
+    public function pendingsOf(int $studentId): array
+    {
+        return array_values(array_filter($this->owed, fn ($owed) => $owed->studentId === $studentId));
+    }
+
     public function resultsRecorded(int $schoolYearId, array $studentIds): array
     {
         return array_values(array_intersect($studentIds, $this->results));

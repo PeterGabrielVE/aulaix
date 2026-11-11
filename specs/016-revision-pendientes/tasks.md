@@ -228,8 +228,11 @@ Tres PRs, cada uno usable por sí mismo:
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls`,
-  `--group=perf` y `tests/Isolation`), y tests de navegador en verde.
+- [x] `php artisan test --compact` en verde (incluidos `--group=rls`,
+  `--group=perf` y `tests/Isolation`): 2010 pasan, 4 omitidos; `perf`, 21
+  pasan (2026-11-11).
+- [ ] Tests de navegador en verde: el contenedor `app` (Alpine, sin Node) no
+  corre Playwright; se comprueban en el job `browser` de CI.
 - [x] Tests de arquitectura en verde.
 - [x] `vendor/bin/pint --dirty` sin cambios; `npm run build` sin errores.
 - [x] Migración: `up`, `down` y `up`.

@@ -41,7 +41,7 @@ jobs:
               run: composer validate --strict
 
             - name: Cache Composer downloads
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: ~/.cache/composer/files
                   key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
@@ -72,7 +72,7 @@ jobs:
                   tools: composer:v2
 
             - name: Cache Composer downloads
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: ~/.cache/composer/files
                   key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
@@ -149,7 +149,7 @@ jobs:
               run: docker exec -i ${{ job.services.postgres.id }} psql -U postgres -d aulaix -v ON_ERROR_STOP=1 < docker/postgres/init.sql
 
             - name: Cache Composer downloads
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: ~/.cache/composer/files
                   key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}

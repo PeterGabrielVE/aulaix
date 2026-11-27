@@ -172,7 +172,7 @@ return [
 
     'custom' => [
         'email' => [
-            'unique' => 'Ya existe un usuario con este correo electrónico en la institución.',
+            'unique' => 'Ya existe un usuario con este correo electrónico en el plantel.',
         ],
     ],
 

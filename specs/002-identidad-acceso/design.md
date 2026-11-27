@@ -8,6 +8,13 @@ depende-de: 000-fundaciones-hexagonales, 001-tenancy
 
 # Diseño — Identidad y acceso (refactor hexagonal)
 
+> **Aviso (ADR 0004).** Con la identidad global, este refactor se hace junto
+> con SPEC-004. Cuando se aprueben los requisitos de 004, este diseño se
+> revisa: `User` pasa a ser una cuenta global, el estado y los roles se
+> mueven a `Membership`, y la migración de `model_type` se combina con la de
+> membresías. Las reglas de dominio (`RoleAssignmentPolicy`, `BaseRole`,
+> `HomeScreen`) siguen siendo válidas, aplicadas a la membresía.
+
 ## Resumen
 
 Se crea el módulo `IdentityAccess`. Las reglas de negocio que hoy están

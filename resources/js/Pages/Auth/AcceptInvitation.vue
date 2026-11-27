@@ -4,7 +4,8 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     email: {
@@ -15,7 +16,24 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    subdomain: {
+        type: String,
+        required: true,
+    },
+    // Who is logged in on the central domain, if anyone (IDG-R04.5).
+    authenticatedEmail: {
+        type: String,
+        default: null,
+    },
+    // SPEC-015 RLT-R06: pending, review or separated while the email has
+    // other historical accounts; null otherwise.
+    consolidation: {
+        type: String,
+        default: null,
+    },
 });
+
+const joinErrors = computed(() => usePage().props.errors ?? {});
 
 const form = useForm({
     token: props.token,
@@ -24,8 +42,12 @@ const form = useForm({
     password_confirmation: '',
 });
 
+const join = () => {
+    router.post(route('invitations.join', props.subdomain), { email: props.email });
+};
+
 const submit = () => {
-    form.post(route('invitation.store'), {
+    form.post(route('invitations.store', props.subdomain), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
@@ -36,10 +58,33 @@ const submit = () => {
         <Head title="Activar cuenta" />
 
         <h1 class="mb-1 text-lg font-semibold text-gray-900">
-            Activa tu cuenta
+            Acepta la invitación
         </h1>
+        <template v-if="authenticatedEmail">
+            <template v-if="authenticatedEmail === email">
+                <p class="mb-4 text-sm text-gray-600">
+                    Únete al plantel con tu cuenta de AulaX ({{ authenticatedEmail }}).
+                </p>
+                <p v-if="consolidation === 'pending'" class="mb-4 text-sm text-gray-600">
+                    Antes de aceptar, unifica tus cuentas con este correo:
+                    <Link :href="route('central.consolidation')" class="text-indigo-600 underline hover:text-indigo-800">unificar mis cuentas</Link>.
+                    La invitación te seguirá esperando.
+                </p>
+                <PrimaryButton @click="join">Aceptar la invitación</PrimaryButton>
+                <InputError class="mt-2" :message="joinErrors.email" />
+            </template>
+            <p v-else class="text-sm text-red-600">
+                Esta invitación es para {{ email }}, pero iniciaste sesión como
+                {{ authenticatedEmail }}. Cierra sesión y entra con el correo invitado.
+            </p>
+        </template>
+
+        <template v-else>
         <p class="mb-4 text-sm text-gray-600">
-            Elige la contraseña con la que vas a iniciar sesión.
+            Crea tu cuenta de AulaX: elige la contraseña con la que vas a iniciar sesión.
+            ¿Ya tienes cuenta?
+            <Link :href="route('central.login')" class="text-indigo-600 underline hover:text-indigo-800">Inicia sesión</Link>
+            para aceptarla.
         </p>
 
         <form @submit.prevent="submit">
@@ -101,9 +146,10 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Activar cuenta
+                    Crear cuenta y aceptar
                 </PrimaryButton>
             </div>
         </form>
+        </template>
     </GuestLayout>
 </template>

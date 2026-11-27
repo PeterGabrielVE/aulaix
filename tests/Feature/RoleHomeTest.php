@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel as User;
 
 dataset('role homes', [
     'Administrador' => ['Administrador', 'admin.home', '/admin', 'Home/Admin'],
@@ -15,10 +15,8 @@ test('each role is sent to its own home screen after login', function (string $r
     $institution = tenant();
     $user = userWithRole($institution, $role);
 
-    $this->post(tenantUrl($institution, '/login'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ])->assertRedirect(route('dashboard', absolute: false));
+    // SPEC-004: the central login hands the session over to the institution.
+    logInTo($institution, $user->email)->assertRedirect(tenantUrl($institution, '/dashboard'));
 
     $this->get(tenantUrl($institution, '/dashboard'))->assertRedirect(route($routeName));
 

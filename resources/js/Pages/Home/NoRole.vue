@@ -5,6 +5,6 @@ import HomeScreen from '@/Components/HomeScreen.vue';
 <template>
     <HomeScreen
         title="Inicio"
-        description="Tu cuenta aún no tiene un rol asignado en esta institución. Comunícate con el administrador para que te dé acceso."
+        description="Tu cuenta aún no tiene un rol asignado en este plantel. Comunícate con su administración para que te dé acceso."
     />
 </template>

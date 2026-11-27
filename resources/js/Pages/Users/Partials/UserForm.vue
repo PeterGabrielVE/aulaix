@@ -7,7 +7,8 @@ import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 // Fields shared by Users/Create and Users/Edit. `form` is the parent's
-// useForm() instance; status is only editable once the user exists.
+// useForm() instance. Name and email are only asked when inviting: a member's
+// belong to them (IDG-R05.5); status only exists once they are a member.
 const props = defineProps({
     form: {
         type: Object,
@@ -16,6 +17,10 @@ const props = defineProps({
     roles: {
         type: Array,
         required: true,
+    },
+    showIdentity: {
+        type: Boolean,
+        default: true,
     },
     showStatus: {
         type: Boolean,
@@ -44,6 +49,7 @@ const selectClass =
 
 <template>
     <form class="space-y-6" @submit.prevent="$emit('submit')">
+        <template v-if="showIdentity">
         <div>
             <InputLabel for="name" value="Nombre" />
             <TextInput
@@ -70,6 +76,7 @@ const selectClass =
             />
             <InputError class="mt-2" :message="form.errors.email" />
         </div>
+        </template>
 
         <fieldset>
             <legend class="block text-sm font-medium text-gray-700">Roles</legend>
@@ -98,7 +105,7 @@ const selectClass =
             <InputLabel for="status" value="Estado" />
             <select id="status" v-model="form.status" :class="selectClass">
                 <option value="active">Activo</option>
-                <option value="inactive">Inactivo (no puede iniciar sesión)</option>
+                <option value="inactive">Suspendido (no puede entrar a este plantel)</option>
             </select>
             <InputError class="mt-2" :message="form.errors.status" />
         </div>

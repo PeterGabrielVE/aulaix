@@ -8,6 +8,7 @@ RUN apk add --no-cache \
         freetype-dev \
         oniguruma-dev \
         icu-dev \
+        linux-headers \
         $PHPIZE_DEPS \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
@@ -18,6 +19,8 @@ RUN apk add --no-cache \
         zip \
         gd \
         intl \
+        # Required by pestphp/pest-plugin-browser (SPEC-013 browser tests).
+        sockets \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS

@@ -99,6 +99,12 @@ buscarlo por nombre, para llegar a su pantalla de acceso.
   subdominio.
 - **TEN-R04.4** — El sistema no deberá incluir instituciones inactivas en los
   resultados de la búsqueda.
+- **TEN-R04.5** — Si un mismo cliente supera 30 búsquedas por minuto, entonces
+  el sistema deberá rechazar las siguientes con 429 hasta que pase el minuto.
+  *(Añadido 2026-10-11, resuelve TEN-H01.)*
+- **TEN-R04.6** — El sistema deberá tratar `%` y `_` del texto buscado como
+  caracteres literales, no como comodines. *(Añadido 2026-10-11, resuelve
+  TEN-H02.)*
 
 ### TEN-R05 — Aislamiento de datos
 
@@ -132,12 +138,12 @@ ver ni modificar mis datos, aunque haya un error en el código.
 - **TEN-NF03** (rendimiento) — `institution_id` está indexado en toda tabla
   de tenant.
 
-## Hallazgos abiertos (requieren aprobación — cambian comportamiento)
+## Hallazgos (requieren aprobación — cambian comportamiento)
 
 | ID | Hallazgo | Riesgo | Propuesta |
 |----|----------|--------|-----------|
-| **TEN-H01** | `GET /api/institutions/search` es público y no tiene límite de peticiones. | DoS barato: cada búsqueda es un `ILIKE '%…%'` que recorre la tabla; también facilita listar todas las instituciones. | Nuevo criterio: *Si un cliente supera 30 búsquedas por minuto, entonces el sistema deberá responder 429* (S-06). |
-| **TEN-H02** | El texto buscado se inserta en el `LIKE` sin escapar `%` ni `_`. | Bajo: no es una inyección SQL (va parametrizado), pero `%` devuelve cualquier institución. | Escapar comodines (S-09). |
+| ~~**TEN-H01**~~ **Resuelto** (TEN-R04.5) | `GET /api/institutions/search` es público y no tiene límite de peticiones. | DoS barato: cada búsqueda es un `ILIKE '%…%'` que recorre la tabla; también facilita listar todas las instituciones. | Nuevo criterio: *Si un cliente supera 30 búsquedas por minuto, entonces el sistema deberá responder 429* (S-06). |
+| ~~**TEN-H02**~~ **Resuelto** (TEN-R04.6) | El texto buscado se inserta en el `LIKE` sin escapar `%` ni `_`. | Bajo: no es una inyección SQL (va parametrizado), pero `%` devuelve cualquier institución. | Escapar comodines (S-09). |
 
 ## Matriz de trazabilidad
 
@@ -162,6 +168,8 @@ ver ni modificar mis datos, aunque haya un error en el código.
 | TEN-R04.2 | `tests/Feature/SubdomainResolutionTest.php` › «www redirects to the institution selector instead of being treated as a tenant» |
 | TEN-R04.3 | `tests/Feature/TenantResolutionTest.php` › «the institution search endpoint only returns active institutions» |
 | TEN-R04.4 | `tests/Feature/TenantResolutionTest.php` › «the institution search endpoint only returns active institutions»; `tests/Feature/InstitutionTest.php` › «the active scope excludes inactive institutions» |
+| TEN-R04.5 | `tests/Feature/TenantResolutionTest.php` › «the institution search is rate limited per client» |
+| TEN-R04.6 | `tests/Feature/TenantResolutionTest.php` › «the institution search treats % and _ literally» |
 | TEN-R05.1 | `tests/Feature/RowLevelSecurityTest.php` › «a query without a tenant returns no rows» |
 | TEN-R05.2 | `tests/Feature/RowLevelSecurityTest.php` › «without a tenant nothing can be written» |
 | TEN-R05.3 | `tests/Feature/RowLevelSecurityTest.php` › «a tenant cannot read another tenant's users even without the Eloquent scope»; `tests/Feature/RowLevelSecurityTest.php` › «raw SQL is also subject to Row Level Security»; `tests/Feature/RowLevelSecurityTest.php` › «a request on one subdomain cannot see users seeded for another»; `tests/Feature/TenantTableTest.php` › «a new tenant table only shows the current institution's rows» |

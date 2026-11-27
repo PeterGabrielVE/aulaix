@@ -1,5 +1,4 @@
 <script setup>
-import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -7,23 +6,27 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
     canResetPassword: {
         type: Boolean,
     },
     status: {
         type: String,
     },
+    // The institution whose subdomain sent the person here (IDG-R03.2).
+    plantel: {
+        type: String,
+        default: null,
+    },
 });
 
 const form = useForm({
     email: '',
     password: '',
-    remember: false,
 });
 
 const submit = () => {
-    form.post(route('login'), {
+    form.post(route('central.login', props.plantel ? { plantel: props.plantel } : {}), {
         onFinish: () => form.reset('password'),
     });
 };
@@ -67,15 +70,6 @@ const submit = () => {
                 />
 
                 <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4 block">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Recordarme</span
-                    >
-                </label>
             </div>
 
             <div class="mt-4 flex items-center justify-end">

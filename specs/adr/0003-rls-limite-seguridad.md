@@ -32,3 +32,10 @@ expondría datos de un colegio a otro.
   limpiar la institución explícitamente.
 - La arquitectura hexagonal (ADR 0001) no sustituye a la RLS: la capa
   `Tenancy\Infrastructure` la encapsula, pero sigue siendo el límite.
+
+## Actualización (2026-10-26, ADR 0011)
+
+La variable `app.current_institution_id` ya no se fija para la sesión de
+la conexión, sino para la transacción (`set_config(..., true)`). Cada
+petición de un plantel corre entera en una transacción. Ver el
+[ADR 0011](0011-plantel-activo-por-transaccion.md) y SPEC-015.

@@ -5,6 +5,6 @@ import HomeScreen from '@/Components/HomeScreen.vue';
 <template>
     <HomeScreen
         title="Inicio de coordinación"
-        description="Aquí verás las secciones, los docentes y las calificaciones que coordinas."
+        description="Lo que falta por organizar en los grados que coordinas."
     />
 </template>

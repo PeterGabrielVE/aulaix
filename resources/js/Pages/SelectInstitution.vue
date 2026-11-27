@@ -43,19 +43,19 @@ function goToInstitution(subdomain) {
 
 <template>
     <GuestLayout>
-        <Head title="Selecciona tu institución" />
+        <Head title="Selecciona tu plantel" />
 
         <h1 class="mb-1 text-lg font-semibold text-gray-900">
             Bienvenido a AulaX
         </h1>
         <p class="mb-4 text-sm text-gray-600">
-            Busca tu institución para continuar al inicio de sesión.
+            Busca tu plantel para continuar al inicio de sesión.
         </p>
 
         <TextInput
             v-model="query"
             type="search"
-            placeholder="Nombre de la institución..."
+            placeholder="Nombre del plantel..."
             class="block w-full"
             autofocus
         />
@@ -76,7 +76,7 @@ function goToInstitution(subdomain) {
         </ul>
 
         <p v-else-if="searched" class="mt-4 text-sm text-gray-500">
-            No se encontraron instituciones.
+            No se encontraron planteles.
         </p>
     </GuestLayout>
 </template>

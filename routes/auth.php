@@ -6,38 +6,28 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-// No public registration: accounts are created by the institution's
-// administrator (UserController) and activated through an invitation.
+// No public registration:
+// people join an institution through an invitation (UserController), accepted
+// on the central domain (routes/web.php).
 Route::middleware('guest')->group(function () {
+    // Forwards to the central login (IDG-R03.2).
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    // Password recovery is central too (IDG-R06.3); links sent before SPEC-004
+    // still land there.
+    Route::get('forgot-password', [PasswordResetLinkController::class, 'central'])
+        ->name('tenant.password.request');
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'central'])
+        ->name('tenant.password.reset');
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
-
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('password.email');
-
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
-
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('password.store');
-
-    Route::get('invitation/{token}', [AcceptInvitationController::class, 'create'])
-        ->name('invitation.show');
-
-    Route::post('invitation', [AcceptInvitationController::class, 'store'])
-        ->name('invitation.store');
+    // Invitation links sent before SPEC-004; they now open on the central domain.
+    Route::get('invitation/{token}', [AcceptInvitationController::class, 'legacy'])
+        ->name('invitation.legacy');
 });
 
 Route::middleware(['auth', 'active'])->group(function () {
@@ -56,8 +46,6 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->name('password.confirm');
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
-
-    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');

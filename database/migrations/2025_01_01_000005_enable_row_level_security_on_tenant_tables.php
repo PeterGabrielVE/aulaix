@@ -8,7 +8,7 @@ return new class extends Migration
     /**
      * Tenant-scoped tables get PostgreSQL Row Level Security (F1-02), on top
      * of (not instead of) the Eloquent global scope in
-     * App\Concerns\BelongsToInstitution. The Eloquent scope is a convenience;
+     * AulaX\Tenancy\Infrastructure\Persistence\BelongsToInstitution. The Eloquent scope is a convenience;
      * RLS is the real security boundary enforced by the database itself,
      * even against raw SQL, a forgotten ->withoutGlobalScope(), or a bug.
      *

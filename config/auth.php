@@ -1,6 +1,7 @@
 <?php
 
-use App\Models\User;
+use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel;
+use AulaX\Platform\Infrastructure\Persistence\OperatorModel;
 
 return [
 
@@ -42,6 +43,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // SPEC-014 (ADR 0010): platform operators, apart from every account.
+        'platform' => [
+            'driver' => 'session',
+            'provider' => 'operators',
+        ],
     ],
 
     /*
@@ -64,7 +71,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model' => env('AUTH_MODEL', AccountModel::class),
+        ],
+
+        'operators' => [
+            'driver' => 'eloquent',
+            'model' => OperatorModel::class,
         ],
 
         // 'users' => [
@@ -98,17 +110,6 @@ return [
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,
-        ],
-
-        // Accounts are only created by an institution's administrator; the
-        // new user sets their own password through an invitation link. Same
-        // token table as resets (a later reset simply replaces a pending
-        // invitation), but a much longer lifetime.
-        'invitations' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60 * 24 * 7,
-            'throttle' => 0,
         ],
     ],
 

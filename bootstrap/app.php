@@ -1,16 +1,32 @@
 <?php
 
-use App\Http\Middleware\EnsureUserIsActive;
+use App\Http\Middleware\EnsureActiveMembership;
+use App\Http\Middleware\EnsurePlatformOperator;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\RequireRecentTotp;
+use App\Http\Middleware\RequireSuperAdmin;
 use App\Http\Middleware\ResolveTenant;
+use App\Http\Middleware\TrustConfiguredProxies;
+use AulaX\IdentityAccess\Application\Auth\HandoffRejected;
+use AulaX\Shared\Domain\AuthorizationDenied;
+use AulaX\Shared\Domain\BusinessRuleViolation;
+use AulaX\Shared\Domain\BusinessRuleViolations;
+use AulaX\Shared\Domain\Conflict;
+use AulaX\Shared\Domain\NotFound;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,11 +45,22 @@ return Application::configure(basePath: dirname(__DIR__))
         // testing environments.
         $middleware->trustHosts(at: fn () => [config('app.domain')], subdomains: true);
 
+        // Only the proxies in TRUSTED_PROXIES may set the client IP (SPEC-005).
+        $middleware->replace(TrustProxies::class, TrustConfiguredProxies::class);
+
+        // The central domain has its own login and home (SPEC-004).
+        $isCentral = fn (Request $request) => $request->getHost() === config('app.domain');
+        $middleware->redirectGuestsTo(fn (Request $request) => $isCentral($request) ? route('central.login') : route('login'));
+        $middleware->redirectUsersTo(fn (Request $request) => $isCentral($request) ? route('central.home') : route('dashboard'));
+
         $middleware->alias([
             'tenant' => ResolveTenant::class,
-            'active' => EnsureUserIsActive::class,
+            'active' => EnsureActiveMembership::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
+            'platform' => EnsurePlatformOperator::class,
+            'platform.super' => RequireSuperAdmin::class,
+            'platform.recent-totp' => RequireRecentTotp::class,
         ]);
 
         // Laravel's default middleware priority list runs Authenticate
@@ -57,4 +84,23 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Domain exceptions → HTTP, in this one place (constitution C-06,
+        // SPEC-000 FND-R05). Use cases throw them; controllers never
+        // translate errors themselves.
+        // A rejected handoff says nothing about why: back to the central login.
+        // SPEC-015 RLT-R04.2: with the institution already chosen.
+        $exceptions->render(fn (HandoffRejected $e, Request $request) => redirect()->away(route('central.login', [
+            'plantel' => Str::before($request->getHost(), '.'.config('app.domain')),
+        ])));
+
+        $exceptions->map(BusinessRuleViolation::class, fn (BusinessRuleViolation $e) => ValidationException::withMessages([
+            $e->field() ?? 'general' => $e->getMessage(),
+        ]));
+        $exceptions->map(BusinessRuleViolations::class, fn (BusinessRuleViolations $e) => ValidationException::withMessages(
+            $e->messagesByField(),
+        ));
+        $exceptions->map(AuthorizationDenied::class, fn (AuthorizationDenied $e) => new AccessDeniedHttpException($e->getMessage(), $e));
+        $exceptions->map(NotFound::class, fn (NotFound $e) => new NotFoundHttpException($e->getMessage(), $e));
+        $exceptions->map(Conflict::class, fn (Conflict $e) => new ConflictHttpException($e->getMessage(), $e));
     })->create();

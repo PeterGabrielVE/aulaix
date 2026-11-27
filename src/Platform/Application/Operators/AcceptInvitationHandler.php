@@ -7,6 +7,7 @@ namespace AulaX\Platform\Application\Operators;
 use AulaX\Audit\Application\AuditContext;
 use AulaX\Audit\Application\AuditTrail;
 use AulaX\Platform\Application\PlatformAudit;
+use AulaX\Platform\Application\Port\OperatorLock;
 use AulaX\Platform\Application\Port\OperatorPasswords;
 use AulaX\Platform\Application\Port\PendingTotpSecrets;
 use AulaX\Platform\Application\Port\TotpCodes;
@@ -14,6 +15,7 @@ use AulaX\Platform\Domain\InvitationPurpose;
 use AulaX\Platform\Domain\OperatorInvitationRejected;
 use AulaX\Platform\Domain\OperatorInvitationRepository;
 use AulaX\Platform\Domain\OperatorRepository;
+use AulaX\Platform\Domain\RecoveryCodeHasher;
 use AulaX\Platform\Domain\RecoveryCodes;
 use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\BusinessRuleViolation;
@@ -23,15 +25,17 @@ use AulaX\Shared\Domain\Clock;
  * Accepting a link (PLT-R01.6, R01.10, R03.1, R03.7): a first code confirms
  * the TOTP shown, the joining operator also sets its password, and ten
  * recovery codes are handed over once. The link is consumed atomically
- * with the change: of two racing requests, one wins (V4).
+ * with the change under OperatorLock (V4, ADR 0014).
  */
 final readonly class AcceptInvitationHandler
 {
     public function __construct(
         private OperatorRepository $operators,
         private OperatorInvitationRepository $invitations,
+        private OperatorLock $locks,
         private OperatorPasswords $passwords,
         private TotpCodes $totp,
+        private RecoveryCodeHasher $recoveryHasher,
         private PendingTotpSecrets $secrets,
         private AuditContext $auditContext,
         private AuditTrail $audit,
@@ -69,21 +73,24 @@ final readonly class AcceptInvitationHandler
 
         $plain = self::newRecoveryCodes();
 
-        $this->transactions->run(function () use ($invitation, $operator, $joining, $password, $secret, $step, $plain, $now) {
-            if (! $this->invitations->consume($invitation, $now)) {
+        $this->transactions->run(function () use ($invitation, $joining, $password, $secret, $step, $plain, $now) {
+            $this->locks->lockOperator($invitation->operatorId);
+            $fresh = $this->operators->byId($invitation->operatorId);
+
+            if ($fresh === null || ! $this->invitations->consume($invitation, $now)) {
                 throw OperatorInvitationRejected::create();
             }
 
             if ($joining) {
-                $operator->activate($this->passwords->hash((string) $password), $secret, $step);
+                $fresh->activate($this->passwords->hash((string) $password), $secret, $step);
             } else {
-                $operator->enrolTotp($secret, $step);
+                $fresh->enrolTotp($secret, $step);
             }
 
-            $this->operators->save($operator);
-            $this->operators->saveRecoveryCodes($operator->id, RecoveryCodes::fromPlain($plain));
-            $this->auditContext->actAsPlatformOperator($operator->id->value);
-            $this->audit->recordForPlatform($joining ? PlatformAudit::activated($operator->id) : PlatformAudit::totpEnrolled($operator->id));
+            $this->operators->save($fresh);
+            $this->operators->saveRecoveryCodes($fresh->id, RecoveryCodes::fromPlain($plain, $this->recoveryHasher));
+            $this->auditContext->actAsPlatformOperator($fresh->id->value);
+            $this->audit->recordForPlatform($joining ? PlatformAudit::activated($fresh->id) : PlatformAudit::totpEnrolled($fresh->id));
         });
 
         $this->secrets->forget($hash);

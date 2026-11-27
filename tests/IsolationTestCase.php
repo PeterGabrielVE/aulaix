@@ -19,11 +19,13 @@ abstract class IsolationTestCase extends TestCase
      *
      * @var list<string>
      */
-    private const TENANT_TABLES = ['enrollments', 'sections', 'students', 'terms', 'school_years', 'institution_memberships'];
+    private const TENANT_TABLES = ['enrollments', 'sections', 'student_withdrawals', 'guardianships', 'students', 'guardians', 'terms', 'school_years', 'institution_memberships'];
 
     private int $lastInstitutionBefore = 0;
 
     private int $lastAccountBefore = 0;
+
+    private int $lastOperatorBefore = 0;
 
     protected function setUp(): void
     {
@@ -36,6 +38,7 @@ abstract class IsolationTestCase extends TestCase
 
         $this->lastInstitutionBefore = (int) DB::table('institutions')->max('id');
         $this->lastAccountBefore = (int) DB::table('users')->max('id');
+        $this->lastOperatorBefore = (int) DB::table('platform_operators')->max('id');
     }
 
     protected function tearDown(): void
@@ -45,7 +48,7 @@ abstract class IsolationTestCase extends TestCase
             DB::rollBack(0);
         }
 
-        $created = DB::table('institutions')->where('id', '>', $this->lastInstitutionBefore)->pluck('id');
+        $created = DB::table('institutions')->where('id', '>', $this->lastInstitutionBefore)->orderByDesc('id')->pluck('id');
 
         foreach ($created as $institutionId) {
             DB::transaction(function () use ($institutionId) {
@@ -57,8 +60,13 @@ abstract class IsolationTestCase extends TestCase
             });
         }
 
-        DB::table('institutions')->whereIn('id', $created)->delete();
+        // Delete newest institutions first so ON DELETE CASCADE removes child
+        // transfer_requests before their origin institution is deleted.
+        foreach ($created as $institutionId) {
+            DB::table('institutions')->where('id', $institutionId)->delete();
+        }
         DB::table('users')->where('id', '>', $this->lastAccountBefore)->delete();
+        DB::table('platform_operators')->where('id', '>', $this->lastOperatorBefore)->delete();
 
         parent::tearDown();
     }

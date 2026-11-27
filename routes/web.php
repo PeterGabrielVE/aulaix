@@ -160,7 +160,7 @@ Route::domain('admin.'.config('app.domain'))->group(function () {
 
         // PLT-NF04: a fresh TOTP before sensitive actions.
         Route::get('/confirmar-codigo', [PlatformTotpController::class, 'show'])->name('platform.totp.confirm');
-        Route::post('/confirmar-codigo', [PlatformTotpController::class, 'store'])->middleware('throttle:5,1');
+        Route::post('/confirmar-codigo', [PlatformTotpController::class, 'store'])->middleware('throttle:platform-confirm');
         Route::post('/codigos-de-recuperacion', [PlatformTotpController::class, 'regenerateRecoveryCodes'])
             ->middleware('platform.recent-totp')->name('platform.recovery-codes.regenerate');
 

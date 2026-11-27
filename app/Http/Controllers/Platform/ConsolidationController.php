@@ -33,18 +33,18 @@ class ConsolidationController extends Controller
         ]);
     }
 
-    public function preview(Request $request, PreviewResolutionQuery $previewResolution): RedirectResponse
+    public function preview(Request $request, int $account, PreviewResolutionQuery $previewResolution): RedirectResponse
     {
         $input = $this->validated($request);
-        $plan = $previewResolution($input['accounts'], $input['decision'], $input['reason'], $input['verification_ref']);
+        $plan = $previewResolution($account, $input['accounts'], $input['decision'], $input['reason'], $input['verification_ref']);
 
         return back()->with('platform.consolidation_preview', ['plan' => $plan, 'input' => $input]);
     }
 
-    public function resolve(Request $request, ResolveCaseHandler $resolveCase): RedirectResponse
+    public function resolve(Request $request, int $account, ResolveCaseHandler $resolveCase): RedirectResponse
     {
         $input = $this->validated($request);
-        $resolution = $resolveCase($input['accounts'], $input['decision'], $input['reason'], $input['verification_ref']);
+        $resolution = $resolveCase($account, $input['accounts'], $input['decision'], $input['reason'], $input['verification_ref']);
 
         return redirect()->route('platform.consolidations')->with('success', $resolution['decision'] === 'consolidate'
             ? "Se consolidaron las cuentas en la #{$resolution['survivorId']}."

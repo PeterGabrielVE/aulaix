@@ -310,8 +310,8 @@ Cuatro PRs, cada uno usable por sí mismo:
 - [x] Notas del PR con el procedimiento de despliegue de V3: crear el
   Superadministrador, invitar a los operadores y probar con `--dry-run`.
 - [x] Matriz de trazabilidad completa.
-- [ ] `/security-review` de cada PR (autenticación, MFA y activación de
-  planteles; S-12).
+- [x] `/security-review` de cada PR (autenticación, MFA y activación de
+  planteles; S-12 — hallazgos cerrados en SPEC-017).
 - [x] `estado` de requirements/design/tasks actualizado.
 
 ## Cobertura de criterios

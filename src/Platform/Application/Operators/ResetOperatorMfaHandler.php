@@ -8,9 +8,11 @@ use AulaX\Audit\Application\AuditContext;
 use AulaX\Audit\Application\AuditTrail;
 use AulaX\Platform\Application\PlatformAccess;
 use AulaX\Platform\Application\PlatformAudit;
+use AulaX\Platform\Application\Port\OperatorLock;
 use AulaX\Platform\Application\Port\OperatorMailer;
 use AulaX\Platform\Application\Port\OperatorSession;
 use AulaX\Platform\Domain\InvitationPurpose;
+use AulaX\Platform\Domain\Operator;
 use AulaX\Platform\Domain\OperatorId;
 use AulaX\Platform\Domain\OperatorInvitation;
 use AulaX\Platform\Domain\OperatorInvitationRepository;
@@ -25,13 +27,15 @@ use AulaX\Shared\Domain\NotFound;
 /**
  * Another operator lost its authenticator (PLT-R03.7): its TOTP and its
  * recovery codes are voided, its sessions end, its pending links are
- * revoked, and a new one-use link by email is its only way back in (V4).
+ * revoked, any active lockout is lifted (SPEC-017 RSP-R03.11), and a new
+ * one-use link by email is its only way back in (V4).
  */
 final readonly class ResetOperatorMfaHandler
 {
     public function __construct(
         private OperatorRepository $operators,
         private OperatorInvitationRepository $invitations,
+        private OperatorLock $locks,
         private OperatorSession $session,
         private OperatorMailer $mailer,
         private AuditContext $auditContext,
@@ -47,22 +51,28 @@ final readonly class ResetOperatorMfaHandler
      */
     public function __invoke(OperatorId $target): void
     {
-        $actor = PlatformAccess::superAdmin($this->session, $this->operators);
+        $actor = PlatformAccess::superAdminWithRecentTotp($this->session, $this->operators, $this->clock);
         $this->auditContext->actAsPlatformOperator($actor->id->value);
-        $operator = $this->operators->byId($target) ?? throw new NotFound('Ese operador no existe.');
 
-        if ($actor->id->equals($operator->id)) {
+        if ($actor->id->equals($target)) {
             throw BusinessRuleViolation::onField('operator', 'Otro Superadministrador debe restablecer tu segundo factor.');
         }
 
         $token = bin2hex(random_bytes(32));
 
-        $this->transactions->run(function () use ($operator, $token) {
+        /** @var Operator $operator */
+        $operator = $this->transactions->run(function () use ($target, $token) {
+            $this->locks->lockOperator($target);
+            PlatformAccess::superAdminWithRecentTotp($this->session, $this->operators, $this->clock);
+            $operator = $this->operators->byId($target) ?? throw new NotFound('Ese operador no existe.');
+
             $operator->resetMfa();
             $this->operators->save($operator);
             $this->operators->saveRecoveryCodes($operator->id, RecoveryCodes::reconstitute([]));
             $this->invitations->issue(OperatorInvitation::issue($operator->id, InvitationPurpose::MfaReset, hash('sha256', $token), $this->clock->now()));
             $this->audit->recordForPlatform(PlatformAudit::mfaReset($operator->id));
+
+            return $operator;
         });
 
         $this->mailer->sendLink($operator->email, $operator->name, $token, InvitationPurpose::MfaReset);

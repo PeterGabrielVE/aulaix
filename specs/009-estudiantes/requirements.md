@@ -257,7 +257,9 @@ pedir su ficha al plantel de donde viene, para no registrarla de nuevo.
   sistema deberá crear en el destino al estudiante activo con su ficha,
   incluidos sus datos de salud y sus representantes, y marcarlo en el
   origen como retirado por cambio de plantel, con la fecha de la
-  aprobación.
+  aprobación. *(Excepción en SPEC-017 RSP-R08.1 – R08.4: si el destino está
+  inactivo, la aprobación se rechaza sin cambios y la solicitud permanece
+  pendiente con su plazo original.)*
 - **EST-R07.6** — Cuando un gestor del origen rechaza la solicitud con un
   motivo, el sistema deberá mostrar al destino el rechazo y su motivo.
 - **EST-R07.7** — Si el origen no responde en 15 días naturales, entonces el

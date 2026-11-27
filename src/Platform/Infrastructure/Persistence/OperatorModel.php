@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AulaX\Platform\Infrastructure\Persistence;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $totp_secret
  * @property ?int $totp_last_step
  * @property int $session_version
+ * @property list<array{at: string, ip: string}> $code_failures
+ * @property ?CarbonImmutable $blocked_until
  */
 final class OperatorModel extends Model implements Authenticatable
 {
@@ -27,7 +30,7 @@ final class OperatorModel extends Model implements Authenticatable
 
     protected $guarded = ['id'];
 
-    protected $hidden = ['password', 'totp_secret', 'totp_last_step'];
+    protected $hidden = ['password', 'totp_secret', 'totp_last_step', 'code_failures'];
 
     protected function casts(): array
     {
@@ -35,6 +38,8 @@ final class OperatorModel extends Model implements Authenticatable
             'totp_secret' => 'encrypted',
             'totp_last_step' => 'integer',
             'session_version' => 'integer',
+            'code_failures' => 'array',
+            'blocked_until' => 'immutable_datetime',
         ];
     }
 

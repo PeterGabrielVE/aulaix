@@ -16,8 +16,10 @@ use AulaX\Platform\Domain\RecoveryCodes;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use Tests\Fixtures\Audit\RecordingAuditTrail;
+use Tests\Fixtures\Platform\CountingOperatorLock;
 use Tests\Fixtures\Platform\FakeAuditContext;
 use Tests\Fixtures\Platform\FakeOperatorSession;
+use Tests\Fixtures\Platform\FakeRecoveryCodeHasher;
 use Tests\Fixtures\Platform\InMemoryOperatorInvitationRepository;
 use Tests\Fixtures\Platform\InMemoryOperatorRepository;
 use Tests\Fixtures\Platform\RecordingOperatorMailer;
@@ -25,12 +27,14 @@ use Tests\Fixtures\Shared\FixedClock;
 use Tests\Fixtures\Shared\InlineTransactionManager;
 
 /**
- * SPEC-014 PLT-R01.10, R03.3 – R03.8, NF05 and V4: what a SuperAdmin may do
- * with the other operators, and what nobody may do.
+ * SPEC-014 PLT-R01.10, R03.3 – R03.8, NF05 and V4; SPEC-017 RSP-R01, R02,
+ * R03.11: what a SuperAdmin may do with the other operators, and what nobody may do.
  */
 beforeEach(function () {
     $this->operators = new InMemoryOperatorRepository;
     $this->invitations = new InMemoryOperatorInvitationRepository;
+    $this->locks = new CountingOperatorLock;
+    $this->hasher = new FakeRecoveryCodeHasher;
     $this->session = new FakeOperatorSession;
     $this->mailer = new RecordingOperatorMailer;
     $this->clock = new FixedClock(new DateTimeImmutable('2026-10-26 10:00:00'));
@@ -38,18 +42,18 @@ beforeEach(function () {
     $this->audit = new RecordingAuditTrail($this->transactions);
     $this->auditContext = new FakeAuditContext;
 
-    $this->boss = managedOperator($this->operators, 'jefa@aulax.ve', OperatorRole::SuperAdmin);
-    $this->other = managedOperator($this->operators, 'otro@aulax.ve', OperatorRole::SuperAdmin);
-    $this->support = managedOperator($this->operators, 'soporte@aulax.ve', OperatorRole::Support);
+    $this->boss = managedOperator($this->operators, 'jefa@aulax.ve', OperatorRole::SuperAdmin, $this->hasher);
+    $this->other = managedOperator($this->operators, 'otro@aulax.ve', OperatorRole::SuperAdmin, $this->hasher);
+    $this->support = managedOperator($this->operators, 'soporte@aulax.ve', OperatorRole::Support, $this->hasher);
     signInAs($this->boss);
 });
 
-function managedOperator(InMemoryOperatorRepository $operators, string $email, OperatorRole $role): OperatorId
+function managedOperator(InMemoryOperatorRepository $operators, string $email, OperatorRole $role, FakeRecoveryCodeHasher $hasher): OperatorId
 {
     $operator = Operator::invite('Operador', OperatorEmail::fromString($email), $role);
     $operator->activate('hash:x', "SECRET-{$email}", 1);
     $id = $operators->save($operator);
-    $operators->saveRecoveryCodes($id, RecoveryCodes::fromPlain(array_map(fn (int $n) => "{$email}-{$n}", range(1, 10))));
+    $operators->saveRecoveryCodes($id, RecoveryCodes::fromPlain(array_map(fn (int $n) => "{$email}-{$n}", range(1, 10)), $hasher));
 
     return $id;
 }
@@ -62,19 +66,19 @@ function signInAs(OperatorId $id): void
 function changeRole(OperatorId $target, OperatorRole $role): void
 {
     $test = test();
-    (new ChangeOperatorRoleHandler($test->operators, $test->session, $test->auditContext, $test->audit, $test->transactions))($target, $role);
+    (new ChangeOperatorRoleHandler($test->operators, $test->locks, $test->session, $test->auditContext, $test->audit, $test->transactions, $test->clock))($target, $role);
 }
 
 function setActive(OperatorId $target, bool $active): void
 {
     $test = test();
-    (new SetOperatorActiveHandler($test->operators, $test->invitations, $test->session, $test->auditContext, $test->audit, $test->transactions))($target, $active);
+    (new SetOperatorActiveHandler($test->operators, $test->invitations, $test->locks, $test->session, $test->auditContext, $test->audit, $test->transactions, $test->clock))($target, $active);
 }
 
 function resetMfa(OperatorId $target): void
 {
     $test = test();
-    (new ResetOperatorMfaHandler($test->operators, $test->invitations, $test->session, $test->mailer, $test->auditContext, $test->audit, $test->transactions, $test->clock))($target);
+    (new ResetOperatorMfaHandler($test->operators, $test->invitations, $test->locks, $test->session, $test->mailer, $test->auditContext, $test->audit, $test->transactions, $test->clock))($target);
 }
 
 it('lists the operators, without secrets', function () {
@@ -153,12 +157,56 @@ it('does not reset its own second factor', function () {
 it('regenerates the own recovery codes, voiding the old ones (PLT-R01.10)', function () {
     signInAs($this->support);
 
-    $codes = (new RegenerateRecoveryCodesHandler($this->operators, $this->session, $this->auditContext, $this->audit, $this->transactions))();
+    $codes = (new RegenerateRecoveryCodesHandler($this->operators, $this->locks, $this->hasher, $this->session, $this->auditContext, $this->audit, $this->transactions, $this->clock))();
 
     $stored = $this->operators->recoveryCodes($this->support);
 
     expect($codes)->toHaveCount(10)
-        ->and($stored->accepts($codes[0]))->toBeTrue()
-        ->and($stored->accepts('soporte@aulax.ve-1'))->toBeFalse()
+        ->and($stored->accepts($codes[0], $this->hasher))->toBeTrue()
+        ->and($stored->accepts('soporte@aulax.ve-1', $this->hasher))->toBeFalse()
+        ->and($this->locks->operatorLocks)->toBe([$this->support->value])
         ->and($this->audit->types())->toBe(['platform.operator.recovery_codes_regenerated']);
 });
+
+it('acquires roster lock before operator lock in role and active changes (ADR 0014)', function () {
+    changeRole($this->support, OperatorRole::SuperAdmin);
+    setActive($this->support, false);
+
+    expect($this->locks->events)->toBe([
+        'roster',
+        "operator:{$this->support->value}",
+        'roster',
+        "operator:{$this->support->value}",
+    ]);
+});
+
+it('refuses mutating another operator if the actor lost SuperAdmin privileges while waiting on the lock', function (Closure $action, Closure $revoke) {
+    $third = managedOperator($this->operators, 'tercero@aulax.ve', OperatorRole::SuperAdmin, $this->hasher);
+
+    $this->locks->onLock = function () use ($revoke): void {
+        $boss = $this->operators->byId($this->boss);
+        $revoke($boss);
+        $this->operators->save($boss);
+    };
+
+    expect(fn () => $action->call($this, $third))->toThrow(AuthorizationDenied::class);
+
+    $target = $this->operators->byId($third);
+
+    expect($target->status)->toBe(OperatorStatus::Active)
+        ->and($target->role)->toBe(OperatorRole::SuperAdmin)
+        ->and($target->totpSecret)->not->toBeNull();
+})->with([
+    'deactivate after actor deactivated' => [
+        fn (OperatorId $third) => setActive($third, false),
+        fn (Operator $boss) => $boss->deactivate(),
+    ],
+    'change role after actor demoted' => [
+        fn (OperatorId $third) => changeRole($third, OperatorRole::Support),
+        fn (Operator $boss) => $boss->changeRole(OperatorRole::Support),
+    ],
+    'reset MFA after actor deactivated' => [
+        fn (OperatorId $third) => resetMfa($third),
+        fn (Operator $boss) => $boss->deactivate(),
+    ],
+]);

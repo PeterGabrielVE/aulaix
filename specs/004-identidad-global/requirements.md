@@ -315,17 +315,23 @@ mano.
   los casos marcados para revisión y otro que resuelva un caso concreto.
 - **IDG-R11.2** — El comando de resolución deberá exigir la identificación
   del operador, los identificadores de las cuentas implicadas, la decisión
-  (consolidar, mantener separadas) y un motivo.
+  (consolidar, mantener separadas) y un motivo. *(Ampliado por SPEC-017
+  RSP-R06: exige además un TOTP interactivo del operador, sin aceptar
+  códigos de recuperación.)*
 - **IDG-R11.3** — Si el operador no es un operador activo del panel de
   plataforma, entonces el comando deberá negarse a ejecutar y registrar el
   rechazo en la bitácora de plataforma. *(Modificado por SPEC-014
-  PLT-R06.6: sustituye a la lista de operadores de la configuración del
-  entorno, `IDENTITY_CONSOLIDATION_OPERATORS`, que desaparece.)*
+  PLT-R06.6 y SPEC-017 RSP-R06: sustituye a `IDENTITY_CONSOLIDATION_OPERATORS`
+  y exige TOTP interactivo válido del operador activo y no bloqueado.)*
 - **IDG-R11.4** — Cuando se ejecuta en modo simulación (`--dry-run`), el
   comando deberá mostrar los cambios que haría sin aplicar ninguno.
+  *(Ampliado por SPEC-017 RSP-R06.8 y R07.2: antes de aplicar pide
+  confirmación expresa tras mostrar el plan, y la vista previa queda
+  auditada.)*
 - **IDG-R11.5** — Si las cuentas indicadas no están marcadas para revisión, o
   si su estado cambió desde que se marcaron, entonces el comando deberá
-  rechazar la operación sin cambios.
+  rechazar la operación sin cambios. *(Ampliado por SPEC-017 RSP-R04 para
+  resoluciones simultáneas.)*
 - **IDG-R11.6** — Si la decisión es consolidar, el comando deberá exigir
   constancia de la verificación de titularidad (referencia del procedimiento
   de soporte) y aplicar la consolidación en una sola transacción: o se aplica

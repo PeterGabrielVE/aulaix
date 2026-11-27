@@ -256,6 +256,54 @@ test('no code activates an institution by hand; requests use forRequest() and sw
     expect($offenders)->toBe(['EnsureNoTenantOnJobStart.php']);
 });
 
+test('pg_advisory is confined to the advisory lock adapters', function () {
+    // SPEC-017 RSP-NF04, ADR 0014: advisory locks live only in the dedicated
+    // adapters sharing AdvisoryLockKeys, never scattered across the codebase.
+    $allowed = [
+        'DatabaseCalendarLock.php',
+        'DatabaseOperatorLock.php',
+        'DatabaseConsolidationLock.php',
+        'DatabaseInstitutionStatusLock.php',
+        'AdvisoryLockKeys.php',
+    ];
+    $offenders = [];
+
+    foreach (['src', 'app', 'database'] as $directory) {
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2).'/'.$directory)) as $file) {
+            if (! $file->isFile() || $file->getExtension() !== 'php' || in_array($file->getFilename(), $allowed, true)) {
+                continue;
+            }
+
+            if (preg_match('/pg_(?:try_)?advisory/i', (string) file_get_contents($file->getPathname()))) {
+                $offenders[] = $file->getFilename();
+            }
+        }
+    }
+
+    expect($offenders)->toBe([]);
+});
+
+test('every Platform use case that updates an operator or its recovery codes takes OperatorLock', function () {
+    // SPEC-017 ADR 0014: complementary static guard on top of the repository's
+    // runtime pg_locks assertion. InviteOperatorHandler inserts a brand new
+    // operator (id === null) and is the only exception.
+    $offenders = [];
+
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(dirname(__DIR__, 2).'/src/Platform/Application')) as $file) {
+        if (! $file->isFile() || $file->getExtension() !== 'php' || $file->getFilename() === 'InviteOperatorHandler.php') {
+            continue;
+        }
+
+        $code = (string) file_get_contents($file->getPathname());
+
+        if (preg_match('/->(save|saveRecoveryCodes)\(/', $code) && ! str_contains($code, 'OperatorLock')) {
+            $offenders[] = $file->getFilename();
+        }
+    }
+
+    expect($offenders)->toBe([]);
+});
+
 arch('only the activator writes the institution Row Level Security applies', function () {
     // ADR 0011: one place that switches, restores and checks.
     expect('AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity')->toOnlyBeUsedIn([

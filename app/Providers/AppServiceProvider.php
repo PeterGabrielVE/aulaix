@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use AulaX\Platform\Application\Port\OperatorSession;
 use AulaX\Tenancy\Application\CurrentTenant;
 use AulaX\Tenancy\Application\TenantActivationHook;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -36,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
         // SPEC-014 PLT-NF03: every attempt counts, whatever failed (V5).
         RateLimiter::for('platform-login', fn (Request $request) => Limit::perMinute(5)->by(
             'platform-login:'.mb_strtolower((string) $request->input('email')).'|'.$request->ip(),
+        ));
+        // SPEC-017 RSP-R03.1: per operator and IP, matching platform-login.
+        RateLimiter::for('platform-confirm', fn (Request $request) => Limit::perMinute(5)->by(
+            'platform-confirm:'.$this->app->make(OperatorSession::class)->current()?->value.'|'.$request->ip(),
         ));
         RateLimiter::for('platform-links', fn (Request $request) => Limit::perMinute(10)->by('platform-links:'.$request->ip()));
     }

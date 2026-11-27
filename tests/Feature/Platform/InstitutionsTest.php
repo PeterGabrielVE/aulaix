@@ -117,3 +117,12 @@ test('switching an institution needs a fresh TOTP (PLT-NF04)', function () {
 
     expect(Institution::query()->find($this->norte->id)->status->value)->toBe('active');
 });
+
+test('platform still reads usage of an inactive institution (RSP-R08.6)', function () {
+    $this->get(adminUrl("/planteles/{$this->sur->id}"))->assertOk()->assertInertia(fn ($page) => $page
+        ->component('Platform/Institution')
+        ->where('institution.name', 'Liceo Sur')
+        ->where('institution.status', 'inactive')
+        ->where('usage.activeStudents', 0)
+    );
+});

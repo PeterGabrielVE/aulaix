@@ -9,6 +9,7 @@ use AulaX\IdentityAccess\Application\Account\DeletionBlockers;
 use AulaX\IdentityAccess\Application\Account\LastAdministratorBlocker;
 use AulaX\IdentityAccess\Application\Auth\AccountInstitutions;
 use AulaX\IdentityAccess\Application\Consolidation\ConsolidationCases;
+use AulaX\IdentityAccess\Application\Consolidation\ConsolidationLock;
 use AulaX\IdentityAccess\Application\Consolidation\ConsolidationOperators;
 use AulaX\IdentityAccess\Application\Members\MemberDirectory;
 use AulaX\IdentityAccess\Application\Port\AccountMailer;
@@ -40,6 +41,7 @@ use AulaX\IdentityAccess\Infrastructure\Auth\RateLimiterLoginThrottle;
 use AulaX\IdentityAccess\Infrastructure\Notifications\NotificationAccountMailer;
 use AulaX\IdentityAccess\Infrastructure\Notifications\NotificationInvitationMailer;
 use AulaX\IdentityAccess\Infrastructure\Persistence\AccountModel;
+use AulaX\IdentityAccess\Infrastructure\Persistence\DatabaseConsolidationLock;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountInstitutions;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountMerger;
 use AulaX\IdentityAccess\Infrastructure\Persistence\EloquentAccountRepository;
@@ -82,6 +84,7 @@ final class IdentityAccessServiceProvider extends ServiceProvider
         ConsolidationCodes::class => CacheConsolidationCodes::class,
         AccountMerger::class => EloquentAccountMerger::class,
         ConsolidationCases::class => EloquentConsolidationCases::class,
+        ConsolidationLock::class => DatabaseConsolidationLock::class,
         ConsolidationOperators::class => PlatformConsolidationOperators::class,
         InstitutionScope::class => EloquentInstitutionScope::class,
     ];

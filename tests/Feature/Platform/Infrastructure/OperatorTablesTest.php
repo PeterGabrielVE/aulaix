@@ -67,3 +67,24 @@ test('the migration rolls back and applies again', function () {
 
     expect(Schema::hasTable('platform_operators'))->toBeTrue();
 });
+
+test('code_failures check constraint rejects more than 10 entries', function () {
+    $id = insertOperator('lockout@aulax.ve');
+    $eleven = json_encode(array_map(fn (int $i) => ['at' => "2026-11-27T10:00:0{$i}+00:00", 'ip' => "198.51.100.{$i}"], range(1, 11)));
+
+    expect(fn () => DB::table('platform_operators')->where('id', $id)->update(['code_failures' => $eleven]))
+        ->toThrow(QueryException::class);
+});
+
+test('the lockout columns migration rolls back and applies again', function () {
+    $lockoutMigration = require database_path('migrations/2026_11_27_000001_add_code_lockout_to_platform_operators.php');
+    $lockoutMigration->down();
+
+    expect(Schema::hasColumn('platform_operators', 'code_failures'))->toBeFalse()
+        ->and(Schema::hasColumn('platform_operators', 'blocked_until'))->toBeFalse();
+
+    $lockoutMigration->up();
+
+    expect(Schema::hasColumn('platform_operators', 'code_failures'))->toBeTrue()
+        ->and(Schema::hasColumn('platform_operators', 'blocked_until'))->toBeTrue();
+});

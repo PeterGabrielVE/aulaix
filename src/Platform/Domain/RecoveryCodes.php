@@ -24,13 +24,13 @@ final readonly class RecoveryCodes
     /**
      * @param  list<string>  $plain  Shown once to the operator, never kept.
      */
-    public static function fromPlain(array $plain): self
+    public static function fromPlain(array $plain, RecoveryCodeHasher $hasher): self
     {
         if (count($plain) !== self::COUNT) {
             throw new InvalidArgumentException('An operator has exactly '.self::COUNT.' recovery codes.');
         }
 
-        return new self(array_map(fn (string $code) => ['hash' => self::hash($code), 'used' => false], $plain));
+        return new self(array_map(fn (string $code) => ['hash' => $hasher->hash(self::normalize($code)), 'used' => false], $plain));
     }
 
     /**
@@ -41,17 +41,17 @@ final readonly class RecoveryCodes
         return new self($codes);
     }
 
-    public function accepts(string $code): bool
+    public function accepts(string $code, RecoveryCodeHasher $hasher): bool
     {
-        return $this->indexOf($code) !== null;
+        return $this->indexOf($code, $hasher) !== null;
     }
 
     /**
      * @throws BusinessRuleViolation
      */
-    public function use(string $code): self
+    public function use(string $code, RecoveryCodeHasher $hasher): self
     {
-        $index = $this->indexOf($code) ?? throw BusinessRuleViolation::onField('code', 'Ese código de recuperación no es válido.');
+        $index = $this->indexOf($code, $hasher) ?? throw BusinessRuleViolation::onField('code', 'Ese código de recuperación no es válido.');
         $codes = $this->codes;
         $codes[$index]['used'] = true;
 
@@ -71,9 +71,9 @@ final readonly class RecoveryCodes
         return $this->codes;
     }
 
-    private function indexOf(string $code): ?int
+    private function indexOf(string $code, RecoveryCodeHasher $hasher): ?int
     {
-        $hash = self::hash($code);
+        $hash = $hasher->hash(self::normalize($code));
 
         foreach ($this->codes as $index => $stored) {
             if (! $stored['used'] && hash_equals($stored['hash'], $hash)) {
@@ -84,8 +84,8 @@ final readonly class RecoveryCodes
         return null;
     }
 
-    private static function hash(string $code): string
+    public static function normalize(string $code): string
     {
-        return hash('sha256', strtolower(str_replace(['-', ' '], '', trim($code))));
+        return strtolower(str_replace(['-', ' '], '', trim($code)));
     }
 }

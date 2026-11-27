@@ -55,7 +55,7 @@ reglas de composición viven en su dominio; no tienen tablas ni escrituras.
 | 014 Superadministración de plataforma | F4-06 (y operación de IDG-R11) | `Platform` (nuevo) | 004, 005, ADR nuevo | **implementada** (PR A – D; ADR 0010). Panel en `admin.APP_DOMAIN` con identidad propia y TOTP, operadores en dos niveles, planteles con su uso y activación, consolidaciones desde el panel (sustituye `IDENTITY_CONSOLIDATION_OPERATORS`) y bitácora de plataforma. Ver [consideraciones](#014--superadministración-de-plataforma) |
 | 015 RLS por transacción y cierre de la revisión de seguridad | (previa a producción) | `Tenancy` (transversal), `IdentityAccess`, `Students` | 001, 004, 009, ADR nuevo | **implementada** (PR A, B y C; ADR 0011): el plantel vive en la transacción, la suite `rls` pasa también por PgBouncer en modo transacción (CI), traspaso ligado al navegador, origen de los traslados protegido e invitaciones bloqueadas mientras el correo espera consolidación. Cierra los cuatro hallazgos de la [revisión de seguridad](#revisión-de-seguridad) |
 | 016 Revisión y materias pendientes | F2-01, F2-02 | `Evaluation` | 007, 008, 010, 011 | **implementada** (PR A, B y C; ADR 0013): prueba de revisión de cada definitiva reprobada de Media, grupos de pendientes por materia y grado de origen con docente asignado, plan y notas por lapso, «repite» si una pendiente queda reprobada y egreso al aprobar la última |
-| 017 Cierre de la revisión de seguridad de SPEC-014 | (previa a producción) | `Platform`, `IdentityAccess`, `Students`, `Tenancy` | 004, 009, 014, 015 | **borrador** (requisitos): carreras en el acceso de operadores y en las consolidaciones, bloqueo por operador, vista previa y TOTP en la consola, y ninguna escritura en un plantel inactivo. Ver [revisión de SPEC-014](#revisión-de-seguridad-de-spec-014) |
+| 017 Cierre de la revisión de seguridad de SPEC-014 | (previa a producción) | `Platform`, `IdentityAccess`, `Students`, `Tenancy` | 004, 009, 014, 015 | **implementada** (PR A, B y C; ADR 0014 aceptada): carreras en el acceso de operadores y en las consolidaciones, bloqueo por operador, huellas HMAC de códigos de recuperación, vista previa y TOTP en la consola, y ninguna escritura en un plantel inactivo. Ver [revisión de SPEC-014](#revisión-de-seguridad-de-spec-014) |
 | — Infraestructura | F1-37, F1-38 | DevOps | — | CD listo (`.github/workflows/cd.yml`); faltan el servidor y los respaldos (F1-38) |
 
 ## 014 — Superadministración de plataforma
@@ -161,3 +161,12 @@ correo espera consolidación.
 y bitácora. Sin hallazgos críticos ni altos. Tres medios, comprobados en el
 código, y siete bajos. Se cierran en
 [SPEC-017](017-revision-seguridad-plataforma/requirements.md).
+
+**2026-11-27**: `/security-review` de cierre de SPEC-017 (S-12) sobre acceso
+de operadores, bloqueos consultivos, migración HMAC de códigos de
+recuperación, consolidaciones en panel y consola, y aislamiento de planteles
+inactivos. Sin hallazgos críticos ni altos; 1 hallazgo medio (revalidación
+del actor SuperAdmin bajo el bloqueo en gestión de operadores) y 1 bajo
+(limpieza y vínculo al operador de la vista previa de consolidación al
+iniciar otra sesión en el mismo navegador) corregidos y cubiertos con tests
+de regresión.

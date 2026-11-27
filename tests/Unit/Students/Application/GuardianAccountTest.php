@@ -21,6 +21,7 @@ use Tests\Fixtures\Shared\InlineTransactionManager;
 use Tests\Fixtures\Students\FakeGuardianInvitations;
 use Tests\Fixtures\Students\InMemoryGuardianRepository;
 use Tests\Fixtures\Students\SwitchableStudentPermissions;
+use Tests\Fixtures\Tenancy\CountingInstitutionStatusLock;
 use Tests\Fixtures\Tenancy\InMemoryInstitutionRepository;
 use Tests\Fixtures\Tenancy\SwitchingTenantActivator;
 
@@ -56,7 +57,7 @@ function inviteGuardian(GuardianId $id): void
 function memberJoined(int $invitationId, int $accountId = 90): void
 {
     $test = test();
-    (new LinkGuardianAccountHandler($test->guardians, $test->activator, new InstitutionContexts($test->institutions), $test->audit, $test->transactions))(
+    (new LinkGuardianAccountHandler($test->guardians, $test->activator, new InstitutionContexts($test->institutions, new CountingInstitutionStatusLock), $test->audit, $test->transactions))(
         new MemberJoined(4, $accountId, $invitationId, new DateTimeImmutable('2026-10-22')),
     );
 }

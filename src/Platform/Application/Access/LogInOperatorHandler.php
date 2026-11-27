@@ -17,6 +17,7 @@ use AulaX\Platform\Domain\OperatorRepository;
 use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use AulaX\Shared\Domain\Clock;
+use DateTimeImmutable;
 
 /**
  * An operator enters the panel with email, password and code at once
@@ -38,6 +39,7 @@ final readonly class LogInOperatorHandler
         private OperatorRepository $operators,
         private OperatorPasswords $passwords,
         private TotpCodes $totp,
+        private CodeAttempt $codeAttempt,
         private OperatorSession $session,
         private SecurityLog $log,
         private AuditContext $auditContext,
@@ -51,46 +53,40 @@ final readonly class LogInOperatorHandler
      *
      * @throws BusinessRuleViolation «Datos de acceso incorrectos.», whatever failed.
      */
-    public function __invoke(string $email, #[\SensitiveParameter] string $password, #[\SensitiveParameter] string $code): ?int
-    {
+    public function __invoke(
+        string $email,
+        #[\SensitiveParameter] string $password,
+        #[\SensitiveParameter] string $code,
+        string $ip = '',
+    ): ?int {
         $now = $this->clock->now();
         $operator = $this->operatorWith($email);
 
         $passwordMatches = $this->passwords->check($password, $operator?->passwordHash);
-        $step = $this->totp->verify($operator?->totpSecret ?? self::DUMMY_SECRET, $code, $now);
-        $codes = $operator?->id === null ? null : $this->operators->recoveryCodes($operator->id);
 
-        $reason = match (true) {
-            $operator === null => 'unknown_email',
-            ! $passwordMatches => 'wrong_password',
-            ! $operator->canLogIn() => 'not_active',
-            $step !== null && $operator->totpLastStep !== null && $step <= $operator->totpLastStep => 'code_reused',
-            $step === null && ! $codes?->accepts($code) => 'wrong_code',
-            default => null,
-        };
-
-        if ($reason !== null) {
-            $this->fail($operator, $reason);
+        if ($operator === null || ! $passwordMatches) {
+            // Same TOTP work as a known operator (PLT-R01.3, V5), without locking or counting a code failure (RSP-R03.3).
+            $this->totp->verify($operator?->totpSecret ?? self::DUMMY_SECRET, $code, $now);
+            $this->fail($operator, $operator === null ? 'unknown_email' : 'wrong_password');
         }
 
-        return $this->transactions->run(function () use ($operator, $step, $codes, $code, $now) {
-            $left = null;
+        $result = $this->codeAttempt->attempt(
+            $operator->id,
+            $code,
+            $ip,
+            allowRecoveryCode: true,
+            onSuccess: function (Operator $fresh, ?int $left, DateTimeImmutable $at) {
+                $this->session->start($fresh, $at);
+                $this->auditContext->actAsPlatformOperator($fresh->id->value);
+                $this->audit->recordForPlatform(PlatformAudit::loginSucceeded($fresh->id));
+            },
+        );
 
-            if ($step !== null) {
-                $operator->useTotpStep($step);
-            } else {
-                $codes = $codes->use($code);
-                $this->operators->saveRecoveryCodes($operator->id, $codes);
-                $left = $codes->remaining();
-            }
+        if (! $result->accepted) {
+            $this->fail($operator, (string) $result->reason);
+        }
 
-            $this->operators->save($operator);
-            $this->session->start($operator, $now);
-            $this->auditContext->actAsPlatformOperator($operator->id->value);
-            $this->audit->recordForPlatform(PlatformAudit::loginSucceeded($operator->id));
-
-            return $left;
-        });
+        return $result->recoveryCodesLeft;
     }
 
     private function operatorWith(string $email): ?Operator

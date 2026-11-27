@@ -15,13 +15,15 @@ use AulaX\Platform\Domain\OperatorRepository;
 use AulaX\Shared\Application\TransactionManager;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
+use AulaX\Shared\Domain\Clock;
 use AulaX\Shared\Domain\NotFound;
 
 /**
  * A SuperAdmin deactivates or reactivates an institution (SPEC-014
- * PLT-R05): nothing is deleted, deactivating needs a reason, and the change
- * is recorded in the same transaction. Its Administradores are told
- * afterwards, so a mail failure never undoes the switch.
+ * PLT-R05, SPEC-017 RSP-NF03): nothing is deleted, deactivating needs a
+ * reason, a recent TOTP is enforced here too, and the change is recorded in
+ * the same transaction. Its Administradores are told afterwards, so a mail
+ * failure never undoes the switch.
  */
 final readonly class SetInstitutionActiveHandler
 {
@@ -33,6 +35,7 @@ final readonly class SetInstitutionActiveHandler
         private AuditContext $auditContext,
         private AuditTrail $audit,
         private TransactionManager $transactions,
+        private Clock $clock,
     ) {}
 
     /**
@@ -42,7 +45,7 @@ final readonly class SetInstitutionActiveHandler
      */
     public function __invoke(int $institutionId, bool $active, string $reason): void
     {
-        $operator = PlatformAccess::superAdmin($this->session, $this->operators);
+        $operator = PlatformAccess::superAdminWithRecentTotp($this->session, $this->operators, $this->clock);
         $this->auditContext->actAsPlatformOperator($operator->id->value);
         $reason = trim($reason);
 

@@ -60,6 +60,7 @@
         <env name="DB_PASSWORD" value="aulaix_app_password" force="true"/>
         <env name="DB_URL" value="" force="true"/>
         <env name="APP_DOMAIN" value="aulaix.test" force="true"/>
+        <env name="PLATFORM_RECOVERY_CODE_KEY" value="testing-platform-recovery-code-key" force="true"/>
         <env name="MAIL_MAILER" value="array" force="true"/>
         <env name="QUEUE_CONNECTION" value="sync" force="true"/>
         <env name="SESSION_DRIVER" value="array" force="true"/>

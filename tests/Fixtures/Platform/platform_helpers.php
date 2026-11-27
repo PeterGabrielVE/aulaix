@@ -1,12 +1,15 @@
 <?php
 
+use AulaX\Platform\Application\Port\OperatorLock;
 use AulaX\Platform\Application\Port\TotpCodes;
 use AulaX\Platform\Domain\Operator;
 use AulaX\Platform\Domain\OperatorEmail;
 use AulaX\Platform\Domain\OperatorId;
 use AulaX\Platform\Domain\OperatorRepository;
 use AulaX\Platform\Domain\OperatorRole;
+use AulaX\Platform\Domain\RecoveryCodeHasher;
 use AulaX\Platform\Domain\RecoveryCodes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\TestResponse;
 use PragmaRX\Google2FA\Google2FA;
@@ -27,12 +30,18 @@ function adminUrl(string $path = '/'): string
 function storedOperator(string $email = 'ana@aulax.ve', OperatorRole $role = OperatorRole::SuperAdmin): OperatorId
 {
     $repository = app(OperatorRepository::class);
-    $operator = Operator::invite('Ana Rivas', OperatorEmail::fromString($email), $role);
-    $operator->activate(Hash::make('clave-de-operador'), app(TotpCodes::class)->newSecret(), step: 1);
-    $id = $repository->save($operator);
-    $repository->saveRecoveryCodes($id, RecoveryCodes::fromPlain(array_map(fn (int $n) => "recup-{$n}", range(1, 10))));
+    $locks = app(OperatorLock::class);
+    $hasher = app(RecoveryCodeHasher::class);
 
-    return $id;
+    return DB::transaction(function () use ($repository, $locks, $hasher, $email, $role) {
+        $operator = Operator::invite('Ana Rivas', OperatorEmail::fromString($email), $role);
+        $operator->activate(Hash::make('clave-de-operador'), app(TotpCodes::class)->newSecret(), step: 1);
+        $id = $repository->save($operator);
+        $locks->lockOperator($id);
+        $repository->saveRecoveryCodes($id, RecoveryCodes::fromPlain(array_map(fn (int $n) => "recup-{$n}", range(1, 10)), $hasher));
+
+        return $id;
+    });
 }
 
 /**

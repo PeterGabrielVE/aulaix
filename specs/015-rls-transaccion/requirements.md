@@ -131,6 +131,9 @@ dejó el proceso anterior.
 - **RLT-R03.2** — Donde un trabajo de la cola actúe sobre un plantel, el
   sistema deberá activar ese plantel de forma expresa, guardado con el
   trabajo al encolarlo, y nunca tomarlo del proceso que lo ejecuta.
+  *(Ampliado por SPEC-017 RSP-R08.5: si el plantel está inactivo al
+  ejecutarse, el trabajo se descarta sin escribir ni reintentar y queda
+  constancia en el registro de errores.)*
 - **RLT-R03.3** — Cuando un comando de consola recorre varios planteles, el
   sistema deberá aplicar a cada uno solo su RLS, sin que lo hecho en uno se
   vea ni se escriba con el plantel de otro.

@@ -33,6 +33,7 @@ final readonly class LaravelOperatorSession implements OperatorSession
     {
         $this->guard()->loginUsingId($operator->id->value);
         $this->session->regenerate();
+        $this->session->forget(SessionConsolidationPreviews::KEY);
         $this->session->put(self::VERSION, $operator->sessionVersion);
         $this->session->put(self::TOTP_CONFIRMED_AT, $now->getTimestamp());
         $this->session->put(self::LAST_ACTIVITY, $now->getTimestamp());

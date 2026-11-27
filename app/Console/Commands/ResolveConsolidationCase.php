@@ -3,16 +3,20 @@
 namespace App\Console\Commands;
 
 use AulaX\Audit\Application\AuditContext;
+use AulaX\IdentityAccess\Application\Consolidation\CaseResolution;
 use AulaX\IdentityAccess\Application\Consolidation\CaseResolutionRefused;
 use AulaX\IdentityAccess\Application\Consolidation\ConsolidationDecision;
 use AulaX\IdentityAccess\Application\Consolidation\ResolveConsolidationCaseCommand;
 use AulaX\IdentityAccess\Application\Consolidation\ResolveConsolidationCaseHandler;
+use AulaX\Platform\Application\Access\AuthenticateConsoleOperatorHandler;
+use AulaX\Shared\Domain\BusinessRuleViolation;
 use Illuminate\Console\Command;
 
 /**
- * SPEC-004 IDG-R11.2 – R11.7: support resolves one case marked for review.
- * Only an input to the use case, like the platform panel (IDG-NF07); the
- * operator must be an active operator of the panel (SPEC-014 PLT-R06.6).
+ * SPEC-004 IDG-R11.2 – R11.7; SPEC-017 RSP-R06: support resolves one case
+ * marked for review. Requires an interactive terminal, a valid TOTP from the
+ * named operator (never passed as an argument or option), a dry-run preview
+ * and explicit confirmation before applying changes.
  */
 class ResolveConsolidationCase extends Command
 {
@@ -26,8 +30,11 @@ class ResolveConsolidationCase extends Command
 
     protected $description = 'Resuelve un caso de consolidación de cuentas marcado para revisión';
 
-    public function handle(ResolveConsolidationCaseHandler $resolveCase, AuditContext $auditContext): int
-    {
+    public function handle(
+        AuthenticateConsoleOperatorHandler $authenticate,
+        ResolveConsolidationCaseHandler $resolveCase,
+        AuditContext $auditContext,
+    ): int {
         $decision = ConsolidationDecision::tryFrom((string) $this->option('decision'));
 
         if ($decision === null) {
@@ -38,19 +45,34 @@ class ResolveConsolidationCase extends Command
 
         $operator = trim((string) $this->option('operator'));
 
-        if ($operator !== '') {
-            // Resolutions and refusals alike are attributed to whoever was named (SPEC-014 V3).
-            $auditContext->actAsConsoleOperator($operator);
+        try {
+            if (! $this->input->isInteractive()) {
+                $authenticate($operator, null);
+            }
+
+            $code = (string) $this->secret('Código TOTP del operador');
+            $authenticate($operator, $code);
+        } catch (BusinessRuleViolation $refused) {
+            $this->error($refused->getMessage().' No se aplicó ningún cambio.');
+
+            return self::FAILURE;
         }
 
+        // Resolutions and refusals alike are attributed to whoever was authenticated (SPEC-014 V3).
+        $auditContext->actAsConsoleOperator($operator);
+
+        $accounts = array_map('intval', (array) $this->argument('accounts'));
+        $reason = (string) $this->option('reason');
+        $verificationRef = $this->option('verification-ref');
+
         try {
-            $resolution = $resolveCase(new ResolveConsolidationCaseCommand(
+            $preview = $resolveCase(new ResolveConsolidationCaseCommand(
                 $operator,
-                array_map('intval', (array) $this->argument('accounts')),
+                $accounts,
                 $decision,
-                (string) $this->option('reason'),
-                $this->option('verification-ref'),
-                (bool) $this->option('dry-run'),
+                $reason,
+                $verificationRef,
+                dryRun: true,
             ));
         } catch (CaseResolutionRefused $refused) {
             $this->error($refused->getMessage().' No se aplicó ningún cambio.');
@@ -58,14 +80,51 @@ class ResolveConsolidationCase extends Command
             return self::FAILURE;
         }
 
-        $affected = implode(', ', array_map(fn (int $id) => "#{$id}", $resolution->affectedIds));
-        $plan = $resolution->decision === ConsolidationDecision::Consolidate
-            ? "Consolidar en #{$resolution->survivorId}: se mueven sus planteles y roles y se borran {$affected}."
-            : "Mantener separadas {$affected}: no se unificarán nunca.";
+        $plan = $this->describePlan($preview);
 
-        $this->line($resolution->applied ? 'Hecho.' : 'Simulación: no se aplicó ningún cambio.');
+        if ((bool) $this->option('dry-run')) {
+            $this->line('Simulación: no se aplicó ningún cambio.');
+            $this->line($plan);
+
+            return self::SUCCESS;
+        }
+
+        $this->line('Vista previa de los cambios:');
         $this->line($plan);
 
+        if (! $this->confirm('¿Confirmas aplicar estos cambios?', false)) {
+            $this->line('Cancelado: no se aplicó ningún cambio.');
+
+            return self::SUCCESS;
+        }
+
+        try {
+            $resolution = $resolveCase(new ResolveConsolidationCaseCommand(
+                $operator,
+                $accounts,
+                $decision,
+                $reason,
+                $verificationRef,
+                dryRun: false,
+            ));
+        } catch (CaseResolutionRefused $refused) {
+            $this->error($refused->getMessage().' No se aplicó ningún cambio.');
+
+            return self::FAILURE;
+        }
+
+        $this->line('Hecho.');
+        $this->line($this->describePlan($resolution));
+
         return self::SUCCESS;
+    }
+
+    private function describePlan(CaseResolution $resolution): string
+    {
+        $affected = implode(', ', array_map(fn (int $id) => "#{$id}", $resolution->affectedIds));
+
+        return $resolution->decision === ConsolidationDecision::Consolidate
+            ? "Consolidar en #{$resolution->survivorId}: se mueven sus planteles y roles y se borran {$affected}."
+            : "Mantener separadas {$affected}: no se unificarán nunca.";
     }
 }

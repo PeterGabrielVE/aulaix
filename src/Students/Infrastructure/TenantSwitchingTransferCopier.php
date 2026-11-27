@@ -41,7 +41,7 @@ final readonly class TenantSwitchingTransferCopier implements TransferCopier
     public function copyTo(InstitutionId $destination, StudentTransferData $data): void
     {
         $this->tenant->context() ?? throw new LogicException('A transfer is copied from an open institution.');
-        $target = $this->institutions->of($destination) ?? throw new LogicException("The destination institution {$destination->value} does not exist.");
+        $target = $this->institutions->writableOf($destination);
 
         $this->activator->within($target, fn () => $this->write($data));
     }

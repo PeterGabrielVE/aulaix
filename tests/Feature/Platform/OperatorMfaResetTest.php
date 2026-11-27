@@ -3,6 +3,7 @@
 use AulaX\Platform\Domain\InvitationPurpose;
 use AulaX\Platform\Domain\OperatorRepository;
 use AulaX\Platform\Domain\OperatorRole;
+use AulaX\Platform\Domain\RecoveryCodeHasher;
 use AulaX\Platform\Infrastructure\Notifications\OperatorLinkMail;
 use Illuminate\Support\Facades\Notification;
 
@@ -43,5 +44,5 @@ test('an operator regenerates its own recovery codes, which voids the old ones',
     $this->post(adminUrl('/codigos-de-recuperacion'))->assertRedirect(adminUrl('/codigos-de-recuperacion'));
     $this->get(adminUrl('/codigos-de-recuperacion'))->assertInertia(fn ($page) => $page->has('codes', 10));
 
-    expect(app(OperatorRepository::class)->recoveryCodes($this->boss)->accepts('recup-1'))->toBeFalse();
+    expect(app(OperatorRepository::class)->recoveryCodes($this->boss)->accepts('recup-1', app(RecoveryCodeHasher::class)))->toBeFalse();
 });

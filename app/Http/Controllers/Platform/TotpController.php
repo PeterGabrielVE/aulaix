@@ -25,7 +25,7 @@ class TotpController extends Controller
     {
         $data = $request->validate(['code' => ['required', 'string', 'max:6']]);
 
-        $confirm($data['code']);
+        $confirm($data['code'], (string) $request->ip());
 
         return redirect()->intended(route('platform.home'));
     }

@@ -393,25 +393,25 @@ Sin preguntas abiertas.
 
 | Criterio | Test(s) |
 |----------|---------|
-| RSP-R01.1 | |
-| RSP-R01.2 | |
-| RSP-R01.3 | |
-| RSP-R01.4 | |
-| RSP-R01.5 | |
-| RSP-R01.6 | |
-| RSP-R02.1 | |
-| RSP-R02.2 | |
-| RSP-R03.1 | |
-| RSP-R03.2 | |
-| RSP-R03.3 | |
-| RSP-R03.4 | |
-| RSP-R03.5 | |
-| RSP-R03.6 | |
-| RSP-R03.7 | |
-| RSP-R03.8 | |
-| RSP-R03.9 | |
-| RSP-R03.10 | |
-| RSP-R03.11 | |
+| RSP-R01.1 | `tests/Isolation/OperatorLockTest.php` › «management and login, both orders: deactivation is never overwritten and leaves no open session»; `tests/Feature/Platform/Infrastructure/OperatorPersistenceTest.php` › «save without the lock fails» |
+| RSP-R01.2 | `tests/Isolation/OperatorLockTest.php` › «management and login, both orders: deactivation is never overwritten and leaves no open session»; `tests/Unit/Platform/Application/LogInOperatorTest.php` › «locks the operator before re-reading and refuses login if deactivated while waiting» |
+| RSP-R01.3 | `tests/Isolation/OperatorLockTest.php` › «role change during login never leaves a session with the previous role» |
+| RSP-R01.4 | `tests/Isolation/OperatorLockTest.php` › «two concurrent logins with the same TOTP or recovery code accept at most one» |
+| RSP-R01.5 | `tests/Isolation/OperatorLockTest.php` › «two concurrent logins with the same TOTP or recovery code accept at most one» |
+| RSP-R01.6 | `tests/Isolation/OperatorLockTest.php` › «recovery code regeneration rejects an old code racing against it» |
+| RSP-R02.1 | `tests/Isolation/OperatorLockTest.php` › «last SuperAdmin: two simultaneous demotions leave at least one active SuperAdmin»; `tests/Unit/Platform/Application/OperatorManagementTest.php` › «acquires roster lock before operator lock in role and active changes (ADR 0014)» |
+| RSP-R02.2 | `tests/Unit/Platform/Application/OperatorManagementTest.php` › «never leaves the platform without an active SuperAdmin, nor lets one act on itself» |
+| RSP-R03.1 | `tests/Feature/Platform/OperatorLockoutTest.php` › «limits TOTP confirmation to 5 attempts per minute per operator and IP» |
+| RSP-R03.2 | `tests/Unit/Platform/Domain/OperatorTest.php` › «blocks for 15 minutes and bumps session version on the tenth consecutive code failure»; `tests/Feature/Platform/OperatorLockoutTest.php` › «blocks an operator for 15 minutes after 10 failed codes across distinct IPs, audits, emails and closes open sessions» |
+| RSP-R03.3 | `tests/Unit/Platform/Application/LogInOperatorTest.php` › «never counts a wrong password as a code failure»; `tests/Feature/Platform/OperatorLockoutTest.php` › «wrong passwords never block an operator and produce the same answer» |
+| RSP-R03.4 | `tests/Feature/Platform/OperatorLockoutTest.php` › «same answer for blocked operator and unknown email» |
+| RSP-R03.5 | `tests/Unit/Platform/Application/ConfirmTotpTest.php` › «ends the current session immediately, audits and emails on the tenth failed confirmation»; `tests/Feature/Platform/OperatorLockoutTest.php` › «blocks an operator for 15 minutes after 10 failed codes across distinct IPs, audits, emails and closes open sessions» |
+| RSP-R03.6 | `tests/Feature/Platform/OperatorLockoutTest.php` › «blocks an operator for 15 minutes after 10 failed codes across distinct IPs, audits, emails and closes open sessions» |
+| RSP-R03.7 | `tests/Feature/Platform/OperatorLockoutTest.php` › «blocks an operator for 15 minutes after 10 failed codes across distinct IPs, audits, emails and closes open sessions» |
+| RSP-R03.8 | `tests/Unit/Platform/Domain/OperatorTest.php` › «clears failures after a successful code outside lockout»; `tests/Unit/Platform/Application/ConfirmTotpTest.php` › «locks before re-reading, confirms a fresh TOTP and clears previous failures» |
+| RSP-R03.9 | `tests/Unit/Platform/Domain/OperatorTest.php` › «accepts codes again with failures reset once the 15-minute lockout expires»; `tests/Feature/Platform/OperatorLockoutTest.php` › «blocks an operator for 15 minutes after 10 failed codes across distinct IPs, audits, emails and closes open sessions» |
+| RSP-R03.10 | `tests/Unit/Platform/Domain/OperatorTest.php` › «offers no method to lift a lockout early» |
+| RSP-R03.11 | `tests/Unit/Platform/Domain/OperatorTest.php` › «resetting MFA lifts an active lockout and clears failures»; `tests/Feature/Platform/OperatorLockoutTest.php` › «resetting MFA of a blocked operator lifts the lockout and clears failures» |
 | RSP-R04.1 | |
 | RSP-R04.2 | |
 | RSP-R04.3 | |
@@ -437,10 +437,10 @@ Sin preguntas abiertas.
 | RSP-R08.4 | |
 | RSP-R08.5 | |
 | RSP-R08.6 | |
-| RSP-NF01 | |
-| RSP-NF02 | |
-| RSP-NF03 | |
-| RSP-NF04 | |
-| RSP-NF05 | |
+| RSP-NF01 | `tests/Isolation/OperatorLockTest.php` › «management and login, both orders: deactivation is never overwritten and leaves no open session» |
+| RSP-NF02 | `tests/Feature/Platform/Infrastructure/KeyedRecoveryCodeHasherTest.php` › «produces a 64-character keyed HMAC that differs from plain SHA-256 and changes with the secret»; `tests/Feature/Platform/Infrastructure/RecoveryCodeRehashMigrationTest.php` › «recovery codes generated before migration remain valid afterwards» |
+| RSP-NF03 | `tests/Unit/Platform/Application/SensitiveActionsNeedRecentTotpTest.php` › «refuses every sensitive platform use case when TOTP confirmation is older than 10 minutes» |
+| RSP-NF04 | `tests/Architecture/LayersTest.php` › «pg_advisory is confined to the advisory lock adapters»; `tests/Architecture/LayersTest.php` › «every Platform use case that updates an operator or its recovery codes takes OperatorLock» |
+| RSP-NF05 | `tests/Feature/Platform/OperatorLockoutTest.php` › «same answer for blocked operator and unknown email» |
 | RSP-NF06 | |
 | RSP-NF07 | |

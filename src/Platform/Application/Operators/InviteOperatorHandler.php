@@ -6,8 +6,10 @@ namespace AulaX\Platform\Application\Operators;
 
 use AulaX\Audit\Application\AuditContext;
 use AulaX\Audit\Application\AuditTrail;
+use AulaX\Platform\Application\PlatformAccess;
 use AulaX\Platform\Application\PlatformAudit;
 use AulaX\Platform\Application\Port\OperatorMailer;
+use AulaX\Platform\Application\Port\OperatorSession;
 use AulaX\Platform\Domain\InvitationPurpose;
 use AulaX\Platform\Domain\Operator;
 use AulaX\Platform\Domain\OperatorEmail;
@@ -23,15 +25,16 @@ use AulaX\Shared\Domain\Clock;
 
 /**
  * A new operator, pending until it accepts the link it receives by email
- * (PLT-R02.1, R03.1). From the panel only an active SuperAdmin invites
- * (PLT-R03.8); from the console (no inviter) the server's own user does
- * (V3). Only the token's hash is kept (V4).
+ * (PLT-R02.1, R03.1). From the panel only an active SuperAdmin with a recent
+ * TOTP invites (PLT-R03.8, SPEC-017 RSP-NF03); from the console (no inviter)
+ * the server's own user does (V3). Only the token's hash is kept (V4).
  */
 final readonly class InviteOperatorHandler
 {
     public function __construct(
         private OperatorRepository $operators,
         private OperatorInvitationRepository $invitations,
+        private OperatorSession $session,
         private OperatorMailer $mailer,
         private AuditContext $auditContext,
         private AuditTrail $audit,
@@ -48,13 +51,13 @@ final readonly class InviteOperatorHandler
     public function __invoke(string $name, string $email, OperatorRole $role, ?OperatorId $invitedBy): OperatorId
     {
         if ($invitedBy !== null) {
-            $inviter = $this->operators->byId($invitedBy);
+            $inviter = PlatformAccess::superAdminWithRecentTotp($this->session, $this->operators, $this->clock);
 
-            if ($inviter === null || ! $inviter->canLogIn() || ! $inviter->role->canManage()) {
+            if (! $inviter->id->equals($invitedBy)) {
                 throw new AuthorizationDenied('Solo un Superadministrador puede invitar operadores.');
             }
 
-            $this->auditContext->actAsPlatformOperator($invitedBy->value);
+            $this->auditContext->actAsPlatformOperator($inviter->id->value);
         }
 
         $address = OperatorEmail::fromString($email);

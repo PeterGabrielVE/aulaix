@@ -13,7 +13,7 @@ use AulaX\Shared\Domain\Clock;
  */
 final readonly class RecentTotpQuery
 {
-    private const int WINDOW_SECONDS = 10 * 60;
+    public const int WINDOW_SECONDS = 10 * 60;
 
     public function __construct(
         private OperatorSession $session,

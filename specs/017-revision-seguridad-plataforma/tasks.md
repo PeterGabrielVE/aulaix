@@ -1,6 +1,6 @@
 ---
 spec: 017-revision-seguridad-plataforma
-estado: borrador
+estado: implementando
 fecha: 2026-11-27
 diseño: design.md
 ---
@@ -34,7 +34,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 1 — Claves compartidas y dominio de Platform
 
-- [ ] **T-01** — Centralizar las claves de bloqueos consultivos en
+- [x] **T-01** — Centralizar las claves de bloqueos consultivos en
   `src/Shared/Infrastructure/AdvisoryLockKeys.php` (`CALENDAR = 7007`,
   `OPERATOR = 1014`, `OPERATOR_ROSTER = 1015`, `CONSOLIDATION = 4011`,
   `INSTITUTION_STATUS = 1001`) y migrar `DatabaseCalendarLock` a usar esa
@@ -46,7 +46,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
   - Hecho cuando: todas las claves están definidas en un único sitio y el test
     de arquitectura pasa.
 
-- [ ] **T-02** — Ampliar el agregado `Operator` y crear el VO `CodeFailure`
+- [x] **T-02** — Ampliar el agregado `Operator` y crear el VO `CodeFailure`
   en `src/Platform/Domain/`:
   - `CodeFailure` (`final readonly`, `occurredAt`, `ip`, sin el código);
   - `Operator` mantiene `codeFailures` (máx. 10) y `blockedUntil`:
@@ -67,7 +67,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
     - «offers no method to lift a lockout early».
   - Hecho cuando: todos los tests unitarios del agregado pasan sin Laravel.
 
-- [ ] **T-03** — Interfaz de dominio `RecoveryCodeHasher` y actualización de
+- [x] **T-03** — Interfaz de dominio `RecoveryCodeHasher` y actualización de
   `RecoveryCodes` para recibir el hasher en `fromPlain()`, `accepts()` y
   `use()` manteniendo la normalización actual.
   - Criterios: RSP-NF02
@@ -78,7 +78,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 2 — Aplicación de Platform (bloqueos, intentos y TOTP reciente)
 
-- [ ] **T-04** — Nuevos puertos y guardas de acceso en `src/Platform/Application/`:
+- [x] **T-04** — Nuevos puertos y guardas de acceso en `src/Platform/Application/`:
   - `Port/OperatorLock` (`lockOperator(OperatorId)`, `lockRoster()`);
   - `Port/OperatorMailer` (+ `operatorBlocked(Operator, list<CodeFailure>, list<OperatorEmail>)`);
   - `PlatformAudit` (+ `operatorBlocked(OperatorId)` → `platform.operator.blocked`);
@@ -100,7 +100,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
     ajustando solo la preparación de TOTP en los tests unitarios que lo
     necesiten.
 
-- [ ] **T-05** — `CodeAttempt` y actualización de `LogInOperatorHandler` y
+- [x] **T-05** — `CodeAttempt` y actualización de `LogInOperatorHandler` y
   `ConfirmTotpHandler`:
   - `CodeAttempt` ejecuta bajo transacción: `OperatorLock::lockOperator()` →
     relectura con `byId()` → verificación de `canLogIn()` e `isBlockedAt()` →
@@ -120,7 +120,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
   - Hecho cuando: los tests unitarios de aplicación verifican bloqueo previo
     a relectura, recuento, lockout, correo post-commit y mensaje único.
 
-- [ ] **T-06** — Bloqueo y relectura en todos los handlers de gestión de
+- [x] **T-06** — Bloqueo y relectura en todos los handlers de gestión de
   operadores:
   - `SetOperatorActiveHandler` y `ChangeOperatorRoleHandler`: dentro de una
     sola transacción toman `lockRoster()` y luego `lockOperator($target)`
@@ -144,7 +144,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 3 — Infraestructura, migraciones y HTTP de Platform (PR A)
 
-- [ ] **T-07** — Migración de esquema en `platform_operators`:
+- [x] **T-07** — Migración de esquema en `platform_operators`:
   - añade `code_failures jsonb NOT NULL DEFAULT '[]'`,
     `blocked_until timestamptz NULL` y
     `CHECK (jsonb_array_length(code_failures) <= 10)`;
@@ -158,7 +158,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
   - Hecho cuando: la migración sube y baja limpiamente en PostgreSQL sin
     `SECURITY DEFINER` ni cambios en RLS de planteles.
 
-- [ ] **T-08** — Adaptadores `DatabaseOperatorLock`,
+- [x] **T-08** — Adaptadores `DatabaseOperatorLock`,
   `KeyedRecoveryCodeHasher`, `OperatorBlockedMail` + `NotificationOperatorMailer`
   y exigencia de bloqueo en `EloquentOperatorRepository`:
   - `DatabaseOperatorLock`: exige transacción abierta y adquiere
@@ -185,7 +185,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
   - Hecho cuando: todos los tests de infraestructura pasan contra PostgreSQL
     real.
 
-- [ ] **T-09** — Migración de datos de `platform_operator_recovery_codes`
+- [x] **T-09** — Migración de datos de `platform_operator_recovery_codes`
   (en su propia tarea):
   - rehashea cada `code_hash` existente a `hash_hmac('sha256', $codeHash, $secret)`
     por lotes dentro de una transacción;
@@ -200,7 +200,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
   - Hecho cuando: los tests de `up` y `down` pasan y los códigos previos al
     despliegue siguen siendo aceptados.
 
-- [ ] **T-10** — Adaptadores HTTP, limitador `platform-confirm`, tests feature
+- [x] **T-10** — Adaptadores HTTP, limitador `platform-confirm`, tests feature
   de lockout y tests de concurrencia reales de operadores (`tests/Isolation`):
   - `AppServiceProvider`: limitador `platform-confirm` (5/min por
     `operador de la sesión | IP`), reemplazando `throttle:5,1` en

@@ -14,8 +14,11 @@ use AulaX\Platform\Domain\OperatorStatus;
 use AulaX\Shared\Domain\AuthorizationDenied;
 use AulaX\Shared\Domain\BusinessRuleViolation;
 use Tests\Fixtures\Audit\RecordingAuditTrail;
+use Tests\Fixtures\Platform\CountingOperatorLock;
 use Tests\Fixtures\Platform\FakeAuditContext;
 use Tests\Fixtures\Platform\FakeOperatorPasswords;
+use Tests\Fixtures\Platform\FakeOperatorSession;
+use Tests\Fixtures\Platform\FakeRecoveryCodeHasher;
 use Tests\Fixtures\Platform\FakeTotpCodes;
 use Tests\Fixtures\Platform\InMemoryOperatorInvitationRepository;
 use Tests\Fixtures\Platform\InMemoryOperatorRepository;
@@ -32,6 +35,9 @@ use Tests\Fixtures\Shared\InlineTransactionManager;
 beforeEach(function () {
     $this->operators = new InMemoryOperatorRepository;
     $this->invitations = new InMemoryOperatorInvitationRepository;
+    $this->locks = new CountingOperatorLock;
+    $this->hasher = new FakeRecoveryCodeHasher;
+    $this->session = new FakeOperatorSession;
     $this->mailer = new RecordingOperatorMailer;
     $this->totp = new FakeTotpCodes;
     $this->secrets = new InMemoryPendingTotpSecrets;
@@ -45,7 +51,11 @@ function platformInvite(string $email = 'ana@aulax.ve', ?OperatorId $by = null, 
 {
     $test = test();
 
-    return (new InviteOperatorHandler($test->operators, $test->invitations, $test->mailer, $test->auditContext, $test->audit, $test->transactions, $test->clock))(
+    if ($by !== null) {
+        $test->session->start($test->operators->byId($by), $test->clock->now());
+    }
+
+    return (new InviteOperatorHandler($test->operators, $test->invitations, $test->session, $test->mailer, $test->auditContext, $test->audit, $test->transactions, $test->clock))(
         'Ana Rivas', $email, $role, $by,
     );
 }
@@ -65,7 +75,7 @@ function acceptPlatformLink(string $token, ?string $password, string $code): arr
     $test = test();
 
     return (new AcceptInvitationHandler(
-        $test->operators, $test->invitations, new FakeOperatorPasswords, $test->totp, $test->secrets,
+        $test->operators, $test->invitations, $test->locks, new FakeOperatorPasswords, $test->totp, $test->hasher, $test->secrets,
         $test->auditContext, $test->audit, $test->transactions, $test->clock,
     ))($token, $password, $code);
 }
@@ -138,7 +148,7 @@ it('activates the operator with its password and a confirmed TOTP, and gives ten
         ->and($operator->totpLastStep)->toBe(5000)
         ->and($codes)->toHaveCount(10)
         ->and(count(array_unique($codes)))->toBe(10)
-        ->and($this->operators->recoveryCodes($id)->accepts($codes[0]))->toBeTrue()
+        ->and($this->operators->recoveryCodes($id)->accepts($codes[0], $this->hasher))->toBeTrue()
         ->and($this->secrets->secrets)->toBe([])
         ->and($this->audit->types())->toBe(['platform.operator.invited', 'platform.operator.activated']);
 });

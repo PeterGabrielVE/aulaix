@@ -40,6 +40,7 @@ final readonly class CurrentOperatorQuery
 
         if ($operator === null
             || ! $operator->canLogIn()
+            || $operator->isBlockedAt($now)
             || $operator->sessionVersion !== $this->session->sessionVersion()
             || $lastActivity === null
             || $now->getTimestamp() - $lastActivity->getTimestamp() > self::IDLE_SECONDS) {

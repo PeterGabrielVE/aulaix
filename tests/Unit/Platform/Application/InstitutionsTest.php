@@ -15,6 +15,7 @@ use Tests\Fixtures\Platform\FakeAuditContext;
 use Tests\Fixtures\Platform\FakeOperatorSession;
 use Tests\Fixtures\Platform\FakePlatformInstitutions;
 use Tests\Fixtures\Platform\InMemoryOperatorRepository;
+use Tests\Fixtures\Shared\FixedClock;
 use Tests\Fixtures\Shared\InlineTransactionManager;
 
 /**
@@ -32,9 +33,10 @@ beforeEach(function () {
     $this->institutions->add(7, 'Colegio Norte');
     $this->institutions->add(8, 'Liceo Sur', 'inactive');
 
+    $this->clock = new FixedClock(new DateTimeImmutable('2026-10-26 10:00:00'));
     $this->boss = institutionsOperator($this->operators, 'jefa@aulax.ve', OperatorRole::SuperAdmin);
     $this->support = institutionsOperator($this->operators, 'soporte@aulax.ve', OperatorRole::Support);
-    $this->session->start($this->operators->byId($this->boss), new DateTimeImmutable);
+    $this->session->start($this->operators->byId($this->boss), $this->clock->now);
 });
 
 function institutionsOperator(InMemoryOperatorRepository $operators, string $email, OperatorRole $role): OperatorId
@@ -48,7 +50,7 @@ function institutionsOperator(InMemoryOperatorRepository $operators, string $ema
 function setInstitutionActive(int $id, bool $active, string $reason): void
 {
     $test = test();
-    (new SetInstitutionActiveHandler($test->operators, $test->session, $test->institutions, $test->institutions, $test->auditContext, $test->audit, $test->transactions))($id, $active, $reason);
+    (new SetInstitutionActiveHandler($test->operators, $test->session, $test->institutions, $test->institutions, $test->auditContext, $test->audit, $test->transactions, $test->clock))($id, $active, $reason);
 }
 
 function showUsage(int $id): array

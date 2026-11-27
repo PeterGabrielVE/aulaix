@@ -15,6 +15,7 @@ use Tests\Fixtures\Platform\FakeAuditContext;
 use Tests\Fixtures\Platform\FakeConsolidationDesk;
 use Tests\Fixtures\Platform\FakeOperatorSession;
 use Tests\Fixtures\Platform\InMemoryOperatorRepository;
+use Tests\Fixtures\Shared\FixedClock;
 use Tests\Fixtures\Shared\InlineTransactionManager;
 
 /**
@@ -34,7 +35,8 @@ beforeEach(function () {
     $operator = Operator::invite('Luis', OperatorEmail::fromString('luis@aulax.ve'), OperatorRole::Support);
     $operator->activate('hash:x', 'SECRET', 1);
     $this->luis = $this->operators->save($operator);
-    $this->session->start($this->operators->byId($this->luis), new DateTimeImmutable);
+    $this->clock = new FixedClock(new DateTimeImmutable('2026-10-26 10:00:00'));
+    $this->session->start($this->operators->byId($this->luis), $this->clock->now);
 });
 
 function consolidationUseCase(string $class): object
@@ -44,7 +46,7 @@ function consolidationUseCase(string $class): object
     return match ($class) {
         ListCasesQuery::class => new ListCasesQuery($test->operators, $test->session, $test->desk),
         ShowCaseQuery::class => new ShowCaseQuery($test->operators, $test->session, $test->desk, $test->auditContext, $test->audit, $test->transactions),
-        default => new $class($test->operators, $test->session, $test->desk, $test->auditContext),
+        default => new $class($test->operators, $test->session, $test->desk, $test->auditContext, $test->clock),
     };
 }
 

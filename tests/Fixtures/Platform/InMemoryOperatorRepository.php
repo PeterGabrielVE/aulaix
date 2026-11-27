@@ -49,6 +49,7 @@ final class InMemoryOperatorRepository implements OperatorRepository
         $this->operators[$id->value] = Operator::reconstitute(
             $id, $operator->name, $operator->email, $operator->role, $operator->status,
             $operator->passwordHash, $operator->totpSecret, $operator->totpLastStep, $operator->sessionVersion,
+            $operator->codeFailures, $operator->blockedUntil,
         );
 
         return $id;

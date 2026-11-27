@@ -80,6 +80,11 @@ final class PlatformAudit
         return AuditEvent::of('platform.operator.recovery_codes_regenerated', self::operator($operator));
     }
 
+    public static function operatorBlocked(OperatorId $operator): AuditEvent
+    {
+        return AuditEvent::of('platform.operator.blocked', self::operator($operator));
+    }
+
     public static function institutionViewed(int $institutionId): AuditEvent
     {
         return AuditEvent::of('platform.institution.viewed', AuditSubject::of('institution', $institutionId));

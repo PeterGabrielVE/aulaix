@@ -23,7 +23,12 @@ class LoginController extends Controller
 
     public function store(OperatorLoginRequest $request, LogInOperatorHandler $logIn): RedirectResponse
     {
-        $left = $logIn($request->validated('email'), $request->validated('password'), $request->validated('code'));
+        $left = $logIn(
+            $request->validated('email'),
+            $request->validated('password'),
+            $request->validated('code'),
+            (string) $request->ip(),
+        );
 
         $redirect = redirect()->intended(route('platform.home'));
 

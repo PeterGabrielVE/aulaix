@@ -1,6 +1,8 @@
 <?php
 
+use AulaX\Platform\Application\Port\OperatorLock;
 use AulaX\Platform\Domain\OperatorRepository;
+use AulaX\Platform\Domain\RecoveryCodeHasher;
 use Illuminate\Support\Facades\DB;
 
 require_once dirname(__DIR__, 2).'/Fixtures/Platform/platform_helpers.php';
@@ -46,16 +48,19 @@ test('every failure gives the same answer and the same entry (V5)', function (Cl
     'wrong code' => [fn () => null, 'ana@aulax.ve', 'clave-de-operador', fn () => '000000'],
     'code already used' => [function () {
         $operators = app(OperatorRepository::class);
+        app(OperatorLock::class)->lockOperator($this->operator);
         $operator = $operators->byId($this->operator);
         $operator->useTotpStep(intdiv(now()->getTimestamp(), 30) + 1);
         $operators->save($operator);
     }, 'ana@aulax.ve', 'clave-de-operador', fn () => currentCode($this->operator)],
     'recovery code spent' => [function () {
         $operators = app(OperatorRepository::class);
-        $operators->saveRecoveryCodes($this->operator, $operators->recoveryCodes($this->operator)->use('recup-1'));
+        app(OperatorLock::class)->lockOperator($this->operator);
+        $operators->saveRecoveryCodes($this->operator, $operators->recoveryCodes($this->operator)->use('recup-1', app(RecoveryCodeHasher::class)));
     }, 'ana@aulax.ve', 'clave-de-operador', fn () => 'recup-1'],
     'operator deactivated' => [function () {
         $operators = app(OperatorRepository::class);
+        app(OperatorLock::class)->lockOperator($this->operator);
         $operator = $operators->byId($this->operator);
         $operator->deactivate();
         $operators->save($operator);
@@ -120,6 +125,7 @@ test('logging out ends the session on the server', function () {
 test('a session started before a deactivation ends on its next request', function () {
     panelLogIn('ana@aulax.ve', 'clave-de-operador', currentCode($this->operator));
     $operators = app(OperatorRepository::class);
+    app(OperatorLock::class)->lockOperator($this->operator);
     $operator = $operators->byId($this->operator);
     $operator->deactivate();
     $operators->save($operator);

@@ -1,6 +1,7 @@
 ---
 spec: 017-revision-seguridad-plataforma
-estado: borrador
+estado: aprobada
+aprobada: 2026-11-27
 fecha: 2026-11-11
 requisitos: requirements.md
 adr: 0014
@@ -34,7 +35,7 @@ src/Platform/
 │   ├── CodeFailure.php                 (nuevo, VO: fecha + IP)
 │   ├── RecoveryCodeHasher.php          (nuevo, interfaz del dominio)
 │   ├── RecoveryCodes.php               (recibe el hasher)
-│   └── OperatorRepository.php          (+ lockedById, lockedByEmail)
+│   └── OperatorRepository.php          (sin cambios de interfaz; el bloqueo entra por OperatorLock)
 ├── Application/
 │   ├── Port/OperatorLock.php           (nuevo)
 │   ├── Port/ConsolidationPreviews.php  (nuevo)
@@ -97,6 +98,7 @@ app/
 | `ConfirmTotpHandler` (cambia) | código, IP | — | RSP-R01.4, R03.1 (con el limitador), R03.2, R03.6 – R03.8 |
 | `AuthenticateConsoleOperatorHandler` (nuevo) | correo, código o `null` si no hay terminal | `OperatorId` | RSP-R06.1, R06.2, R06.4, R06.5, R06.6, R06.7 |
 | `SetOperatorActiveHandler`, `ChangeOperatorRoleHandler` (cambian) | operador, valor | — | RSP-R01.1 – R01.3, R02.1, R02.2, NF03 |
+| `InviteOperatorHandler` (cambia) | nombre, correo, nivel, invitador | `OperatorId` | RSP-NF03 (TOTP reciente cuando `$invitedBy !== null`, es decir, desde el panel; la consola sigue sin sesión) |
 | `ResetOperatorMfaHandler` (cambia) | operador | — | RSP-R01.1, R01.2, R03.10, R03.11, NF03 |
 | `RegenerateRecoveryCodesHandler` (cambia) | — | códigos nuevos | RSP-R01.6, NF02, NF03 |
 | `AcceptInvitationHandler` (cambia) | token, contraseña, TOTP | — | RSP-R01.1 (bloquea como los demás) |
@@ -126,13 +128,19 @@ la consola. Se escribe una vez y se prueba una vez:
    - si no puede entrar (inactivo, sin TOTP) o está bloqueado: fallo
      genérico, sin contarlo (R01.2, R03.4);
    - si el paso TOTP ya se usó, o el código no es válido: `failCode(now,
-     ip)`, guardar y confirmar la transacción. Después se lanza el fallo
-     genérico (R01.4, R01.5, R03.2). Si acaba de bloquearse, se registra en
-     la bitácora dentro de la transacción (R03.7) y, después del commit, se
-     envía el aviso (R03.6);
+     ip)`, guardar y confirmar la transacción. Si acaba de bloquearse, se
+     registra `platform.operator.blocked` en la bitácora dentro de la
+     transacción (R03.7); después del commit, en `ConfirmTotpHandler` se
+     cierra además la sesión actual de inmediato (`$this->session->end()`,
+     R03.5) y se envía el aviso por correo (R03.6). Por último se lanza el
+     fallo genérico (R01.4, R01.5, R03.2);
    - si es correcto: `useTotpStep`, o el código de recuperación se marca
      usado; se guarda; en el inicio de sesión se abre la sesión con la
      versión releída (R01.3); se escribe la bitácora.
+
+`PlatformAccess::operator()` comprueba también `! $operator->isBlockedAt($now)`
+(además de `canLogIn()`), y `PlatformAccess::withRecentTotp()` verifica la
+ventana de 10 minutos con el mismo umbral de `RecentTotpQuery` (NF03).
 
 Una acción de gestión que se confirme antes del paso 3 se ve en la
 relectura. Si se confirma después, encuentra el operador ya guardado bajo
@@ -201,7 +209,10 @@ Un rechazo no envía nada ni cierra ninguna sesión (R04.4).
   cuentas.
 
 `CompleteConsolidationHandler` (IDG-R09) pasa a llamar a la nueva firma con
-su propia comprobación. Su comportamiento no cambia (NF07).
+su propia comprobación. Si tras releer bajo `ConsolidationLock::lockEmail()`
+el grupo tiene una sola cuenta pendiente, la marca consolidada dentro de esa
+misma transacción bloqueada para no dejar una ventana sin bloqueo sobre el
+correo. Su comportamiento observable no cambia (NF07).
 
 ### Vista previa exigida (R05)
 
@@ -212,13 +223,18 @@ su propia comprobación. Su comportamiento no cambia (NF07).
   1. comprueba el operador y el TOTP reciente (NF03);
   2. comprueba que el caso de la ruta está entre las cuentas (R05.4);
   3. comprueba que hay una vista previa igual de los últimos 10 minutos.
-     Si no la hay, registra `consolidation.resolve_refused` con el motivo
-     `no_preview` y lanza `BusinessRuleViolation` en `preview` (R05.1,
-     R05.2);
+     Si no la hay, registra `platform.consolidation.resolve_refused` con el
+     motivo `no_preview` y lanza `BusinessRuleViolation` en `preview`
+     (R05.1, R05.2);
   4. resuelve;
   5. olvida la vista previa (R05.3).
 
   Si la resolución falla, la vista previa se conserva hasta que caduque.
+
+`ListCasesQuery` registra `platform.consolidation_cases.listed` en la
+bitácora de plataforma dentro de una transacción con los identificadores de
+las cuentas mostradas (o lista vacía si no hay casos pendientes), sin
+nombres, correos ni planteles (R07.1, R07.3).
 
 La sesión del panel es del operador, así que una vista previa nunca sirve a
 otro operador.
@@ -248,7 +264,7 @@ otro operador.
 | Puerto (interfaz) | Capa | Adaptador | Notas |
 |-------------------|------|-----------|-------|
 | `OperatorLock` | Platform Application | `DatabaseOperatorLock` | `lockOperator(OperatorId)` → (`1014`, id) y `lockRoster()` → (`1015`, 0). Exige una transacción abierta. Se mantiene como puerto para que los tests de aplicación comprueben, con un doble que cuenta, que se bloquea antes de releer (patrón de `CountingCalendarLock`). |
-| `OperatorRepository` (se amplía) | Platform Domain | `EloquentOperatorRepository` | `save()` y `saveRecoveryCodes()` comprueban en `pg_locks` que la transacción tiene el bloqueo de ese operador; si no, `LogicException` (ADR 0014, regla 3). Guarda `code_failures` y `blocked_until`. |
+| `OperatorRepository` (sin cambio de interfaz) | Platform Domain | `EloquentOperatorRepository` | `save()` cuando `$operator->id !== null` (actualización) y `saveRecoveryCodes()` comprueban en `pg_locks` que la transacción tiene el bloqueo de ese operador; si no, `LogicException` (ADR 0014, regla 3). Un alta nueva (`id === null`) no tiene todavía identificador que bloquear. Guarda `code_failures` y `blocked_until`. |
 | `RecoveryCodeHasher` | Platform Domain | `KeyedRecoveryCodeHasher` | `hash_hmac('sha256', hash('sha256', $normalizado), $secreto)`. El secreto es `PLATFORM_RECOVERY_CODE_KEY` y es obligatorio fuera de `local` y `testing`. No es `APP_KEY`: rotar esa clave no debe invalidar los códigos. |
 | `ConsolidationPreviews` | Platform Application | `SessionConsolidationPreviews` | Vive en la sesión del panel (guard `platform`). Una sola entrada: cuentas ordenadas, decisión y hora. |
 | `OperatorMailer` (se amplía) | Platform Application | `NotificationOperatorMailer` | `operatorBlocked(Operator $blocked, list<CodeFailure>, list<OperatorEmail> $superAdmins)` (R03.6). Se envía después del commit. |
@@ -329,7 +345,7 @@ Una migración de esquema y una de datos, ninguna en tablas de un plantel:
 | **T**ampering | Un inicio de sesión simultáneo deshace una desactivación o un restablecimiento. | Bloqueo y relectura. `save()` exige el bloqueo (R01.1 – R01.3). | `OperatorLockTest`; `EloquentOperatorRepositoryTest` › «save without the lock fails» |
 | **T**ampering | Dos resoluciones a la vez fusionan cuentas mantenidas separadas. | Bloqueo del correo, relectura y comprobación dentro de la transacción (R04). | `ConsolidationLockTest` (Isolation) |
 | **T**ampering | Escribir en un plantel recién desactivado. | Bloqueo compartido o exclusivo del estado y `writableOf` (R08). | `InstitutionStatusLockTest` (Isolation), `TransferToInactiveTest` |
-| **R**epudiation | Mirar la lista de casos, o hacer una vista previa, sin dejar rastro. | Entradas `consolidation.cases_listed` e `identity.consolidation.previewed` (R07). | `ConsolidationAuditTest` |
+| **R**epudiation | Mirar la lista de casos, o hacer una vista previa, sin dejar rastro. | Entradas `platform.consolidation_cases.listed` e `identity.consolidation.previewed` (R07). | `ConsolidationAuditTest` |
 | **R**epudiation | Resolver sin haber visto la vista previa. | El caso de uso exige una vista previa de los últimos 10 minutos y registra el rechazo (R05). | `ResolveCaseHandlerTest`, `ConsolidationPanelTest` |
 | **I**nformation disclosure | Una copia de la base de datos revela los códigos de recuperación por fuerza bruta. | Huella con un secreto que no está en la base de datos (NF02). | `KeyedRecoveryCodeHasherTest`; `RecoveryCodeRehashMigrationTest` |
 | **I**nformation disclosure | El bloqueo o un rechazo revelan si un correo es de un operador, o el motivo de una desactivación. | Mensaje único de PLT-R01.3; los fallos con contraseña incorrecta no cuentan; mensaje genérico en el traslado (NF05). | `OperatorLockoutTest` › «same answer», `TransferToInactiveTest` › «no reason» |
@@ -401,8 +417,9 @@ Una migración de esquema y una de datos, ninguna en tablas de un plantel:
     reactivar y caducidad.
 - **Arquitectura:**
   - `pg_advisory` solo en los adaptadores de bloqueo;
-  - `OperatorRepository::save` no se llama desde ningún caso de uso que no
-    reciba `OperatorLock` (regla complementaria del test de
+  - `OperatorRepository::save` (salvo `InviteOperatorHandler`, que inserta un
+    operador nuevo) y `saveRecoveryCodes` no se llaman desde ningún caso de
+    uso que no reciba `OperatorLock` (regla complementaria del test de
     infraestructura).
 - **Rendimiento:** PLT-NF06 y RLT-NF03 siguen en `--group=perf` sin
   cambios (NF06).

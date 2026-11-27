@@ -1,6 +1,7 @@
 ---
-estado: propuesta
+estado: aceptada
 fecha: 2026-11-11
+aceptada: 2026-11-27
 spec: 017-revision-seguridad-plataforma
 ---
 
@@ -62,10 +63,14 @@ Tres reglas acompañan a los bloqueos:
 2. **Orden fijo:** primero la lista de operadores, luego el operador. El
    inicio de sesión solo toma el del operador. No hay ciclos, así que no
    hay interbloqueos.
-3. **El repositorio lo exige.** `OperatorRepository::save()` comprueba en
-   `pg_locks` que la transacción tiene el bloqueo de ese operador. Si no lo
-   tiene, falla con una `LogicException`. Un caso de uso nuevo que olvide
-   bloquear falla en los tests, no en producción.
+3. **El repositorio lo exige.** `OperatorRepository::save()` al actualizar
+   un operador existente (`id !== null`) y `saveRecoveryCodes()` comprueban
+   en `pg_locks` que la transacción tiene el bloqueo de ese operador. Si no
+   lo tiene, fallan con una `LogicException`. Un alta nueva (`id === null`,
+   en `InviteOperatorHandler`) aún no tiene identificador; su unicidad por
+   correo sigue garantizada por el índice único. Un caso de uso nuevo que
+   olvide bloquear al modificar un operador falla en los tests, no en
+   producción.
 
 La colisión de `hashtext` entre dos correos distintos solo pone en fila dos
 casos sin relación, sin efecto sobre la corrección.

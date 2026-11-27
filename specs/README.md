@@ -45,7 +45,7 @@ specs/
 ```
 
 Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
-(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007), `EAC` (008), `EST` (009), `MAT` (010), `EVA` (011), `NAV` (013), `PLT` (014), `RLT` (015), `RVP` (016), `RSP` (017).
+(002), `CAT` (003), `IDG` (004), `AUD` (005), `INS` (006), `CAL` (007), `EAC` (008), `EST` (009), `MAT` (010), `EVA` (011), `DOC` (012), `NAV` (013), `PLT` (014), `RLT` (015), `RVP` (016), `RSP` (017).
 
 ## Índice
 
@@ -63,6 +63,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [009 Estudiantes y representantes](009-estudiantes/) | `Students` | implementada | implementada | implementada |
 | [010 Inscripción y prosecución](010-inscripcion/) | `Enrollment` (nuevo) | implementada | implementada | implementada |
 | [011 Evaluación](011-evaluacion/) | `Evaluation` (nuevo) | implementada | implementada | implementada |
+| [012 Documentos del plantel y verificación QR](012-documentos/) | `Documents` (nuevo) | borrador | — | — |
 | [013 Layout, menú e inicio por rol](013-layout-menu/) | `Workspace` (nuevo), `app/` | implementada | implementada | implementada |
 | [014 Superadministración de plataforma](014-superadministracion/) | `Platform` (nuevo) | implementada | implementada | implementada |
 | [015 RLS por transacción y cierre de la revisión de seguridad](015-rls-transaccion/) | `Tenancy` (transversal), `IdentityAccess`, `Students` | implementada | implementada | implementada |

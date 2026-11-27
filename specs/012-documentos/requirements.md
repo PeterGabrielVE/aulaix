@@ -1,8 +1,9 @@
 ---
 spec: 012-documentos
 prefijo: DOC
-estado: borrador
+estado: aprobada
 fecha: 2026-11-27
+aprobada: 2026-11-27
 backlog: F1-32, F1-33, F1-34, F1-35, F1-36 (alcance de documentos del plantel y QR; formatos oficiales MPPE/CDCE diferidos a F0-02)
 módulo: Documents (nuevo)
 depende-de: 005-auditoria, 006-institucion (datos, logo y firmas), 007-anio-escolar (lapsos cerrados), 008-estructura-academica (pensum, grados coordinados), 009-estudiantes (ficha, retiros), 010-inscripcion (inscripciones, prosecución, egreso), 011-evaluacion (notas, literales, informes), 013-layout-menu (menú), 016-revision-pendientes (definitiva tras revisión, pendientes, egreso)
@@ -81,6 +82,8 @@ plantel.
 | Permisos y alcance | Nuevo permiso `emitir-documentos`, asignado por defecto a Administrador, Director y Coordinador (este último acotado a sus grados coordinados), y asignable persona a persona a otros miembros activos. |
 | Privacidad del QR público | Muestra únicamente estado (`válido`, `anulado`, `vencido`), plantel (+ DEA si existe), tipo, año/lapso, fechas de emisión/vencimiento e iniciales del estudiante + últimos 4 dígitos de su cédula o cédula escolar. Nunca nombre completo ni calificaciones. |
 | Vigencia y anulación | Las constancias vigentes en el tiempo (estudio, inscripción, buena conducta) vencen a los 90 días por defecto (configurable 1–365 días). Boletas, constancias de retiro y de egreso/prosecución no vencen. Todo documento puede anularse con motivo obligatorio y sin borrado físico. |
+| Verificación QR con plantel inactivo | La página pública de verificación QR sigue respondiendo en solo lectura aunque el plantel esté desactivado, sin revelar el estado comercial ni el motivo de desactivación; emisión, descarga y anulación permanecen bloqueadas (RSP-R08). |
+| Constancia de buena conducta | Usa el texto estándar del plantel y admite una observación opcional breve de texto plano (hasta 300 caracteres); si se deja vacía no se muestra. La observación nunca aparece en la página pública del QR. |
 
 ## Glosario
 
@@ -210,10 +213,11 @@ solicitudes de las familias y terceros.
 - **DOC-R04.4** — Cuando una persona autorizada emite una **constancia de buena
   conducta** para un estudiante que tiene o tuvo al menos una inscripción no
   anulada en el plantel, el sistema deberá generar un PDF con el texto estándar
-  del plantel, el último grado y año escolar cursados, fecha de emisión, fecha
-  de vencimiento (90 días por defecto, configurable entre 1 y 365 días), firmas
-  y código QR. Si el estudiante nunca tuvo una inscripción válida en el
-  plantel, entonces el sistema deberá rechazarla.
+  del plantel, una observación opcional en texto plano (hasta 300 caracteres;
+  omitida si queda vacía), el último grado y año escolar cursados, fecha de
+  emisión, fecha de vencimiento (90 días por defecto, configurable entre 1 y
+  365 días), firmas y código QR. Si el estudiante nunca tuvo una inscripción
+  válida en el plantel, entonces el sistema deberá rechazarla.
 - **DOC-R04.5** — Cuando una persona autorizada emite una **constancia de
   prosecución o egreso** para un estudiante con resultado de prosecución o
   egreso registrado en un año escolar (SPEC-010, SPEC-016), el sistema deberá
@@ -224,8 +228,9 @@ solicitudes de las familias y terceros.
   estando «pendiente de egresar» con materias pendientes sin aprobar
   (RVP-R05.5)—, entonces el sistema deberá rechazarla.
 - **DOC-R04.6** — Si se indica una vigencia menor que 1 día o mayor que 365
-  días para una constancia con vencimiento, entonces el sistema deberá rechazar
-  la emisión.
+  días para una constancia con vencimiento, o si la observación opcional de una
+  constancia de buena conducta supera los 300 caracteres, entonces el sistema
+  deberá rechazar la emisión.
 
 ### DOC-R05 — Encabezado institucional, firmas e inmutabilidad
 
@@ -297,11 +302,16 @@ menor.
   - iniciales del estudiante y últimos 4 dígitos de su cédula o cédula escolar.
 - **DOC-R07.3** — El sistema no deberá mostrar en la página pública de
   verificación el nombre completo del estudiante, su cédula completa, sus
-  notas, literales, informes descriptivos, datos de representantes ni el motivo
-  interno de anulación.
+  notas, literales, informes descriptivos, datos de representantes, la
+  observación opcional de buena conducta ni el motivo interno de anulación.
 - **DOC-R07.4** — Si el código consultado no existe o pertenece a otro plantel,
   entonces el sistema deberá responder con el mismo mensaje neutral («Documento
   no encontrado») sin revelar si el código existe en otro plantel.
+- **DOC-R07.5** — Mientras el plantel esté inactivo (SPEC-014, RSP-R08), el
+  sistema deberá mantener disponible en solo lectura la página pública de
+  verificación por QR de sus documentos emitidos, sin revelar que el plantel
+  está inactivo ni el motivo de desactivación, y manteniendo bloqueadas la
+  emisión, la descarga y la anulación.
 
 ### DOC-R08 — Permisos, alcance y navegación
 
@@ -383,6 +393,10 @@ evitar emisiones indebidas.
 
 ## Cambios en otras specs
 
+- **SPEC-001** (`TEN-R03.3`): documentar que la ruta pública `GET` de
+  verificación por QR de SPEC-012 (`DOC-R07.5`) es la única lectura permitida
+  sobre el subdominio de un plantel inactivo, en transacción de solo lectura,
+  sin revelar su estado ni permitir escrituras ni inicio de sesión.
 - **SPEC-002** (`IAM-R11.1`): incorporar `emitir-documentos` en `Administrador`,
   `Director` y `Coordinador`.
 - **SPEC-013** (`NAV-R03`): incorporar la entrada «Documentos» en el grupo
@@ -394,6 +408,9 @@ evitar emisiones indebidas.
 
 ## Fuera de alcance y preguntas abiertas
 
+Ninguna pregunta abierta: todas están resueltas en [Decisiones de producto
+incorporadas](#decisiones-de-producto-incorporadas-2026-11-27).
+
 Fuera de alcance en SPEC-012:
 - Certificación de Calificaciones oficial MPPE (`RR-DEA-03-03`), Resumen Final
   de Rendimiento Estudiantil oficial MPPE (`RR-DEA-04-03` / `RR-DEA-05-03`),
@@ -403,17 +420,6 @@ Fuera de alcance en SPEC-012:
   `F2-07`);
 - asistencia en boletas (`Attendance`, `F2-03`);
 - editor visual de plantillas PDF y envío automático por correo/WhatsApp.
-
-Preguntas abiertas (para confirmar antes de aprobar `requirements.md`):
-
-- [ ] **Q1 — Verificación QR cuando el plantel está inactivo:** hoy un plantel
-  desactivado por la plataforma bloquea todo su subdominio (`TEN-R02`).
-  ¿Mantenemos ese comportamiento también para el QR público, o permitimos que
-  la verificación QR siga respondiendo en solo lectura para validar documentos
-  emitidos antes de la desactivación?
-- [ ] **Q2 — Constancia de buena conducta:** ¿basta el texto estándar fijo del
-  plantel o conviene permitir una observación opcional breve (p. ej. hasta 300
-  caracteres) escrita por quien la emite?
 
 ## Matriz de trazabilidad
 
@@ -451,6 +457,7 @@ Preguntas abiertas (para confirmar antes de aprobar `requirements.md`):
 | DOC-R07.2 | |
 | DOC-R07.3 | |
 | DOC-R07.4 | |
+| DOC-R07.5 | |
 | DOC-R08.1 | |
 | DOC-R08.2 | |
 | DOC-R08.3 | |

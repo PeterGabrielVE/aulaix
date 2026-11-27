@@ -49,6 +49,16 @@ final class EloquentEnrollmentList implements EnrollmentList
             ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
     }
 
+    public function inSection(int $sectionId): array
+    {
+        return DB::table('enrollments')
+            ->where('section_id', $sectionId)
+            ->whereNull('annulled_at')
+            ->orderBy('id')
+            ->get()
+            ->pipe(fn ($rows) => EnrollmentRows::manyToDomain($rows));
+    }
+
     public function currentStudentsOf(int $schoolYearId): array
     {
         return DB::table('enrollments')

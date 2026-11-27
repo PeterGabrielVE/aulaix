@@ -395,16 +395,23 @@ arch('the modules enrollments build on never depend on them', function () {
     expect(['AulaX\Students', 'AulaX\AcademicStructure', 'AulaX\AcademicCalendar'])->not->toUse('AulaX\Enrollment');
 });
 
-arch('no module depends on Evaluation', function () {
-    // SPEC-011, ADR 0012: Evaluation builds on Enrollment, AcademicStructure
-    // and AcademicCalendar through their public queries and extension
-    // points; nothing in src uses it back.
-    $others = collect(modules())
-        ->reject(fn (string $module) => $module === 'Evaluation')
-        ->map(fn (string $module) => "AulaX\\{$module}")
-        ->all();
-
-    expect($others)->not->toUse('AulaX\Evaluation');
+arch('the modules Evaluation builds on never depend on it', function () {
+    // SPEC-011, SPEC-012, ADR 0012: Evaluation builds on these upstream
+    // modules through their public queries and extension points; none of
+    // them may depend back on Evaluation. Downstream consumers (Documents)
+    // read Evaluation's public Application queries only (A-06).
+    expect([
+        'AulaX\Shared',
+        'AulaX\Catalogs',
+        'AulaX\Tenancy',
+        'AulaX\Audit',
+        'AulaX\IdentityAccess',
+        'AulaX\AcademicCalendar',
+        'AulaX\Students',
+        'AulaX\AcademicStructure',
+        'AulaX\Enrollment',
+        'AulaX\Platform',
+    ])->not->toUse('AulaX\Evaluation');
 });
 
 arch('only the provider of Evaluation puts its reactions under the extension points', function () {

@@ -35,6 +35,17 @@ final class SwitchingTenantActivator implements TenantActivator
         return $handle();
     }
 
+    public function forReadOnlyRequest(TenantContext $context, callable $handle): mixed
+    {
+        $this->activate($context);
+
+        try {
+            return $handle();
+        } finally {
+            $this->deactivate();
+        }
+    }
+
     public function within(TenantContext $context, callable $operation): mixed
     {
         $previous = $this->tenant->context();

@@ -21,6 +21,15 @@ final class EloquentInstitutionRepository implements InstitutionRepository
         return $model === null ? null : InstitutionMapper::toDomain($model);
     }
 
+    public function findBySubdomain(Subdomain $subdomain): ?Institution
+    {
+        $model = InstitutionModel::query()
+            ->where('subdomain', $subdomain->value)
+            ->first();
+
+        return $model === null ? null : InstitutionMapper::toDomain($model);
+    }
+
     public function byId(InstitutionId $id): ?Institution
     {
         $model = InstitutionModel::query()->find($id->value);

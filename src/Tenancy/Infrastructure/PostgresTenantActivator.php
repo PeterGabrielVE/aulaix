@@ -52,6 +52,25 @@ final readonly class PostgresTenantActivator implements TenantActivator
         return $result;
     }
 
+    public function forReadOnlyRequest(TenantContext $context, callable $handle): mixed
+    {
+        $this->connection->beginTransaction();
+
+        try {
+            // In production and isolation tests, transactionLevel() is 1 (fresh top-level
+            // transaction), so PostgreSQL enforces read-only at the engine level (25006).
+            if ($this->connection->transactionLevel() === 1) {
+                $this->connection->unprepared('SET TRANSACTION READ ONLY');
+            }
+            $this->activate($context);
+
+            return $handle();
+        } finally {
+            $this->clearMemory();
+            $this->connection->rollBack();
+        }
+    }
+
     public function activate(TenantContext $context): void
     {
         if ($this->connection->transactionLevel() === 0) {

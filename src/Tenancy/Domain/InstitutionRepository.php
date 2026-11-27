@@ -19,6 +19,12 @@ interface InstitutionRepository
      */
     public function findActiveBySubdomain(Subdomain $subdomain): ?Institution;
 
+    /**
+     * The institution at this subdomain regardless of active/inactive status.
+     * Used exclusively by ResolveTenantForVerificationHandler (SPEC-012 DOC-R07.5, ADR 0015).
+     */
+    public function findBySubdomain(Subdomain $subdomain): ?Institution;
+
     public function byId(InstitutionId $id): ?Institution;
 
     /**

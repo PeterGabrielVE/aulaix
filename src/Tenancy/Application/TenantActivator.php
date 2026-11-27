@@ -28,6 +28,18 @@ interface TenantActivator
     public function forRequest(TenantContext $context, callable $handle, callable $keep): mixed;
 
     /**
+     * Serves a strictly read-only public request (SPEC-012 DOC-R07.5, ADR 0015)
+     * in a PostgreSQL `SET TRANSACTION READ ONLY` transaction under RLS,
+     * rolling back unconditionally when $handle finishes.
+     *
+     * @template T
+     *
+     * @param  callable(): T  $handle
+     * @return T
+     */
+    public function forReadOnlyRequest(TenantContext $context, callable $handle): mixed;
+
+    /**
      * The institution for the rest of the current transaction. Used by
      * forRequest() and by the test helpers; the application switches with
      * within() (an architecture test).

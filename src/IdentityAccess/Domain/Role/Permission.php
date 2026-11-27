@@ -39,4 +39,7 @@ enum Permission: string
 
     /** SPEC-007 CAL-R05.2: grades of a closed term. Granted person by person, never by a base role (CAL-R05.4). */
     case EditClosedTermGrades = 'editar-notas-lapso-cerrado';
+
+    /** SPEC-012 DOC-R08.1: issuing, listing, re-downloading and voiding institution documents. */
+    case IssueDocuments = 'emitir-documentos';
 }

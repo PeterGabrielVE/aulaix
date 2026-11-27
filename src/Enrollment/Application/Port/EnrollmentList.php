@@ -27,6 +27,11 @@ interface EnrollmentList
     public function currentIn(int $sectionId): array;
 
     /**
+     * @return list<Enrollment> Every non-annulled enrollment of a section (current or ended, e.g. withdrawn after a closed term; SPEC-012 DOC-R01.6, R03.1).
+     */
+    public function inSection(int $sectionId): array;
+
+    /**
      * @return list<int> Students with a current enrollment in the year.
      */
     public function currentStudentsOf(int $schoolYearId): array;

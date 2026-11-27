@@ -37,6 +37,17 @@ final class InMemoryInstitutionRepository implements InstitutionRepository
         return null;
     }
 
+    public function findBySubdomain(Subdomain $subdomain): ?Institution
+    {
+        foreach ($this->institutions as $institution) {
+            if ($institution->subdomain->value === $subdomain->value) {
+                return $institution;
+            }
+        }
+
+        return null;
+    }
+
     public function byId(InstitutionId $id): ?Institution
     {
         return $this->institutions[$id->value] ?? null;

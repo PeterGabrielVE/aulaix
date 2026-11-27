@@ -129,6 +129,14 @@ final class InMemoryEnrollmentRepository implements EnrollmentList, EnrollmentRe
         return array_values(array_filter($this->current(), fn (Enrollment $enrollment) => $enrollment->placement()->sectionId === $sectionId));
     }
 
+    public function inSection(int $sectionId): array
+    {
+        return array_values(array_filter(
+            $this->enrollments,
+            fn (Enrollment $enrollment) => $enrollment->placement()->sectionId === $sectionId && $enrollment->annulment() === null,
+        ));
+    }
+
     public function currentStudentsOf(int $schoolYearId): array
     {
         return array_values(array_map(

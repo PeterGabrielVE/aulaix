@@ -1,7 +1,8 @@
 ---
 spec: 012-documentos
-estado: borrador
+estado: implementando
 fecha: 2026-11-27
+aprobada: 2026-11-27
 diseño: design.md
 adr: ../adr/0015-documentos-pdf-inmutables-y-verificacion-qr.md
 ---
@@ -21,7 +22,7 @@ Reglas:
 
 ## PR A — Fundaciones, dominio, datos, permisos y motor PDF/QR
 
-- [ ] **T-01** — Instalar `dompdf/dompdf` (`^3.1`), verificar `composer audit
+- [x] **T-01** — Instalar `dompdf/dompdf` (`^3.1`), verificar `composer audit
   --locked` y actualizar la regla `no module depends on Evaluation` en
   `tests/Architecture/LayersTest.php` para que proteja a los módulos base sin
   bloquear a `Documents` (`A-06`).
@@ -31,7 +32,7 @@ Reglas:
     `composer audit --locked` pasa sin vulnerabilidades y `LayersTest` está en
     verde.
 
-- [ ] **T-02** — Permiso `emitir-documentos`: añadir `Permission::IssueDocuments`
+- [x] **T-02** — Permiso `emitir-documentos`: añadir `Permission::IssueDocuments`
   a `src/IdentityAccess/Domain/Role/Permission.php`, asignarlo por defecto a
   `Administrador`, `Director` y `Coordinador` en `BaseRole.php`, y crear la
   migración de datos idempotente `grant_issue_documents_permission` (con `up()`
@@ -42,7 +43,7 @@ Reglas:
     (vía migración) conceden `emitir-documentos` a los tres roles y el permiso
     se puede asignar persona a persona.
 
-- [ ] **T-03** — Capa de dominio de `src/Documents/Domain/`:
+- [x] **T-03** — Capa de dominio de `src/Documents/Domain/`:
   `DocumentId`, `DocumentKind`, `DocumentStatus`, `VerificationCode` (128 bits
   de entropía, normalización, SHA-256, `codeHint`), `StudentPublicSummary`
   (iniciales + últimos 4 dígitos), `ValidityPeriod` (1–365 días),
@@ -59,7 +60,7 @@ Reglas:
   - Hecho cuando: todas las invariantes de dominio tienen tests unitarios sin
     Laravel en verde y `LayersTest` confirma que `Documents\Domain` es PHP puro.
 
-- [ ] **T-04** — Persistencia de documentos emitidos: migración
+- [x] **T-04** — Persistencia de documentos emitidos: migración
   `create_issued_documents_table` (`belongsToInstitution()`,
   `RowLevelSecurity::enable()`, constraints `CHECK` e índices),
   `IssuedDocumentModel`, `IssuedDocumentMapper`,
@@ -72,7 +73,7 @@ Reglas:
     inconsistentes, `migrate:reset` + `migrate` funcionan limpio y `TenantTableTest`
     pasa.
 
-- [ ] **T-05** — Almacenamiento privado y motor PDF/QR: puertos
+- [x] **T-05** — Almacenamiento privado y motor PDF/QR: puertos
   `DocumentStorage`, `PdfRenderer`, `QrCodeGenerator`; adaptadores
   `LaravelDocumentStorage` (`institutions/{id}/documents/{random40}.pdf`,
   `isOwn()` estricto, contabilizado por `UsedStorageQuery`),
@@ -89,7 +90,7 @@ Reglas:
     y QR esperados, escapan inyección HTML sin abrir conexiones remotas y
     `UsedStorageQuery` refleja su peso.
 
-- [ ] **T-06** — Consultas públicas entre módulos (`A-06`) y proveedor de
+- [x] **T-06** — Consultas públicas entre módulos (`A-06`) y proveedor de
   `Documents`:
   - en `Tenancy`: `InstitutionProfileQuery` (datos del encabezado + nombres y
     cargos de firmas + aviso de faltantes), `ResolveTenantForVerificationHandler`

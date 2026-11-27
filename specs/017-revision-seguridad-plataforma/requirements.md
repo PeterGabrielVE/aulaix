@@ -1,7 +1,8 @@
 ---
 spec: 017-revision-seguridad-plataforma
 prefijo: RSP
-estado: borrador
+estado: aprobada
+aprobada: 2026-11-11
 fecha: 2026-11-11
 módulo: Platform, IdentityAccess, Students, Tenancy
 depende-de: 004-identidad-global (IDG-R11), 009-estudiantes (EST-R07), 014-superadministracion, 015-rls-transaccion (RLT-R03.2)

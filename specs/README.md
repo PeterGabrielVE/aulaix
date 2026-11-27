@@ -67,7 +67,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [014 Superadministración de plataforma](014-superadministracion/) | `Platform` (nuevo) | implementada | implementada | implementada |
 | [015 RLS por transacción y cierre de la revisión de seguridad](015-rls-transaccion/) | `Tenancy` (transversal), `IdentityAccess`, `Students` | implementada | implementada | implementada |
 | [016 Revisión y materias pendientes](016-revision-pendientes/) | `Evaluation` | implementada | implementada | implementada |
-| [017 Cierre de la revisión de seguridad de SPEC-014](017-revision-seguridad-plataforma/) | `Platform`, `IdentityAccess`, `Students`, `Tenancy` | borrador | — | — |
+| [017 Cierre de la revisión de seguridad de SPEC-014](017-revision-seguridad-plataforma/) | `Platform`, `IdentityAccess`, `Students`, `Tenancy` | aprobada | borrador | — |
 
 ¹ Los requisitos de 001–003 documentan el comportamiento que **ya existe**
 (Fase 1, F1-01 a F1-07), extraído del código y de los tests actuales. Los
@@ -108,3 +108,4 @@ Las specs siguientes de la Fase 1 y sus bloqueos están en [roadmap.md](roadmap.
 | [0011](adr/0011-plantel-activo-por-transaccion.md) | El plantel activo vive en la transacción, no en la conexión | aceptado |
 | [0012](adr/0012-extension-sincrona-entre-modulos.md) | Reacciones entre módulos dentro de la misma transacción, por puntos de extensión | aceptado |
 | [0013](adr/0013-dueno-del-plan-de-evaluacion.md) | El plan de evaluación pertenece a una sección o a un grupo de pendientes | aceptado |
+| [0014](adr/0014-carreras-de-plataforma-e-identidad.md) | Carreras en operadores, consolidaciones y estado de los planteles: bloqueos consultivos por transacción | propuesta |

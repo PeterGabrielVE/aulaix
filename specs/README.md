@@ -63,7 +63,7 @@ Prefijos de IDs de requisitos por spec: `FND` (000), `TEN` (001), `IAM`
 | [009 Estudiantes y representantes](009-estudiantes/) | `Students` | implementada | implementada | implementada |
 | [010 Inscripción y prosecución](010-inscripcion/) | `Enrollment` (nuevo) | implementada | implementada | implementada |
 | [011 Evaluación](011-evaluacion/) | `Evaluation` (nuevo) | implementada | implementada | implementada |
-| [012 Documentos del plantel y verificación QR](012-documentos/) | `Documents` (nuevo) | aprobada | borrador | — |
+| [012 Documentos del plantel y verificación QR](012-documentos/) | `Documents` (nuevo) | aprobada | aprobada | borrador |
 | [013 Layout, menú e inicio por rol](013-layout-menu/) | `Workspace` (nuevo), `app/` | implementada | implementada | implementada |
 | [014 Superadministración de plataforma](014-superadministracion/) | `Platform` (nuevo) | implementada | implementada | implementada |
 | [015 RLS por transacción y cierre de la revisión de seguridad](015-rls-transaccion/) | `Tenancy` (transversal), `IdentityAccess`, `Students` | implementada | implementada | implementada |
@@ -110,4 +110,4 @@ Las specs siguientes de la Fase 1 y sus bloqueos están en [roadmap.md](roadmap.
 | [0012](adr/0012-extension-sincrona-entre-modulos.md) | Reacciones entre módulos dentro de la misma transacción, por puntos de extensión | aceptado |
 | [0013](adr/0013-dueno-del-plan-de-evaluacion.md) | El plan de evaluación pertenece a una sección o a un grupo de pendientes | aceptado |
 | [0014](adr/0014-carreras-de-plataforma-e-identidad.md) | Carreras en operadores, consolidaciones y estado de los planteles: bloqueos consultivos por transacción | aceptada |
-| [0015](adr/0015-documentos-pdf-inmutables-y-verificacion-qr.md) | Generación de PDF, almacenamiento inmutable y verificación QR de documentos del plantel | propuesta |
+| [0015](adr/0015-documentos-pdf-inmutables-y-verificacion-qr.md) | Generación de PDF, almacenamiento inmutable y verificación QR de documentos del plantel | aceptada |

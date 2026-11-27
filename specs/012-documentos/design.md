@@ -1,7 +1,8 @@
 ---
 spec: 012-documentos
-estado: borrador
+estado: aprobada
 fecha: 2026-11-27
+aprobada: 2026-11-27
 requisitos: requirements.md
 adr: ../adr/0015-documentos-pdf-inmutables-y-verificacion-qr.md
 ---

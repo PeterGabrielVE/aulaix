@@ -1,8 +1,9 @@
 ---
 adr: 0015
 título: Generación de PDF, almacenamiento inmutable y verificación QR de documentos del plantel
-estado: propuesta
+estado: aceptada
 fecha: 2026-11-27
+aceptada: 2026-11-27
 spec: 012-documentos
 ---
 

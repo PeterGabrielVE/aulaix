@@ -56,6 +56,8 @@ test('a preview shows the changes and changes nothing (PLT-R06.3)', function () 
 });
 
 test('consolidating needs a reason and the proof of ownership, and changes nothing without them (PLT-R06.2)', function () {
+    $this->post(adminUrl("/consolidaciones/{$this->older->id}/vista-previa"), ['accounts' => $this->accounts, 'decision' => 'consolidate', 'reason' => 'Verificada', 'verification_ref' => 'TICKET-1']);
+
     $this->from(adminUrl("/consolidaciones/{$this->older->id}"))
         ->post(adminUrl("/consolidaciones/{$this->older->id}/resolver"), ['accounts' => $this->accounts, 'decision' => 'consolidate', 'reason' => 'Verificada', 'verification_ref' => ''])
         ->assertSessionHasErrors('general');
@@ -67,6 +69,9 @@ test('consolidating needs a reason and the proof of ownership, and changes nothi
 });
 
 test('resolving merges the case and records it with the operator of the session (PLT-R06.5)', function () {
+    $this->post(adminUrl("/consolidaciones/{$this->older->id}/vista-previa"), ['accounts' => $this->accounts, 'decision' => 'consolidate', 'reason' => 'Cédula verificada', 'verification_ref' => 'TICKET-1'])
+        ->assertRedirect();
+
     $this->post(adminUrl("/consolidaciones/{$this->older->id}/resolver"), ['accounts' => $this->accounts, 'decision' => 'consolidate', 'reason' => 'Cédula verificada', 'verification_ref' => 'TICKET-1'])
         ->assertRedirect(adminUrl('/consolidaciones'))
         ->assertSessionHasNoErrors();
@@ -79,6 +84,9 @@ test('resolving merges the case and records it with the operator of the session 
 });
 
 test('a case that changed since it was opened is refused untouched (PLT-R06.4)', function () {
+    $this->post(adminUrl("/consolidaciones/{$this->older->id}/vista-previa"), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Son dos personas'])
+        ->assertRedirect();
+
     DB::table('users')->where('id', $this->newer->id)->update(['consolidation_state' => 'pending']);
 
     $this->post(adminUrl("/consolidaciones/{$this->older->id}/resolver"), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Son dos personas'])
@@ -86,6 +94,27 @@ test('a case that changed since it was opened is refused untouched (PLT-R06.4)',
 
     expect(User::query()->where('email', 'ana@example.com')->count())->toBe(2)
         ->and(DB::table('platform_audit_entries')->where('event_type', 'identity.consolidation.refused')->value('operator'))->toBe("operador #{$this->luis->value}");
+});
+
+test('direct POST to resolve without a matching preview is refused and audited (RSP-R05.1, R05.2)', function () {
+    $this->from(adminUrl("/consolidaciones/{$this->older->id}"))
+        ->post(adminUrl("/consolidaciones/{$this->older->id}/resolver"), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Sin vista previa'])
+        ->assertSessionHasErrors(['preview' => 'Revisa la vista previa antes de resolver.']);
+
+    expect(User::query()->where('email', 'ana@example.com')->pluck('consolidation_state')->unique()->all())->toBe(['review'])
+        ->and(DB::table('platform_audit_entries')->where('event_type', 'platform.consolidation.resolve_refused')->exists())->toBeTrue();
+});
+
+test('previewing or resolving with accounts that do not belong to the route case is refused (RSP-R05.4)', function () {
+    $this->from(adminUrl('/consolidaciones/999999'))
+        ->post(adminUrl('/consolidaciones/999999/vista-previa'), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Otra ruta'])
+        ->assertSessionHasErrors(['accounts' => 'Esas cuentas no son las de este caso.']);
+
+    $this->from(adminUrl('/consolidaciones/999999'))
+        ->post(adminUrl('/consolidaciones/999999/resolver'), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Otra ruta'])
+        ->assertSessionHasErrors(['accounts' => 'Esas cuentas no son las de este caso.']);
+
+    expect(User::query()->where('email', 'ana@example.com')->pluck('consolidation_state')->unique()->all())->toBe(['review']);
 });
 
 test('resolving needs a fresh TOTP', function () {

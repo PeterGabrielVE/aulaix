@@ -28,6 +28,7 @@ final readonly class ResolveConsolidationCaseHandler
     public function __construct(
         private ConsolidationOperators $operators,
         private AccountRepository $accounts,
+        private ConsolidationLock $locks,
         private AccountConsolidator $consolidator,
         private AuditTrail $audit,
         private TransactionManager $transactions,
@@ -39,59 +40,18 @@ final readonly class ResolveConsolidationCaseHandler
     public function __invoke(ResolveConsolidationCaseCommand $command): CaseResolution
     {
         try {
-            $group = $this->checked($command);
+            return $this->execute($command);
         } catch (CaseResolutionRefused $refused) {
             $this->recordRefusal($command, $refused);
 
             throw $refused;
         }
-
-        $verificationRef = trim((string) $command->verificationRef);
-        $ids = array_map(fn (Account $account) => $account->id->value, $group);
-        sort($ids);
-
-        $resolution = $command->decision === ConsolidationDecision::Consolidate
-            ? new CaseResolution($command->decision, $ids[0], array_slice($ids, 1), ! $command->dryRun)
-            : new CaseResolution($command->decision, null, $ids, ! $command->dryRun);
-
-        if ($command->dryRun) {
-            return $resolution;
-        }
-
-        $context = [
-            FieldChange::of('decision', null, $command->decision->value),
-            FieldChange::of('reason', null, trim($command->reason)),
-        ];
-
-        if ($command->decision === ConsolidationDecision::Consolidate) {
-            $this->consolidator->consolidate($group, null, [...$context, FieldChange::of('verification_ref', null, $verificationRef)]);
-
-            return $resolution;
-        }
-
-        $this->transactions->run(function () use ($group, $ids, $context) {
-            foreach ($group as $account) {
-                $this->accounts->save($account->keptSeparate());
-            }
-
-            $this->audit->recordForPlatform(AuditEvent::of(
-                'identity.account.kept_separate',
-                AuditSubject::of('account', $ids[0]),
-                [FieldChange::of('accounts', null, $ids), ...$context],
-            ));
-        });
-
-        return $resolution;
     }
 
     /**
-     * The operator, the reason, the proof of ownership and the case itself.
-     *
-     * @return list<Account>
-     *
      * @throws CaseResolutionRefused
      */
-    private function checked(ResolveConsolidationCaseCommand $command): array
+    private function execute(ResolveConsolidationCaseCommand $command): CaseResolution
     {
         if (trim($command->operator) === '' || ! $this->operators->isAuthorized($command->operator)) {
             throw CaseResolutionRefused::operatorNotAuthorized();
@@ -101,11 +61,83 @@ final readonly class ResolveConsolidationCaseHandler
             throw CaseResolutionRefused::missing('el motivo');
         }
 
-        if ($command->decision === ConsolidationDecision::Consolidate && trim((string) $command->verificationRef) === '') {
+        $verificationRef = trim((string) $command->verificationRef);
+
+        if ($command->decision === ConsolidationDecision::Consolidate && $verificationRef === '') {
             throw CaseResolutionRefused::missing('la referencia de la verificación de titularidad');
         }
 
-        return $this->caseOf($command->accountIds);
+        $requested = array_values(array_unique($command->accountIds));
+        sort($requested);
+
+        // Read outside the lock only to learn which email to lock (ADR 0014, rule 1).
+        $first = count($requested) >= 2 ? $this->accounts->byId(AccountId::fromInt($requested[0])) : null;
+
+        if ($first === null) {
+            throw CaseResolutionRefused::notUnderReview();
+        }
+
+        $email = $first->email;
+        $checkGroup = fn (array $group): array => $this->assertUnderReview($group, $requested);
+
+        if ($command->dryRun) {
+            return $this->transactions->run(function () use ($email, $checkGroup, $command, $requested) {
+                $this->locks->lockEmail($email);
+                $checkGroup($this->accounts->byEmail($email));
+
+                // SPEC-017 RSP-R07.2, R07.3: audit the preview with ids and decision only (no PII).
+                $this->audit->recordForPlatform(AuditEvent::of(
+                    'identity.consolidation.previewed',
+                    AuditSubject::of('account', $requested[0]),
+                    [
+                        FieldChange::of('decision', null, $command->decision->value),
+                        FieldChange::of('accounts', null, $requested),
+                    ],
+                ));
+
+                return $command->decision === ConsolidationDecision::Consolidate
+                    ? new CaseResolution($command->decision, $requested[0], array_slice($requested, 1), false)
+                    : new CaseResolution($command->decision, null, $requested, false);
+            });
+        }
+
+        $context = [
+            FieldChange::of('decision', null, $command->decision->value),
+            FieldChange::of('reason', null, trim($command->reason)),
+        ];
+
+        if ($command->decision === ConsolidationDecision::Consolidate) {
+            $survivor = $this->consolidator->consolidate(
+                $email,
+                $checkGroup,
+                null,
+                [...$context, FieldChange::of('verification_ref', null, $verificationRef)],
+            );
+
+            return new CaseResolution(
+                $command->decision,
+                $survivor->id->value,
+                array_values(array_filter($requested, fn (int $id) => $id !== $survivor->id->value)),
+                true,
+            );
+        }
+
+        $this->transactions->run(function () use ($email, $checkGroup, $requested, $context) {
+            $this->locks->lockEmail($email);
+            $group = $checkGroup($this->accounts->byEmail($email));
+
+            foreach ($group as $account) {
+                $this->accounts->save($account->keptSeparate());
+            }
+
+            $this->audit->recordForPlatform(AuditEvent::of(
+                'identity.account.kept_separate',
+                AuditSubject::of('account', $requested[0]),
+                [FieldChange::of('accounts', null, $requested), ...$context],
+            ));
+        });
+
+        return new CaseResolution($command->decision, null, $requested, true);
     }
 
     /**
@@ -129,26 +161,18 @@ final readonly class ResolveConsolidationCaseHandler
     }
 
     /**
-     * Every account sharing the email, all still under review (IDG-R11.5).
+     * Every account sharing the email, all still under review (IDG-R11.5, RSP-R04).
      *
-     * @param  list<int>  $accountIds
+     * @param  list<Account>  $group
+     * @param  list<int>  $requested  Already unique and sorted.
      * @return list<Account>
      *
      * @throws CaseResolutionRefused
      */
-    private function caseOf(array $accountIds): array
+    private function assertUnderReview(array $group, array $requested): array
     {
-        $requested = array_values(array_unique($accountIds));
-        $first = count($requested) >= 2 ? $this->accounts->byId(AccountId::fromInt($requested[0])) : null;
-
-        if ($first === null) {
-            throw CaseResolutionRefused::notUnderReview();
-        }
-
-        $group = $this->accounts->byEmail($first->email);
         $groupIds = array_map(fn (Account $account) => $account->id->value, $group);
         sort($groupIds);
-        sort($requested);
 
         if ($groupIds !== $requested) {
             throw CaseResolutionRefused::notUnderReview();

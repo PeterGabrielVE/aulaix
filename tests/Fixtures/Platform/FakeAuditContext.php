@@ -12,6 +12,8 @@ final class FakeAuditContext implements AuditContext
 {
     public ?int $platformOperator = null;
 
+    public ?string $consoleOperator = null;
+
     public function actorId(): ?int
     {
         return null;
@@ -22,7 +24,10 @@ final class FakeAuditContext implements AuditContext
         return $this->platformOperator === null ? AuditOrigin::system() : AuditOrigin::platform('127.0.0.1', $this->platformOperator);
     }
 
-    public function actAsConsoleOperator(string $operator): void {}
+    public function actAsConsoleOperator(string $operator): void
+    {
+        $this->consoleOperator = $operator;
+    }
 
     public function actAsPlatformOperator(int $operatorId): void
     {

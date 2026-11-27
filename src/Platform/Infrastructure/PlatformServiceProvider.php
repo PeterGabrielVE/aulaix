@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AulaX\Platform\Infrastructure;
 
 use AulaX\Platform\Application\Port\ConsolidationDesk;
+use AulaX\Platform\Application\Port\ConsolidationPreviews;
 use AulaX\Platform\Application\Port\InstitutionDirectory;
 use AulaX\Platform\Application\Port\InstitutionNotifier;
 use AulaX\Platform\Application\Port\InstitutionUsage;
@@ -51,6 +52,7 @@ final class PlatformServiceProvider extends ServiceProvider
         InstitutionUsage::class => TenantScopedInstitutionUsage::class,
         InstitutionNotifier::class => MailInstitutionNotifier::class,
         ConsolidationDesk::class => IdentityConsolidationDesk::class,
+        ConsolidationPreviews::class => SessionConsolidationPreviews::class,
     ];
 
     public function register(): void

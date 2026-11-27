@@ -231,7 +231,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 4 — Consolidaciones concurrentes y vista previa auditada (`IdentityAccess`)
 
-- [ ] **T-11** — Puerto `ConsolidationLock` y refactor de
+- [x] **T-11** — Puerto `ConsolidationLock` y refactor de
   `AccountConsolidator`, `ResolveConsolidationCaseHandler` y
   `CompleteConsolidationHandler` en `src/IdentityAccess/`:
   - nuevo puerto `ConsolidationLock::lockEmail(EmailAddress)`;
@@ -268,7 +268,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 5 — Vista previa en servidor y bitácora del panel (`Platform`)
 
-- [ ] **T-12** — Puerto `ConsolidationPreviews` +
+- [x] **T-12** — Puerto `ConsolidationPreviews` +
   `SessionConsolidationPreviews`, `ListCasesQuery`, `PreviewResolutionQuery`,
   `ResolveCaseHandler` y `ConsolidationController`:
   - `ConsolidationPreviews` (`remember`, `matches`, `forget`) implementado en
@@ -305,7 +305,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 6 — Autenticación TOTP y confirmación en la consola
 
-- [ ] **T-13** — `AuthenticateConsoleOperatorHandler` en `src/Platform/` y
+- [x] **T-13** — `AuthenticateConsoleOperatorHandler` en `src/Platform/` y
   actualización del comando `app/Console/Commands/ResolveConsolidationCase.php`:
   - `AuthenticateConsoleOperatorHandler` usa `CodeAttempt` sin contraseña,
     aceptando únicamente TOTP (un código de recuperación cuenta como fallo y

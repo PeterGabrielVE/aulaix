@@ -412,32 +412,32 @@ Sin preguntas abiertas.
 | RSP-R03.9 | `tests/Unit/Platform/Domain/OperatorTest.php` › «accepts codes again with failures reset once the 15-minute lockout expires»; `tests/Feature/Platform/OperatorLockoutTest.php` › «blocks an operator for 15 minutes after 10 failed codes across distinct IPs, audits, emails and closes open sessions» |
 | RSP-R03.10 | `tests/Unit/Platform/Domain/OperatorTest.php` › «offers no method to lift a lockout early» |
 | RSP-R03.11 | `tests/Unit/Platform/Domain/OperatorTest.php` › «resetting MFA lifts an active lockout and clears failures»; `tests/Feature/Platform/OperatorLockoutTest.php` › «resetting MFA of a blocked operator lifts the lockout and clears failures» |
-| RSP-R04.1 | |
-| RSP-R04.2 | |
-| RSP-R04.3 | |
-| RSP-R04.4 | |
-| RSP-R05.1 | |
-| RSP-R05.2 | |
-| RSP-R05.3 | |
-| RSP-R05.4 | |
-| RSP-R06.1 | |
-| RSP-R06.2 | |
-| RSP-R06.3 | |
-| RSP-R06.4 | |
-| RSP-R06.5 | |
-| RSP-R06.6 | |
-| RSP-R06.7 | |
-| RSP-R06.8 | |
-| RSP-R07.1 | |
-| RSP-R07.2 | |
-| RSP-R07.3 | |
+| RSP-R04.1 | `tests/Isolation/ConsolidationLockTest.php` › «separate wins and blocks a concurrent consolidation with no email or session revocation»; `tests/Isolation/ConsolidationLockTest.php` › «consolidate wins and blocks a concurrent separate resolution» |
+| RSP-R04.2 | `tests/Isolation/ConsolidationLockTest.php` › «separate wins and blocks a concurrent consolidation with no email or session revocation»; `tests/Isolation/ConsolidationLockTest.php` › «consolidate wins and blocks a concurrent separate resolution» |
+| RSP-R04.3 | `tests/Isolation/ConsolidationLockTest.php` › «separate wins and blocks a concurrent consolidation with no email or session revocation»; `tests/Unit/IdentityAccess/Application/ResolveConsolidationCaseTest.php` › «refuses consolidation without email or session revocation if accounts became separated while waiting for the lock» |
+| RSP-R04.4 | `tests/Unit/IdentityAccess/Application/AccountConsolidatorTest.php` › «locks the email before re-reading and triggers no side effects when the check refuses»; `tests/Isolation/ConsolidationLockTest.php` › «separate wins and blocks a concurrent consolidation with no email or session revocation» |
+| RSP-R05.1 | `tests/Unit/Platform/Application/ConsolidationTest.php` › «refuses resolving without a matching preview, when expired, or with a different decision or accounts, and audits the refusal (RSP-R05.1, R05.2)»; `tests/Feature/Platform/ConsolidationTest.php` › «direct POST to resolve without a matching preview is refused and audited (RSP-R05.1, R05.2)» |
+| RSP-R05.2 | `tests/Feature/Platform/ConsolidationTest.php` › «direct POST to resolve without a matching preview is refused and audited (RSP-R05.1, R05.2)» |
+| RSP-R05.3 | `tests/Unit/Platform/Application/ConsolidationTest.php` › «resolves a case for real, with the operator of the session (PLT-R06.5)» |
+| RSP-R05.4 | `tests/Unit/Platform/Application/ConsolidationTest.php` › «refuses when the route case account is not part of the submitted accounts (RSP-R05.4)»; `tests/Feature/Platform/ConsolidationTest.php` › «previewing or resolving with accounts that do not belong to the route case is refused (RSP-R05.4)» |
+| RSP-R06.1 | `tests/Unit/Platform/Application/AuthenticateConsoleOperatorTest.php` › «authenticates an active operator with a fresh TOTP and advances totpLastStep» |
+| RSP-R06.2 | `tests/Feature/Platform/ConsoleOperatorTest.php` › «wrong TOTP or recovery code is refused, audited and counted as a code failure (RSP-R06.2, R06.5, R06.7)»; `tests/Feature/Platform/ConsoleOperatorTest.php` › «inactive or blocked operator is refused in console and audited (RSP-R06.2)» |
+| RSP-R06.3 | `tests/Feature/Platform/ConsoleOperatorTest.php` › «command signature has no option or argument for the TOTP code (RSP-R06.3)» |
+| RSP-R06.4 | `tests/Unit/Platform/Application/AuthenticateConsoleOperatorTest.php` › «refuses a non-interactive call and audits without counting a code failure (RSP-R06.4)»; `tests/Feature/Platform/ConsoleOperatorTest.php` › «non-interactive execution is refused without changes and audited (RSP-R06.4)» |
+| RSP-R06.5 | `tests/Unit/Platform/Application/AuthenticateConsoleOperatorTest.php` › «rejects reused TOTP, unknown or inactive operator, and triggers lockout on the tenth failure»; `tests/Feature/Platform/ConsoleOperatorTest.php` › «wrong TOTP or recovery code is refused, audited and counted as a code failure (RSP-R06.2, R06.5, R06.7)» |
+| RSP-R06.6 | `tests/Feature/Platform/ConsoleOperatorTest.php` › «a TOTP used in the panel cannot be reused in the console and vice versa (RSP-R06.6)» |
+| RSP-R06.7 | `tests/Unit/Platform/Application/AuthenticateConsoleOperatorTest.php` › «rejects a recovery code in the console, counts it as a code failure and audits (RSP-R06.5, R06.7)»; `tests/Feature/Platform/ConsoleOperatorTest.php` › «wrong TOTP or recovery code is refused, audited and counted as a code failure (RSP-R06.2, R06.5, R06.7)» |
+| RSP-R06.8 | `tests/Feature/Platform/ConsoleOperatorTest.php` › «declining confirmation after preview leaves the accounts untouched and audits the preview (RSP-R06.8, R07.2, R07.3)» |
+| RSP-R07.1 | `tests/Unit/Platform/Application/ConsolidationTest.php` › «lists the cases to any operator (PLT-R06.1)»; `tests/Feature/Platform/ConsolidationAuditTest.php` › «listing consolidation cases records operator, date, IP and account ids without PII» |
+| RSP-R07.2 | `tests/Unit/IdentityAccess/Application/ResolveConsolidationCaseTest.php` › «records a dry-run preview in the platform log with only decision and account ids (RSP-R07.2, R07.3)»; `tests/Feature/Platform/ConsolidationAuditTest.php` › «successful panel preview records operator, decision and account ids without PII»; `tests/Feature/Platform/ConsoleOperatorTest.php` › «declining confirmation after preview leaves the accounts untouched and audits the preview (RSP-R06.8, R07.2, R07.3)» |
+| RSP-R07.3 | `tests/Feature/Platform/ConsolidationAuditTest.php` › «listing consolidation cases records operator, date, IP and account ids without PII»; `tests/Feature/Platform/ConsolidationAuditTest.php` › «successful panel preview records operator, decision and account ids without PII» |
 | RSP-R08.1 | |
 | RSP-R08.2 | |
 | RSP-R08.3 | |
 | RSP-R08.4 | |
 | RSP-R08.5 | |
 | RSP-R08.6 | |
-| RSP-NF01 | `tests/Isolation/OperatorLockTest.php` › «management and login, both orders: deactivation is never overwritten and leaves no open session» |
+| RSP-NF01 | `tests/Isolation/OperatorLockTest.php` › «management and login, both orders: deactivation is never overwritten and leaves no open session»; `tests/Isolation/ConsolidationLockTest.php` › «separate wins and blocks a concurrent consolidation with no email or session revocation» |
 | RSP-NF02 | `tests/Feature/Platform/Infrastructure/KeyedRecoveryCodeHasherTest.php` › «produces a 64-character keyed HMAC that differs from plain SHA-256 and changes with the secret»; `tests/Feature/Platform/Infrastructure/RecoveryCodeRehashMigrationTest.php` › «recovery codes generated before migration remain valid afterwards» |
 | RSP-NF03 | `tests/Unit/Platform/Application/SensitiveActionsNeedRecentTotpTest.php` › «refuses every sensitive platform use case when TOTP confirmation is older than 10 minutes» |
 | RSP-NF04 | `tests/Architecture/LayersTest.php` › «pg_advisory is confined to the advisory lock adapters»; `tests/Architecture/LayersTest.php` › «every Platform use case that updates an operator or its recovery codes takes OperatorLock» |

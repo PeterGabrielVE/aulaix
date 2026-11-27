@@ -107,6 +107,58 @@ final class PlatformAudit
         return AuditEvent::of('platform.consolidation_case.viewed', AuditSubject::of('account', $accountId));
     }
 
+    /**
+     * SPEC-017 RSP-R07.1, R07.3: records only account identifiers, never names,
+     * emails or institutions.
+     *
+     * @param  list<int>  $accountIds
+     */
+    public static function consolidationCasesListed(array $accountIds): AuditEvent
+    {
+        $ids = array_values(array_unique(array_map('intval', $accountIds)));
+        sort($ids);
+
+        return AuditEvent::of(
+            'platform.consolidation_cases.listed',
+            AuditSubject::of('consolidation_cases', 'panel'),
+            [FieldChange::of('accounts', null, $ids)],
+        );
+    }
+
+    /**
+     * SPEC-017 RSP-R05.2: refusal before reaching IdentityAccess (e.g. missing
+     * or expired preview).
+     *
+     * @param  list<int>  $accountIds
+     */
+    public static function consolidationResolveRefused(array $accountIds, string $reason): AuditEvent
+    {
+        $ids = array_values(array_unique(array_map('intval', $accountIds)));
+        sort($ids);
+
+        return AuditEvent::of(
+            'platform.consolidation.resolve_refused',
+            AuditSubject::of('account', $ids[0] ?? 'ninguna'),
+            [
+                FieldChange::of('accounts', null, $ids),
+                FieldChange::of('reason', null, $reason),
+            ],
+        );
+    }
+
+    /**
+     * SPEC-017 RSP-R06.2, R06.4: refused operator authentication in the console
+     * consolidation command.
+     */
+    public static function consoleAuthRefused(string $reason): AuditEvent
+    {
+        return AuditEvent::of(
+            'platform.console_auth.refused',
+            AuditSubject::of('platform_console', 'resolve'),
+            [FieldChange::of('reason', null, $reason)],
+        );
+    }
+
     public static function activityViewed(): AuditEvent
     {
         return AuditEvent::of('platform.activity.viewed', AuditSubject::of('platform_log', 'panel'));

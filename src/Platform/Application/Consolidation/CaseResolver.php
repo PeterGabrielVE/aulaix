@@ -29,6 +29,21 @@ abstract readonly class CaseResolver
     ) {}
 
     /**
+     * SPEC-017 RSP-R05.4: ensures the route's case account belongs to the
+     * submitted accounts list before simulating or applying.
+     *
+     * @param  list<int>  $accountIds
+     *
+     * @throws BusinessRuleViolation
+     */
+    protected function assertCaseAccount(int $caseAccountId, array $accountIds): void
+    {
+        if (! in_array($caseAccountId, array_map('intval', $accountIds), true)) {
+            throw BusinessRuleViolation::onField('accounts', 'Esas cuentas no son las de este caso.');
+        }
+    }
+
+    /**
      * @param  list<int>  $accountIds
      * @return array{decision: string, survivorId: ?int, affectedIds: list<int>, applied: bool}
      *

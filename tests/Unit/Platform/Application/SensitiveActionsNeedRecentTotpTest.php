@@ -18,6 +18,7 @@ use Tests\Fixtures\Platform\FakeConsolidationDesk;
 use Tests\Fixtures\Platform\FakeOperatorSession;
 use Tests\Fixtures\Platform\FakePlatformInstitutions;
 use Tests\Fixtures\Platform\FakeRecoveryCodeHasher;
+use Tests\Fixtures\Platform\InMemoryConsolidationPreviews;
 use Tests\Fixtures\Platform\InMemoryOperatorInvitationRepository;
 use Tests\Fixtures\Platform\InMemoryOperatorRepository;
 use Tests\Fixtures\Platform\RecordingOperatorMailer;
@@ -65,7 +66,7 @@ it('refuses every sensitive platform use case when TOTP confirmation is older th
     'regenerate recovery codes' => [fn () => (new RegenerateRecoveryCodesHandler($this->operators, $this->locks, $this->hasher, $this->session, $this->auditContext, $this->audit, $this->transactions, $this->clock))()],
     'invite operator from panel' => [fn () => (new InviteOperatorHandler($this->operators, $this->invitations, $this->session, $this->mailer, $this->auditContext, $this->audit, $this->transactions, $this->clock))('Nuevo', 'nuevo@aulax.ve', OperatorRole::Support, $this->boss)],
     'set institution active' => [fn () => (new SetInstitutionActiveHandler($this->operators, $this->session, $this->institutions, $this->institutions, $this->auditContext, $this->audit, $this->transactions, $this->clock))(7, false, 'Mora')],
-    'resolve consolidation case' => [fn () => (new ResolveCaseHandler($this->operators, $this->session, $this->desk, $this->auditContext, $this->clock))([11, 12], 'separate', 'Distintas personas', null)],
+    'resolve consolidation case' => [fn () => (new ResolveCaseHandler($this->operators, $this->session, $this->desk, $this->auditContext, $this->clock, new InMemoryConsolidationPreviews, $this->audit, $this->transactions))(11, [11, 12], 'separate', 'Distintas personas', null)],
 ]);
 
 it('still allows inviting the bootstrap operator from the console without a session', function () {

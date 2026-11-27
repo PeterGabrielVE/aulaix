@@ -5,7 +5,7 @@
 #   web — nginx serving public/ and proxying PHP to app:9000
 # (docker/php/Dockerfile is the development image: code is bind-mounted.)
 
-FROM php:8.4-fpm-alpine AS base
+FROM php:8.5-fpm-alpine AS base
 
 RUN apk add --no-cache libpq libzip libpng libjpeg-turbo freetype icu-libs \
     && apk add --no-cache --virtual .build-deps \

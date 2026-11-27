@@ -150,12 +150,14 @@ desactivar operadores, para que el equipo de soporte tenga el acceso justo.
   el sistema deberá cerrar sus sesiones abiertas.
 - **PLT-R03.5** — Si la acción dejaría la plataforma sin ningún
   Superadministrador activo, entonces el sistema deberá rechazarla.
+  *(Ampliado por SPEC-017 RSP-R02 para acciones simultáneas.)*
 - **PLT-R03.6** — Si un Superadministrador intenta desactivarse o quitarse
   el nivel a sí mismo, entonces el sistema deberá rechazarlo.
 - **PLT-R03.7** — Cuando un Superadministrador restablece el segundo factor
   de otro operador (dispositivo perdido), el sistema deberá anular su TOTP y
   sus códigos de recuperación, cerrar sus sesiones y pedirle configurarlo de
-  nuevo en su próximo acceso.
+  nuevo en su próximo acceso. *(Ampliado por SPEC-017 RSP-R03.11: también
+  levanta cualquier bloqueo activo y reinicia la cuenta de fallos.)*
 - **PLT-R03.8** — Si un operador de nivel Soporte intenta gestionar
   operadores, entonces el sistema deberá denegarlo.
 
@@ -220,7 +222,8 @@ desde el panel, con las mismas garantías que el comando de consola.
   titularidad (IDG-R11.2, R11.6).
 - **PLT-R06.3** — Antes de aplicar la decisión, el sistema deberá mostrar
   los cambios que hará y pedir confirmación (equivalente a `--dry-run`,
-  IDG-R11.4).
+  IDG-R11.4). *(Ampliado por SPEC-017 RSP-R05: el servidor exige una vista
+  previa coincidente del mismo operador de los últimos 10 minutos.)*
 - **PLT-R06.4** — Si las cuentas ya no están marcadas para revisión o su
   estado cambió, entonces el sistema deberá rechazar la operación sin
   cambios (IDG-R11.5).
@@ -230,7 +233,8 @@ desde el panel, con las mismas garantías que el comando de consola.
 - **PLT-R06.6** — Cuando el comando de consola de IDG-R11 identifica al
   operador, el sistema deberá aceptar solo a un operador activo del panel,
   en lugar de la lista de la configuración del entorno (sustituye
-  IDG-R11.3).
+  IDG-R11.3). *(Ampliado por SPEC-017 RSP-R06: exige un TOTP interactivo
+  del operador nombrado.)*
 
 ### PLT-R07 — Bitácora
 
@@ -242,7 +246,8 @@ cada operador, y ver los eventos de la identidad global.
 - **PLT-R07.1** — El sistema deberá registrar en la bitácora de plataforma
   cada acceso al panel (con éxito o fallido), cada acción y cada consulta de
   un plantel o de un caso de consolidación, con el operador, la fecha y la
-  IP.
+  IP. *(Precisado por SPEC-017 RSP-R07: incluye la lista de casos y cada
+  vista previa exitosa, guardando solo identificadores.)*
 - **PLT-R07.2** — El sistema deberá permitir a los operadores consultar la
   bitácora de plataforma, con filtros por fecha, operador y tipo de evento.
 - **PLT-R07.3** — El sistema no deberá guardar en la bitácora contraseñas,
@@ -258,10 +263,14 @@ cada operador, y ver los eventos de la identidad global.
   plantel, o desde datos que no son de ningún plantel.
 - **PLT-NF02** (seguridad) — Contraseñas con hash adaptativo; el secreto
   TOTP, cifrado en reposo; los códigos de recuperación y los tokens de
-  invitación, guardados con hash y de un solo uso (S-07, S-08).
+  invitación, guardados con hash y de un solo uso (S-07, S-08). *(Ampliado
+  por SPEC-017 RSP-NF02: los códigos de recuperación usan huella HMAC con
+  secreto fuera de la base de datos.)*
 - **PLT-NF03** (seguridad) — El inicio de sesión y la verificación del
   código admiten como máximo 5 intentos por minuto por correo e IP (S-06).
-  Cada TOTP se acepta una sola vez.
+  Cada TOTP se acepta una sola vez. *(Ampliado por SPEC-017 RSP-R03:
+  confirmación limitada por operador e IP, y bloqueo de 15 minutos tras 10
+  códigos fallidos seguidos desde cualquier IP.)*
 - **PLT-NF04** (seguridad) — Activar o desactivar un plantel y gestionar
   operadores exigen un TOTP nuevo, tecleado en los últimos 10 minutos.
 - **PLT-NF05** (seguridad) — Autorización en dos capas: middleware de nivel

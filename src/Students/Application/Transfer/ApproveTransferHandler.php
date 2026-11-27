@@ -23,6 +23,7 @@ use AulaX\Students\Domain\Student\WithdrawalReason;
 use AulaX\Students\Domain\Transfer\TransferRequestId;
 use AulaX\Students\Domain\Transfer\TransferRequestRepository;
 use AulaX\Tenancy\Application\CurrentTenant;
+use AulaX\Tenancy\Application\InstitutionUnavailable;
 use DateTimeImmutable;
 use LogicException;
 
@@ -79,6 +80,8 @@ final readonly class ApproveTransferHandler
                 $this->copier->copyTo($request->destinationId(), $this->dataOf($student, $origin->name));
             } catch (Conflict $alreadyThere) {
                 throw new Conflict('El plantel destino ya registró a ese estudiante; rechaza la solicitud.', previous: $alreadyThere);
+            } catch (InstitutionUnavailable) {
+                throw BusinessRuleViolation::onField('transfer', 'El plantel destino no puede recibir el traslado por ahora.');
             }
 
             $this->audit->record(TransferAudit::approved($request));

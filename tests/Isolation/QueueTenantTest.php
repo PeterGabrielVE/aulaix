@@ -9,6 +9,7 @@ use AulaX\Tenancy\Infrastructure\Persistence\RowLevelSecurity;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Tests\Fixtures\Tenancy\ProbeInstitutionJob;
 
@@ -54,4 +55,18 @@ test('a job queued by a request runs only after the request commits', function (
     // It ran on its own transaction, opened by within() after the request's ended.
     expect(ProbeInstitutionJob::$runs)->toHaveCount(1)
         ->and(ProbeInstitutionJob::$runs[0]['openTransactions'])->toBe(1);
+});
+
+test('discards a job for an inactive institution without retrying and logs the error', function () {
+    $inactive = Institution::factory()->inactive()->create(['subdomain' => 'cerrado-cola']);
+    Log::spy();
+
+    ProbeInstitutionJob::dispatch($inactive->id);
+
+    expect(ProbeInstitutionJob::$runs)->toBe([])
+        ->and(RowLevelSecurity::currentSetting())->toBe('')
+        ->and(app(CurrentTenant::class)->institutionId())->toBeNull();
+
+    Log::shouldHaveReceived('error')->once()->withArgs(fn (string $message, array $context) => $context['job'] === ProbeInstitutionJob::class
+        && $context['institution_id'] === $inactive->id);
 });

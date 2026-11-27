@@ -37,8 +37,12 @@ beforeEach(function () {
 function rivalPlatformConnection(): PDO
 {
     $config = config('database.connections.pgsql');
+    // Under PgBouncer (pool_size=1), connect the rival directly to postgres so
+    // two backend sessions can hold concurrent transactions against the same DB.
+    $host = $config['host'] === 'pgbouncer' ? 'postgres' : $config['host'];
+    $port = $config['host'] === 'pgbouncer' ? 5432 : $config['port'];
 
-    return new PDO("pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}", $config['username'], $config['password']);
+    return new PDO("pgsql:host={$host};port={$port};dbname={$config['database']}", $config['username'], $config['password']);
 }
 
 function createRealOperator(string $email, OperatorRole $role = OperatorRole::Support): OperatorId

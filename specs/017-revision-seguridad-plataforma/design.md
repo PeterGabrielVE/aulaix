@@ -1,7 +1,8 @@
 ---
 spec: 017-revision-seguridad-plataforma
-estado: aprobada
+estado: implementada
 aprobada: 2026-11-27
+implementada: 2026-11-27
 fecha: 2026-11-11
 requisitos: requirements.md
 adr: 0014

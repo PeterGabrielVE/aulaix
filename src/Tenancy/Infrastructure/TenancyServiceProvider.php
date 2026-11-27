@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AulaX\Tenancy\Infrastructure;
 
 use AulaX\Tenancy\Application\CurrentTenant;
+use AulaX\Tenancy\Application\InstitutionStatusLock;
 use AulaX\Tenancy\Application\Port\InstitutionFiles;
 use AulaX\Tenancy\Application\Port\InstitutionPermissions;
 use AulaX\Tenancy\Application\SearchInstitutions\InstitutionDirectory;
@@ -13,6 +14,7 @@ use AulaX\Tenancy\Application\TenantActivator;
 use AulaX\Tenancy\Domain\InstitutionRepository;
 use AulaX\Tenancy\Domain\SignatureRepository;
 use AulaX\Tenancy\Infrastructure\Files\LaravelInstitutionFiles;
+use AulaX\Tenancy\Infrastructure\Persistence\DatabaseInstitutionStatusLock;
 use AulaX\Tenancy\Infrastructure\Persistence\EloquentInstitutionDirectory;
 use AulaX\Tenancy\Infrastructure\Persistence\EloquentInstitutionRepository;
 use AulaX\Tenancy\Infrastructure\Persistence\EloquentSignatureRepository;
@@ -37,6 +39,7 @@ final class TenancyServiceProvider extends ServiceProvider
         InstitutionDirectory::class => EloquentInstitutionDirectory::class,
         SignatureRepository::class => EloquentSignatureRepository::class,
         InstitutionPermissions::class => GateInstitutionPermissions::class,
+        InstitutionStatusLock::class => DatabaseInstitutionStatusLock::class,
     ];
 
     public function register(): void

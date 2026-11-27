@@ -44,8 +44,10 @@ beforeEach(function () {
 function rivalConsolidationConnection(): PDO
 {
     $config = config('database.connections.pgsql');
+    $host = $config['host'] === 'pgbouncer' ? 'postgres' : $config['host'];
+    $port = $config['host'] === 'pgbouncer' ? 5432 : $config['port'];
 
-    return new PDO("pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}", $config['username'], $config['password']);
+    return new PDO("pgsql:host={$host};port={$port};dbname={$config['database']}", $config['username'], $config['password']);
 }
 
 /**

@@ -14,9 +14,18 @@ return new class extends Migration
     public function up(): void
     {
         $secret = trim((string) config('platform.recovery_code_key'));
+        $hasRows = DB::table('platform_operator_recovery_codes')->exists();
 
         if ($secret === '') {
-            throw new RuntimeException('PLATFORM_RECOVERY_CODE_KEY must be configured before migrating platform_operator_recovery_codes.');
+            if ($hasRows || ! app()->environment(['local', 'testing'])) {
+                throw new RuntimeException('PLATFORM_RECOVERY_CODE_KEY must be configured before migrating platform_operator_recovery_codes.');
+            }
+
+            return;
+        }
+
+        if (! $hasRows) {
+            return;
         }
 
         DB::transaction(function () use ($secret) {
@@ -36,6 +45,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! DB::table('platform_operator_recovery_codes')->exists()) {
+            return;
+        }
+
         throw new RuntimeException(
             'Cannot reverse keyed HMAC recovery code hashes. '
             .'Option A: restore platform_operator_recovery_codes from the pre-migration backup. '

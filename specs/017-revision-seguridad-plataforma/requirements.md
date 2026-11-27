@@ -1,8 +1,9 @@
 ---
 spec: 017-revision-seguridad-plataforma
 prefijo: RSP
-estado: aprobada
+estado: implementada
 aprobada: 2026-11-11
+implementada: 2026-11-27
 fecha: 2026-11-11
 módulo: Platform, IdentityAccess, Students, Tenancy
 depende-de: 004-identidad-global (IDG-R11), 009-estudiantes (EST-R07), 014-superadministracion, 015-rls-transaccion (RLT-R03.2)
@@ -431,16 +432,16 @@ Sin preguntas abiertas.
 | RSP-R07.1 | `tests/Unit/Platform/Application/ConsolidationTest.php` › «lists the cases to any operator (PLT-R06.1)»; `tests/Feature/Platform/ConsolidationAuditTest.php` › «listing consolidation cases records operator, date, IP and account ids without PII» |
 | RSP-R07.2 | `tests/Unit/IdentityAccess/Application/ResolveConsolidationCaseTest.php` › «records a dry-run preview in the platform log with only decision and account ids (RSP-R07.2, R07.3)»; `tests/Feature/Platform/ConsolidationAuditTest.php` › «successful panel preview records operator, decision and account ids without PII»; `tests/Feature/Platform/ConsoleOperatorTest.php` › «declining confirmation after preview leaves the accounts untouched and audits the preview (RSP-R06.8, R07.2, R07.3)» |
 | RSP-R07.3 | `tests/Feature/Platform/ConsolidationAuditTest.php` › «listing consolidation cases records operator, date, IP and account ids without PII»; `tests/Feature/Platform/ConsolidationAuditTest.php` › «successful panel preview records operator, decision and account ids without PII» |
-| RSP-R08.1 | |
-| RSP-R08.2 | |
-| RSP-R08.3 | |
-| RSP-R08.4 | |
-| RSP-R08.5 | |
-| RSP-R08.6 | |
-| RSP-NF01 | `tests/Isolation/OperatorLockTest.php` › «management and login, both orders: deactivation is never overwritten and leaves no open session»; `tests/Isolation/ConsolidationLockTest.php` › «separate wins and blocks a concurrent consolidation with no email or session revocation» |
+| RSP-R08.1 | `tests/Feature/Students/TransferToInactiveTest.php` › «no reason: approving a transfer to an inactive destination is refused without changes and preserves the request»; `tests/Isolation/InstitutionStatusLockTest.php` › «deactivation under exclusive lock blocks transfer approval and leaves both institutions untouched» |
+| RSP-R08.2 | `tests/Feature/Students/TransferToInactiveTest.php` › «no reason: approving a transfer to an inactive destination is refused without changes and preserves the request» |
+| RSP-R08.3 | `tests/Feature/Students/TransferToInactiveTest.php` › «no reason: approving a transfer to an inactive destination is refused without changes and preserves the request»; `tests/Feature/Students/TransferToInactiveTest.php` › «a pending request to an inactive destination still expires after its original 15 days» |
+| RSP-R08.4 | `tests/Feature/Students/TransferToInactiveTest.php` › «approving succeeds once the destination is reactivated before the original 15-day deadline» |
+| RSP-R08.5 | `tests/Isolation/QueueTenantTest.php` › «discards a job for an inactive institution without retrying and logs the error» |
+| RSP-R08.6 | `tests/Unit/Tenancy/Application/InstitutionContextsTest.php` › «refuses an inactive or missing institution in writableOf while of still reads it for platform»; `tests/Feature/Platform/InstitutionsTest.php` › «platform still reads usage of an inactive institution (RSP-R08.6)» |
+| RSP-NF01 | `tests/Isolation/OperatorLockTest.php` › «management and login, both orders: deactivation is never overwritten and leaves no open session»; `tests/Isolation/ConsolidationLockTest.php` › «separate wins and blocks a concurrent consolidation with no email or session revocation»; `tests/Isolation/InstitutionStatusLockTest.php` › «deactivation under exclusive lock blocks transfer approval and leaves both institutions untouched» |
 | RSP-NF02 | `tests/Feature/Platform/Infrastructure/KeyedRecoveryCodeHasherTest.php` › «produces a 64-character keyed HMAC that differs from plain SHA-256 and changes with the secret»; `tests/Feature/Platform/Infrastructure/RecoveryCodeRehashMigrationTest.php` › «recovery codes generated before migration remain valid afterwards» |
 | RSP-NF03 | `tests/Unit/Platform/Application/SensitiveActionsNeedRecentTotpTest.php` › «refuses every sensitive platform use case when TOTP confirmation is older than 10 minutes» |
 | RSP-NF04 | `tests/Architecture/LayersTest.php` › «pg_advisory is confined to the advisory lock adapters»; `tests/Architecture/LayersTest.php` › «every Platform use case that updates an operator or its recovery codes takes OperatorLock» |
-| RSP-NF05 | `tests/Feature/Platform/OperatorLockoutTest.php` › «same answer for blocked operator and unknown email» |
-| RSP-NF06 | |
-| RSP-NF07 | |
+| RSP-NF05 | `tests/Feature/Platform/OperatorLockoutTest.php` › «same answer for blocked operator and unknown email»; `tests/Feature/Students/TransferToInactiveTest.php` › «no reason: approving a transfer to an inactive destination is refused without changes and preserves the request» |
+| RSP-NF06 | `tests/Feature/Platform/PlatformPerformanceTest.php` › «the list of 500 institutions loads within 500 ms (p95)»; `tests/Feature/Platform/PlatformPerformanceTest.php` › «the usage of a large institution loads within 300 ms (p95)»; `tests/Isolation/RlsOverheadTest.php` › «holding the institution in the request transaction costs under 5 ms (p95)» |
+| RSP-NF07 | `tests/Feature/Students/TransferFlowTest.php` › «the origin sees the request with the destination and its student, and approves it»; `tests/Feature/IdentityAccess/ConsolidationTest.php` › «historical accounts are merged into the oldest one, with a code sent by email»; `tests/Isolation/QueueTenantTest.php` › «a job about an institution runs in it, and leaves no institution after it» |

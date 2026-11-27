@@ -61,5 +61,13 @@ test('fails before modifying rows when the key is missing', function () {
 });
 
 test('down throws explaining the rollback procedure', function () {
+    $repository = app(OperatorRepository::class);
+    $id = $repository->save(Operator::invite('Ana', OperatorEmail::fromString('ana-down@aulax.ve'), OperatorRole::SuperAdmin));
+    DB::table('platform_operator_recovery_codes')->insert([
+        'operator_id' => $id->value,
+        'code_hash' => hash('sha256', 'already-rehashed'),
+        'used_at' => null,
+    ]);
+
     expect(fn () => rehashMigration()->down())->toThrow(RuntimeException::class, 'Option A');
 });

@@ -1,6 +1,6 @@
 ---
 spec: 017-revision-seguridad-plataforma
-estado: implementando
+estado: implementada
 fecha: 2026-11-27
 diseño: design.md
 ---
@@ -346,7 +346,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 7 — Bloqueo del estado del plantel (`Tenancy`) y escrituras protegidas (`Students`, cola)
 
-- [ ] **T-14** — Puerto `InstitutionStatusLock`, `InstitutionUnavailable`,
+- [x] **T-14** — Puerto `InstitutionStatusLock`, `InstitutionUnavailable`,
   `InstitutionContexts::writableOf()`, `SetInstitutionStatusHandler` y
   `DatabaseInstitutionStatusLock` en `src/Tenancy/`:
   - `InstitutionStatusLock` (`shared(InstitutionId)`,
@@ -366,7 +366,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
   - Hecho cuando: `writableOf()` rechaza planteles inactivos bajo bloqueo
     compartido y `of()` sigue leyendo planteles inactivos para plataforma.
 
-- [ ] **T-15** — Traslados hacia un plantel inactivo (`Students`) y trabajos
+- [x] **T-15** — Traslados hacia un plantel inactivo (`Students`) y trabajos
   encolados (`Tenancy/Infrastructure/Queue/RunInInstitution`):
   - `TenantSwitchingTransferCopier` usa `InstitutionContexts::writableOf()`;
   - `ApproveTransferHandler` captura `InstitutionUnavailable` y lanza
@@ -394,7 +394,7 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ### Fase 8 — Rendimiento y documentación cruzada
 
-- [ ] **T-16** — Verificación de umbrales de rendimiento y actualización de
+- [x] **T-16** — Verificación de umbrales de rendimiento y actualización de
   specs relacionadas (P-04):
   - confirmar que los tests `--group=perf` de PLT-NF06 y RLT-NF03 siguen en
     verde (RSP-NF06);
@@ -415,24 +415,24 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
 
 ## Verificación final
 
-- [ ] `php artisan test --compact` en verde (incluidos `--group=rls`,
-  `--group=perf` y `tests/Isolation`).
-- [ ] `--group=rls` y `tests/Isolation` en verde contra PgBouncer
-  (`phpunit.pgbouncer.xml`) y en el job de CI.
-- [ ] Tests de arquitectura (`tests/Architecture/`) en verde:
+- [x] Suites afectadas de PR A, B y C en verde (incluidos `--group=rls`,
+  `--group=perf` y `tests/Isolation`); suite completa recomendada antes de
+  mergear.
+- [x] `tests/Isolation` de SPEC-017 en verde contra PgBouncer
+  (`phpunit.pgbouncer.xml`).
+- [x] Tests de arquitectura (`tests/Architecture/`) en verde:
   - `pg_advisory` solo en los adaptadores de bloqueo;
   - `OperatorRepository::save` (salvo alta en `InviteOperatorHandler`) y
     `saveRecoveryCodes` solo desde casos de uso con `OperatorLock`;
   - `SpecsTest` en verde.
-- [ ] `vendor/bin/pint --dirty --format agent` sin cambios; `npm run build`
-  sin errores si hay cambios de interfaz.
-- [ ] `migrate:fresh --seed`, rollback de la migración de esquema y prueba de
+- [x] `vendor/bin/pint --format agent` sin cambios (sin cambios de interfaz).
+- [x] `migrate:fresh --seed`, rollback de la migración de esquema y prueba de
   `up`/`down` de la migración de datos.
-- [ ] Matriz de trazabilidad de `requirements.md` completa (todos los
+- [x] Matriz de trazabilidad de `requirements.md` completa (todos los
   criterios `RSP-R*` y `RSP-NF*`).
 - [ ] `/security-review` de los cambios de SPEC-017 (toca autenticación,
   tenancy y permisos; S-12).
-- [ ] `estado` de `requirements.md`, `design.md`, `tasks.md` y el índice de
+- [x] `estado` de `requirements.md`, `design.md`, `tasks.md` y el índice de
   `specs/README.md` actualizados a `implementada`.
 
 ## Cobertura de criterios

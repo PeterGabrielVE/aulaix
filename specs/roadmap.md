@@ -161,3 +161,12 @@ correo espera consolidación.
 y bitácora. Sin hallazgos críticos ni altos. Tres medios, comprobados en el
 código, y siete bajos. Se cierran en
 [SPEC-017](017-revision-seguridad-plataforma/requirements.md).
+
+**2026-11-27**: `/security-review` de cierre de SPEC-017 (S-12) sobre acceso
+de operadores, bloqueos consultivos, migración HMAC de códigos de
+recuperación, consolidaciones en panel y consola, y aislamiento de planteles
+inactivos. Sin hallazgos críticos ni altos; 1 hallazgo medio (revalidación
+del actor SuperAdmin bajo el bloqueo en gestión de operadores) y 1 bajo
+(limpieza y vínculo al operador de la vista previa de consolidación al
+iniciar otra sesión en el mismo navegador) corregidos y cubiertos con tests
+de regresión.

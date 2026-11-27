@@ -63,6 +63,7 @@ final readonly class ResetOperatorMfaHandler
         /** @var Operator $operator */
         $operator = $this->transactions->run(function () use ($target, $token) {
             $this->locks->lockOperator($target);
+            PlatformAccess::superAdminWithRecentTotp($this->session, $this->operators, $this->clock);
             $operator = $this->operators->byId($target) ?? throw new NotFound('Ese operador no existe.');
 
             $operator->resetMfa();

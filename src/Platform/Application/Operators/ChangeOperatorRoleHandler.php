@@ -61,6 +61,10 @@ final readonly class ChangeOperatorRoleHandler
 
             SuperAdminRules::check($actor, $operator, demotes: $from === OperatorRole::SuperAdmin, activeSuperAdmins: ActiveSuperAdmins::count($this->operators));
 
+            // Re-verify the acting SuperAdmin under the roster lock so a concurrent
+            // deactivation or demotion cannot be bypassed while waiting on the lock.
+            PlatformAccess::superAdminWithRecentTotp($this->session, $this->operators, $this->clock);
+
             $operator->changeRole($role);
             $this->operators->save($operator);
             $this->audit->recordForPlatform(PlatformAudit::roleChanged($operator->id, $from->value, $role->value));

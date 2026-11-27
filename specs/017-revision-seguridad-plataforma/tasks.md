@@ -430,8 +430,14 @@ Tres PRs, independientes entre sí salvo las claves compartidas de bloqueo
   `up`/`down` de la migración de datos.
 - [x] Matriz de trazabilidad de `requirements.md` completa (todos los
   criterios `RSP-R*` y `RSP-NF*`).
-- [ ] `/security-review` de los cambios de SPEC-017 (toca autenticación,
-  tenancy y permisos; S-12).
+- [x] `/security-review` de los cambios de SPEC-017 (toca autenticación,
+  tenancy y permisos; S-12). Revisión ejecutada el 2026-11-27: sin hallazgos
+  críticos ni altos; 1 medio (revalidación del actor SuperAdmin bajo bloqueo
+  en `SetOperatorActiveHandler`, `ChangeOperatorRoleHandler` y
+  `ResetOperatorMfaHandler`) y 1 bajo (limpieza y vínculo al operador de la
+  vista previa de consolidación al iniciar otra sesión en
+  `LaravelOperatorSession` / `SessionConsolidationPreviews`) cerrados con
+  tests de regresión.
 - [x] `estado` de `requirements.md`, `design.md`, `tasks.md` y el índice de
   `specs/README.md` actualizados a `implementada`.
 

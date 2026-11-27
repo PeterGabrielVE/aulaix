@@ -105,6 +105,19 @@ test('direct POST to resolve without a matching preview is refused and audited (
         ->and(DB::table('platform_audit_entries')->where('event_type', 'platform.consolidation.resolve_refused')->exists())->toBeTrue();
 });
 
+test('a preview recorded by one operator is never usable by another operator signing in on the same browser (RSP-R05.1)', function () {
+    $this->post(adminUrl("/consolidaciones/{$this->older->id}/vista-previa"), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Son dos personas'])
+        ->assertRedirect();
+
+    signedInOperator('marta@aulax.ve', OperatorRole::Support);
+
+    $this->from(adminUrl("/consolidaciones/{$this->older->id}"))
+        ->post(adminUrl("/consolidaciones/{$this->older->id}/resolver"), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Son dos personas'])
+        ->assertSessionHasErrors(['preview' => 'Revisa la vista previa antes de resolver.']);
+
+    expect(User::query()->where('email', 'ana@example.com')->pluck('consolidation_state')->unique()->all())->toBe(['review']);
+});
+
 test('previewing or resolving with accounts that do not belong to the route case is refused (RSP-R05.4)', function () {
     $this->from(adminUrl('/consolidaciones/999999'))
         ->post(adminUrl('/consolidaciones/999999/vista-previa'), ['accounts' => $this->accounts, 'decision' => 'separate', 'reason' => 'Otra ruta'])

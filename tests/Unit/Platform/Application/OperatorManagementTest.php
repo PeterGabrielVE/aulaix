@@ -179,3 +179,34 @@ it('acquires roster lock before operator lock in role and active changes (ADR 00
         "operator:{$this->support->value}",
     ]);
 });
+
+it('refuses mutating another operator if the actor lost SuperAdmin privileges while waiting on the lock', function (Closure $action, Closure $revoke) {
+    $third = managedOperator($this->operators, 'tercero@aulax.ve', OperatorRole::SuperAdmin, $this->hasher);
+
+    $this->locks->onLock = function () use ($revoke): void {
+        $boss = $this->operators->byId($this->boss);
+        $revoke($boss);
+        $this->operators->save($boss);
+    };
+
+    expect(fn () => $action->call($this, $third))->toThrow(AuthorizationDenied::class);
+
+    $target = $this->operators->byId($third);
+
+    expect($target->status)->toBe(OperatorStatus::Active)
+        ->and($target->role)->toBe(OperatorRole::SuperAdmin)
+        ->and($target->totpSecret)->not->toBeNull();
+})->with([
+    'deactivate after actor deactivated' => [
+        fn (OperatorId $third) => setActive($third, false),
+        fn (Operator $boss) => $boss->deactivate(),
+    ],
+    'change role after actor demoted' => [
+        fn (OperatorId $third) => changeRole($third, OperatorRole::Support),
+        fn (Operator $boss) => $boss->changeRole(OperatorRole::Support),
+    ],
+    'reset MFA after actor deactivated' => [
+        fn (OperatorId $third) => resetMfa($third),
+        fn (Operator $boss) => $boss->deactivate(),
+    ],
+]);
